@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ActusDeiEngine", "ActusDeiXboxOneEdition\ActusDeiXboxOneEdition.vcxproj", "{182E0533-34A4-45C4-9B72-7B2161F3DE8B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{8826B6D5-1464-4657-9350-F0222868D64E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{182E0533-34A4-45C4-9B72-7B2161F3DE8B} = {182E0533-34A4-45C4-9B72-7B2161F3DE8B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
