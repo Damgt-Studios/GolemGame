@@ -269,6 +269,8 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ADMath.h" />
+    <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="pch.h" />
