@@ -34,6 +34,8 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -43,6 +45,8 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

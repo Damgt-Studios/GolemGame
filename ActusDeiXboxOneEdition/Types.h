@@ -13,6 +13,10 @@ typedef unsigned long long AD_ULONG;
 enum class ADResourceType {
 	PhongRenderer = 0,
 	Light,
+	Gem,
+	Destructable,
+	Trigger,
+	Enemy
 };
 
 namespace ADResource
@@ -114,5 +118,153 @@ namespace ADResource
 			ComPtr<ID3D11Buffer> constantBuffer;
 			ComPtr<ID3D11Buffer> lightBuffer;
 		};
+	}
+
+	namespace ADGameplay
+	{
+		//This could be part of the player object.  You guys decide how you want the event system to determine things.
+		struct GameState
+		{
+			int Health;
+			int Gems;
+		};
+
+		class GameObject
+		{
+		public:
+			enum OBJECT_TYPE
+			{
+				PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  //We should replace trigger with the types of trigger to avoid an extra var for trigger type.
+			};
+			enum OBJECT_DEFENSE
+			{
+				NONE, IGNORE_RAM, IGNORE_FIRE, INVULNERABLE
+			};
+			enum DAMAGE_TYPE
+			{
+				RAM = 1, FIRE = 2
+			};
+
+			bool active;
+			int type;
+			int GemCount;
+			AD_ULONG meshID;
+			OBJECT_DEFENSE defenseType;
+			XMFLOAT4X4 transform;
+			XMFLOAT4X4 postTransform;
+			ADPhysics::Collider collider;
+
+
+			//TODO: Whittington.
+			virtual void Render() {};
+
+			virtual void Damage(DAMAGE_TYPE damageType)
+			{
+				if (type == DESTRUCTABLE)
+				{
+					if (defenseType != INVULNERABLE && defenseType != damageType)
+					{
+						Remove();
+					}
+				}
+			};
+			virtual void Remove()
+			{
+				//Drop your Gems and get return to pool,  Your done son.
+			}
+		};
+
+		class Enemy : GameObject
+		{
+			AD_AI::AI ai;
+			int health;
+			void Update()
+			{
+				ai.Update();
+			}
+			void Damage(DAMAGE_TYPE damageType) override
+			{
+				if (defenseType != INVULNERABLE && defenseType != damageType)
+				{
+					health--;
+					if (health < 1)
+					{
+						Remove();
+					}
+				}
+			};
+		};
+	}
+
+	namespace AD_AI
+	{
+
+		enum AITYPES
+		{
+			RUNNER, STRIKER, SHOOTER, BOSS, COUNT
+		};
+
+		enum BEHAVIORS
+		{
+			IDLE, WANDER, DIRECT, WAYPOINT, ATTACK, SHOOT, DEATH, GUARD, TAUNT
+		};
+
+		class AI
+		{
+		public:
+			void Update()
+			{
+				//Traverse Behavior Tree and Enact Behavior
+				//Updates the postTransform of a Game Object.
+				//Communicates with EventSystem to spawn projectiles and Gems.
+			}
+		};
+
+		//For constructing AI's from binary.
+		class AIData
+		{
+			int ObjectType;
+
+			AI ToAI()
+			{
+				switch (ObjectType)
+				{
+				case AITYPES::RUNNER:
+
+					break;
+				case AITYPES::STRIKER:
+
+					break;
+				case AITYPES::SHOOTER:
+
+					break;
+				case AITYPES::BOSS:
+
+					break;
+				default:
+					break;
+				}
+			}
+		};
+
+	}
+
+
+	//TODO Gage  (This is rough draft crap made by Dan.  Just do your thing.)
+	namespace ADPhysics
+	{
+		struct Collider
+		{
+			enum TYPE
+			{
+				AABB, SPHERE
+			};
+
+			int type;
+			int centerAnchor;
+			XMFLOAT3 sizeOffsets;
+			XMFLOAT3 positionOffset;
+		};
+
 	}
 }
