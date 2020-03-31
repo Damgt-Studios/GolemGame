@@ -17,9 +17,9 @@ bool Engine::Initialize()
 	// Don't delete
 
 	// Model
-	camera = new FPSCamera(XMFLOAT3(0, 0, -25));
+	/*camera = new FPSCamera(XMFLOAT3(0, 0, -25));
 	camera->Rotate(0, 15);
-	camera->SetFOV(30);
+	camera->SetFOV(30);*/
 	// Model
 
 	// Lights
@@ -63,4 +63,22 @@ bool Engine::ShutDown()
 	pbr.ShutDown();
 
 	return true;
+}
+
+ResourceManager* Engine::GetResourceManager()
+{
+	return &rmanager;
+}
+
+
+void Engine::SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov)
+{
+	camera = new FPSCamera(position);
+	camera->Rotate(yaw, pitch);
+	camera->SetFOV(fov);
+}
+
+ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
+{
+	return &pbr;
 }
