@@ -7,8 +7,12 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+// Global type definitions
+typedef unsigned long long AD_ULONG;
+
 enum class ADResourceType {
-	PhongRenderer = 0
+	PhongRenderer = 0,
+	Light,
 };
 
 namespace ADResource

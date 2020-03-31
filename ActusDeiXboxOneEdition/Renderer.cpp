@@ -1,13 +1,9 @@
 #include "pch.h"
+
 #include "Renderer.h"
 #include "Utils.h"
 
-// Shaders
-#include "base_vs.csh"
-#include "base_ps.csh"
-// Shaders
-
-bool ADRenderer::PBRRenderer::Initialize()
+bool ADResource::ADRenderer::PBRRenderer::Initialize()
 {
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 
@@ -77,22 +73,6 @@ bool ADRenderer::PBRRenderer::Initialize()
 	result = pbr.device->CreateRenderTargetView(backbuffer.Get(), nullptr, &pbr.render_target_view);
 	assert(!FAILED(result));
 
-	// Lights
-	Light light;
-	ZeroMemory(&light, sizeof(Light));
-	light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-	light.ambientUp = XMFLOAT4(1, 1, 1, 1);
-	light.ambientDown = XMFLOAT4(1, 1, 1, 1);
-	light.ambientIntensityDown = .2;
-	light.ambientIntensityUp = .4;
-	light.diffuse = XMFLOAT4(1, 1, 1, 1);
-	light.lightDirection = XMFLOAT4(2, -1, 3, 1);
-	light.diffuseIntensity = 1;
-	light.specular = XMFLOAT4(1, 1, 1, 1);
-	light.specularIntensity = .2;
-	lights.push_back(light);
-	// Lights
-
 	// Rasterizer state
 	D3D11_RASTERIZER_DESC rdesc;
 	ZeroMemory(&rdesc, sizeof(D3D11_RASTERIZER_DESC));
@@ -133,7 +113,7 @@ bool ADRenderer::PBRRenderer::Initialize()
 	assert(!FAILED(result));
 
 	// Create light buffer
-	bDesc.ByteWidth = lights.size() * sizeof(Light);
+	bDesc.ByteWidth = ResourceManager::GetLightCount() * sizeof(Light);
 
 	result = pbr.device->CreateBuffer(&bDesc, nullptr, &pbr.lightBuffer);
 	assert(!FAILED(result));
@@ -161,58 +141,10 @@ bool ADRenderer::PBRRenderer::Initialize()
 	result = pbr.device->CreateDepthStencilView(pbr.zBuffer.Get(), nullptr, &pbr.depthStencil);
 	assert(!FAILED(result));
 
-	//LoadWobjectMesh("files/models/FireExt.wobj", m_model, device);
-	ADUtils::LoadWobjectMesh("files/models/oildrum.wobj", m_model, pbr.device);
-
-	// Setup Vertex Buffer
-	D3D11_BUFFER_DESC bufferDesc;
-	D3D11_SUBRESOURCE_DATA vdata;
-	ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
-	ZeroMemory(&vdata, sizeof(D3D11_SUBRESOURCE_DATA));
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.ByteWidth = sizeof(Vertex) * m_model.vertices.size();
-	bufferDesc.CPUAccessFlags = 0;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
-	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	vdata.pSysMem = m_model.vertices.data();
-
-	result = pbr.device->CreateBuffer(&bufferDesc, &vdata, &m_model.vertexBuffer);
-	assert(!FAILED(result));
-
-	// Index buffer
-	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bufferDesc.ByteWidth = sizeof(int) * m_model.indices.size();
-
-	D3D11_SUBRESOURCE_DATA idata;
-	ZeroMemory(&idata, sizeof(D3D11_SUBRESOURCE_DATA));
-	idata.pSysMem = m_model.indices.data();
-	result = pbr.device->CreateBuffer(&bufferDesc, &idata, &m_model.indexBuffer);
-	assert(!FAILED(result));
-
-	// Load shaders
-	result = pbr.device->CreateVertexShader(base_vs, sizeof(base_vs), nullptr, &m_model.vertexShader);
-	assert(!FAILED(result));
-	result = pbr.device->CreatePixelShader(base_ps, sizeof(base_ps), nullptr, &m_model.pixelShader);
-	assert(!FAILED(result));
-
-	// Make input layout for vertex buffer
-	D3D11_INPUT_ELEMENT_DESC tempInputElementDesc[] =
-	{
-		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
-	result = pbr.device->CreateInputLayout(tempInputElementDesc, ARRAYSIZE(tempInputElementDesc), base_vs, sizeof(base_vs), &m_model.vertexBufferLayout);
-	assert(!FAILED(result));
-
 	return true;
 }
 
-bool ADRenderer::PBRRenderer::Update(FPSCamera* camera)
+bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 {
 	float color[4] = { 0, 0, 0, 1 };
 
@@ -230,7 +162,8 @@ bool ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 	// World matrix projection
 	XMMATRIX temp = XMMatrixIdentity();
 	temp = XMMatrixMultiply(temp, XMMatrixScaling(.1, .1, .1));
-	temp = XMMatrixMultiply(temp, XMMatrixTranslation(m_model.position.x, m_model.position.y, m_model.position.z));
+	XMFLOAT3 pos = ResourceManager::GetPBRPtr()[0].position;
+	temp = XMMatrixMultiply(temp, XMMatrixTranslation(pos.x, pos.y, pos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
 	camera->GetViewMatrix(temp);
@@ -255,7 +188,7 @@ bool ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 	D3D11_MAPPED_SUBRESOURCE lightSub;
 	result = pbr.context->Map(pbr.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
 	assert(!FAILED(result));
-	memcpy(lightSub.pData, lights.data(), sizeof(Light) * lights.size());
+	memcpy(lightSub.pData, ResourceManager::GetLightDataPtr(), sizeof(Light) * ResourceManager::GetLightCount());
 	pbr.context->Unmap(pbr.lightBuffer.Get(), 0);
 	// Connect constant buffer to the pipeline
 	ID3D11Buffer* lightCbuffers[] = { pbr.lightBuffer.Get() };
@@ -265,41 +198,46 @@ bool ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 	// sET THE PIPELINE
 	UINT strides[] = { sizeof(Vertex) };
 	UINT offsets[] = { 0 };
-	ID3D11Buffer* moelVertexBuffers[] = { m_model.vertexBuffer.Get() };
+	ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetPBRPtr()[0].vertexBuffer.Get() };
 	pbr.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-	pbr.context->IASetIndexBuffer(m_model.indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	pbr.context->IASetIndexBuffer(ResourceManager::GetPBRPtr()[0].indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// Set sampler
-	pbr.context->PSSetSamplers(0, 1, m_model.sampler.GetAddressOf());
+	pbr.context->PSSetSamplers(0, 1, ResourceManager::GetPBRPtr()[0].sampler.GetAddressOf());
 
 	ID3D11ShaderResourceView* resource_views[] = {
-		m_model.albedo.Get(),
-		m_model.normal.Get(),
-		m_model.metallic.Get(),
-		m_model.roughness.Get(),
-		m_model.ambient_occlusion.Get(),
+		ResourceManager::GetPBRPtr()[0].albedo.Get(),
+		ResourceManager::GetPBRPtr()[0].normal.Get(),
+		ResourceManager::GetPBRPtr()[0].metallic.Get(),
+		ResourceManager::GetPBRPtr()[0].roughness.Get(),
+		ResourceManager::GetPBRPtr()[0].ambient_occlusion.Get(),
 	};
 
 	pbr.context->PSSetShaderResources(0, 5, resource_views);
 
-	pbr.context->VSSetShader(m_model.vertexShader.Get(), 0, 0);
-	pbr.context->PSSetShader(m_model.pixelShader.Get(), 0, 0);
-	pbr.context->IASetInputLayout(m_model.vertexBufferLayout.Get());
+	pbr.context->VSSetShader(ResourceManager::GetPBRPtr()[0].vertexShader.Get(), 0, 0);
+	pbr.context->PSSetShader(ResourceManager::GetPBRPtr()[0].pixelShader.Get(), 0, 0);
+	pbr.context->IASetInputLayout(ResourceManager::GetPBRPtr()[0].vertexBufferLayout.Get());
 
-	pbr.context->DrawIndexed(m_model.indices.size(), 0, 0);
+	pbr.context->DrawIndexed(ResourceManager::GetPBRPtr()[0].indices.size(), 0, 0);
 	// Render stuff
 
 	return true;
 }
 
-bool ADRenderer::PBRRenderer::Frame()
+bool  ADResource::ADRenderer::PBRRenderer::Frame()
 {
 	pbr.chain->Present(1, 0);
 
 	return true;
 }
 
-bool ADRenderer::PBRRenderer::ShutDown()
+bool  ADResource::ADRenderer::PBRRenderer::ShutDown()
 {
 	return true;
+}
+
+ADResource::ADRenderer::PBRRendererResources* ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()
+{
+	return &pbr;
 }

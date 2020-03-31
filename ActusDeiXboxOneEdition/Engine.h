@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
 
 #include <wrl/client.h>
 #include <d3d11_1.h>
@@ -28,6 +29,13 @@ public:
 	bool Render();
 	bool ShutDown();
 
+public:
+	ResourceManager* GetResourceManager();
+	void SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov);
+
+private:
+	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();
+
 private:
 	Model m_model;
 	WVP WORLD;
@@ -40,5 +48,6 @@ private:
 
 private:
 	// New shit
-	ADRenderer::PBRRenderer pbr;
+	ADResource::ADRenderer::PBRRenderer pbr;
+	ResourceManager rmanager;
 };

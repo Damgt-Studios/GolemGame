@@ -59,10 +59,28 @@ public:
 
 		// Initialize the engine
 		Engine engine;
+		engine.SetCamera(XMFLOAT3(0, 0, -25), 0, 15, 30);
+
+		Light light;
+		ZeroMemory(&light, sizeof(Light));
+		light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
+		light.ambientUp = XMFLOAT4(1, 1, 1, 1);
+		light.ambientDown = XMFLOAT4(1, 1, 1, 1);
+		light.ambientIntensityDown = .2;
+		light.ambientIntensityUp = .4;
+		light.diffuse = XMFLOAT4(1, 1, 1, 1);
+		light.lightDirection = XMFLOAT4(2, -1, 3, 1);
+		light.diffuseIntensity = 1;
+		light.specular = XMFLOAT4(1, 1, 1, 1);
+		light.specularIntensity = .2;
+		engine.GetResourceManager()->AddLight(light);
+
 		if (!engine.Initialize())
 		{
 			return;
 		}
+
+		engine.GetResourceManager()->AddPBRModel("files/models/oildrum.wobj");
 
 		ADResource::ADRenderer::Header header;
 
