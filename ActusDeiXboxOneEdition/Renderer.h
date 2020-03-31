@@ -5,30 +5,38 @@
 
 #include "Types.h"
 #include "Camera.h"
+#include "ResourceManager.h"
 
 using namespace ADResource::ADRenderer;
 
-namespace ADRenderer
+namespace
 {
-	class PBRRenderer
+	PBRRendererResources pbr;
+}
+
+namespace ADResource
+{
+	namespace ADRenderer
 	{
-	public:
-		PBRRenderer() = default;
-		~PBRRenderer() = default;
+		class PBRRenderer
+		{
+		public:
+			PBRRenderer() = default;
+			~PBRRenderer() = default;
 
-		// Lifecycle Methods
-		bool Initialize();
-		bool Update(FPSCamera* camera);
-		bool Frame();
-		bool ShutDown();
+			// Lifecycle Methods
+			bool Initialize();
+			bool Update(FPSCamera* camera);
+			bool Frame();
+			bool ShutDown();
 
-		// Temp
-	private:
-		std::vector<Light> lights;
-		Model m_model;
-		WVP WORLD;
+		public:
+			static PBRRendererResources* GetPBRRendererResources();
 
-	private:
-		PBRRendererResources pbr;
+			// Temp
+		private:
+			//Model m_model;
+			WVP WORLD;
+		};
 	};
-};
+}

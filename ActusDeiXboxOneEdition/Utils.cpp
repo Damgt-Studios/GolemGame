@@ -1,7 +1,10 @@
 #include "pch.h"
+
+#include <d3dcompiler.h>
+#include "DDSTextureLoader.h"
+
 #include "Utils.h"
 
-#include "DDSTextureLoader.h"
 
 //************************************
 // Returns:   void
@@ -55,6 +58,72 @@ void ADUtils::LoadWobjectMesh(const char* meshname, Model& _model, ComPtr<ID3D11
 
 	// Load textures
 	LoadTextures(header, _model, device);
+
+	// Create buffers
+	// Setup Vertex Buffer
+	D3D11_BUFFER_DESC bufferDesc;
+	D3D11_SUBRESOURCE_DATA vdata;
+	ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
+	ZeroMemory(&vdata, sizeof(D3D11_SUBRESOURCE_DATA));
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.ByteWidth = sizeof(Vertex) * _model.vertices.size();
+	bufferDesc.CPUAccessFlags = 0;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vdata.pSysMem = _model.vertices.data();
+
+	HRESULT result = device->CreateBuffer(&bufferDesc, &vdata, &_model.vertexBuffer);
+	assert(!FAILED(result));
+
+	// Index buffer
+	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bufferDesc.ByteWidth = sizeof(int) * _model.indices.size();
+
+	D3D11_SUBRESOURCE_DATA idata;
+	ZeroMemory(&idata, sizeof(D3D11_SUBRESOURCE_DATA));
+	idata.pSysMem = _model.indices.data();
+	result = device->CreateBuffer(&bufferDesc, &idata, &_model.indexBuffer);
+	assert(!FAILED(result));
+
+	// Load shaders
+	// Load shaders
+	ComPtr<ID3D10Blob> vertexblob;
+	ComPtr<ID3D10Blob> pixelblob;
+
+	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\shaders\\base_vs.hlsl");
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\shaders\\base_ps.hlsl");
+
+	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
+
+	std::wstring vshadername(v.begin(), v.end());
+	std::wstring pshadername(p.begin(), p.end());
+
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, "main", "vs_4_0", D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	assert(!FAILED(result));
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, "main", "ps_4_0", D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	assert(!FAILED(result));
+
+	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &_model.vertexShader);
+	assert(!FAILED(result));
+	result = device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &_model.pixelShader);
+	assert(!FAILED(result));
+
+	// Make input layout for vertex buffer
+	D3D11_INPUT_ELEMENT_DESC tempInputElementDesc[] =
+	{
+		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	result = device->CreateInputLayout(tempInputElementDesc, ARRAYSIZE(tempInputElementDesc), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &_model.vertexBufferLayout);
+	assert(!FAILED(result));
 }
 
 void ADUtils::LoadTextures(Header& header, Model& _model, ComPtr<ID3D11Device1> dev)
@@ -65,7 +134,7 @@ void ADUtils::LoadTextures(Header& header, Model& _model, ComPtr<ID3D11Device1> 
 	result = dev.As(&device);
 	assert(!FAILED(result));
 
-	std::string texture_path = READ_PATH.append("files\\textures\\");
+	std::string texture_path = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\textures\\");
 
 	// Construct wide string with filename
 	std::string spath = header.t_albedo;
