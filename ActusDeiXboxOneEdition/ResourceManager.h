@@ -12,8 +12,13 @@ namespace
 	std::unordered_map<AD_ULONG, unsigned int> light_map;
 	std::unordered_map<AD_ULONG, unsigned int> pbrmodel_map;
 
+	std::unordered_map<AD_ULONG, unsigned int> gameObject;
+
 	std::vector<ADResource::ADRenderer::Light> lights;
 	std::vector<ADResource::ADRenderer::Model> pbrmodels;
+
+	std::vector<ADResource::ADGameplay::GameObject> passables;
+	std::vector<ADResource::ADGameplay::GameObject> collidables;
 }
 
 // Note: Update the resource manager to load models and store mesh data in same draw call in contiguous memory
