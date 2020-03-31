@@ -47,6 +47,8 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ADMath.h" />
+    <ClInclude Include="ADPhysics.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
