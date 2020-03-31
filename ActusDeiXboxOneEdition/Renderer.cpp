@@ -3,10 +3,9 @@
 #include "Renderer.h"
 #include "Utils.h"
 
-bool ADResource::ADRenderer::PBRRenderer::Initialize()
-{
-	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 
+ADResource::ADRenderer::PBRRenderer::PBRRenderer()
+{
 	// Create the device
 	D3D_FEATURE_LEVEL XBOX11 = D3D_FEATURE_LEVEL_10_0;
 	ComPtr<ID3D11Device> tdevice;
@@ -22,18 +21,23 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 		&tdevice,
 		nullptr,
 		&tcontext
-	);
+		);
 	assert(!FAILED(result));
+
 	// Convert the device and device context pointers to the 11.1 pointers
 	result = tdevice.As(&pbr.device); assert(!FAILED(result));
 	result = tcontext.As(&pbr.context); assert(!FAILED(result));
 
 	// Grab the adapter to set up the swapchain
-	ComPtr<IDXGIDevice1> dxgiDevice;
 	result = pbr.device.As(&dxgiDevice); assert(!FAILED(result));
+}
+
+bool ADResource::ADRenderer::PBRRenderer::Initialize()
+{
+	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 
 	ComPtr<IDXGIAdapter> dxgiAdapter;
-	result = dxgiDevice->GetAdapter(&dxgiAdapter); assert(!FAILED(result));
+	HRESULT result = dxgiDevice->GetAdapter(&dxgiAdapter); assert(!FAILED(result));
 
 	ComPtr<IDXGIFactory2> dxgiFactory;
 	result = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), &dxgiFactory);
@@ -154,73 +158,75 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 
 	pbr.context->ClearRenderTargetView(pbr.render_target_view.Get(), color);
 	pbr.context->RSSetViewports(1, &pbr.viewport);
-	// Model stuff
 
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
 
-	// World matrix projection
-	XMMATRIX temp = XMMatrixIdentity();
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(.1, .1, .1));
-	XMFLOAT3 pos = ResourceManager::GetPBRPtr()[0].position;
-	temp = XMMatrixMultiply(temp, XMMatrixTranslation(pos.x, pos.y, pos.z));
-	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
-	// View
-	camera->GetViewMatrix(temp);
-	XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-	// Projection
-	temp = XMMatrixPerspectiveFovLH(camera->GetFOV(), aspectRatio, 0.1f, 1000);
-	XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-	XMFLOAT3 campos = camera->GetPosition();
-	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+	for (int i = 0; i < ResourceManager::GetPBRModelCount(); i++)
+	{
+		// Model stuff
+		// World matrix projection
+		XMMATRIX temp = XMMatrixIdentity();
+		temp = XMMatrixMultiply(temp, XMMatrixScaling(ResourceManager::GetPBRPtr()[i].scale.x, ResourceManager::GetPBRPtr()[i].scale.y, ResourceManager::GetPBRPtr()[i].scale.z));
+		XMFLOAT3 pos = ResourceManager::GetPBRPtr()[i].position;
+		temp = XMMatrixMultiply(temp, XMMatrixTranslation(pos.x, pos.y, pos.z));
+		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+		// View
+		camera->GetViewMatrix(temp);
+		XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+		// Projection
+		temp = XMMatrixPerspectiveFovLH(camera->GetFOV(), aspectRatio, 0.1f, 1000);
+		XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
+		XMFLOAT3 campos = camera->GetPosition();
+		WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
-	// Send the matrix to constant buffer
-	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
-	HRESULT result = pbr.context->Map(pbr.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
-	memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
-	pbr.context->Unmap(pbr.constantBuffer.Get(), 0);
-	// Connect constant buffer to the pipeline
-	ID3D11Buffer* modelCBuffers[] = { pbr.constantBuffer.Get() };
-	pbr.context->VSSetConstantBuffers(0, 1, modelCBuffers);
-	// Model stuff
+		// Send the matrix to constant buffer
+		D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+		HRESULT result = pbr.context->Map(pbr.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+		memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
+		pbr.context->Unmap(pbr.constantBuffer.Get(), 0);
+		// Connect constant buffer to the pipeline
+		ID3D11Buffer* modelCBuffers[] = { pbr.constantBuffer.Get() };
+		pbr.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+		// Model stuff
+
+		// Render stuff
+		// sET THE PIPELINE
+		UINT strides[] = { sizeof(Vertex) };
+		UINT offsets[] = { 0 };
+		ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetPBRPtr()[i].vertexBuffer.Get() };
+		pbr.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
+		pbr.context->IASetIndexBuffer(ResourceManager::GetPBRPtr()[i].indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+		// Set sampler
+		pbr.context->PSSetSamplers(0, 1, ResourceManager::GetPBRPtr()[i].sampler.GetAddressOf());
+
+		ID3D11ShaderResourceView* resource_views[] = {
+			ResourceManager::GetPBRPtr()[i].albedo.Get(),
+			ResourceManager::GetPBRPtr()[i].normal.Get(),
+			ResourceManager::GetPBRPtr()[i].metallic.Get(),
+			ResourceManager::GetPBRPtr()[i].roughness.Get(),
+			ResourceManager::GetPBRPtr()[i].ambient_occlusion.Get(),
+		};
+
+		pbr.context->PSSetShaderResources(0, 5, resource_views);
+
+		pbr.context->VSSetShader(ResourceManager::GetPBRPtr()[i].vertexShader.Get(), 0, 0);
+		pbr.context->PSSetShader(ResourceManager::GetPBRPtr()[i].pixelShader.Get(), 0, 0);
+		pbr.context->IASetInputLayout(ResourceManager::GetPBRPtr()[i].vertexBufferLayout.Get());
+
+		pbr.context->DrawIndexed(ResourceManager::GetPBRPtr()[i].indices.size(), 0, 0);
+	}
 
 	// Send the lights to constant buffer
 	D3D11_MAPPED_SUBRESOURCE lightSub;
-	result = pbr.context->Map(pbr.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
+	HRESULT result = pbr.context->Map(pbr.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
 	assert(!FAILED(result));
 	memcpy(lightSub.pData, ResourceManager::GetLightDataPtr(), sizeof(Light) * ResourceManager::GetLightCount());
 	pbr.context->Unmap(pbr.lightBuffer.Get(), 0);
 	// Connect constant buffer to the pipeline
 	ID3D11Buffer* lightCbuffers[] = { pbr.lightBuffer.Get() };
 	pbr.context->PSSetConstantBuffers(0, 1, lightCbuffers);
-
-	// Render stuff
-	// sET THE PIPELINE
-	UINT strides[] = { sizeof(Vertex) };
-	UINT offsets[] = { 0 };
-	ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetPBRPtr()[0].vertexBuffer.Get() };
-	pbr.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-	pbr.context->IASetIndexBuffer(ResourceManager::GetPBRPtr()[0].indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-	// Set sampler
-	pbr.context->PSSetSamplers(0, 1, ResourceManager::GetPBRPtr()[0].sampler.GetAddressOf());
-
-	ID3D11ShaderResourceView* resource_views[] = {
-		ResourceManager::GetPBRPtr()[0].albedo.Get(),
-		ResourceManager::GetPBRPtr()[0].normal.Get(),
-		ResourceManager::GetPBRPtr()[0].metallic.Get(),
-		ResourceManager::GetPBRPtr()[0].roughness.Get(),
-		ResourceManager::GetPBRPtr()[0].ambient_occlusion.Get(),
-	};
-
-	pbr.context->PSSetShaderResources(0, 5, resource_views);
-
-	pbr.context->VSSetShader(ResourceManager::GetPBRPtr()[0].vertexShader.Get(), 0, 0);
-	pbr.context->PSSetShader(ResourceManager::GetPBRPtr()[0].pixelShader.Get(), 0, 0);
-	pbr.context->IASetInputLayout(ResourceManager::GetPBRPtr()[0].vertexBufferLayout.Get());
-
-	pbr.context->DrawIndexed(ResourceManager::GetPBRPtr()[0].indices.size(), 0, 0);
-	// Render stuff
 
 	return true;
 }

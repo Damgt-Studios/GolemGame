@@ -21,7 +21,7 @@ namespace ADResource
 		class PBRRenderer
 		{
 		public:
-			PBRRenderer() = default;
+			PBRRenderer();
 			~PBRRenderer() = default;
 
 			// Lifecycle Methods
@@ -35,8 +35,10 @@ namespace ADResource
 
 			// Temp
 		private:
-			//Model m_model;
 			WVP WORLD;
+
+			// Temp
+			ComPtr<IDXGIDevice1> dxgiDevice;
 		};
 	};
 }

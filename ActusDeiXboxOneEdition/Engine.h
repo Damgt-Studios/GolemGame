@@ -21,7 +21,7 @@ using namespace ADResource::ADRenderer;
 class Engine
 {
 public:
-	Engine() = default;
+	Engine();
 	~Engine() = default;
 
 	bool Initialize();
@@ -32,6 +32,9 @@ public:
 public:
 	ResourceManager* GetResourceManager();
 	void SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov);
+	XMFLOAT3 GetCameraPosition();
+	void MoveCamera(XMFLOAT3 move_direction);
+	void RotateCamera(float yaw, float pitch);
 
 private:
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();

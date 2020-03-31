@@ -21,6 +21,7 @@ bool FULLSCREEN = false;
 ref class App sealed : public IFrameworkView
 {
 private:
+	Engine* engine;
 	bool shutdown = false;
 public:
 	// some functions called by Windows
@@ -48,18 +49,17 @@ public:
 	{
 		Window->KeyDown += ref new TypedEventHandler
 			<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyDown);
-
-		/*Window->PointerMoved += ref new TypedEventHandler
-			<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerMoved);*/
 	}
 	virtual void Load(String^ EntryPoint) {}
 	virtual void Run()
 	{
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
+		// Create the engine
+		engine = new Engine;
+
 		// Initialize the engine
-		Engine engine;
-		engine.SetCamera(XMFLOAT3(0, 0, -25), 0, 15, 30);
+		engine->SetCamera(XMFLOAT3(0, 0, -30), -12, 12, 30);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
@@ -73,14 +73,16 @@ public:
 		light.diffuseIntensity = 1;
 		light.specular = XMFLOAT4(1, 1, 1, 1);
 		light.specularIntensity = .2;
-		engine.GetResourceManager()->AddLight(light);
+		engine->GetResourceManager()->AddLight(light);
 
-		if (!engine.Initialize())
+		engine->GetResourceManager()->AddPBRModel("files/models/text.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
+		engine->GetResourceManager()->AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.1, .1, .1), XMFLOAT3(0, 0, 0));
+		engine->GetResourceManager()->AddPBRModel("files/models/fireExt.wobj", XMFLOAT3(-10, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
+
+		if (!engine->Initialize())
 		{
 			return;
 		}
-
-		engine.GetResourceManager()->AddPBRModel("files/models/oildrum.wobj");
 
 		ADResource::ADRenderer::Header header;
 
@@ -90,8 +92,8 @@ public:
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 			// D3d11 shit
-			if (!engine.Update()) break;
-			if (!engine.Render()) break;
+			if (!engine->Update()) break;
+			if (!engine->Render()) break;
 		}
 	}
 	virtual void Uninitialize() {}
@@ -110,9 +112,47 @@ public:
 
 	void OnKeyDown(CoreWindow^ Window, KeyEventArgs^ args)
 	{
+		static float camera_movement_thresh = .25;
+		static float camera_rotation_thresh = .25;
+
 		if (args->VirtualKey == VirtualKey::Escape)
 		{
 			shutdown = true;
+		}
+		else if(args->VirtualKey == VirtualKey::W)
+		{
+			XMFLOAT3 pos(0, 0, 0);
+			pos.z += camera_movement_thresh;
+			engine->MoveCamera(pos);
+		} else if(args->VirtualKey == VirtualKey::S)
+		{
+			XMFLOAT3 pos(0, 0, 0);
+			pos.z += -camera_movement_thresh;
+			engine->MoveCamera(pos);
+		} else if(args->VirtualKey == VirtualKey::A)
+		{
+			XMFLOAT3 pos(0, 0, 0);
+			pos.x += -camera_movement_thresh;
+			engine->MoveCamera(pos);
+		} else if(args->VirtualKey == VirtualKey::D)
+		{
+			XMFLOAT3 pos(0, 0, 0);
+			pos.x += camera_movement_thresh;
+			engine->MoveCamera(pos);
+		}
+		else if (args->VirtualKey == VirtualKey::Left)
+		{
+			engine->RotateCamera(camera_rotation_thresh, 0);
+		} else if (args->VirtualKey == VirtualKey::Right)
+		{
+			engine->RotateCamera(-camera_rotation_thresh, 0);
+		}
+		else if (args->VirtualKey == VirtualKey::Up)
+		{
+			engine->RotateCamera(0, camera_rotation_thresh);
+		} else if (args->VirtualKey == VirtualKey::Down)
+		{
+			engine->RotateCamera(0, -camera_rotation_thresh);
 		}
 	}
 };
