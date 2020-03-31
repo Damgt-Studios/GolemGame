@@ -43,6 +43,8 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="ADMath.h" />
+    <ClInclude Include="ADPhysics.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
