@@ -8,38 +8,23 @@
 // Shaders
 #include "base_vs.csh"
 #include "base_ps.csh"
-// Shaders
 
-bool Engine::Initialize()
+Engine::Engine()
 {
 	// Don't delete
 	ADUtils::InitializeFileSystem();
 	// Don't delete
+}
 
-	// Model
-	/*camera = new FPSCamera(XMFLOAT3(0, 0, -25));
-	camera->Rotate(0, 15);
-	camera->SetFOV(30);*/
-	// Model
+// Shaders
 
-	// Lights
-	Light light;
-	ZeroMemory(&light, sizeof(Light));
-	light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-	light.ambientUp = XMFLOAT4(1, 1, 1, 1);
-	light.ambientDown = XMFLOAT4(1, 1, 1, 1);
-	light.ambientIntensityDown = .2;
-	light.ambientIntensityUp = .4;
-	light.diffuse = XMFLOAT4(1, 1, 1, 1);
-	light.lightDirection = XMFLOAT4(2, -1, 3, 1);
-	light.diffuseIntensity = 1;
-	light.specular = XMFLOAT4(1, 1, 1, 1);
-	light.specularIntensity = .2;
-	lights.push_back(light);
-	// Lights
-
+bool Engine::Initialize()
+{
 	// Initialize PBR Renderer
 	pbr.Initialize(); // Needs error checking
+
+	// Initialize unified buffers
+	ResourceManager::ConfigureUnifiedBuffers(pbr.GetPBRRendererResources()->device);
 
 	return true;
 }
@@ -76,6 +61,23 @@ void Engine::SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov)
 	camera = new FPSCamera(position);
 	camera->Rotate(yaw, pitch);
 	camera->SetFOV(fov);
+}
+
+
+DirectX::XMFLOAT3 Engine::GetCameraPosition()
+{
+	return camera->GetPosition();
+}
+
+void Engine::MoveCamera(XMFLOAT3 move_direction)
+{
+	camera->Move(move_direction);
+}
+
+
+void Engine::RotateCamera(float yaw, float pitch)
+{
+	camera->Rotate(yaw, pitch);
 }
 
 ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()

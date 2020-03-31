@@ -47,12 +47,24 @@ namespace ADResource
 			char emissive[256];
 		};
 
+		struct PBRVertexBufferDesc
+		{
+			unsigned int index_start;
+			unsigned int index_count;
+			unsigned int vertex_count;
+			unsigned int base_vertex_location;
+		};
+
 		struct Model
 		{
 			std::vector<Vertex> vertices;
 			std::vector<int> indices;
 
 			XMFLOAT3 position;
+			XMFLOAT3 rotation;
+			XMFLOAT3 scale;
+
+			PBRVertexBufferDesc desc;
 
 			ComPtr<ID3D11Buffer> vertexBuffer;
 			ComPtr<ID3D11Buffer> indexBuffer;
@@ -186,7 +198,8 @@ namespace ADResource
 
 		enum OBJECT_TYPE
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  //We should replace trigger with the types of trigger to avoid an extra var for trigger type.
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  
+			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
 		};
 		enum OBJECT_DEFENSE
 		{
@@ -226,7 +239,7 @@ namespace ADResource
 			OBJECT_DEFENSE defenseType;
 			XMFLOAT4X4 transform;
 			XMFLOAT4X4 postTransform;
-			//ADPhysics::Collider collider;
+			// ADPhysics::Collider collider;
 		};
 
 		class Enemy : GameObject
