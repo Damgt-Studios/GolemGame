@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#include "ADPhysics.h"
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -120,82 +122,6 @@ namespace ADResource
 		};
 	}
 
-	namespace ADGameplay
-	{
-		//This could be part of the player object.  You guys decide how you want the event system to determine things.
-		struct GameState
-		{
-			int Health;
-			int Gems;
-		};
-
-		class GameObject
-		{
-		public:
-			enum OBJECT_TYPE
-			{
-				PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  //We should replace trigger with the types of trigger to avoid an extra var for trigger type.
-			};
-			enum OBJECT_DEFENSE
-			{
-				NONE, IGNORE_RAM, IGNORE_FIRE, INVULNERABLE
-			};
-			enum DAMAGE_TYPE
-			{
-				RAM = 1, FIRE = 2
-			};
-
-			bool active;
-			int type;
-			int GemCount;
-			AD_ULONG meshID;
-			OBJECT_DEFENSE defenseType;
-			XMFLOAT4X4 transform;
-			XMFLOAT4X4 postTransform;
-			ADPhysics::Collider collider;
-
-
-			//TODO: Whittington.
-			virtual void Render() {};
-
-			virtual void Damage(DAMAGE_TYPE damageType)
-			{
-				if (type == DESTRUCTABLE)
-				{
-					if (defenseType != INVULNERABLE && defenseType != damageType)
-					{
-						Remove();
-					}
-				}
-			};
-			virtual void Remove()
-			{
-				//Drop your Gems and get return to pool,  Your done son.
-			}
-		};
-
-		class Enemy : GameObject
-		{
-			AD_AI::AI ai;
-			int health;
-			void Update()
-			{
-				ai.Update();
-			}
-			void Damage(DAMAGE_TYPE damageType) override
-			{
-				if (defenseType != INVULNERABLE && defenseType != damageType)
-				{
-					health--;
-					if (health < 1)
-					{
-						Remove();
-					}
-				}
-			};
-		};
-	}
-
 	namespace AD_AI
 	{
 
@@ -248,6 +174,84 @@ namespace ADResource
 		};
 
 	}
+
+	namespace ADGameplay
+	{
+		//This could be part of the player object.  You guys decide how you want the event system to determine things.
+		struct GameState
+		{
+			int Health;
+			int Gems;
+		};
+
+		enum OBJECT_TYPE
+		{
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  //We should replace trigger with the types of trigger to avoid an extra var for trigger type.
+		};
+		enum OBJECT_DEFENSE
+		{
+			NONE, IGNORE_RAM, IGNORE_FIRE, INVULNERABLE
+		};
+		enum DAMAGE_TYPE
+		{
+			RAM = 1, FIRE = 2
+		};
+
+		class GameObject
+		{
+		public:
+			//TODO: Whittington.
+			virtual void Render() {};
+
+			virtual void Damage(DAMAGE_TYPE damageType)
+			{
+				if (type == DESTRUCTABLE)
+				{
+					if (defenseType != INVULNERABLE && defenseType != damageType)
+					{
+						Remove();
+					}
+				}
+			};
+			virtual void Remove()
+			{
+				//Drop your Gems and get return to pool,  You're done son.
+			}
+
+		public:
+			bool active;
+			int type;
+			int GemCount;
+			AD_ULONG meshID;
+			OBJECT_DEFENSE defenseType;
+			XMFLOAT4X4 transform;
+			XMFLOAT4X4 postTransform;
+			//ADPhysics::Collider collider;
+		};
+
+		class Enemy : GameObject
+		{
+			AD_AI::AI ai;
+			int health;
+			void Update()
+			{
+				ai.Update();
+			}
+			void Damage(DAMAGE_TYPE damageType) override
+			{
+				if (defenseType != INVULNERABLE && defenseType != damageType)
+				{
+					health--;
+					if (health < 1)
+					{
+						Remove();
+					}
+				}
+			};
+		};
+	}
+
+	
 
 
 	//TODO Gage  (This is rough draft crap made by Dan.  Just do your thing.)
