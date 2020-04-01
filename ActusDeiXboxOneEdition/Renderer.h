@@ -11,7 +11,7 @@ using namespace ADResource::ADRenderer;
 
 namespace
 {
-	PBRRendererResources pbr;
+	PBRRendererResources pbr_renderer_resources;
 }
 
 namespace ADResource

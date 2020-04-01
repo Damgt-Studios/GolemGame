@@ -15,7 +15,7 @@ namespace
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
 	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
-	std::vector<unsigned int> pbrIndexData;
+	std::vector<unsigned int> pbrIndxData;
 
 	std::vector<ADResource::ADRenderer::Light> lights;
 	std::vector<ADResource::ADRenderer::Model> pbrmodels;
@@ -45,6 +45,8 @@ public:
 public:
 	// Rendering init shit
 	static void ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device);
+	static ComPtr<ID3D11Buffer> GetVertexBuffer();
+	static ComPtr<ID3D11Buffer> GetIndexBuffer();
 
 public:
 	// Getters/ setters
