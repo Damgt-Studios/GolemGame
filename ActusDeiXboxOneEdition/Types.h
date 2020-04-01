@@ -51,6 +51,7 @@ namespace ADResource
 		{
 			unsigned int index_start;
 			unsigned int index_count;
+			unsigned int index_offset;
 			unsigned int vertex_count;
 			unsigned int base_vertex_location;
 		};

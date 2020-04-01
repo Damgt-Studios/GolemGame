@@ -75,9 +75,8 @@ public:
 		light.specularIntensity = .2;
 		engine->GetResourceManager()->AddLight(light);
 
-		engine->GetResourceManager()->AddPBRModel("files/models/text.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
 		engine->GetResourceManager()->AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.1, .1, .1), XMFLOAT3(0, 0, 0));
-		engine->GetResourceManager()->AddPBRModel("files/models/fireExt.wobj", XMFLOAT3(-10, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
+		engine->GetResourceManager()->AddPBRModel("files/models/text.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
 
 		if (!engine->Initialize())
 		{

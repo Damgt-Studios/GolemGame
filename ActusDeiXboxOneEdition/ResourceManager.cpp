@@ -18,14 +18,14 @@ AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, 
 	memcpy((char*)&pbrVertexData[pre_resize_vertex_end_index], temp.vertices.data(), sizeof(Vertex) * temp.vertices.size());
 
 	// Add stuff into the PBR index data
-	int pre_resize_index_end = pbrIndexData.size();
-	pbrIndexData.resize(pbrIndexData.size() + temp.indices.size());
-	memcpy((char*)&pbrIndexData[pre_resize_index_end], temp.indices.data(), sizeof(unsigned int) * temp.indices.size());
+	int pre_resize_index_end = pbrIndxData.size();
+	pbrIndxData.resize(pbrIndxData.size() + temp.indices.size());
+	memcpy((char*)&pbrIndxData[pre_resize_index_end], temp.indices.data(), sizeof(unsigned int) * temp.indices.size());
 
 	ADResource::ADRenderer::PBRVertexBufferDesc desc = { 0 };
 	desc.base_vertex_location = pre_resize_vertex_end_index;
-	desc.index_count = temp.indices.size();
-	desc.vertex_count = temp.vertices.size();
+	desc.index_count = pbrIndxData.size() - pre_resize_index_end;
+	desc.vertex_count = pbrVertexData.size() - pre_resize_vertex_end_index;
 	desc.index_start = pre_resize_index_end;
 
 	temp.desc = desc;
@@ -80,13 +80,25 @@ void ResourceManager::ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device)
 
 	// Index buffer
 	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bufferDesc.ByteWidth = sizeof(int) * pbrIndexData.size();
+	bufferDesc.ByteWidth = sizeof(unsigned int) * pbrIndxData.size();
 
 	D3D11_SUBRESOURCE_DATA idata;
 	ZeroMemory(&idata, sizeof(D3D11_SUBRESOURCE_DATA));
-	idata.pSysMem = pbrIndexData.data();
+	idata.pSysMem = pbrIndxData.data();
 	result = device->CreateBuffer(&bufferDesc, &idata, &indexBuffer);
 	assert(!FAILED(result));
+}
+
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> ResourceManager::GetVertexBuffer()
+{
+	return vertexBuffer;
+}
+
+
+Microsoft::WRL::ComPtr<ID3D11Buffer> ResourceManager::GetIndexBuffer()
+{
+	return indexBuffer;
 }
 
 int ResourceManager::GetLightCount()
