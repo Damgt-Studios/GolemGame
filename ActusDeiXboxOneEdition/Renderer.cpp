@@ -84,7 +84,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	rdesc.DepthBiasClamp = 1;
 	rdesc.DepthBias = rdesc.SlopeScaledDepthBias = 0;
 	rdesc.DepthClipEnable = true;
-	rdesc.FillMode = D3D11_FILL_WIREFRAME;
+	rdesc.FillMode = D3D11_FILL_SOLID;
 	rdesc.CullMode = D3D11_CULL_BACK;
 	rdesc.AntialiasedLineEnable = false;
 	rdesc.MultisampleEnable = false;
@@ -179,16 +179,17 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
 	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	rot += .03;
-	if (rot > 360) rot = 0;
 	unsigned int model_count = ResourceManager::GetPBRModelCount();
 	for (int i = 0; i < model_count; i++)
 	{
 		// Model stuff
 		// World matrix projection
-		XMMATRIX temp = XMMatrixRotationY(rot);
-		temp = XMMatrixMultiply(temp, XMMatrixScaling(ResourceManager::GetPBRPtr()[i].scale.x, ResourceManager::GetPBRPtr()[i].scale.y, ResourceManager::GetPBRPtr()[i].scale.z));
+		// TODO: Translate rotation to quaternion
 		XMFLOAT3 pos = ResourceManager::GetPBRPtr()[i].position;
+		XMMATRIX temp = XMMatrixRotationZ(ResourceManager::GetPBRPtr()[i].rotation.z);
+		temp = XMMatrixMultiply(temp, XMMatrixRotationY(ResourceManager::GetPBRPtr()[i].rotation.y));
+		temp = XMMatrixMultiply(temp, XMMatrixRotationX(ResourceManager::GetPBRPtr()[i].rotation.x));
+		temp = XMMatrixMultiply(temp, XMMatrixScaling(ResourceManager::GetPBRPtr()[i].scale.x, ResourceManager::GetPBRPtr()[i].scale.y, ResourceManager::GetPBRPtr()[i].scale.z));
 		temp = XMMatrixMultiply(temp, XMMatrixTranslation(pos.x, pos.y, pos.z));
 		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 		// View

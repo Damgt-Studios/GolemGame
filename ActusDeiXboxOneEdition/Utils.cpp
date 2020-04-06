@@ -19,7 +19,7 @@ void ADUtils::InitializeFileSystem()
 	WRITE_PATH = std::string(localfolder->Begin(), localfolder->End()).append("\\");
 }
 
-void ADUtils::LoadWobjectMesh(const char* meshname, Model& _model, ComPtr<ID3D11Device1> device)
+void ADUtils::LoadWobjectMesh(const char* meshname, Model& _model, ComPtr<ID3D11Device1> device, SHADER& shader)
 {
 	Header header;
 
@@ -94,17 +94,20 @@ void ADUtils::LoadWobjectMesh(const char* meshname, Model& _model, ComPtr<ID3D11
 	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
 	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
 
-	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\shaders\\base_vs.hlsl");
-	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\shaders\\base_ps.hlsl");
+	std::string vname(shader.vshader);
+	std::string pname(shader.pshader);
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
 
 	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
 
 	std::wstring vshadername(v.begin(), v.end());
 	std::wstring pshadername(p.begin(), p.end());
 
-	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, "main", "vs_4_0", D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, SHADER_ENTRY_POINT, SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
 	assert(!FAILED(result));
-	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, "main", "ps_4_0", D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, SHADER_ENTRY_POINT, SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
 	assert(!FAILED(result));
 
 	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &_model.vertexShader);

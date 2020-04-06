@@ -39,7 +39,6 @@ namespace ADResource
 
 			// Temp
 			ComPtr<IDXGIDevice1> dxgiDevice;
-			float rot = 0;
 		};
 	};
 }

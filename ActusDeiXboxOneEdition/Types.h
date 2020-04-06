@@ -233,6 +233,10 @@ namespace ADResource
 			}
 
 		public:
+			// Setters/ Getters
+			void SetMeshID(AD_ULONG id) { meshID = id; };
+
+		public:
 			bool active;
 			int type;
 			int GemCount;
@@ -243,7 +247,7 @@ namespace ADResource
 			// ADPhysics::Collider collider;
 		};
 
-		class Enemy : GameObject
+		class Enemy : public GameObject
 		{
 			AD_AI::AI ai;
 			int health;
@@ -263,10 +267,22 @@ namespace ADResource
 				}
 			};
 		};
+
+		class Spyro : public GameObject
+		{
+			int health;
+
+			void Damage(DAMAGE_TYPE d_type)
+			{
+
+			}
+
+			void Remove()
+			{
+
+			}
+		};
 	}
-
-	
-
 
 	//TODO Gage  (This is rough draft crap made by Dan.  Just do your thing.)
 	namespace ADPhysics

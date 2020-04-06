@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.h"
+#include "Utils.h"
 
 #include <unordered_map>
 #include <string>
@@ -39,8 +40,15 @@ public:
 	AD_ULONG AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
+	AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+
 	// Utils
 	AD_ULONG GenerateUniqueID();
+
+	ADResource::ADGameplay::Spyro* LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+
+private:
+	AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
 public:
 	// Rendering init shit
