@@ -1,12 +1,60 @@
 #include "pch.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
-#include "Utils.h"
 
 AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
+	ADUtils::SHADER shader = { 0 };
+	strcpy_s(shader.vshader, "files\\shaders\\base_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\base_ps.hlsl");
+	
+	return InitializePBRModel(modelname, position, scale, rotation, shader);
+}
+
+AD_ULONG ResourceManager::AddLight(ADResource::ADRenderer::Light& light)
+{
+	ADResource::ADRenderer::Light temp;
+	memcpy(&temp, &light, sizeof(ADResource::ADRenderer::Light));
+
+	// Generate id and add that shit
+	AD_ULONG id = GenerateUniqueID();
+	unsigned int index = lights.size();
+	light_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	lights.push_back(temp);
+
+	return id;
+}
+
+
+AD_ULONG ResourceManager::AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADUtils::SHADER shader = { 0 };
+	strcpy_s(shader.vshader, "files\\shaders\\spyro_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\spyro_ps.hlsl");
+
+	return InitializePBRModel(modelname, position, scale, rotation, shader);
+}
+
+AD_ULONG ResourceManager::GenerateUniqueID()
+{
+	return current_id++;
+}
+
+
+ADResource::ADGameplay::Spyro* ResourceManager::LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::Spyro* temp = new ADResource::ADGameplay::Spyro;
+
+	AD_ULONG id = AddSpyro(modelname, position, scale, rotation);
+	temp->SetMeshID(id);
+
+	return temp;
+}
+
+AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
+{
 	ADResource::ADRenderer::Model temp;
-	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device);
+	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader);
 	temp.position = position;
 	temp.scale = scale;
 	temp.rotation = rotation;
@@ -36,29 +84,9 @@ AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, 
 	unsigned int index = pbrmodels.size();
 	pbrmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
 	pbrmodels.push_back(temp);
-	
-	return id;
-}
-
-AD_ULONG ResourceManager::AddLight(ADResource::ADRenderer::Light& light)
-{
-	ADResource::ADRenderer::Light temp;
-	memcpy(&temp, &light, sizeof(ADResource::ADRenderer::Light));
-
-	// Generate id and add that shit
-	AD_ULONG id = GenerateUniqueID();
-	unsigned int index = lights.size();
-	light_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
-	lights.push_back(temp);
 
 	return id;
 }
-
-AD_ULONG ResourceManager::GenerateUniqueID()
-{
-	return current_id++;
-}
-
 
 void ResourceManager::ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device)
 {
