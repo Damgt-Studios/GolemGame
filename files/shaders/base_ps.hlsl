@@ -130,7 +130,7 @@ float4 main(OutputVertex input) : SV_TARGET
 {
     //return t_albedo.Sample(t_sampler, input.tex);
     //return float4(1, 0, 0, 1);
-    //return float4(1, 1, 1, 1);
+    return float4(1, 1, 1, 1);
     //Load normal from normal map
     float3 normalMap = t_normal.Sample(t_sampler, input.tex).rgb;
     //Change normal map range from [0, 1] to [-1, 1]
@@ -153,6 +153,7 @@ float4 main(OutputVertex input) : SV_TARGET
     float metallic = t_metallic.Sample(t_sampler, input.tex).r;
     float roughness = t_roughness.Sample(t_sampler, input.tex).g;
     float ambient_occlusion = t_metallic.Sample(t_sampler, input.tex).b;
+    float emissive_strength = 1 - pow(t_albedo.Sample(t_sampler, input.tex), 2.2).a;
     
     // BDRF
     float3 N = normalize(input.normal);
@@ -191,6 +192,10 @@ float4 main(OutputVertex input) : SV_TARGET
     
     _color = _color / (_color + float3(1.0, 1.0, 1.0));
     _color = pow(_color, 1.0 / 2.2); // Gamma correction
+    
+    // Add emissive color
+    _color = saturate(_color + (albedo * emissive_strength));
+    //_color = float3(emissive_strength, emissive_strength, emissive_strength);
     
     return float4(_color, 1.0);
     // BDRF

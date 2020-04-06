@@ -59,7 +59,7 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 0, -30), -12, 12, 30);
+		engine->SetCamera(XMFLOAT3(0, 40, -30), 0, -45, 30);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
@@ -75,8 +75,9 @@ public:
 		light.specularIntensity = .2;
 		engine->GetResourceManager()->AddLight(light);
 
-		engine->GetResourceManager()->AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.1, .1, .1), XMFLOAT3(0, 0, 0));
-		engine->GetResourceManager()->AddPBRModel("files/models/text.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
+		engine->GetResourceManager()->AddPBRModel("files/models/Spyro_LowRes.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		//engine->GetResourceManager()->AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.1, .1, .1), XMFLOAT3(0, 0, 0));
+		//engine->GetResourceManager()->AddPBRModel("files/models/text.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(.01, .01, .01), XMFLOAT3(0, 0, 0));
 
 		if (!engine->Initialize())
 		{

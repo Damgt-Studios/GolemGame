@@ -84,7 +84,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	rdesc.DepthBiasClamp = 1;
 	rdesc.DepthBias = rdesc.SlopeScaledDepthBias = 0;
 	rdesc.DepthClipEnable = true;
-	rdesc.FillMode = D3D11_FILL_SOLID;
+	rdesc.FillMode = D3D11_FILL_WIREFRAME;
 	rdesc.CullMode = D3D11_CULL_BACK;
 	rdesc.AntialiasedLineEnable = false;
 	rdesc.MultisampleEnable = false;
@@ -162,13 +162,31 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
 
+	// Send the lights to constant buffer
+	D3D11_MAPPED_SUBRESOURCE lightSub;
+	HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
+	assert(!FAILED(result));
+	memcpy(lightSub.pData, ResourceManager::GetLightDataPtr(), sizeof(Light) * ResourceManager::GetLightCount());
+	pbr_renderer_resources.context->Unmap(pbr_renderer_resources.lightBuffer.Get(), 0);
+	// Connect constant buffer to the pipeline
+	ID3D11Buffer* lightCbuffers[] = { pbr_renderer_resources.lightBuffer.Get() };
+	pbr_renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
+	// sET THE PIPELINE
+	UINT strides[] = { sizeof(Vertex) };
+	UINT offsets[] = { 0 };
+	ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
+	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
+	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	rot += .03;
+	if (rot > 360) rot = 0;
 	unsigned int model_count = ResourceManager::GetPBRModelCount();
 	for (int i = 0; i < model_count; i++)
 	{
 		// Model stuff
 		// World matrix projection
-		XMMATRIX temp = XMMatrixIdentity();
+		XMMATRIX temp = XMMatrixRotationY(rot);
 		temp = XMMatrixMultiply(temp, XMMatrixScaling(ResourceManager::GetPBRPtr()[i].scale.x, ResourceManager::GetPBRPtr()[i].scale.y, ResourceManager::GetPBRPtr()[i].scale.z));
 		XMFLOAT3 pos = ResourceManager::GetPBRPtr()[i].position;
 		temp = XMMatrixMultiply(temp, XMMatrixTranslation(pos.x, pos.y, pos.z));
@@ -193,14 +211,6 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 		// Model stuff
 
 		// Render stuff
-		// sET THE PIPELINE
-		UINT strides[] = { sizeof(Vertex) };
-		UINT offsets[] = { ResourceManager::GetPBRPtr()[i].desc.base_vertex_location * sizeof(Vertex) };
-		ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
-		pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-		int ioffset = ResourceManager::GetPBRPtr()[i].desc.index_start * 4;
-		pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, ioffset);
-
 		// Set sampler
 		pbr_renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetPBRPtr()[i].sampler.GetAddressOf());
 
@@ -221,18 +231,8 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera)
 		int istart = ResourceManager::GetPBRPtr()[i].desc.index_start;
 		int ibase = ResourceManager::GetPBRPtr()[i].desc.base_vertex_location;
 		int icount = ResourceManager::GetPBRPtr()[i].desc.index_count;
-		pbr_renderer_resources.context->DrawIndexed(icount, 0, 0);
+		pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
 	}
-
-	// Send the lights to constant buffer
-	D3D11_MAPPED_SUBRESOURCE lightSub;
-	HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
-	assert(!FAILED(result));
-	memcpy(lightSub.pData, ResourceManager::GetLightDataPtr(), sizeof(Light) * ResourceManager::GetLightCount());
-	pbr_renderer_resources.context->Unmap(pbr_renderer_resources.lightBuffer.Get(), 0);
-	// Connect constant buffer to the pipeline
-	ID3D11Buffer* lightCbuffers[] = { pbr_renderer_resources.lightBuffer.Get() };
-	pbr_renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
 	return true;
 }
