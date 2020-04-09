@@ -124,6 +124,7 @@ namespace ADResource
 
 			// States
 			ComPtr<ID3D11RasterizerState1> defaultRasterizerState;
+			ComPtr<ID3D11RasterizerState1> skyboxRasterizerState;
 
 			// Z Buffer
 			ComPtr<ID3D11Texture2D> zBuffer;
@@ -235,6 +236,9 @@ namespace ADResource
 		public:
 			// Setters/ Getters
 			void SetMeshID(AD_ULONG id) { meshID = id; };
+			AD_ULONG GetMeshId() { return meshID; }
+			// Rotations in degrees
+			void SetRotation(float x, float y, float z);
 
 		public:
 			bool active;

@@ -33,6 +33,8 @@ public:
 	ResourceManager* GetResourceManager();
 	void SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov);
 	XMFLOAT3 GetCameraPosition();
+	FPSCamera* GetCamera();
+	OrbitCamera* GetOrbitCamera();
 	void MoveCamera(XMFLOAT3 move_direction);
 	void RotateCamera(float yaw, float pitch);
 
@@ -48,6 +50,7 @@ private:
 	std::vector<Light> lights;
 
 	FPSCamera* camera;
+	OrbitCamera* ocamera;
 
 private:
 	// New shit

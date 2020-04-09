@@ -80,7 +80,7 @@ Camera::Camera()
 	m_yaw = WMATH_PI;
 	m_fov = WMATH_PI / 4; // default fov
 	m_near = .01;
-	m_far = 1000;
+	m_far = 3000;
 }
 
 
@@ -159,4 +159,71 @@ void FPSCamera::UpdateCameraVectors()
 
 	// Store the new target position
 	XMStoreFloat3(&m_targetPosition, targetpositionvector);
+}
+
+OrbitCamera::OrbitCamera() : mRadius(10.0f) {}
+
+void OrbitCamera::Rotate(float yaw, float pitch)
+{
+	m_yaw = XMConvertToRadians(yaw);
+	m_pitch = XMConvertToRadians(pitch);
+
+	m_pitch = clamp(m_pitch, (-WMATH_PI / 2.0f) + 0.1f, (WMATH_PI / 2.0f) - 0.1f);
+
+	UpdateCameraVectors();
+}
+
+void OrbitCamera::SetLookAt(XMFLOAT3 target)
+{
+	m_targetPosition = target;
+}
+
+void OrbitCamera::SetRadius(float radius)
+{
+	mRadius = clamp(radius, 2.0f, 100.0f);
+}
+
+
+void OrbitCamera::SetLookAtAndRotate(XMFLOAT3 lookat, float yaw, float pitch, float delta_time)
+{
+	Rotate(yaw, pitch);
+	m_targetPosition = lookat;
+}
+
+
+void OrbitCamera::SetRunningTarget(XMFLOAT3 rt)
+{
+	running_target = rt;
+}
+
+void OrbitCamera::Update(XMFLOAT3 lookat, float yaw, float pitch, float delta_time)
+{
+
+}
+
+void OrbitCamera::UpdateCameraVectors()
+{
+	// Spherical to Cartesian coordinates
+	m_position.x = m_targetPosition.x + mRadius * cosf(m_pitch) * sinf(m_yaw);
+	m_position.y = m_targetPosition.y + mRadius * sinf(m_pitch);
+	m_position.z = m_targetPosition.z + mRadius * cosf(m_pitch) * cosf(m_yaw);
+}
+
+float clamp(float value, float min, float max)
+{
+	float temp = value;
+
+	assert(min <= max || max > min);
+
+	if (temp > max) temp = max;
+	if (temp < min) temp = min;
+
+	assert(temp >= min && temp <= max);
+
+	return temp;
+}
+
+float lerp(float a, float b, float f)
+{
+	return (a * (1.0 - f)) + (b * f);
 }

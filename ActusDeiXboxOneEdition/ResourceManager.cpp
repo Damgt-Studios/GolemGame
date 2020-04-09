@@ -35,6 +35,19 @@ AD_ULONG ResourceManager::AddSpyro(std::string modelname, XMFLOAT3 position, XMF
 	return InitializePBRModel(modelname, position, scale, rotation, shader);
 }
 
+
+void ResourceManager::AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADUtils::SHADER shader = { 0 };
+	strcpy_s(shader.vshader, "files\\shaders\\skybox_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\skybox_ps.hlsl");
+
+	ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader);
+	skybox.position = position;
+	skybox.scale = scale;
+	skybox.rotation = rotation;
+}
+
 AD_ULONG ResourceManager::GenerateUniqueID()
 {
 	return current_id++;
@@ -151,6 +164,11 @@ ADResource::ADRenderer::Model* ResourceManager::GetPBRPtr()
 }
 
 
+ADResource::ADRenderer::Model* ResourceManager::GetSkybox()
+{
+	return &skybox;
+}
+
 int ResourceManager::GetPBRModelCount()
 {
 	return pbrmodels.size();
@@ -166,4 +184,18 @@ int ResourceManager::GetPBRVertexCount()
 	}
 
 	return count;
+}
+
+ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG mesh_id)
+{
+	Model* temp = nullptr;
+	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = pbrmodel_map.find(mesh_id);
+
+	if (iter != pbrmodel_map.end())
+	{
+		// Found
+		temp = &pbrmodels[iter->second];
+	}
+
+	return temp;
 }

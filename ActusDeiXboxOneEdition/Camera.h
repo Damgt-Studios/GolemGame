@@ -49,3 +49,34 @@ public:
 private:
 	void UpdateCameraVectors();
 };
+
+class OrbitCamera : public Camera
+{
+public:
+	OrbitCamera();
+
+	virtual void Rotate(float yaw, float pitch);
+
+	void SetLookAt(XMFLOAT3 target);
+	void SetRadius(float radius);
+
+	void SetLookAtAndRotate(XMFLOAT3 lookat, float yaw, float pitch, float delta_time);
+
+	// Customs
+	void SetRunningTarget(XMFLOAT3 rt);
+	void Update(XMFLOAT3 lookat, float yaw, float pitch, float delta_time);
+
+private:
+	void UpdateCameraVectors();
+
+	float mRadius;
+
+	XMFLOAT3 running_target;
+	float catchup_delay = .2;
+	float rotation_speed = 20;
+	float follow_speed = 50;
+};
+
+// hELPERS
+float clamp(float value, float min, float max);
+float lerp(float a, float b, float f);

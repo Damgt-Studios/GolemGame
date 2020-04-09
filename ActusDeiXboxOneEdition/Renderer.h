@@ -26,7 +26,7 @@ namespace ADResource
 
 			// Lifecycle Methods
 			bool Initialize();
-			bool Update(FPSCamera* camera);
+			bool Update(FPSCamera* camera, OrbitCamera* ocamera);
 			bool Frame();
 			bool ShutDown();
 

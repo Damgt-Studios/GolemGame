@@ -31,7 +31,7 @@ bool Engine::Initialize()
 
 bool Engine::Update()
 {
-	pbr.Update(camera); //  Needs error checking
+	pbr.Update(camera, ocamera); //  Needs error checking
 
 	return true;
 }
@@ -61,12 +61,28 @@ void Engine::SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov)
 	camera = new FPSCamera(position);
 	camera->Rotate(yaw, pitch);
 	camera->SetFOV(fov);
+
+	ocamera = new OrbitCamera;
+	ocamera->Rotate(yaw, pitch);
+	ocamera->SetFOV(fov);
 }
 
 
 DirectX::XMFLOAT3 Engine::GetCameraPosition()
 {
 	return camera->GetPosition();
+}
+
+
+FPSCamera* Engine::GetCamera()
+{
+	return camera;
+}
+
+
+OrbitCamera* Engine::GetOrbitCamera()
+{
+	return ocamera;
 }
 
 void Engine::MoveCamera(XMFLOAT3 move_direction)

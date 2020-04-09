@@ -24,6 +24,9 @@ namespace
 	std::vector<ADResource::ADGameplay::GameObject> passables;
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
 
+	// On offss
+	ADResource::ADRenderer::Model skybox;
+
 	// Unified buffers
 	ComPtr<ID3D11Buffer> vertexBuffer;
 	ComPtr<ID3D11Buffer> indexBuffer;
@@ -41,6 +44,7 @@ public:
 	AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
 	AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	void AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	// Utils
 	AD_ULONG GenerateUniqueID();
@@ -63,9 +67,11 @@ public:
 	
 	static char* GetPBRDataPtr();
 	static ADResource::ADRenderer::Model* GetPBRPtr();
+	static ADResource::ADRenderer::Model* GetSkybox();
 	static int GetPBRModelCount();
 	static int GetPBRVertexCount();
 
+	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
 	AD_ULONG current_id = 0;

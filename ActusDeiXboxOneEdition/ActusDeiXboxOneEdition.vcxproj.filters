@@ -36,6 +36,7 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Types.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -84,6 +85,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\files\shaders\spyro_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\skybox_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\skybox_vs.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
