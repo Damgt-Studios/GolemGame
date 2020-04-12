@@ -90,12 +90,18 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	rdesc.MultisampleEnable = false;
 
 	ComPtr<ID3D11RasterizerState> traster;
+	ComPtr<ID3D11RasterizerState> twireraster;
 	result = pbr_renderer_resources.device->CreateRasterizerState(&rdesc, &traster);
 	assert(!FAILED(result));
-	result = traster.As(&pbr_renderer_resources.defaultRasterizerState);
-	assert(!FAILED(result));
+	pbr_renderer_resources.defaultRasterizerState = traster;
 
-	pbr_renderer_resources.context->RSSetState(traster.Get());
+	// Wireframe raster
+	rdesc.FillMode = D3D11_FILL_WIREFRAME;
+	result = pbr_renderer_resources.device->CreateRasterizerState(&rdesc, &twireraster);
+	assert(!FAILED(result));
+	pbr_renderer_resources.wireframeRasterizerState = twireraster;
+
+	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 	// Rasterizer state
 
 	// Set primitive topology
@@ -158,6 +164,7 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 
 	pbr_renderer_resources.context->ClearRenderTargetView(pbr_renderer_resources.render_target_view.Get(), color);
 	pbr_renderer_resources.context->RSSetViewports(1, &pbr_renderer_resources.viewport);
+	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
@@ -247,6 +254,16 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 
 	for (int i = 0; i < model_count; i++)
 	{
+		bool bruh = ResourceManager::GetPBRPtr()[i].desc.wireframe_mode;
+		if (bruh)
+		{
+			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.wireframeRasterizerState.Get());
+		}
+		else
+		{
+			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+		}
+
 		// Model stuff
 		// World matrix projection
 		// TODO: Translate rotation to quaternion

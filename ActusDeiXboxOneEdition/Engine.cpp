@@ -55,7 +55,6 @@ ResourceManager* Engine::GetResourceManager()
 	return &rmanager;
 }
 
-
 void Engine::SetCamera(XMFLOAT3 position, float yaw, float pitch, float fov)
 {
 	camera = new FPSCamera(position);

@@ -54,6 +54,8 @@ namespace ADResource
 			unsigned int index_offset;
 			unsigned int vertex_count;
 			unsigned int base_vertex_location;
+
+			bool wireframe_mode;
 		};
 
 		struct Model
@@ -123,8 +125,8 @@ namespace ADResource
 			D3D11_VIEWPORT viewport;
 
 			// States
-			ComPtr<ID3D11RasterizerState1> defaultRasterizerState;
-			ComPtr<ID3D11RasterizerState1> skyboxRasterizerState;
+			ComPtr<ID3D11RasterizerState> defaultRasterizerState;
+			ComPtr<ID3D11RasterizerState> wireframeRasterizerState;
 
 			// Z Buffer
 			ComPtr<ID3D11Texture2D> zBuffer;

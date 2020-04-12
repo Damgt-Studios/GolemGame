@@ -130,7 +130,7 @@ float4 main(OutputVertex input) : SV_TARGET
 {
     //return t_albedo.Sample(t_sampler, input.tex);
     //return float4(1, 0, 0, 1);
-    return float4(input.normal * .1, 1);
+    return float4(input.normal * .5, 1);
     //Load normal from normal map
     float3 normalMap = t_normal.Sample(t_sampler, input.tex).rgb;
     //Change normal map range from [0, 1] to [-1, 1]

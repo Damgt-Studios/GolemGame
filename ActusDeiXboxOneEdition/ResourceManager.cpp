@@ -2,12 +2,35 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 
-AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe)
 {
 	ADUtils::SHADER shader = { 0 };
-	strcpy_s(shader.vshader, "files\\shaders\\base_vs.hlsl");
-	strcpy_s(shader.pshader, "files\\shaders\\base_ps.hlsl");
+
+	if (!wireframe)
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\base_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\base_ps.hlsl");
+	}
+	else
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
+	}
 	
+	shader.wireframe = wireframe;
+	
+	return InitializePBRModel(modelname, position, scale, rotation, shader);
+}
+
+AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe /*= false*/)
+{
+	ADUtils::SHADER shader = { 0 };
+
+	strcpy_s(shader.vshader, "files\\shaders\\pink_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\pink_ps.hlsl");
+
+	shader.wireframe = wireframe;
+
 	return InitializePBRModel(modelname, position, scale, rotation, shader);
 }
 
@@ -90,6 +113,7 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 	desc.index_start = pre_resize_index_end;
 
 	temp.desc = desc;
+	temp.desc.wireframe_mode = shader.wireframe;
 	// Eh
 
 	// grab id and add stuff
@@ -162,7 +186,6 @@ ADResource::ADRenderer::Model* ResourceManager::GetPBRPtr()
 {
 	return pbrmodels.data();
 }
-
 
 ADResource::ADRenderer::Model* ResourceManager::GetSkybox()
 {

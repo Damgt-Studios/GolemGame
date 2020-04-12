@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Renderer.h"
+#include "Input.h"
 #include "ResourceManager.h"
 
 #include <wrl/client.h>
@@ -15,6 +16,7 @@
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
+using namespace Windows::Gaming::Input;
 
 using namespace ADResource::ADRenderer;
 

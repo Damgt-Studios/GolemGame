@@ -37,6 +37,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Types.cpp" />
+    <ClCompile Include="Input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -50,6 +51,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADPhysics.h" />
+    <ClInclude Include="Input.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -91,6 +93,18 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\files\shaders\skybox_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\debug_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\debug_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\pink_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\pink_vs.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
