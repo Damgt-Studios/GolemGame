@@ -26,7 +26,7 @@ using namespace Platform;
 using namespace Platform::Collections;
 
 // Settings
-bool FULLSCREEN = false;
+bool FULLSCREEN = true;
 // Settings
 
 // the class definition for the core "framework" of our app
@@ -38,8 +38,6 @@ private:
 	AD_ULONG spyro_collider = 0;
 
 	AudioManager* audio_manager;
-
-	//Gamepad^ controller = nullptr;
 
 	bool shutdown = false;
 
@@ -111,26 +109,9 @@ public:
 		AppView->Activated += ref new TypedEventHandler
 			<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
 
-		// Register for gamepad added and removed events.
-		/*Gamepad::GamepadAdded += ref new EventHandler<Gamepad^>(this, &App::OnGamepadAdded);
-		Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^>(this, &App::OnGamepadRemoved);*/
-
 		Gamepad::GamepadAdded += ref new EventHandler<Gamepad^>(&Input::OnGamepadAdded);
 		Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^>(&Input::OnGamepadRemoved);
 	}
-
-	//void OnGamepadAdded(Platform::Object^ sender, Gamepad^ args)
-	//{
-	//	// If no controller connected, do the thing
-	//	if(controller == nullptr)
-	//		controller = args;
-	//}
-
-	//void OnGamepadRemoved(Platform::Object^ sender, Gamepad^ args)
-	//{
-	//	if (controller == args)
-	//		controller = nullptr;
-	//}
 
 	virtual void SetWindow(CoreWindow^ Window)
 	{
@@ -340,11 +321,6 @@ public:
 		Window->Activate();
 	}
 
-	void OnPointerMoved(CoreWindow^ Window, PointerEventArgs^ args)
-	{
-
-	}
-
 	void ProcessInput()
 	{
 		static float camera_rotation_thresh = 250;
@@ -392,6 +368,18 @@ public:
 			} else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
 			{
 				pitch += camera_rotation_thresh * dt;
+			}
+
+			// Actions
+			if (Input::QueryButtonDown(GamepadButtons::A))
+			{
+				jumping = true;
+				og_y_pos = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y;
+			}
+
+			if (Input::QueryButtonDown(GamepadButtons::LeftThumbstick) && Input::QueryButtonDown(GamepadButtons::RightThumbstick))
+			{
+				shutdown = true;
 			}
 		}
 	}
