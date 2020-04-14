@@ -94,7 +94,9 @@ public:
 		Window->KeyDown += ref new TypedEventHandler
 			<CoreWindow^, KeyEventArgs^>(this, &App::OnKeyDown);
 	}
+
 	virtual void Load(String^ EntryPoint) {}
+
 	virtual void Run()
 	{
 		// Bruh
@@ -123,11 +125,9 @@ public:
 		light.specularIntensity = .2;
 		ResourceManager::AddLight(light);
 
-
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Spyro_LowRes.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
-		
 
 		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
 
@@ -266,89 +266,34 @@ public:
 			}
 			if (args->VirtualKey == VirtualKey::W || args->VirtualKey == VirtualKey::GamepadLeftThumbstickUp)
 			{
-				/*XMFLOAT3 pos = engine->GetCamera()->GetLook();
-				pos.z += camera_movement_thresh * dt;
-				engine->MoveCamera(pos);*/
-
-				//spryo_movement_deltas.z += camera_movement_thresh * delta_time;
-				/*forward = true;
-				backward = false;
-				z_plane_timer = 0;*/
-
 			}
 			else if (args->VirtualKey == VirtualKey::S || args->VirtualKey == VirtualKey::GamepadLeftThumbstickDown)
 			{
-				/*XMFLOAT3 pos = engine->GetCamera()->GetLook();
-				pos.x = -pos.x; pos.y = -pos.y; pos.z = -pos.z;
-				pos.z += -camera_movement_thresh * dt;
-				engine->MoveCamera(pos);*/
-
-				//spryo_movement_deltas.z += -camera_movement_thresh * delta_time;
-				/*backward = true;
-				forward = false;
-				z_plane_timer = 0;*/
 			}
 			else if (args->VirtualKey == VirtualKey::A || args->VirtualKey == VirtualKey::GamepadLeftThumbstickLeft)
 			{
-				/*XMFLOAT3 pos = engine->GetCamera()->GetRight();
-				pos.x += -camera_movement_thresh * dt;
-				engine->MoveCamera(pos);*/
-
-				//ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->rotation.y += -spyro_turn_speed * dt;
-				//spryo_movement_deltas.x += -1.;
-				/*left = true;
-				right = false;
-				x_plane_timer = 0;*/
 			}
 			else if (args->VirtualKey == VirtualKey::D || args->VirtualKey == VirtualKey::GamepadLeftThumbstickRight)
 			{
-				/*XMFLOAT3 pos = engine->GetCamera()->GetRight();
-				pos.x = -pos.x; pos.y = -pos.y; pos.z = -pos.z;
-				pos.x += camera_movement_thresh * dt;
-				engine->MoveCamera(pos);*/
-
-				//ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->rotation.y += spyro_turn_speed * dt;
-				//spryo_movement_deltas.x += 1.;
-				/*right = true;
-				left = false;
-				x_plane_timer = 0;*/
 			}
 
 			if (args->VirtualKey == VirtualKey::Left || args->VirtualKey == VirtualKey::GamepadRightThumbstickRight)
 			{
-				//engine->RotateCamera(camera_rotation_thresh * dt, 0);
-
 				yaw += camera_rotation_thresh * dt;
-				//engine->GetOrbitCamera()->Rotate(yaw, pitch);
 			}
 			else if (args->VirtualKey == VirtualKey::Right || args->VirtualKey == VirtualKey::GamepadRightThumbstickLeft)
 			{
-				//engine->RotateCamera(-camera_rotation_thresh * dt, 0);
-
 				yaw += -camera_rotation_thresh * dt;
-				//engine->GetOrbitCamera()->Rotate(yaw, pitch);
 			}
 
 			if (args->VirtualKey == VirtualKey::Up || args->VirtualKey == VirtualKey::GamepadRightThumbstickDown)
 			{
-				//engine->RotateCamera(0, camera_rotation_thresh * dt);
-
 				pitch += camera_rotation_thresh * dt;
-				//engine->GetOrbitCamera()->Rotate(yaw, pitch);
 			}
 			else if (args->VirtualKey == VirtualKey::Down || args->VirtualKey == VirtualKey::GamepadRightThumbstickUp)
 			{
-				//engine->RotateCamera(0, -camera_rotation_thresh * dt);
-
 				pitch += -camera_rotation_thresh * dt;
-				//engine->GetOrbitCamera()->Rotate(yaw, pitch);
 			}
-
-			//if (args->VirtualKey == VirtualKey::Space || args->VirtualKey == VirtualKey::GamepadA && !jumping)
-			//{
-			//	jumping = true;
-			//	//og_y_pos = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y;
-			//}
 		}
 	}
 };
