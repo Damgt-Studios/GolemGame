@@ -37,15 +37,15 @@ public:
 	// Queries
 	static bool QueryButtonDown(GamepadButtons button);
 	static bool QueryButtonUp(GamepadButtons button);
-	static int QueryTriggerUpDown(TRIGGERS trigger, float tolerance = 0.6);
+	static int QueryTriggerUpDown(TRIGGERS trigger, float tolerance = 0.3);
 	static float QueryTriggerValueExact(TRIGGERS trigger);
-	static float QueryTriggerValueWithTolerance(TRIGGERS trigger, float tolerance = 0.6);
+	static float QueryTriggerValueWithTolerance(TRIGGERS trigger, float tolerance = 0.3);
 	static int QueryThumbSticLeftRightX(THUMBSTICKS stick);
 	static float QueryThumbStickValueExactX(THUMBSTICKS stick);
-	static float QueryThumbStickValueWithToleranceX(THUMBSTICKS stick, float tolerance = 0.6);
+	static float QueryThumbStickValueWithToleranceX(THUMBSTICKS stick, float tolerance = 0.3);
 	static int QueryThumbStickUpDownY(THUMBSTICKS stick);
 	static float QueryThumbStickValueExactY(THUMBSTICKS stick);
-	static float QueryThumbStickValueWithToleranceY(THUMBSTICKS stick, float tolerance = 0.6);
+	static float QueryThumbStickValueWithToleranceY(THUMBSTICKS stick, float tolerance = 0.3);
 private:
 	static Gamepad^ controller;
 	static float epsilon;

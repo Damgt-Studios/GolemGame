@@ -59,36 +59,11 @@ private:
 
 	float yaw = 180;
 	float pitch = 30;
-
-	XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
-
-	// Gameplay
-	float jump_time_up = .4;
-	float jump_time_length = 1;
-	float jump_count_down = 0;
-	float jump_height = 15;
-	float og_y_pos = 0;
-	float gravity = 5;
-	bool jumping = false;
-
-	// Movement bools
-	bool forward = false;
-	bool backward = false;
-	bool left = false;
-	bool right = false;
-
-	// Turning
-	float spyro_turn_speed = 5;
-	float spyro_move_speed = 5;
-
-	float z_plane_cooldown = .2;
-	float z_plane_timer = 0;
-
-	float x_plane_cooldown = .2;
-	float x_plane_timer = 0;
+	
+	float default_yaw = 180;
+	float default_pitch = 30;
 
 	// Physics
-	ADPhysics::AABB character_collider;
 	ADPhysics::AABB test_colider;
 	ADPhysics::AABB test_colider1;
 
@@ -180,7 +155,6 @@ public:
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 
 		// Construct physics stuff
-		character_collider = ADPhysics::AABB(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position, XMFLOAT3(2, 2, 2));
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
 
@@ -200,20 +174,18 @@ public:
 				audio_manager->PlayBackgroundMusic();
 			}
 
-			// Reset movement deltas
-			spryo_movement_deltas = XMFLOAT3(0, 0, 0);
-			if (z_plane_timer > z_plane_cooldown)
-			{
-				forward = backward = false;
-				z_plane_timer = 0;
-			}
-			if (x_plane_timer > x_plane_cooldown)
-			{
-				left = right = false;
-				x_plane_timer = 0;
-			}
-			z_plane_timer += delta_time;
-			x_plane_timer += delta_time;
+			// Test
+			spyro->Update(delta_time);
+			// Debug draw
+			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
+
+			engine->GetOrbitCamera()->SetLookAtAndRotate(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position, yaw, pitch, delta_time);
+
+			// Physics test
+			spyro->CheckCollision(test_colider);
+			spyro->CheckCollision(test_colider1);
+			// Test
+
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
@@ -230,86 +202,6 @@ public:
 				tfw = std::wstring(fr.begin(), fr.end());
 				wchar = tfw.c_str();
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
-			}
-
-			// Rotation
-			rot += .1;
-			if (rot >= 360) rot = 0;
-
-			// GAMEPLAY
-			// Jumping
-
-			if (forward)
-			{
-				spryo_movement_deltas.z += spyro_move_speed * delta_time;
-			}
-			if (backward)
-			{
-				spryo_movement_deltas.z -= spyro_move_speed * delta_time;
-			}
-			if (left)
-			{
-				spryo_movement_deltas.x -= spyro_move_speed * delta_time;
-			}
-			if (right)
-			{
-				spryo_movement_deltas.x += spyro_move_speed * delta_time;
-			}
-
-			engine->GetOrbitCamera()->Rotate(yaw, pitch);
-			ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.z += spryo_movement_deltas.z;
-			ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.x += spryo_movement_deltas.x;
-
-			engine->GetOrbitCamera()->SetLookAtAndRotate(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position, yaw, pitch, delta_time);
-
-			if (jumping)
-			{
-				jump_count_down += delta_time;
-				
-				if (jump_count_down < jump_time_length)
-				{
-					if (jump_count_down <= jump_time_up)
-					{
-						// Jump completion ratio
-						float jump_up_ratio = jump_count_down / jump_time_up;
-
-						ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y = 
-							lerp(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y, jump_height, jump_up_ratio);
-					}
-					else
-					{
-						// Jump down ratio
-						float jump_dn_ratio = ((jump_count_down - jump_time_up) / (jump_time_length - jump_time_up));
-
-						ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y = 
-							lerp(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y, og_y_pos, jump_dn_ratio);
-					}
-				}
-
-				if (jump_count_down > jump_time_length)
-				{
-					jump_count_down = 0;
-					jumping = false;
-
-					ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y = og_y_pos;
-				}
-			}
-
-			// Update collider
-			character_collider = ADPhysics::AABB(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position, XMFLOAT3(2, 2, 2));
-			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
-
-			// Check collision
-			if (ADPhysics::AabbToAabbCollision(character_collider, test_colider) | ADPhysics::AabbToAabbCollision(character_collider, test_colider1))
-			{
-				forward = backward = false;
-				z_plane_timer = 0;
-
-				left = right = false;
-				x_plane_timer = 0;
-
-				jump_count_down = 0;
-				jumping = false;
 			}
 		}
 	}
@@ -329,32 +221,6 @@ public:
 
 		if (Input::ControllerPresent())
 		{
-			if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::UP)
-			{
-				forward = true;
-				backward = false;
-				z_plane_timer = 0;
-			}
-			else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
-			{
-				backward = true;
-				forward = false;
-				z_plane_timer = 0;
-			}
-
-			if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
-			{
-				left = true;
-				right = false;
-				x_plane_timer = 0;
-			}
-			else if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
-			{
-				right = true;
-				left = false;
-				x_plane_timer = 0;
-			}
-
 			// Camera rotation
 			if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
 			{
@@ -371,16 +237,14 @@ public:
 				pitch += camera_rotation_thresh * dt;
 			}
 
-			// Actions
-			if (Input::QueryButtonDown(GamepadButtons::A))
-			{
-				jumping = true;
-				og_y_pos = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y;
-			}
-
 			if (Input::QueryButtonDown(GamepadButtons::LeftThumbstick) && Input::QueryButtonDown(GamepadButtons::RightThumbstick))
 			{
 				shutdown = true;
+			}
+			else if (Input::QueryButtonDown(GamepadButtons::DPadDown))
+			{
+				yaw = default_yaw;
+				pitch = default_pitch;
 			}
 		}
 	}
@@ -407,9 +271,9 @@ public:
 				engine->MoveCamera(pos);*/
 
 				//spryo_movement_deltas.z += camera_movement_thresh * delta_time;
-				forward = true;
+				/*forward = true;
 				backward = false;
-				z_plane_timer = 0;
+				z_plane_timer = 0;*/
 
 			}
 			else if (args->VirtualKey == VirtualKey::S || args->VirtualKey == VirtualKey::GamepadLeftThumbstickDown)
@@ -420,9 +284,9 @@ public:
 				engine->MoveCamera(pos);*/
 
 				//spryo_movement_deltas.z += -camera_movement_thresh * delta_time;
-				backward = true;
+				/*backward = true;
 				forward = false;
-				z_plane_timer = 0;
+				z_plane_timer = 0;*/
 			}
 			else if (args->VirtualKey == VirtualKey::A || args->VirtualKey == VirtualKey::GamepadLeftThumbstickLeft)
 			{
@@ -432,9 +296,9 @@ public:
 
 				//ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->rotation.y += -spyro_turn_speed * dt;
 				//spryo_movement_deltas.x += -1.;
-				left = true;
+				/*left = true;
 				right = false;
-				x_plane_timer = 0;
+				x_plane_timer = 0;*/
 			}
 			else if (args->VirtualKey == VirtualKey::D || args->VirtualKey == VirtualKey::GamepadLeftThumbstickRight)
 			{
@@ -445,9 +309,9 @@ public:
 
 				//ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->rotation.y += spyro_turn_speed * dt;
 				//spryo_movement_deltas.x += 1.;
-				right = true;
+				/*right = true;
 				left = false;
-				x_plane_timer = 0;
+				x_plane_timer = 0;*/
 			}
 
 			if (args->VirtualKey == VirtualKey::Left || args->VirtualKey == VirtualKey::GamepadRightThumbstickRight)
@@ -480,11 +344,11 @@ public:
 				//engine->GetOrbitCamera()->Rotate(yaw, pitch);
 			}
 
-			if (args->VirtualKey == VirtualKey::Space || args->VirtualKey == VirtualKey::GamepadA && !jumping)
-			{
-				jumping = true;
-				og_y_pos = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y;
-			}
+			//if (args->VirtualKey == VirtualKey::Space || args->VirtualKey == VirtualKey::GamepadA && !jumping)
+			//{
+			//	jumping = true;
+			//	//og_y_pos = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position.y;
+			//}
 		}
 	}
 };

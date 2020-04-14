@@ -92,23 +92,9 @@ float3 fresnelSchlick(float cosTheta, float3 F0)
 }
 
 float3 CalcDirectionalLight(float3 color, float3 directionToLight, OutputVertex INPUT, Light light)
-{
-    //Load normal from normal map
-    float3 normalMap = t_normal.Sample(t_sampler, INPUT.tex).rgb;
-    //Change normal map range from [0, 1] to [-1, 1]
-    normalMap = (2.0f * normalMap) - 1.0f;
-    
-    //Make sure tangent is completely orthogonal to normal
-    INPUT.tangent = normalize(INPUT.tangent - dot(INPUT.tangent, INPUT.normal) * INPUT.normal);
-    //Create the biTangent
-    float3 biTangent = cross(INPUT.normal, INPUT.tangent);
-    //Create the "Texture Space"
-    float3x3 texSpace = float3x3(INPUT.tangent, biTangent, INPUT.normal);
-    //Convert normal from normal map to texture space and store in input.normal
-    INPUT.normal = normalize(mul(normalMap, texSpace));
-    
+{   
     // Ambient
-    float3 ambientColor = CalcAmbient(light, normalMap, color);
+    float3 ambientColor = CalcAmbient(light, INPUT.normal, color);
     
     // Diffuse
     float NDotL = saturate(dot(normalize(directionToLight), INPUT.normal));
@@ -130,7 +116,8 @@ float4 main(OutputVertex input) : SV_TARGET
 {
     //return t_albedo.Sample(t_sampler, input.tex);
     //return float4(1, 0, 0, 1);
-    return float4(input.normal * .5, 1);
+    //return float4(input.normal * .5, 1);
+    return float4(CalcDirectionalLight(float3(1, 1, 1), -lights[0].lightDirection.xyz, input, lights[0]), 1);
     //Load normal from normal map
     float3 normalMap = t_normal.Sample(t_sampler, input.tex).rgb;
     //Change normal map range from [0, 1] to [-1, 1]

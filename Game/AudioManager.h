@@ -31,3 +31,7 @@ private:
 	// Volume
 	float main_loop_volume = .2;
 };
+
+// NOTE: Needs significant refactoring, the point is there though
+// Doesn't build on engine, missing some kind of app related dependency
+// This is fine being on the client side if necessary - not ideal, but not worth the effort to fix dependencies
