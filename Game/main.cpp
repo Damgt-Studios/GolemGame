@@ -8,6 +8,7 @@
 #include "XTime.h"
 
 #include "AudioManager.h"
+#include "GameUtilities.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -26,7 +27,7 @@ using namespace Platform;
 using namespace Platform::Collections;
 
 // Settings
-bool FULLSCREEN = true;
+bool FULLSCREEN = false;
 // Settings
 
 // the class definition for the core "framework" of our app
@@ -145,22 +146,22 @@ public:
 		light.diffuseIntensity = 1;
 		light.specular = XMFLOAT4(1, 1, 1, 1);
 		light.specularIntensity = .2;
-		engine->GetResourceManager()->AddLight(light);
+		ResourceManager::AddLight(light);
 
 
-		engine->GetResourceManager()->AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		spyro = engine->GetResourceManager()->LoadSpyroFromModelFile("files/models/Spyro_LowRes.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		spyro_collider = engine->GetResourceManager()->AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
+		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
+		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Spyro_LowRes.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
 		
 
-		engine->GetResourceManager()->AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
 
-		engine->GetResourceManager()->AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		engine->GetResourceManager()->AddPBRModel("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddPBRModel("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 
 		// Colliders
-		engine->GetResourceManager()->AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		engine->GetResourceManager()->AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);

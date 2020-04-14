@@ -1,0 +1,10 @@
+{
+  "name": "watchman",
+  "version": "1.0.0",
+  "main": "watch.js",
+  "license": "MIT",
+  "dependencies": {
+    "delete": "^1.1.0",
+    "ncp": "^2.0.0"
+  }
+}

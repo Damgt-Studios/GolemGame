@@ -36,7 +36,6 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Types.cpp" />
     <ClCompile Include="Input.cpp" />
   </ItemGroup>
   <ItemGroup>

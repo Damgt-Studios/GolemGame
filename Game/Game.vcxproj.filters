@@ -29,6 +29,8 @@
     <ClCompile Include="pchgame.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Spyro.cpp" />
+    <ClCompile Include="GameUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -192,5 +194,7 @@
     <ClInclude Include="pchgame.h" />
     <ClInclude Include="XTime.h" />
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="Spyro.h" />
+    <ClInclude Include="GameUtilities.h" />
   </ItemGroup>
 </Project>

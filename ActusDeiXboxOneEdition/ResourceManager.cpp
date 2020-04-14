@@ -2,6 +2,9 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 
+// Static private members
+AD_ULONG ResourceManager::current_id = 0;
+
 AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe)
 {
 	ADUtils::SHADER shader = { 0 };
@@ -73,18 +76,7 @@ void ResourceManager::AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOA
 
 AD_ULONG ResourceManager::GenerateUniqueID()
 {
-	return current_id++;
-}
-
-
-ADResource::ADGameplay::Spyro* ResourceManager::LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-{
-	ADResource::ADGameplay::Spyro* temp = new ADResource::ADGameplay::Spyro;
-
-	AD_ULONG id = AddSpyro(modelname, position, scale, rotation);
-	temp->SetMeshID(id);
-
-	return temp;
+	return ResourceManager::current_id++;
 }
 
 AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)

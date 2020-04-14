@@ -220,6 +220,8 @@ namespace ADResource
 			//TODO: Whittington.
 			virtual void Render() {};
 
+			virtual void Update() {};
+
 			virtual void Damage(DAMAGE_TYPE damageType)
 			{
 				if (type == DESTRUCTABLE)
@@ -272,21 +274,6 @@ namespace ADResource
 					}
 				}
 			};
-		};
-
-		class Spyro : public GameObject
-		{
-			int health;
-
-			void Damage(DAMAGE_TYPE d_type)
-			{
-
-			}
-
-			void Remove()
-			{
-
-			}
 		};
 	}
 

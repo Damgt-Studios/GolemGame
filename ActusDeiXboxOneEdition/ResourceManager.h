@@ -37,23 +37,18 @@ namespace
 class ResourceManager
 {
 public:
-	ResourceManager() = default;
-	~ResourceManager() = default;
 
-	AD_ULONG AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
-	AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
-	AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
+	static AD_ULONG AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+	static AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
-	AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	void AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static void AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	// Utils
-	AD_ULONG GenerateUniqueID();
+	static AD_ULONG GenerateUniqueID();
 
-	ADResource::ADGameplay::Spyro* LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-
-private:
-	AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
 public:
 	// Rendering init shit
@@ -75,7 +70,7 @@ public:
 	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
-	AD_ULONG current_id = 0;
+	static AD_ULONG current_id;
 };
 
 // Note: Update uuid to use long long
