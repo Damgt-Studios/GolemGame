@@ -245,18 +245,16 @@ namespace ADResource
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
 			{
-				XMVECTOR temp = XMLoadFloat3(&pos);
-				temp.m128_f32[3] = 1;
-
-				transform.r[3] = temp;
+				transform.r[3].m128_f32[0] = pos.x;
+				transform.r[3].m128_f32[1] = pos.y;
+				transform.r[3].m128_f32[2] = pos.z;
 			}
 
 			virtual void AddToPositionVector(XMFLOAT3 pos)
 			{
-				XMVECTOR temp = XMLoadFloat3(&pos);
-				temp.m128_f32[3] = 0;
-
-				transform.r[3] += temp;
+				transform.r[3].m128_f32[0] += pos.x;
+				transform.r[3].m128_f32[1] += pos.y;
+				transform.r[3].m128_f32[2] += pos.z;
 			}
 
 			XMFLOAT3 GetPosition()
@@ -279,7 +277,7 @@ namespace ADResource
 
 			void SetScale(XMFLOAT3 scale)
 			{
-
+				transform = XMMatrixMultiply(transform, XMMatrixScaling(scale.x, scale.y, scale.z));
 			}
 
 			void GetWorldMatrix(XMMATRIX& mat)

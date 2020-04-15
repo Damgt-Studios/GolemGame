@@ -21,9 +21,9 @@ ADResource::ADGameplay::Spyro* GameUtilities::LoadSpyroFromModelFile(std::string
 	return temp;
 }
 
-ADResource::ADGameplay::ColliderBox* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::ColliderBox* temp = new ADResource::ADGameplay::ColliderBox;
+	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
 	// Transform data
 	temp->SetPosition(position);
@@ -31,6 +31,21 @@ ADResource::ADGameplay::ColliderBox* GameUtilities::AddColliderBox(std::string m
 	temp->SetScale(scale);
 
 	AD_ULONG id = ResourceManager::AddColliderBox(modelname, position, scale, rotation);
+	temp->SetMeshID(id);
+
+	return temp;
+}
+
+ADResource::ADGameplay::Renderable* GameUtilities::AddPBRStaticAsset(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
+
+	// Transform data
+	temp->SetPosition(position);
+	temp->SetRotation(rotation);
+	temp->SetScale(scale);
+
+	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
 
 	return temp;

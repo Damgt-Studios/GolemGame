@@ -1,8 +1,5 @@
 #pragma once
-#include "Types.h"
-#include "Input.h"
-#include "ResourceManager.h"
-#include "Camera.h"
+#include "GameplayBaseClasses.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -11,12 +8,11 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
-		class Spyro : public GameObject
+		class Spyro : public Renderable
 		{
 		
 		public:
 			virtual void Update(float time_delta);
-			virtual void Render();
 
 			void Damage(DAMAGE_TYPE d_type);
 
@@ -40,7 +36,7 @@ namespace ADResource
 			float jump_count_down = 0;
 			float jump_height = 15;
 			float og_y_pos = 0;
-			float gravity = 5;
+			float gravity = 50;
 			bool jumping = false;
 
 			// Turning
@@ -54,12 +50,6 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
-		class ColliderBox : public GameObject
-		{
-			void Render()
-			{
-				ResourceManager::AddModelToRenderQueue(dynamic_cast<GameObject*>(this));
-			}
-		};
+		
 	}
 }
