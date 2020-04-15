@@ -24,7 +24,9 @@ namespace
 	std::vector<ADResource::ADGameplay::GameObject> passables;
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
 
-	// On offss
+	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
+
+	// On/ Offs
 	ADResource::ADRenderer::Model skybox;
 
 	// Unified buffers
@@ -55,6 +57,10 @@ public:
 	static void ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device);
 	static ComPtr<ID3D11Buffer> GetVertexBuffer();
 	static ComPtr<ID3D11Buffer> GetIndexBuffer();
+
+public:
+	// Game object shit
+	static int AddGameObject(ADResource::ADGameplay::GameObject* OBJ);
 
 public:
 	// Getters/ setters

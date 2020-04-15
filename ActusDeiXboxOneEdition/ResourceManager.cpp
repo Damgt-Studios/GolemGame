@@ -158,6 +158,15 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> ResourceManager::GetIndexBuffer()
 	return indexBuffer;
 }
 
+int ResourceManager::AddGameObject(ADResource::ADGameplay::GameObject* OBJ)
+{
+	int temp = gameobjects.size();
+
+	gameobjects.push_back(OBJ);
+
+	return temp;
+}
+
 int ResourceManager::GetLightCount()
 {
 	return lights.size();
