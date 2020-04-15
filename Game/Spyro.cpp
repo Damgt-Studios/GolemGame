@@ -46,6 +46,11 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 	collider = AABB(ResourceManager::GetModelPtrFromMeshId(GetMeshId())->position, XMFLOAT3(2, 2, 2));
 }
 
+void ADResource::ADGameplay::Spyro::Render()
+{
+	ResourceManager::AddModelToRenderQueue(dynamic_cast<GameObject*>(this));
+}
+
 void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
 {
 
@@ -68,13 +73,18 @@ void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
+	XMFLOAT3 pos(0, 0, 0);
+
 	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::UP)
 	{
-		ResourceManager::GetModelPtrFromMeshId(GetMeshId())->position.z += spyro_move_speed * delta_time;
+		//ResourceManager::GetModelPtrFromMeshId(GetMeshId())->position.z += spyro_move_speed * delta_time;
+		pos.z += spyro_move_speed * delta_time;
+		transform.r[3].m128_f32[2] = spyro_move_speed * delta_time;
 	}
 	else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
 	{
-		ResourceManager::GetModelPtrFromMeshId(GetMeshId())->position.z += -spyro_move_speed * delta_time;
+		//ResourceManager::GetModelPtrFromMeshId(GetMeshId())->position.z += -spyro_move_speed * delta_time;
+		pos.z += -spyro_move_speed * delta_time;
 	}
 
 	if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
@@ -85,6 +95,8 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	{
 		ResourceManager::GetModelPtrFromMeshId(GetMeshId())->position.x += spyro_move_speed * delta_time;
 	}
+
+	//AddToPositionVector(pos);
 
 	// Actions
 	if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)

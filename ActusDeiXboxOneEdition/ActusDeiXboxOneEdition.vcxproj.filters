@@ -37,6 +37,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -51,6 +52,7 @@
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

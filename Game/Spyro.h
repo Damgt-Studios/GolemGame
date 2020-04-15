@@ -16,6 +16,7 @@ namespace ADResource
 		
 		public:
 			virtual void Update(float time_delta);
+			virtual void Render();
 
 			void Damage(DAMAGE_TYPE d_type);
 
@@ -45,6 +46,20 @@ namespace ADResource
 			// Turning
 			float spyro_turn_speed = 5;
 			float spyro_move_speed = 5;
+		};
+	}
+}
+
+namespace ADResource
+{
+	namespace ADGameplay
+	{
+		class ColliderBox : public GameObject
+		{
+			void Render()
+			{
+				ResourceManager::AddModelToRenderQueue(dynamic_cast<GameObject*>(this));
+			}
 		};
 	}
 }

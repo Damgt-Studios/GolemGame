@@ -158,6 +158,24 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> ResourceManager::GetIndexBuffer()
 	return indexBuffer;
 }
 
+void ResourceManager::AddModelToRenderQueue(ADResource::ADGameplay::GameObject* obj)
+{
+	render_queue.push(obj);
+}
+
+bool ResourceManager::RenderQueueEmpty()
+{
+	return render_queue.empty();
+}
+
+ADResource::ADGameplay::GameObject* ResourceManager::PopFromRenderQueue()
+{
+	ADResource::ADGameplay::GameObject* temp = render_queue.front();
+	render_queue.pop();
+
+	return temp;
+}
+
 int ResourceManager::AddGameObject(ADResource::ADGameplay::GameObject* OBJ)
 {
 	int temp = gameobjects.size();
@@ -208,6 +226,16 @@ int ResourceManager::GetPBRVertexCount()
 	}
 
 	return count;
+}
+
+int ResourceManager::GetGameObjectCount()
+{
+	return gameobjects.size();
+}
+
+ADResource::ADGameplay::GameObject** ResourceManager::GetGameObjectPtr()
+{
+	return gameobjects.data();
 }
 
 ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG mesh_id)

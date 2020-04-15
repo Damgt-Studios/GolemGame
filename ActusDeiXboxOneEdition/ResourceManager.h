@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <queue>
 
 namespace 
 {
@@ -25,6 +26,8 @@ namespace
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
 
 	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
+
+	std::queue<ADResource::ADGameplay::GameObject*> render_queue;
 
 	// On/ Offs
 	ADResource::ADRenderer::Model skybox;
@@ -57,6 +60,9 @@ public:
 	static void ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device);
 	static ComPtr<ID3D11Buffer> GetVertexBuffer();
 	static ComPtr<ID3D11Buffer> GetIndexBuffer();
+	static void AddModelToRenderQueue(ADResource::ADGameplay::GameObject*);
+	static bool RenderQueueEmpty();
+	static ADResource::ADGameplay::GameObject* PopFromRenderQueue();
 
 public:
 	// Game object shit
@@ -72,6 +78,9 @@ public:
 	static ADResource::ADRenderer::Model* GetSkybox();
 	static int GetPBRModelCount();
 	static int GetPBRVertexCount();
+
+	static int GetGameObjectCount();
+	static ADResource::ADGameplay::GameObject** GetGameObjectPtr();
 
 	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
 

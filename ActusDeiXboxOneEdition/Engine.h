@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "Input.h"
 #include "ResourceManager.h"
+#include "XTime.h"
 
 #include <wrl/client.h>
 #include <d3d11_1.h>
@@ -58,4 +59,9 @@ private:
 	// New shit
 	ADResource::ADRenderer::PBRRenderer pbr;
 	ResourceManager rmanager;
+
+	// Timing
+	XTime engine_time;
+	float delta_time_sf;
+	double delta_time_sd;
 };

@@ -5,10 +5,6 @@
 
 #include "Utils.h"
 
-// Shaders
-#include "base_vs.csh"
-#include "base_ps.csh"
-
 Engine::Engine()
 {
 	// Don't delete
@@ -26,18 +22,45 @@ bool Engine::Initialize()
 	// Initialize unified buffers
 	ResourceManager::ConfigureUnifiedBuffers(pbr.GetPBRRendererResources()->device);
 
+	// Start timer
+	engine_time = XTime();
+	engine_time.Restart();
+
 	return true;
 }
 
 bool Engine::Update()
 {
-	pbr.Update(camera, ocamera); //  Needs error checking
+	// Tick timer
+	engine_time.Signal();
+	delta_time_sd = engine_time.SmoothDelta();
+	delta_time_sf = static_cast<float>(delta_time_sd);
+
+	// For each game object, call update
+	int OBJ_COUNT =  ResourceManager::GetGameObjectCount();
+	ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+
+	for (int i = 0; i < OBJ_COUNT; i++)
+	{
+		OBJS[i]->Update(delta_time_sf);
+	}
+
+	//pbr.Update(camera, ocamera); //  Needs error checking
 
 	return true;
 }
 
 bool Engine::Render()
 {
+	// Loop over all game objects with a mesh and render
+	int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+	ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+	for (int i = 0; i < OBJ_COUNT; i++)
+	{
+		OBJS[i]->Render();
+	}
+
+	pbr.Render(camera, ocamera);
 	pbr.Frame();
 
 	return true;

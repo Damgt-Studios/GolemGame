@@ -5,7 +5,6 @@
 #include <collection.h>
 #include "Engine.h"
 #include "ADPhysics.h"
-#include "XTime.h"
 
 #include "AudioManager.h"
 #include "GameUtilities.h"
@@ -134,12 +133,14 @@ public:
 		ResourceManager::AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		ResourceManager::AddPBRModel("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 
-		// Add gameobjects
-		ResourceManager::AddGameObject(dynamic_cast<GameObject*>(spyro));
-
 		// Colliders
-		ResourceManager::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		ResourceManager::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		ColliderBox* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		ColliderBox* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		// Add gameobjects
+		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
+		GameUtilities::AddGameObject(c1);
+		GameUtilities::AddGameObject(c2);
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
@@ -178,11 +179,11 @@ public:
 			}
 
 			// Test
-			spyro->Update(delta_time);
+			//spyro->Update(delta_time);
 			// Debug draw
 			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
 
-			engine->GetOrbitCamera()->SetLookAtAndRotate(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position, yaw, pitch, delta_time);
+			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
 
 			// Physics test
 			spyro->CheckCollision(test_colider);

@@ -217,10 +217,15 @@ namespace ADResource
 		class GameObject
 		{
 		public:
+			GameObject()
+			{
+				transform = postTransform = XMMatrixIdentity();
+			}
+
 			//TODO: Whittington.
 			virtual void Render() {};
 
-			virtual void Update() {};
+			virtual void Update(float delta_time) {};
 
 			virtual void Damage(DAMAGE_TYPE damageType)
 			{
@@ -237,12 +242,50 @@ namespace ADResource
 				//Drop your Gems and get return to pool,  You're done son.
 			}
 
+			// Nesessary utilities
+			virtual void SetPosition(XMFLOAT3 pos)
+			{
+				XMVECTOR temp = XMLoadFloat3(&pos);
+				temp.m128_f32[3] = 1;
+
+				transform.r[3] = temp;
+			}
+
+			virtual void AddToPositionVector(XMFLOAT3 pos)
+			{
+				XMVECTOR temp = XMLoadFloat3(&pos);
+				temp.m128_f32[3] = 0;
+
+				transform.r[3] += temp;
+			}
+
+			XMFLOAT3 GetPosition()
+			{
+				XMFLOAT3 pos;
+				XMVECTOR posv = transform.r[3];
+				XMStoreFloat3(&pos, posv);
+
+				return pos;
+			}
+
 		public:
 			// Setters/ Getters
 			void SetMeshID(AD_ULONG id) { meshID = id; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
-			void SetRotation(float x, float y, float z);
+			void SetRotation(XMFLOAT3 rotation)
+			{
+			}
+
+			void SetScale(XMFLOAT3 scale)
+			{
+
+			}
+
+			void GetWorldMatrix(XMMATRIX& mat)
+			{
+				mat = transform;
+			}
 
 		public:
 			bool active;
@@ -250,9 +293,11 @@ namespace ADResource
 			int GemCount;
 			AD_ULONG meshID;
 			OBJECT_DEFENSE defenseType;
-			XMFLOAT4X4 transform;
-			XMFLOAT4X4 postTransform;
-			// ADPhysics::Collider collider;
+			XMMATRIX transform;
+			XMMATRIX postTransform;
+
+		public:
+			bool has_mesh = false;
 		};
 
 		class Enemy : public GameObject
