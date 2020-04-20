@@ -26,6 +26,8 @@ bool Engine::Initialize()
 	engine_time = XTime();
 	engine_time.Restart();
 
+	userInterface.Initialize(pbr.GetPBRRendererResources()->device);
+
 	return true;
 }
 
@@ -35,18 +37,26 @@ bool Engine::Update()
 	engine_time.Signal();
 	delta_time_sd = engine_time.SmoothDelta();
 	delta_time_sf = static_cast<float>(delta_time_sd);
-
-	// For each game object, call update
-	int OBJ_COUNT =  ResourceManager::GetGameObjectCount();
-	ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
-
-	for (int i = 0; i < OBJ_COUNT; i++)
+	if (userInterface.GetUIState()==0)
 	{
-		OBJS[i]->Update(delta_time_sf);
+
+		// For each game object, call update
+		int OBJ_COUNT =  ResourceManager::GetGameObjectCount();
+		ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+
+		for (int i = 0; i < OBJ_COUNT; i++)
+		{
+			OBJS[i]->Update(delta_time_sf);
+		}
+
+		//pbr.Update(camera, ocamera); //  Needs error checking
+	}
+	else if (userInterface.GetUIState() == 2)
+	{
+		return false;
 	}
 
-	//pbr.Update(camera, ocamera); //  Needs error checking
-
+	userInterface.Update(delta_time_sf);
 	return true;
 }
 
@@ -61,6 +71,7 @@ bool Engine::Render()
 	}
 
 	pbr.Render(camera, ocamera);
+	userInterface.Render(pbr.GetPBRRendererResources()->context.Get(), pbr.GetPBRRendererResources()->render_target_view.Get());
 	pbr.Frame();
 
 	return true;
@@ -69,7 +80,7 @@ bool Engine::Render()
 bool Engine::ShutDown()
 {
 	pbr.ShutDown();
-
+	userInterface.ShutDown();
 	return true;
 }
 

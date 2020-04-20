@@ -91,4 +91,5 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 		jumping = true;
 		og_y_pos = GetPosition().y;
 	}
+
 }

@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "ResourceManager.h"
 #include "XTime.h"
+#include "ADUserInterface.h"
 
 #include <wrl/client.h>
 #include <d3d11_1.h>
@@ -59,6 +60,7 @@ private:
 	// New shit
 	ADResource::ADRenderer::PBRRenderer pbr;
 	ResourceManager rmanager;
+	AD_UI::ADUI userInterface;
 
 	// Timing
 	XTime engine_time;

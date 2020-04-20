@@ -53,6 +53,7 @@
     <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="XTime.h" />
+    <ClInclude Include="ADUserInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -106,6 +107,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\files\shaders\pink_vs.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\ui_ps.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\files\shaders\ui_vs.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
