@@ -12,6 +12,12 @@ using namespace Microsoft::WRL;
 // Global type definitions
 typedef unsigned long long AD_ULONG;
 
+enum class ENGINE_STATE {
+	GAMEPLAY = 0,
+	PAUSED,
+	MENUSCREEN
+};
+
 enum class ADResourceType {
 	PhongRenderer = 0,
 	Light,
@@ -138,6 +144,140 @@ namespace ADResource
 
 			// Samplers
 			ComPtr<ID3D11SamplerState> normal_sampler;
+		};
+	}
+
+	namespace AD_UI
+	{
+
+		struct UIVertex
+		{
+			XMFLOAT4 Color;     //If a pixel is white hue (grey/etc) it will bleech it this color.  Starts white.
+			XMFLOAT3 Pos;
+			XMFLOAT2 Tex;
+		};
+
+		struct UIHeader
+		{
+			char t_albedo[256];
+		};
+
+		struct TextSet
+		{
+			ComPtr<ID3D11ShaderResourceView> albedo;
+			float spacing;
+			//Map of padding per letter
+		};
+
+		struct QuadData
+		{
+			int x, y;
+			float quadWidth;
+			float quadHeight;
+			float minU;
+			float maxU;
+			float minV;
+			float maxV;
+		};
+
+		struct AnimData2d
+		{
+			UINT frameCount;
+			UINT startFrame;
+			UINT columns;
+			float fps;
+		};
+
+		class UIComponent
+		{
+		public:
+			UINT quadCount = 0;
+			bool active;
+			bool visible;
+			bool controlFocus;
+			virtual void Initialize() {};
+			virtual void Update(float delta_time) {};
+			virtual int ProcessInput() { return 0; };
+			virtual QuadData** GetQuads() { return nullptr; };
+			virtual QuadData* GetQuad() { return nullptr; };
+			virtual UINT GetQuadCount() { return quadCount; };
+			virtual void Enable() { visible = true; active = true; };
+			virtual void Disable() { visible = false; active = false; };
+			virtual void CleanUp() {};
+		};
+
+		class Overlay2D
+		{
+		private:
+			bool dynamic = false;
+			UINT myId;
+
+		public:
+			bool active = true;
+			bool visible = true;
+			std::vector<UINT> componentIDs;
+			std::vector<ADResource::AD_UI::UIVertex> vertices;
+			std::vector<int> indices;
+			ComPtr<ID3D11Buffer> vertexBuffer;
+			ComPtr<ID3D11Buffer> indexBuffer;
+			
+			Overlay2D(UINT _myID, bool _visible = false, bool _active = false, bool _dynamic = true)
+			{
+				myId = _myID;
+				visible = _visible;
+				active = _active;
+				dynamic = _dynamic;
+			};
+
+			void AddComponent(UINT _compID)
+			{
+				componentIDs.push_back(_compID);
+			};
+
+			void Enable()
+			{
+				visible = true;
+				active = true;
+			}
+
+			void Disable()
+			{
+				visible = false;
+				active = false;
+			}
+
+			bool IsDynamic()
+			{
+				return dynamic;
+			}
+
+			UINT GetID()
+			{
+				return myId;
+			}
+		};
+
+		struct UIRendererResources
+		{
+			std::vector<ADResource::AD_UI::UIVertex> vertices;
+			std::vector<int> indices;
+
+			ComPtr<ID3D11Buffer> vertexBuffer;
+			ComPtr<ID3D11Buffer> indexBuffer;
+
+			ComPtr<ID3D11VertexShader> vertexShader;
+			ComPtr<ID3D11PixelShader> pixelShader;
+
+			ComPtr<ID3D11InputLayout> vertexBufferLayout;
+
+			ComPtr<ID3D11ShaderResourceView> uiTextures;
+
+			// Cbuffers - Orthogonal projection matrix for 2D
+			ComPtr<ID3D11Buffer> constantBuffer;
+			XMFLOAT4X4 ortoprojMatrix;
+
+			// For drawing to the front by turning off the zbuffer.
+			ComPtr<ID3D11DepthStencilState> depthStencilState;
 		};
 	}
 
