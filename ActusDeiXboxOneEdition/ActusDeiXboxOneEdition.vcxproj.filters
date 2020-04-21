@@ -38,6 +38,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="XTime.cpp" />
+    <ClCompile Include="Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="XTime.h" />
     <ClInclude Include="ADUserInterface.h" />
+    <ClInclude Include="Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
