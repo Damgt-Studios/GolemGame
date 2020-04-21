@@ -64,4 +64,7 @@ private:
 	XTime engine_time;
 	float delta_time_sf;
 	double delta_time_sd;
+
+	// Temp
+	int lightdir = 1;
 };

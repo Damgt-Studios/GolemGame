@@ -113,25 +113,46 @@ public:
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
 		light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-		light.ambientUp = XMFLOAT4(1, 1, 1, 1);
-		light.ambientDown = XMFLOAT4(1, 1, 1, 1);
-		light.ambientIntensityDown = .2;
-		light.ambientIntensityUp = .4;
-		light.diffuse = XMFLOAT4(1, 1, 1, 1);
-		light.lightDirection = XMFLOAT4(2, -1, 3, 1);
+		light.diffuse = 
+			light.ambientUp = 
+			light.ambientDown = 
+			light.specular = 
+			XMFLOAT4(1, 1, 1, 1);
+		light.ambientIntensityDown = .1;
+		light.ambientIntensityUp = .1;
+		light.lightDirection = XMFLOAT4(0, 0, 10, 1);
 		light.diffuseIntensity = 1;
-		light.specular = XMFLOAT4(1, 1, 1, 1);
 		light.specularIntensity = .2;
+		light.diffuse =
+			light.ambientUp =
+			light.ambientDown =
+			light.specular =
+			XMFLOAT4(0, 0, 1, 1);
 		ResourceManager::AddLight(light);
 
+		// Point light
+		Light light1;
+		ZeroMemory(&light1, sizeof(Light));
+		light1.ambientIntensityDown = .1;
+		light1.ambientIntensityUp = .1;
+		light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
+		light1.diffuseIntensity = .5;
+		light1.specularIntensity = .2;
+		light1.diffuse =
+			light1.ambientUp =
+			light1.ambientDown =
+			light1.specular =
+			XMFLOAT4(1, 1, 1, 1);
+		light1.lightType = (int)LIGHTTYPE::POINT;
+		light1.position = XMFLOAT4(10, 0, 0, 1);
+		light1.lightRadius = 100;
+		ResourceManager::AddLight(light1);
+
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Spyro_LowRes.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
 
 		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
-
-		ResourceManager::AddPBRModel("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		ResourceManager::AddPBRModel("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
@@ -141,6 +162,13 @@ public:
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
+		// Comment this out - will run at 1fps
+		/*int COUNT = 2500;
+		for (int i = 0; i < COUNT; i++)
+		{
+			GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
+		}*/
+		// Comment this out - will run at 1fps
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
 		GameUtilities::AddGameObject(c1);
 		GameUtilities::AddGameObject(c2);
@@ -179,8 +207,10 @@ public:
 			// Audio
 			if (main_music_loop_timer <= 0 && !music_triggered)
 			{
+#ifdef _RELEASE
 				music_triggered = true;
 				audio_manager->PlayBackgroundMusic();
+#endif
 			}
 
 			// Test

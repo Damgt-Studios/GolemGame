@@ -211,6 +211,11 @@ ADResource::ADRenderer::Model* ResourceManager::GetSkybox()
 	return &skybox;
 }
 
+ADResource::ADRenderer::Light* ResourceManager::GetLightPtr()
+{
+	return lights.data();
+}
+
 int ResourceManager::GetPBRModelCount()
 {
 	return pbrmodels.size();

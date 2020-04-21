@@ -10,6 +10,7 @@ ADResource::ADRenderer::PBRRenderer::PBRRenderer()
 	D3D_FEATURE_LEVEL XBOX11 = D3D_FEATURE_LEVEL_10_0;
 	ComPtr<ID3D11Device> tdevice;
 	ComPtr<ID3D11DeviceContext> tcontext;
+#ifdef _DEBUG
 	HRESULT result = D3D11CreateDevice(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -22,6 +23,20 @@ ADResource::ADRenderer::PBRRenderer::PBRRenderer()
 		nullptr,
 		&tcontext
 		);
+#else
+	HRESULT result = D3D11CreateDevice(
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		NULL,
+		&XBOX11,
+		1,
+		D3D11_SDK_VERSION,
+		&tdevice,
+		nullptr,
+		&tcontext
+		);
+#endif
 	assert(!FAILED(result));
 
 	// Convert the device and device context pointers to the 11.1 pointers
@@ -149,6 +164,20 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	zViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
 
 	result = pbr_renderer_resources.device->CreateDepthStencilView(pbr_renderer_resources.zBuffer.Get(), nullptr, &pbr_renderer_resources.depthStencil);
+	assert(!FAILED(result));
+
+	// Create normal map sampler state
+	D3D11_SAMPLER_DESC sdesc;
+	ZeroMemory(&sdesc, sizeof(D3D11_SAMPLER_DESC));
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sdesc.MinLOD = 0;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+	// Create the sampler state
+	result = pbr_renderer_resources.device->CreateSamplerState(&sdesc, &pbr_renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
 	return true;
@@ -465,7 +494,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 		// Render stuff
 		// Set sampler
-		pbr_renderer_resources.context->PSSetSamplers(0, 1, current_model->sampler.GetAddressOf());
+		ID3D11SamplerState* samplers[] = { current_model->sampler.Get(), pbr_renderer_resources.normal_sampler.Get() };
+		pbr_renderer_resources.context->PSSetSamplers(0, 2, samplers);
 
 		ID3D11ShaderResourceView* resource_views[] = {
 			current_model->albedo.Get(),
@@ -476,6 +506,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		};
 
 		pbr_renderer_resources.context->PSSetShaderResources(0, 5, resource_views);
+		pbr_renderer_resources.context->VSSetShaderResources(0, 1, current_model->normal.GetAddressOf());
 
 		pbr_renderer_resources.context->VSSetShader(current_model->vertexShader.Get(), 0, 0);
 		pbr_renderer_resources.context->PSSetShader(current_model->pixelShader.Get(), 0, 0);

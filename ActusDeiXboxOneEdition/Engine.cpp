@@ -45,7 +45,10 @@ bool Engine::Update()
 		OBJS[i]->Update(delta_time_sf);
 	}
 
-	//pbr.Update(camera, ocamera); //  Needs error checking
+	// Move the light
+	/*ResourceManager::GetLightPtr()[1].position.x += .1 * lightdir;
+	if (fabs(ResourceManager::GetLightPtr()[1].position.x) > 10)
+		lightdir *= -1;*/
 
 	return true;
 }

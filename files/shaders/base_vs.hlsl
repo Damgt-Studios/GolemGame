@@ -27,6 +27,7 @@ struct OutputVertex
     float3 worldposition : WORDLPOS;
     float2 tex : TEXCOORD;
     float3 tangent : TANGENT;
+    float3 bitangent : BITAN;
     float3 normal : NORMAL;
 };
 
@@ -43,8 +44,11 @@ OutputVertex main(InputVertex input)
     output.campos = cameraPosition;
     output.tex = input.tex;
     
-    output.normal = mul(float4(input.normal, 0), worldMatrix).xyz;
-    output.tangent = mul(float4(input.tangent, 0), worldMatrix).xyz;
+    output.normal = normalize(mul(float4(input.normal, 0), worldMatrix).xyz);
+    output.tangent = normalize(mul(float4(input.tangent, 0), worldMatrix).xyz);
+    output.bitangent = normalize(cross(output.normal, output.tangent));
+    
+    output.tangent = normalize(output.tangent - dot(output.tangent, output.normal) * output.normal);
     
     return output;
 }

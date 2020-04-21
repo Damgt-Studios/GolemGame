@@ -5,7 +5,10 @@ Texture2D t_normal : register(t1);
 Texture2D t_metallic : register(t2);
 Texture2D t_roughness : register(t3);
 Texture2D t_ambient_occlusion : register(t4);
+
+// Samplers
 SamplerState t_sampler : register(s0);
+SamplerState t_normal_sampler : register(s1);
 
 struct OutputVertex
 {
@@ -15,6 +18,7 @@ struct OutputVertex
     float3 worldposition : WORDLPOS;
     float2 tex : TEXCOORD;
     float3 tangent : TANGENT;
+    float3 bitangent : BITAN;
     float3 normal : NORMAL;
 };
 
@@ -92,71 +96,55 @@ float3 fresnelSchlick(float cosTheta, float3 F0)
 }
 
 float3 CalcDirectionalLight(float3 color, float3 directionToLight, OutputVertex INPUT, Light light)
-{
+{    
+    color = pow(color, 2.2);
     //Load normal from normal map
-    float3 normalMap = t_normal.Sample(t_sampler, INPUT.tex).rgb;
+    float3 normalMap = t_normal.Sample(t_normal_sampler, INPUT.tex).rgb;
     //Change normal map range from [0, 1] to [-1, 1]
     normalMap = (2.0f * normalMap) - 1.0f;
-    
-    //Make sure tangent is completely orthogonal to normal
-    INPUT.tangent = normalize(INPUT.tangent - dot(INPUT.tangent, INPUT.normal) * INPUT.normal);
-    //Create the biTangent
-    float3 biTangent = cross(INPUT.normal, INPUT.tangent);
-    //Create the "Texture Space"
-    float3x3 texSpace = float3x3(INPUT.tangent, biTangent, INPUT.normal);
-    //Convert normal from normal map to texture space and store in input.normal
-    INPUT.normal = normalize(mul(normalMap, texSpace));
     
     // Ambient
     float3 ambientColor = CalcAmbient(light, normalMap, color);
     
     // Diffuse
-    float NDotL = saturate(dot(normalize(directionToLight), INPUT.normal));
+    float NDotL = saturate(dot(normalize(directionToLight), normalMap));
     float3 diffuseColor = saturate(light.diffuse.rgb * NDotL);
     diffuseColor = saturate(diffuseColor * light.diffuseIntensity);
     
     // Specular
     float3 dirToEye = normalize(INPUT.campos - INPUT.worldposition);
     float3 halfvec = normalize(dirToEye + directionToLight);
-    float NDotH = saturate(dot(halfvec, INPUT.normal));
+    float NDotH = saturate(dot(halfvec, normalMap));
     float3 specularColor = saturate(light.specular.rgb * pow(NDotH, SPEC_EXP) * light.specularIntensity);
     
     float3 finalcolor = saturate((diffuseColor + specularColor + ambientColor) * color);
     
-    return finalcolor;
+    return pow(finalcolor, 1.0/2.2);
 }
 
 float4 main(OutputVertex input) : SV_TARGET
 {
-    //return t_albedo.Sample(t_sampler, input.tex);
-    //return float4(1, 0, 0, 1);
-    //return float4(1, 1, 1, 1);
+    // test
+    //return float4(CalcDirectionalLight(t_albedo.Sample(t_sampler, input.tex).rgb, -lights[0].lightDirection.xyz, input, lights[0]), 1);
+    // test
+    
     //Load normal from normal map
-    float3 normalMap = t_normal.Sample(t_sampler, input.tex).rgb;
+    float3 normalMap = t_normal.Sample(t_normal_sampler, input.tex).rgb;
     //Change normal map range from [0, 1] to [-1, 1]
     normalMap = (2.0f * normalMap) - 1.0f;
+    float3x3 TBN = float3x3(input.tangent, input.bitangent, input.normal);
+    normalMap = normalize(mul(normalMap, TBN));
     
-    //Make sure tangent is completely orthogonal to normal
-    input.tangent = normalize(input.tangent - dot(input.tangent, input.normal) * input.normal);
-    //Create the biTangent
-    float3 biTangent = cross(input.normal, input.tangent);
-    //Create the "Texture Space"
-    float3x3 texSpace = float3x3(input.tangent, biTangent, input.normal);
-    //Convert normal from normal map to texture space and store in input.normal
-    input.normal = normalize(mul(normalMap, texSpace));
-    
-    float3 white = float3(1, 1, 1);
-    float3 color = white * white;
     float3 directionToLight = -lights[0].lightDirection.xyz;
     
     float3 albedo = pow(t_albedo.Sample(t_sampler, input.tex).rgb, 2.2);
     float metallic = t_metallic.Sample(t_sampler, input.tex).r;
-    float roughness = t_roughness.Sample(t_sampler, input.tex).g;
+    float roughness = t_metallic.Sample(t_sampler, input.tex).g;
     float ambient_occlusion = t_metallic.Sample(t_sampler, input.tex).b;
-    float emissive_strength = 1 - pow(t_albedo.Sample(t_sampler, input.tex), 2.2).a;
+    float emissive_strength = 1 - t_albedo.Sample(t_sampler, input.tex).a;
     
     // BDRF
-    float3 N = normalize(input.normal);
+    float3 N = normalize(normalMap);
     float3 V = normalize(input.campos - input.worldposition);
     float3 F0 = float3(0.04, 0.04, 0.04); // Hard coded fresnel value for dielectrics
     F0 = lerp(F0, albedo, metallic);
@@ -194,7 +182,8 @@ float4 main(OutputVertex input) : SV_TARGET
     _color = pow(_color, 1.0 / 2.2); // Gamma correction
     
     // Add emissive color
-    _color = saturate(_color + (albedo * emissive_strength));
+    //_color = saturate(_color + (albedo * emissive_strength));
+    //_color = saturate(_color + (albedo));
     //_color = float3(emissive_strength, emissive_strength, emissive_strength);
     
     return float4(_color, 1.0);

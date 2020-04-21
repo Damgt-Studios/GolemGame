@@ -135,6 +135,9 @@ namespace ADResource
 			// Cbuffers
 			ComPtr<ID3D11Buffer> constantBuffer;
 			ComPtr<ID3D11Buffer> lightBuffer;
+
+			// Samplers
+			ComPtr<ID3D11SamplerState> normal_sampler;
 		};
 	}
 

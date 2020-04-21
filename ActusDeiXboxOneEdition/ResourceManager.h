@@ -76,6 +76,7 @@ public:
 	static char* GetPBRDataPtr();
 	static ADResource::ADRenderer::Model* GetPBRPtr();
 	static ADResource::ADRenderer::Model* GetSkybox();
+	static ADResource::ADRenderer::Light* GetLightPtr();
 	static int GetPBRModelCount();
 	static int GetPBRVertexCount();
 
