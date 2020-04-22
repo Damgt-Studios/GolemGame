@@ -37,6 +37,7 @@ bool Engine::Update()
 	engine_time.Signal();
 	delta_time_sd = engine_time.SmoothDelta();
 	delta_time_sf = static_cast<float>(delta_time_sd);
+
 	if (userInterface.GetUIState()==0)
 	{
 

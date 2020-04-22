@@ -846,3 +846,8 @@ namespace AD_UI
         }   
     };
 }
+
+// NOTE: UI shit needs to be removed
+/*
+
+*/

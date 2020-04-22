@@ -41,8 +41,9 @@ private:
 
 	bool shutdown = false;
 
-	// Media player
-	MediaPlayer^ player;
+	// Temp music
+	int effect_id;
+	bool effect_triggered = false;
 
 	// Timing
 	XTime game_time;
@@ -99,8 +100,12 @@ public:
 	virtual void Run()
 	{
 		// Bruh
+		std::vector<std::string> sfx;
+		sfx.push_back("files\\audio\\main_theme.wav");
+		sfx.push_back("files\\audio\\main_theme.wav");
+		sfx.push_back("files\\audio\\main_theme.wav");
 		audio_manager = new AudioManager;
-		audio_manager->Initialize("files\\audio\\main_theme.wav");
+		audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -204,10 +209,10 @@ public:
 
 			ProcessInput();
 
-			// Audio
+			// Audio -Music doesn't play in debug mode -  annoying AF
 			if (main_music_loop_timer <= 0 && !music_triggered)
 			{
-#ifdef _RELEASE
+#ifdef NDEBUG
 				music_triggered = true;
 				audio_manager->PlayBackgroundMusic();
 #endif
@@ -290,6 +295,19 @@ public:
 
 	void OnKeyDown(CoreWindow^ Window, KeyEventArgs^ args)
 	{
+		if (args->VirtualKey == VirtualKey::A)
+		{
+			if (effect_triggered) audio_manager->ResumeEffect(0, effect_id);
+			else {
+				effect_triggered = true;
+				effect_id = audio_manager->PlayEffect(0);
+			}
+		}
+		if (args->VirtualKey == VirtualKey::D)
+		{
+			audio_manager->PauseEffect(0, effect_id);
+		}
+
 		bool enabled = false;
 
 		if (enabled)
