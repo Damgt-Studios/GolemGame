@@ -1,5 +1,5 @@
 #pragma once
-#define _CRTDBG_MAP_ALLOC
+#include "pch.h"
 #include <stdlib.h>
 #include <crtdbg.h>
 #include <cstring>
@@ -38,8 +38,8 @@ private:
 
 extern MemoryManager memoryManager;
 
-void* operator new(size_t size);
-void* operator new[](size_t size);
+//void* operator new(size_t size);
+//void* operator new[](size_t size);
 
 template<typename Type>
 class Handle

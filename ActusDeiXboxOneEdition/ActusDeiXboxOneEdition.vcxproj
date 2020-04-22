@@ -272,6 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADMath.h" />
+    <ClInclude Include="ADMemoryManager.h" />
     <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="ADUserInterface.h" />
     <ClInclude Include="Camera.h" />
@@ -287,6 +288,7 @@
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Input.cpp" />

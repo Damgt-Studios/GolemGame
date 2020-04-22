@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ADMemoryManager.h"
 
 MemoryManager memoryManager;
@@ -5,7 +6,7 @@ MemoryManager memoryManager;
 MemoryManager::MemoryManager()
 {
 	// Allocate 5 GB of RAM for application
-	memoryBuffer = (char*)calloc(FIVE_GB, sizeof(char));
+	//memoryBuffer = (char*)calloc(FIVE_GB, sizeof(char));
 	allocatedSize = 0;
 	memset(handles, NULL, ADMEMORY_ARRAY_SIZE);
 }
@@ -124,12 +125,12 @@ size_t MemoryManager::GetNextHandle()
 	return 0;
 }
 
-void* operator new(size_t size)
-{
-	return memoryManager.Allocate(size);
-}
-
-void* operator new[](size_t size)
-{
-	return memoryManager.Allocate(size);
-}
+//void* operator new(size_t size)
+//{
+//	return memoryManager.Allocate(size);
+//}
+//
+//void* operator new[](size_t size)
+//{
+//	return memoryManager.Allocate(size);
+//}
