@@ -70,6 +70,7 @@ public:
 	// some functions called by Windows
 	virtual void Initialize(CoreApplicationView^ AppView)
 	{
+
 		if (FULLSCREEN)
 		{
 			Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode =
@@ -156,6 +157,8 @@ public:
 		{
 			return;
 		}
+
+		//ApplicationView::GetForCurrentView()->;
 
 		// Timing
 		game_time.Restart();

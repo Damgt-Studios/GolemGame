@@ -159,16 +159,9 @@ namespace ADResource
 			char t_albedo[256];
 		};
 
-		struct TextSet
-		{
-			ComPtr<ID3D11ShaderResourceView> albedo;
-			float spacing;
-			//Map of padding per letter
-		};
-
 		struct QuadData
 		{
-			int x, y;
+			float x, y;
 			float quadWidth;
 			float quadHeight;
 			float minU;

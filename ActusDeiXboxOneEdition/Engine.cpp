@@ -26,7 +26,8 @@ bool Engine::Initialize()
 	engine_time = XTime();
 	engine_time.Restart();
 
-	userInterface.Initialize(pbr.GetPBRRendererResources()->device);
+	userInterface.Initialize(pbr.GetPBRRendererResources()->device, pbr.GetPBRRendererResources()->viewport.Width, pbr.GetPBRRendererResources()->viewport.Height);
+	//pbr.GetPBRRendererResources()->viewport.
 
 	return true;
 }

@@ -211,4 +211,17 @@ void ADUtils::LoadUITextures(ADResource::AD_UI::UIHeader& header, ComPtr<ID3D11S
 	result = CreateDDSTextureFromFile(device.Get(), wpath.c_str(), nullptr, &srv);
 	assert(!FAILED(result));
 
+
+
+}
+
+std::wstring ADUtils::GetTexturePath(const char* textName)
+{
+	std::string texture_path = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\textures\\");
+
+	std::string spath = textName;
+	spath = std::string(texture_path).append(spath);
+	std::wstring wpath = std::wstring(spath.begin(), spath.end());
+	return wpath;
+
 }
