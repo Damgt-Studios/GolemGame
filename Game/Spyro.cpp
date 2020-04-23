@@ -61,7 +61,7 @@ void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 		VelocityImpulse(Velocity, mat, tempV, temp, m);
 		PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
 
-		float Dot = VectorDot((XMFLOAT3&)((XMVECTOR&)collider.Pos - (XMVECTOR&)item.Pos), XMFLOAT3(0,1,0));
+		float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0,1,0));
 
 		if (Dot > 0.5f)
 			jumping = false;;

@@ -472,7 +472,7 @@ namespace ADPhysics
 	static bool AabbToPlaneCollision(const AABB& box, const Plane& plane, Manifold& m)
 	{
 		static XMFLOAT3 Difference;
-		Difference = XMFLOAT3(box.Pos.x - plane.Pos.x, box.Pos.y - plane.Pos.y, box.Pos.z - plane.Pos.z);
+		Difference = XMFLOAT3(plane.Pos.x - box.Pos.x, plane.Pos.y - box.Pos.y, plane.Pos.z - box.Pos.z);
 
 		bool temp = !(
 			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(1, 0, 0), box, plane) ||
@@ -482,7 +482,7 @@ namespace ADPhysics
 			ADPhysics::SerparatingAxisTest(Difference, plane.AxisY, box, plane) ||
 			ADPhysics::SerparatingAxisTest(Difference, plane.AxisZ, box, plane));
 
-		if (!temp)
+		if (temp == false)
 			return temp;
 
 		XMVECTOR NormalPosition = XMVectorSet(plane.Pos.x + plane.Normal.x, plane.Pos.y + plane.Normal.y, plane.Pos.z + plane.Normal.z, 1);
