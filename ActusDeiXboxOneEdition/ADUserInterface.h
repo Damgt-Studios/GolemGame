@@ -2,10 +2,12 @@
 #include "pch.h"
 #include "Types.h"
 #include <vector>
-#include <string.h>
+#include <SpriteFont.h>
 
+#include "Utils.h"
 #include <d3dcompiler.h>
 #include "DDSTextureLoader.h"
+#include <string>
 
 using namespace ADResource::AD_UI;
 
@@ -34,11 +36,26 @@ namespace AD_UI
         QUIT
     };
 
-    class Text2D : UIComponent
+
+
+    class Text2D
     {
-        //the target texture index
-        //the stored string
-        //the set X,Y of this image
+        std::unique_ptr<SpriteBatch> spriteBatch;
+        std::unique_ptr<SpriteFont> spriteFont;
+
+    public:
+        void Initialize(ID3D11Device1* _device, ID3D11DeviceContext1* _context)
+        {
+            spriteBatch = std::make_unique<SpriteBatch>(_context);
+            spriteFont = std::make_unique<SpriteFont>(_device, ADUtils::GetTexturePath("SpyroFont.spritefont").c_str());
+        };
+
+        void Render(TextLabel label)
+        {
+            spriteBatch->Begin();
+            spriteFont->DrawString(spriteBatch.get(), label.output.c_str(), label.position);
+            spriteBatch->End();
+        }
     };
 
     class Image2D : public UIComponent
@@ -50,6 +67,18 @@ namespace AD_UI
         float updateThreshold;
         float updateTimer;
         QuadData* quad;
+
+        Image2D()
+        {
+            visible = true;
+            active = false;
+            textureID = 0;
+            quadCount = 1;
+            frameCount = 1;
+            currentFrame = 0;
+            updateThreshold = 100.f;
+            updateTimer = 0.f;
+        };
 
         Image2D(QuadData _quad, int _textureID = 0)
         { 
@@ -133,6 +162,55 @@ namespace AD_UI
             }
             delete[] quad;
         };
+    };
+
+    class UILog : public UIComponent
+    {
+    public:
+        Image2D blackBox;
+        TextLabel consoleLabel;
+        std::deque<std::string> messageQueue;
+
+
+
+        void InitializeLog(float screenWidth, float screenHeight, float width = 200.f, float height = 400.f)
+        {
+            blackBox.quad = new QuadData{ 0.35f * screenWidth, -0.3f * screenHeight, 400, 250, 0.1046f, 0.2083f, 0.8645f, 0.9876f };
+            blackBox.visible = true;
+            consoleLabel = { true, XMFLOAT2(0.75f * screenWidth, 0.7f * screenHeight), {"0"} };
+        }
+
+        virtual int ProcessInput() 
+        { 
+            return 0; 
+        };
+
+        void WriteToLog(std::string message)
+        {
+            messageQueue.push_back(message);
+
+            consoleLabel.output = "";
+            for (int i = 0; i < 6; ++i)
+            {
+                int index = messageQueue.size() - 6 + i;
+                if (index >= 0)
+                {
+                    consoleLabel.output.append(messageQueue[index]);
+                    consoleLabel.output.append("\n");
+                }
+
+            }
+        }
+
+        virtual QuadData* GetQuad() 
+        { 
+            return blackBox.GetQuad(); 
+        };
+
+        TextLabel* GetText()
+        {
+            return &consoleLabel;
+        }
     };
 
     class Button2D : public UIComponent
@@ -303,11 +381,12 @@ namespace AD_UI
 
     struct UISetup
     {
-        //std::vector<TextSet> textSets;
+        std::vector<TextLabel> textLabels;
         std::vector<Overlay2D> overlays;
         std::vector<UIComponent*> uiComponents;
         std::vector<bool> uiControllersEnabled;
     };
+
 
     class OverlayController
     {
@@ -343,11 +422,16 @@ namespace AD_UI
                     if (setup.overlays[1].active)
                     {
                         setup.overlays[1].Disable();
+                        setup.overlays[2].visible = false;
+                        setup.textLabels[0].visible = false;
+                        setup.textLabels[1].visible = false;
                         uiState = UISTATE::GAMEPLAY;
                     }
                     else
                     {
                         setup.overlays[1].Enable();
+                        setup.textLabels[0].visible = true;
+                        setup.textLabels[1].visible = true;
                         uiState = UISTATE::MENUSTATE;
                     }
                     buttonPressed = true;
@@ -373,11 +457,17 @@ namespace AD_UI
                 if (setup.overlays[1].active)
                 {
                     setup.overlays[1].Disable();
+                    setup.overlays[2].visible = false;
+                    setup.textLabels[0].visible = false;
+                    setup.textLabels[1].visible = false;
                     uiState = UISTATE::GAMEPLAY;
                 }
                 else
                 {
                     setup.uiControllersEnabled[1] = true;
+                    setup.textLabels[0].visible = true;
+                    setup.textLabels[1].visible = true;
+                    setup.overlays[2].visible = true;
                     setup.overlays[1].Enable();
                     uiState = UISTATE::MENUSTATE;
                 }
@@ -385,10 +475,25 @@ namespace AD_UI
             }
             if (Input::QueryButtonDown(GamepadButtons::Y))
             {
-                if (setup.overlays[2].visible)
-                    setup.overlays[2].visible = false;
+                if (setup.overlays[2].visible )
+                {
+                    if (!setup.overlays[1].active)
+                    {
+                        setup.overlays[2].visible = false;
+                        setup.textLabels[0].visible = false;
+                        setup.textLabels[1].visible = false;
+                    }
+                    setup.overlays[3].visible = !setup.overlays[3].visible;
+                    //setup.logVisible = !setup.logVisible;
+                }
                 else
+                {
                     setup.overlays[2].visible = true;
+                    setup.textLabels[0].visible = true;
+                    setup.textLabels[1].visible = true;
+                    setup.overlays[3].visible = true;
+                    //setup.logVisible = true;
+                }
                 buttonPressed = true;
             }
         return buttonPressed;
@@ -399,6 +504,18 @@ namespace AD_UI
     {
     public:
         StartMenuUIControllerSPYROGAME(UINT& _uiState, UISetup& _setup) : OverlayController(_uiState, _setup) {};
+
+        virtual bool ProcessInput(float delta_time)
+        {
+            bool buttonPressed = false;
+            if (Input::QueryButtonDown(GamepadButtons::Y))
+            {
+                //setup.logVisible = !setup.logVisible;
+                setup.overlays[3].visible = !setup.overlays[3].visible;
+                buttonPressed = true;
+            }
+            return buttonPressed;
+        };
 
         virtual bool ProcessResponse(UINT responseID)
         {
@@ -429,6 +546,8 @@ namespace AD_UI
     class ADUI
     {
     private:
+        UILog uiLog;
+        Text2D text;
         UISetup* setup;
         std::vector<OverlayController*> uiControllers;
         UIRendererResources uiResources;
@@ -439,10 +558,10 @@ namespace AD_UI
         void CreateQuad(QuadData& _quad, std::vector<ADResource::AD_UI::UIVertex>& vertices, std::vector<int>& indices)
         {
             UINT startIndex = vertices.size();
-            vertices.push_back({ {1,1,1,1},{_quad.x - _quad.quadWidth, _quad.y - _quad.quadHeight, 1},  {_quad.minU, _quad.maxV} });
-            vertices.push_back({ {1,1,1,1},{_quad.x - _quad.quadWidth, _quad.y + _quad.quadHeight, 1},  {_quad.minU, _quad.minV} });
-            vertices.push_back({ {1,1,1,1},{_quad.x + _quad.quadWidth, _quad.y + _quad.quadHeight, 1},  {_quad.maxU, _quad.minV} });
-            vertices.push_back({ {1,1,1,1},{_quad.x + _quad.quadWidth, _quad.y - _quad.quadHeight, 1},  {_quad.maxU, _quad.maxV} });
+            vertices.push_back({ {1,1,1,1},{_quad.x - _quad.quadWidth /2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.maxV} });
+            vertices.push_back({ {1,1,1,1},{_quad.x - _quad.quadWidth /2.f, _quad.y + _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.minV} });
+            vertices.push_back({ {1,1,1,1},{_quad.x + _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1},  {_quad.maxU, _quad.minV} });
+            vertices.push_back({ {1,1,1,1},{_quad.x + _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.maxU, _quad.maxV} });
 
             indices.push_back(startIndex);
             indices.push_back(startIndex + 1);
@@ -476,47 +595,74 @@ namespace AD_UI
             return uiState;
         }
 
-        void GameSideCode()
+
+        XMFLOAT2 GetPosition(float _percentageX, float _percentageY, float _screenWidth, float _screeHeight)
+        {
+            return { (_percentageX * _screenWidth), (_percentageY * _screeHeight) };
+        }
+
+        UILog GetLogComponent()
+        {
+            return uiLog;
+        }
+
+        void GameSideCode(float width, float height)
         {
             setup = new UISetup();
 
+            uiLog.InitializeLog(width, height);
+            uiLog.WriteToLog("UI Log Created.");
+            uiLog.WriteToLog("1.");
+            uiLog.WriteToLog("2.");
+            uiLog.WriteToLog("3.");
+            uiLog.WriteToLog("4.");
+            uiLog.WriteToLog("5.");
+            uiLog.WriteToLog("6.");
+
+
             //TitleScreen
             UINT id = AddNewOverlay(true, true, true);
-            Image2D* titleImage = new Image2D({ 0, 0, 640, 480, 0, 1, 0, 0.333f });
+            Image2D* titleImage = new Image2D({ 0, 0, width, height, 0, 1, 0, 0.333f });
             UINT compId = AddUIComponent(titleImage);
             setup->overlays[id].AddComponent(compId);
 
             //PauseScreen
             id = AddNewOverlay();
-            Image2D* pauseImage = new Image2D({ 0, 0, 640, 480, 0, 1, 0.333f, 0.666f });
+            Image2D* pauseImage = new Image2D({ 0, 0, width, height, 0, 1, 0.333f, 0.666f });
             compId = AddUIComponent(pauseImage);
             setup->overlays[id].AddComponent(compId);
 
+            //(0.05f * width), (0.1f * height)
             //HUD
             id = AddNewOverlay();
-            Image2D* image1 = new Image2D({ -490, 340, 80, 84, 0, 0.06f, 0.667f, 0.698f });
-            Image2D* image2 = new Image2D({ 490, 340, 80, 80, 0.06667f, 0.128f, 0.667f, 0.7065f });
+            Image2D* image1 = new Image2D({ -(0.45f * width), (0.4f * height), 80, 80, 0, 0.06f, 0.667f, 0.698f });
+            Image2D* image2 = new Image2D({ (0.40f * width), (0.4f * height), 80, 80, 0.06667f, 0.128f, 0.667f, 0.7065f });
             compId = AddUIComponent(image1);
             setup->overlays[id].AddComponent(compId);
             compId = AddUIComponent(image2);
             setup->overlays[id].AddComponent(compId);
 
+            TextLabel gemLabel = { false, GetPosition(0.1f, 0.1f, width, height), {"0"} };
+            TextLabel healthLabel = { false, GetPosition(0.95f, 0.1f, width, height), {"0"} };
+            setup->textLabels.push_back(gemLabel);
+            setup->textLabels.push_back(healthLabel);
+
             //Button List for Start and Pause Menus
             Button2D* button = new Button2D(
-                new Image2D({ 0, -100, 120, 30, 0.2994f, 0.4911f, 0.6666f, 0.6907f }, { 2, 0, 2, 6 }),
-                new Image2D({ 0, -100, 120, 30, 0.6848f, 0.8875f, 0.6666f, 0.6907f })
+                new Image2D({ 0, -100, 240, 60, 0.2994f, 0.4911f, 0.6666f, 0.6907f }, { 2, 0, 2, 6 }),
+                new Image2D({ 0, -100, 240, 60, 0.6848f, 0.8875f, 0.6666f, 0.6907f })
                 );
             button->actionValue = 1;
 
             Button2D* button2 = new Button2D(
-                new Image2D({ 0, -170, 120, 30, 0.2994f, 0.4911f, 0.7614, 0.7858f }),
-                new Image2D({ 0, -170, 120, 30, 0.4921f, 0.6859f, 0.7614, 0.7858f })
+                new Image2D({ 0, -170, 240, 60, 0.2994f, 0.4911f, 0.7614, 0.7858f }),
+                new Image2D({ 0, -170, 240, 60, 0.4921f, 0.6859f, 0.7614, 0.7858f })
                 );
             button2->actionValue = 2;
 
             ButtonList* buttonList = new ButtonList();
-            buttonList->y = -140;
-            buttonList->spacing = 40;
+            buttonList->y = -160;
+            buttonList->spacing = 20;
             buttonList->active = true;
             buttonList->controlFocus = true;
             buttonList->buttons.push_back(button);
@@ -535,7 +681,7 @@ namespace AD_UI
 
             buttonList = new ButtonList();
             buttonList->y = +80;
-            buttonList->spacing = 40;
+            buttonList->spacing = 20;
             buttonList->active = true;
             buttonList->controlFocus = true;
             buttonList->buttons.push_back(button);
@@ -550,6 +696,12 @@ namespace AD_UI
             setup->uiControllersEnabled.push_back(false);
             gameplayUIController->AddComponent(compId);
             uiControllers.push_back(gameplayUIController);
+
+            //UI Log
+            id = AddNewOverlay(true, true, true);
+            compId = AddUIComponent(&uiLog);
+            setup->overlays[id].AddComponent(compId);
+
         }
 
         void SetSetup(UISetup* _setup)
@@ -586,6 +738,13 @@ namespace AD_UI
                         }
                     }
 
+                    //if (uiLog.visible)
+                    //{
+                    //    QuadData* qd = uiLog.blackBox.GetQuad();
+                    //    if (qd)
+                    //        CreateQuad(*qd, setup->overlays[over].vertices, setup->overlays[over].indices);
+                    //}
+
                     //Update the Vertex buffers
                     D3D11_MAPPED_SUBRESOURCE mappedResource;
                     ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -603,9 +762,12 @@ namespace AD_UI
             }
         }
 
-        void Initialize(ComPtr<ID3D11Device1> device)
+        void Initialize(ComPtr<ID3D11Device1> device, float width, float height)
         {
-            GameSideCode();
+            GameSideCode(width, height);
+
+            text.Initialize(device.Get(), ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->context.Get());
+
             uiState = true;
 
             responseTime = 0.2f;
@@ -651,6 +813,10 @@ namespace AD_UI
                     }
                     //CreateQuad( *components[overlay[currentOverlay].componentIDs[i]]->GetQuads() );
                 }
+
+                //QuadData* qd = uiLog.blackBox.GetQuad();
+                //if (qd)
+                //    CreateQuad(*qd, setup->overlays[over].vertices, setup->overlays[over].indices);
 
                 //Create buffers
                 // Setup Vertex Buffer
@@ -827,8 +993,26 @@ namespace AD_UI
                     _context->IASetVertexBuffers(0, 1, uiVertexBuffers, strides, offsets);
                     _context->IASetIndexBuffer(setup->overlays[overly].indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
                     _context->DrawIndexed(setup->overlays[overly].indices.size(), 0, 0);
+
+                    for (int i = 0; i < setup->overlays[overly].componentIDs.size(); ++i)
+                    {
+
+                        Overlay2D ovl = setup->overlays[overly];
+                        UINT cid = ovl.componentIDs[i];
+                        TextLabel* label = setup->uiComponents[cid]->GetText();
+                        if (label)
+                        {
+                            text.Render(*label);
+                        }
+                    }
                 }
             }
+            for (int label = 0; label < setup->textLabels.size(); ++label)
+            {
+                if(setup->textLabels[label].visible)
+                    text.Render(setup->textLabels[label]);
+            }
+
             _context->OMSetDepthStencilState(nullptr, 1);
         }
 

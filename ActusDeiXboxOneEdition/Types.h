@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include <string>
 #include "ADPhysics.h"
 
 using namespace DirectX;
@@ -162,16 +163,9 @@ namespace ADResource
 			char t_albedo[256];
 		};
 
-		struct TextSet
-		{
-			ComPtr<ID3D11ShaderResourceView> albedo;
-			float spacing;
-			//Map of padding per letter
-		};
-
 		struct QuadData
 		{
-			int x, y;
+			float x, y;
 			float quadWidth;
 			float quadHeight;
 			float minU;
@@ -188,6 +182,13 @@ namespace ADResource
 			float fps;
 		};
 
+		struct TextLabel
+		{
+			bool visible;
+			XMFLOAT2 position;
+			std::string output;
+		};
+
 		class UIComponent
 		{
 		public:
@@ -201,6 +202,7 @@ namespace ADResource
 			virtual QuadData** GetQuads() { return nullptr; };
 			virtual QuadData* GetQuad() { return nullptr; };
 			virtual UINT GetQuadCount() { return quadCount; };
+			virtual TextLabel* GetText() { return nullptr; };
 			virtual void Enable() { visible = true; active = true; };
 			virtual void Disable() { visible = false; active = false; };
 			virtual void CleanUp() {};
