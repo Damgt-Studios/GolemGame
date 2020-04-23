@@ -26,7 +26,8 @@ bool Engine::Initialize()
 	engine_time = XTime();
 	engine_time.Restart();
 
-	userInterface.Initialize(pbr.GetPBRRendererResources()->device);
+	userInterface.Initialize(pbr.GetPBRRendererResources()->device, pbr.GetPBRRendererResources()->viewport.Width, pbr.GetPBRRendererResources()->viewport.Height);
+	//pbr.GetPBRRendererResources()->viewport.
 
 	return true;
 }
@@ -132,6 +133,16 @@ void Engine::MoveCamera(XMFLOAT3 move_direction)
 void Engine::RotateCamera(float yaw, float pitch)
 {
 	camera->Rotate(yaw, pitch);
+}
+
+void Engine::SetupUserInterface(AD_UI::UISetup* _setup)
+{
+	userInterface.SetSetup(_setup);
+}
+
+AD_UI::ADUI* Engine::GetUserInterface()
+{
+	return nullptr;
 }
 
 ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
