@@ -5,6 +5,7 @@
 #include <collection.h>
 #include "Engine.h"
 #include "ADPhysics.h"
+#include "ADUserInterface.h"
 
 #include "AudioManager.h"
 #include "GameUtilities.h"

@@ -408,6 +408,7 @@ namespace AD_UI
 
     class GameplayUIControllerSPYROGAME : public OverlayController
     {
+        int timesPressed = 0;
     public:
         GameplayUIControllerSPYROGAME(UINT& _uiState, UISetup& _setup) : OverlayController(_uiState, _setup) {};
 
@@ -494,6 +495,13 @@ namespace AD_UI
                     setup.overlays[3].visible = true;
                     //setup.logVisible = true;
                 }
+                buttonPressed = true;
+            }
+            if (Input::QueryButtonDown(GamepadButtons::X))
+            {
+                timesPressed += 1;
+                setup.textLabels[0].output.clear();
+                setup.textLabels[0].output = std::to_string(timesPressed);
                 buttonPressed = true;
             }
         return buttonPressed;
