@@ -41,6 +41,8 @@ public:
 	OrbitCamera* GetOrbitCamera();
 	void MoveCamera(XMFLOAT3 move_direction);
 	void RotateCamera(float yaw, float pitch);
+	void SetupUserInterface(AD_UI::UISetup* _setup);
+	AD_UI::ADUI* GetUserInterface();
 
 private:
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();

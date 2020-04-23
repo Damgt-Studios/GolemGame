@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include <string>
 #include "ADPhysics.h"
 
 using namespace DirectX;
@@ -178,6 +179,13 @@ namespace ADResource
 			float fps;
 		};
 
+		struct TextLabel
+		{
+			bool visible;
+			XMFLOAT2 position;
+			std::string output;
+		};
+
 		class UIComponent
 		{
 		public:
@@ -191,6 +199,7 @@ namespace ADResource
 			virtual QuadData** GetQuads() { return nullptr; };
 			virtual QuadData* GetQuad() { return nullptr; };
 			virtual UINT GetQuadCount() { return quadCount; };
+			virtual TextLabel* GetText() { return nullptr; };
 			virtual void Enable() { visible = true; active = true; };
 			virtual void Disable() { visible = false; active = false; };
 			virtual void CleanUp() {};

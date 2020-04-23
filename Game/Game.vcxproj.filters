@@ -32,6 +32,7 @@
     <ClCompile Include="Spyro.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="GameplayBaseClasses.cpp" />
+    <ClCompile Include="GameUserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -198,5 +199,6 @@
     <ClInclude Include="Spyro.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="GameplayBaseClasses.h" />
+    <ClInclude Include="GameUserInterface.h" />
   </ItemGroup>
 </Project>

@@ -130,6 +130,16 @@ void Engine::RotateCamera(float yaw, float pitch)
 	camera->Rotate(yaw, pitch);
 }
 
+void Engine::SetupUserInterface(AD_UI::UISetup* _setup)
+{
+	userInterface.SetSetup(_setup);
+}
+
+AD_UI::ADUI* Engine::GetUserInterface()
+{
+	return nullptr;
+}
+
 ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
 {
 	return &pbr;

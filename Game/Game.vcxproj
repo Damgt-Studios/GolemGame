@@ -303,6 +303,7 @@
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="GameplayBaseClasses.h" />
+    <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="pchgame.h" />
     <ClInclude Include="Spyro.h" />
@@ -311,6 +312,7 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="GameplayBaseClasses.cpp" />
+    <ClCompile Include="GameUserInterface.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pchgame.cpp">
