@@ -52,12 +52,19 @@ void ADResource::ADGameplay::Spyro::Remove()
 
 void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 {
-	if (AabbToAabbCollision(collider, item))
+	Manifold m;
+
+	if (AabbToAabbCollision(collider, item, m))
 	{
 		jumping = false;
 		jump_count_down = 0;
 		og_y_pos = og_y_pos = GetPosition().y;
 	}
+}
+
+void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
+{
+
 }
 
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
