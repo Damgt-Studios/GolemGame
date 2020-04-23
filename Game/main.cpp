@@ -269,6 +269,19 @@ public:
 
 	void ProcessInput()
 	{
+		if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
+		{
+			if (effect_triggered) audio_manager->ResumeEffect(0, effect_id);
+			else {
+				effect_triggered = true;
+				effect_id = audio_manager->PlayEffect(0);
+			}
+		}
+		if (Input::QueryButtonDown(GamepadButtons::DPadRight))
+		{
+			audio_manager->PauseEffect(0, effect_id);
+		}
+
 		static float camera_rotation_thresh = 250;
 		float dt = delta_time;
 
@@ -294,7 +307,7 @@ public:
 			{
 				shutdown = true;
 			}
-			else if (Input::QueryButtonDown(GamepadButtons::DPadDown))
+			else if (Input::QueryButtonDown(GamepadButtons::RightThumbstick))
 			{
 				yaw = default_yaw;
 				pitch = default_pitch;
@@ -304,19 +317,6 @@ public:
 
 	void OnKeyDown(CoreWindow^ Window, KeyEventArgs^ args)
 	{
-		if (args->VirtualKey == VirtualKey::A)
-		{
-			if (effect_triggered) audio_manager->ResumeEffect(0, effect_id);
-			else {
-				effect_triggered = true;
-				effect_id = audio_manager->PlayEffect(0);
-			}
-		}
-		if (args->VirtualKey == VirtualKey::D)
-		{
-			audio_manager->PauseEffect(0, effect_id);
-		}
-
 		bool enabled = false;
 
 		if (enabled)
@@ -363,7 +363,6 @@ public:
 		}
 	}
 };
-
 
 // the class definition that creates an instance of our core framework class
 ref class AppSource sealed : IFrameworkViewSource

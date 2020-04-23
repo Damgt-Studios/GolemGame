@@ -1,5 +1,5 @@
 #pragma once
-#include "DirectXMath.h"
+//#include "DirectXMath.h"
 #include "ADMath.h"
 
 namespace ADPhysics
