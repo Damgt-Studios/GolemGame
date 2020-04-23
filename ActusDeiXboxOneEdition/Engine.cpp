@@ -26,8 +26,7 @@ bool Engine::Initialize()
 	engine_time = XTime();
 	engine_time.Restart();
 
-	userInterface.Initialize(pbr.GetPBRRendererResources()->device, pbr.GetPBRRendererResources()->viewport.Width, pbr.GetPBRRendererResources()->viewport.Height);
-	//pbr.GetPBRRendererResources()->viewport.
+	userInterface->Initialize(pbr.GetPBRRendererResources()->device.Get(), pbr.GetPBRRendererResources()->context.Get());
 
 	return true;
 }
@@ -38,7 +37,7 @@ bool Engine::Update()
 	engine_time.Signal();
 	delta_time_sd = engine_time.SmoothDelta();
 	delta_time_sf = static_cast<float>(delta_time_sd);
-	if (userInterface.GetUIState()==0)
+	if (userInterface->GetUIState()==0)
 	{
 
 		// For each game object, call update
@@ -52,12 +51,12 @@ bool Engine::Update()
 
 		//pbr.Update(camera, ocamera); //  Needs error checking
 	}
-	else if (userInterface.GetUIState() == 2)
+	else if (userInterface->GetUIState() == 2)
 	{
 		return false;
 	}
 
-	userInterface.Update(delta_time_sf);
+	userInterface->Update(delta_time_sf);
 	return true;
 }
 
@@ -72,7 +71,7 @@ bool Engine::Render()
 	}
 
 	pbr.Render(camera, ocamera);
-	userInterface.Render(pbr.GetPBRRendererResources()->context.Get(), pbr.GetPBRRendererResources()->render_target_view.Get());
+	userInterface->Render(pbr.GetPBRRendererResources()->context.Get(), pbr.GetPBRRendererResources()->render_target_view.Get());
 	pbr.Frame();
 
 	return true;
@@ -81,7 +80,7 @@ bool Engine::Render()
 bool Engine::ShutDown()
 {
 	pbr.ShutDown();
-	userInterface.ShutDown();
+	userInterface->ShutDown();
 	return true;
 }
 
@@ -130,15 +129,15 @@ void Engine::RotateCamera(float yaw, float pitch)
 	camera->Rotate(yaw, pitch);
 }
 
-void Engine::SetupUserInterface(AD_UI::UISetup* _setup)
+void Engine::SetupUserInterface(AD_UI::ADUI* _uiSetup)
 {
-	userInterface.SetSetup(_setup);
+	userInterface = _uiSetup;
 }
-
-AD_UI::ADUI* Engine::GetUserInterface()
-{
-	return nullptr;
-}
+//
+//AD_UI::ADUI* Engine::GetUserInterface()
+//{
+//	return nullptr;
+//}
 
 ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
 {
