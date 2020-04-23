@@ -30,7 +30,8 @@ namespace ADResource
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
 			AABB collider;
-			PhysicsMaterial mat = PhysicsMaterial(1,1,0);
+			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
+
 
 			// Gameplay
 			float jump_time_up = .4;
@@ -40,7 +41,9 @@ namespace ADResource
 			float og_y_pos = 0;
 			float gravity = 50;
 			bool jumping = false;
-			XMFLOAT3 Velocity;
+
+			float floatiness = 0.25f;
+			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
 
 			// Turning
 			float spyro_turn_speed = 5;

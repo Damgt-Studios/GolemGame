@@ -66,6 +66,7 @@ private:
 	// Physics
 	ADPhysics::AABB test_colider;
 	ADPhysics::AABB test_colider1;
+	ADPhysics::Plane test_plane;
 
 public:
 	// some functions called by Windows
@@ -199,6 +200,7 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
+		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(100, 0, 100));
 
 		while (!shutdown)
 		{
@@ -228,6 +230,8 @@ public:
 			// Physics test
 			spyro->CheckCollision(test_colider);
 			spyro->CheckCollision(test_colider1);
+			spyro->CheckCollision(test_plane);
+
 			// Test
 
 			// Poll input
@@ -236,6 +240,8 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
+
+
 
 			// Update framerate
 			if (timer > 1)
