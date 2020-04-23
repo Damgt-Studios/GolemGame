@@ -6,7 +6,7 @@ MemoryManager memoryManager;
 MemoryManager::MemoryManager()
 {
 	// Allocate 5 GB of RAM for application
-	//memoryBuffer = (char*)calloc(FIVE_GB, sizeof(char));
+	memoryBuffer = (char*)calloc(FIVE_GB, sizeof(char));
 	allocatedSize = 0;
 	memset(handles, NULL, ADMEMORY_ARRAY_SIZE);
 }

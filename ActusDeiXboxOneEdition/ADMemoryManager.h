@@ -59,6 +59,11 @@ public:
 		isArray = true;
 	}
 
+	Handle(const Handle<Type>& that)
+	{
+		*this = that;
+	}
+
 	~Handle()
 	{
 		Delete();
@@ -94,6 +99,17 @@ public:
 		if (!ptr)
 			assert(NULL);
 		return *ptr;
+	}
+
+	Handle<Type>& operator=(const Handle<Type>& that)
+	{
+		if (this != that)
+		{
+			this->handleIndex = that.handleIndex;
+			this->ptr = that.ptr;
+			this->isArray = that.isArray;
+		}
+		return *this;
 	}
 
 #pragma region New()
@@ -226,7 +242,7 @@ public:
 	// Allocates a required chunk of memory from the memory buffer
 	// If the array constructor is called this function isn't neccessary
 	// CALL THIS FUNCTION BEFORE CALLING ANYTHING ELSE
-	void New(size_t arraySize)
+	void NewArray(size_t arraySize)
 	{
 		if (!isArray)
 		{
