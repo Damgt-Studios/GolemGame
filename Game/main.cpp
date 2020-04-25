@@ -163,6 +163,7 @@ public:
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		Renderable* a3 = GameUtilities::AddPBRStaticAsset("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -179,8 +180,9 @@ public:
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
 		GameUtilities::AddGameObject(c1);
 		GameUtilities::AddGameObject(c2);
-		GameUtilities::AddGameObject(a1);
+		//GameUtilities::AddGameObject(a1);
 		GameUtilities::AddGameObject(a2);
+		GameUtilities::AddGameObject(a3);
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
@@ -191,8 +193,6 @@ public:
 		{
 			return;
 		}
-
-		//ApplicationView::GetForCurrentView()->;
 
 		// Timing
 		game_time.Restart();
