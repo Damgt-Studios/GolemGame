@@ -5,37 +5,6 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 {
 	HandleInput(delta_time);
 
-	// GAMEPLAY
-	// Jumping
-	//if (jumping)
-	//{
-	//	jump_count_down += delta_time;
-
-	//	if (jump_count_down < jump_time_length)
-	//	{
-	//		if (jump_count_down <= jump_time_up)
-	//		{
-	//			// Jump completion ratio
-	//			float jump_up_ratio = jump_count_down / jump_time_up;
-
-	//			transform.r[3].m128_f32[1] =
-	//				lerp(GetPosition().y, jump_height, jump_up_ratio);
-	//		}
-	//		else
-	//		{
-	//			transform.r[3].m128_f32[1] = GetPosition().y - (gravity * delta_time);
-	//		}
-	//	}
-
-	//	if (GetPosition().y <= 0)
-	//	{
-	//		jumping = false;
-	//		jump_count_down = 0;
-	//		transform.r[3].m128_f32[1] = 0;
-	//		og_y_pos = GetPosition().y;
-	//	}
-	//}
-
 	// Physics
 	collider = AABB(GetPosition(), XMFLOAT3(2, 2, 2));
 }

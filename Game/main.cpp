@@ -127,14 +127,14 @@ public:
 			XMFLOAT4(1, 1, 1, 1);
 		light.ambientIntensityDown = .1;
 		light.ambientIntensityUp = .1;
-		light.lightDirection = XMFLOAT4(0, 0, 10, 1);
+		light.lightDirection = XMFLOAT4(0, -1, 0, 1);
 		light.diffuseIntensity = 1;
 		light.specularIntensity = .2;
 		light.diffuse =
 			light.ambientUp =
 			light.ambientDown =
 			light.specular =
-			XMFLOAT4(0, 0, 1, 1);
+			XMFLOAT4(1, 1, 1, 1);
 		ResourceManager::AddLight(light);
 
 		// Point light

@@ -165,7 +165,7 @@ float4 main(OutputVertex input) : SV_TARGET
     float3 F = fresnelSchlick(max(dot(H, V), 0), F0);
     
     float3 KS = F;
-    float3 KD = float3(1.0, 1, 1) - KS;
+    float3 KD = float3(1.0, 1.0, 1.0) - KS;
     KD *= 1.0 - metallic;
     
     float3 numerator = NDF * G * F;
