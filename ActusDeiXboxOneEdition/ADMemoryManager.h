@@ -10,7 +10,7 @@ using namespace std;
 namespace
 {
 	const int ADMEMORY_ARRAY_SIZE = 1000;
-	const long long FIVE_GB = 5000000000;
+	const long long FIVE_GB = 4500000000;
 }
 
 class MemoryManager
@@ -38,9 +38,6 @@ private:
 
 extern MemoryManager memoryManager;
 
-//void* operator new(size_t size);
-//void* operator new[](size_t size);
-
 template<typename Type>
 class Handle
 {
@@ -54,7 +51,7 @@ public:
 
 	Handle(size_t arraySize)
 	{
-		ptr = new Type[arraySize];
+		ptr = (Type*)memoryManager.Allocate(arraySize * sizeof(Type));
 		handleIndex = memoryManager.GetAvailableHandle();
 		isArray = true;
 	}
@@ -121,7 +118,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type;
+			Type localVar;
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -135,7 +134,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam);
+			Type localVar(firstParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -149,7 +150,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam);
+			Type localVar(firstParam, secondParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -163,7 +166,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam, thirdParam);
+			Type localVar(firstParam, secondParam, thirdParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -177,7 +182,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam, thirdParam, fourthParam);
+			Type localVar(firstParam, secondParam, thirdParam, fourthParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -191,7 +198,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam, thirdParam, fourthParam, fifthParam);
+			Type localVar(firstParam, secondParam, thirdParam, fourthParam, fifthParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -205,7 +214,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam, thirdParam, fourthParam, fifthParam, sixthParam);
+			Type localVar(firstParam, secondParam, thirdParam, fourthParam, fifthParam, sixthParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -219,7 +230,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam, thirdParam, fourthParam, fifthParam, sixthParam, seventhParam);
+			Type localVar(firstParam, secondParam, thirdParam, fourthParam, fifthParam, sixthParam, seventhParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -233,7 +246,9 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type(firstParam, secondParam, thirdParam, fourthParam, fifthParam, sixthParam, seventhParam, eighthParam);
+			Type localVar(firstParam, secondParam, thirdParam, fourthParam, fifthParam, sixthParam, seventhParam, eighthParam);
+			ptr = (Type*)memoryManager.Allocate(sizeof(localVar));
+			memcpy(ptr, &localVar, sizeof(localVar));
 			handleIndex = memoryManager.GetAvailableHandle();
 		}
 	}
@@ -246,7 +261,7 @@ public:
 	{
 		if (!isArray)
 		{
-			ptr = new Type[arraySize];
+			ptr = (Type*)memoryManager.Allocate(arraySize * sizeof(Type));
 			handleIndex = memoryManager.GetAvailableHandle();
 			isArray = true;
 		}
@@ -271,43 +286,3 @@ private:
 	Type* ptr;
 	bool isArray;
 };
-
-template <typename Type>
-class ADAllocator
-{
-public:
-	typedef Type value_type;
-
-	ADAllocator() noexcept
-	{
-
-	}
-
-	template <typename U>
-	ADAllocator(const ADAllocator<U>&) noexcept
-	{
-
-	}
-
-	Type* allocate(size_t num)
-	{
-		return static_cast<Type*>(malloc(num * sizeof(Type)));
-	}
-
-	void deallocate(Type* p, size_t num)
-	{
-		free(p);
-	}
-
-	bool operator== (const ADAllocator<Type>&) noexcept
-	{
-		return true;
-	}
-
-	bool operator!= (const ADAllocator<Type>&) noexcept
-	{
-		return false;
-	}
-};
-
-#define allocator ADAllocator

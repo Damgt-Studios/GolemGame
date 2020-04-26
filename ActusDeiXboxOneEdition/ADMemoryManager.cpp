@@ -124,13 +124,3 @@ size_t MemoryManager::GetNextHandle()
 	assert(NULL);
 	return 0;
 }
-
-//void* operator new(size_t size)
-//{
-//	return memoryManager.Allocate(size);
-//}
-//
-//void* operator new[](size_t size)
-//{
-//	return memoryManager.Allocate(size);
-//}
