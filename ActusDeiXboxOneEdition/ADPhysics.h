@@ -82,35 +82,6 @@ namespace ADPhysics
 		}
 	};
 
-	struct Raycast
-	{
-		XMFLOAT3 Start, End;
-		Raycast() : Start(XMFLOAT3(0, 0, 0)), End(XMFLOAT3(0, 0, 0)) {};
-		Raycast(XMFLOAT3 Begin, XMFLOAT3 End) : Start(Begin), End(End) {};
-	};
-
-	struct AxisPoint
-	{
-		XMFLOAT3 Pos, AxisX, AxisY, AxisZ;
-		AxisPoint()
-		{
-			Pos = XMFLOAT3(0, 0, 0);
-			AxisX = XMFLOAT3(1, 0, 0);
-			AxisY = XMFLOAT3(0, 1, 0);
-			AxisZ = XMFLOAT3(0, 0, 1);
-		}
-
-		AxisPoint(XMFLOAT3 Position, XMFLOAT3 X, XMFLOAT3 Y, XMFLOAT3 Z) : Pos(Position), AxisX(X), AxisY(Y), AxisZ(Z) { };
-
-		AxisPoint(XMMATRIX Transform)
-		{
-			Pos = (XMFLOAT3&)Transform.r[3];
-			AxisX = (XMFLOAT3&)Transform.r[0];
-			AxisY = (XMFLOAT3&)Transform.r[1];
-			AxisZ = (XMFLOAT3&)Transform.r[2];
-		}
-	};
-
 	struct PhysicsMaterial
 	{
 		float Mass;
@@ -126,6 +97,11 @@ namespace ADPhysics
 		float PenetrationDepth;
 		XMFLOAT3 Normal;
 		XMFLOAT4 ContactPoint;
+	};
+
+	struct Interval
+	{
+		float min, max;
 	};
 
 	static float Gravity = -9.8f;
@@ -187,36 +163,148 @@ namespace ADPhysics
 				fabs(VectorDot((Float3Multiply(obb.AxisZ, obb.HalfSize.z)), Axis))));
 	}
 
-	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const OBB& box, const AxisPoint& point)
-	{
-		return (fabs(VectorDot(Difference, Axis)) >
-			(fabs(VectorDot((Float3Multiply(box.AxisX, box.HalfSize.x)), Axis)) +
-				fabs(VectorDot((Float3Multiply(box.AxisY, box.HalfSize.y)), Axis)) +
-				fabs(VectorDot((Float3Multiply(box.AxisZ, box.HalfSize.z)), Axis)) +
-				fabs(VectorDot((Float3Multiply(point.AxisX, 0.1f)), Axis)) +
-				fabs(VectorDot((Float3Multiply(point.AxisY, 0.1f)), Axis)) +
-				fabs(VectorDot((Float3Multiply(point.AxisZ, 0.1f)), Axis))));
-	}
-
-	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const Plane& plane, const AxisPoint& point)
-	{
-		return (fabs(VectorDot(Difference, Axis)) >
-			(fabs(VectorDot((Float3Multiply(plane.AxisX, plane.HalfSize.x)), Axis)) +
-				fabs(VectorDot((Float3Multiply(plane.AxisY, plane.HalfSize.y)), Axis)) +
-				fabs(VectorDot((Float3Multiply(plane.AxisZ, plane.HalfSize.z)), Axis)) +
-				fabs(VectorDot(point.AxisX, Axis)) +
-				fabs(VectorDot(point.AxisY, Axis)) +
-				fabs(VectorDot(point.AxisZ, Axis))));
-	}
-
-	//------------------------------------------Distance Formula
+	//------------------------------------------Helper Function
 
 	static float CalculateDistance(const XMFLOAT3& first, const XMFLOAT3& second)
 	{
 		return sqrt(pow(second.x - first.x, 2) + pow(second.y - first.y, 2) + pow(second.z - first.z, 2));
 	}
 
-	
+	static float CalculateSquaredDistance(const XMFLOAT3& first, const XMFLOAT3& second)
+	{
+		return pow(second.x - first.x, 2) + pow(second.y - first.y, 2) + pow(second.z - first.z, 2);
+	}
+
+	static float Magnitude(const XMFLOAT3& Vector)
+	{
+		return sqrt(pow(Vector.x, 2) + pow(Vector.y, 2) + pow(Vector.z, 2));
+	}
+
+	static float MagnitudeSq(const XMFLOAT3& Vector)
+	{
+		return pow(Vector.x, 2) + pow(Vector.y, 2) + pow(Vector.z, 2);
+	}
+
+	static XMFLOAT3 FindClosestPoint(const XMFLOAT3& Point, const Sphere& sphere)
+	{
+		XMVECTOR SphereToPoint = (XMVECTOR&)Point - (XMVECTOR&)sphere.Pos;
+		SphereToPoint = XMVector3Normalize(SphereToPoint);
+		SphereToPoint *= sphere.Radius;
+		return (XMFLOAT3&)(SphereToPoint + (XMVECTOR&)sphere.Pos);
+	}
+
+	static XMFLOAT3 FindClosestPoint(const XMFLOAT3& Point, const AABB& aabb)
+	{
+		XMFLOAT3 result = Point;
+		XMFLOAT3 max = aabb.Max;
+		XMFLOAT3 min = aabb.Min;
+
+		result.x = result.x < min.x ? min.x : result.x;
+		result.y = result.y < min.y ? min.y : result.y;
+		result.z = result.z < min.z ? min.z : result.z;
+
+		result.x = result.x > max.x ? max.x : result.x;
+		result.y = result.y > max.y ? max.y : result.y;
+		result.z = result.z > max.z ? max.z : result.z;
+
+		return result;
+	}
+
+	static XMFLOAT3 FindClosestPoint(const XMFLOAT3& point, const OBB& obb)
+	{
+		XMFLOAT3 result = obb.Pos;
+		XMFLOAT3 Direction = (XMFLOAT3&)((XMVECTOR&)point - (XMVECTOR&)result);
+
+		float distance = VectorDot(Direction, obb.AxisX);
+
+		if (distance > obb.HalfSize.x)
+			distance = obb.HalfSize.x;
+
+		if (distance < -obb.HalfSize.x)
+			distance = -obb.HalfSize.x;
+
+		result = (XMFLOAT3&)((XMVECTOR&)result + ((XMVECTOR&)obb.AxisX * distance));
+
+		distance = VectorDot(Direction, obb.AxisY);
+
+		if (distance > obb.HalfSize.y)
+			distance = obb.HalfSize.y;
+
+		if (distance < -obb.HalfSize.y)
+			distance = -obb.HalfSize.y;
+
+		result = (XMFLOAT3&)((XMVECTOR&)result + ((XMVECTOR&)obb.AxisY * distance));
+
+		distance = VectorDot(Direction, obb.AxisZ);
+
+		if (distance > obb.HalfSize.z)
+			distance = obb.HalfSize.z;
+
+		if (distance < -obb.HalfSize.z)
+			distance = -obb.HalfSize.z;
+
+		result = (XMFLOAT3&)((XMVECTOR&)result + ((XMVECTOR&)obb.AxisZ * distance));
+
+		return result;
+	}
+
+	static Interval GetInterval(const AABB& aabb, const XMFLOAT3& axis)
+	{
+		Interval result;
+
+		XMFLOAT3 a = aabb.Min;
+		XMFLOAT3 i = aabb.Max;
+
+		XMFLOAT3 vertex[] =
+		{
+			XMFLOAT3(i.x, a.y, a.z),
+			XMFLOAT3(i.x, a.y, i.z),
+			XMFLOAT3(i.x, i.y, a.z),
+			XMFLOAT3(i.x, i.y, i.z),
+			XMFLOAT3(a.x, a.y, a.z),
+			XMFLOAT3(a.x, a.y, i.z),
+			XMFLOAT3(a.x, i.y, a.z),
+			XMFLOAT3(a.x, i.y, i.z)
+		};
+
+		result.min = result.max = VectorDot(axis, vertex[0]);
+
+		for (unsigned int i = 1; i < 8; i++)
+		{
+			float projection = VectorDot(axis, vertex[i]);
+			result.min = projection < result.min ? projection : result.min;
+			result.max = projection > result.max ? projection : result.max;
+		}
+		return result;
+	}
+
+	static Interval GetInterval(const OBB& obb, const XMFLOAT3& axis)
+	{
+		Interval result;
+
+		XMFLOAT3 vertex[8];
+
+		XMVECTOR C = (XMVECTOR&)obb.Pos;
+
+		vertex[0] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[1] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[2] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[3] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[4] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[5] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[6] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[7] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+
+		result.min = result.max = VectorDot(axis, vertex[0]);
+
+		for (unsigned int i = 1; i < 8; i++)
+		{
+			float projection = VectorDot(axis, vertex[i]);
+			result.min = projection < result.min ? projection : result.min;
+			result.max = projection > result.max ? projection : result.max;
+		}
+		return result;
+	}
 
 	//------------------------------------------Self Collision
 
@@ -255,27 +343,27 @@ namespace ADPhysics
 
 		if (Overlap.x <= Overlap.y && Overlap.x <= Overlap.z)
 		{
-		    ContactNormal = XMFLOAT3(1, 0, 0);
-		    PenetrationDepth = Overlap.x;
+			ContactNormal = XMFLOAT3(1, 0, 0);
+			PenetrationDepth = Overlap.x;
 		}
 		if (Overlap.y <= Overlap.x && Overlap.y <= Overlap.z)
 		{
-		    ContactNormal = XMFLOAT3(0, 1, 0);
-		    PenetrationDepth = Overlap.y;
+			ContactNormal = XMFLOAT3(0, 1, 0);
+			PenetrationDepth = Overlap.y;
 		}
 		if (Overlap.z <= Overlap.x && Overlap.z <= Overlap.y)
 		{
-		    ContactNormal = XMFLOAT3(0, 0, 1);
-		    PenetrationDepth = Overlap.z;
+			ContactNormal = XMFLOAT3(0, 0, 1);
+			PenetrationDepth = Overlap.z;
 		}
 
-		XMVECTOR Vector = (XMVECTOR&)(box2.Pos)-(XMVECTOR&)(box1.Pos);
+		XMVECTOR Vector = (XMVECTOR&)(box2.Pos) - (XMVECTOR&)(box1.Pos);
 		XMFLOAT4 FloatVector = VectorToFloat4(Vector);
 
 		float dot = FloatVector.x * ContactNormal.x + FloatVector.y * ContactNormal.y + FloatVector.z * ContactNormal.z;
 
 		if (dot < 0)
-		    ContactNormal = XMFLOAT3(-ContactNormal.x, -ContactNormal.y, -ContactNormal.z);
+			ContactNormal = XMFLOAT3(-ContactNormal.x, -ContactNormal.y, -ContactNormal.z);
 
 		XMVECTOR cp = ((XMVECTOR&)collisionMax + (XMVECTOR&)collisionMin) * 0.5f;
 		cp -= (XMVECTOR&)ContactNormal * PenetrationDepth * 0.5f;
@@ -290,7 +378,7 @@ namespace ADPhysics
 		return true;
 	}
 
-	static bool ObbToObbCollision(const OBB& box1, const OBB& box2, Manifold &m)
+	static bool ObbToObbCollision(const OBB& box1, const OBB& box2, Manifold& m)
 	{
 		static XMFLOAT3 Difference;
 		Difference = XMFLOAT3(box2.Pos.x - box1.Pos.x, box2.Pos.y - box1.Pos.y, box2.Pos.z - box1.Pos.z);
@@ -315,125 +403,74 @@ namespace ADPhysics
 		if (temp == false)
 			return false;
 
-		return true; // Seperating axis not found
-	}
+		//Axises Needed are required to be Normalized. First 6 should already be normalized
+		XMFLOAT3 Axises[] = {
+			 box1.AxisX,
+			 box1.AxisY,
+			 box1.AxisZ,
+			 box2.AxisX,
+			 box2.AxisY,
+			 box2.AxisZ,
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisX), Float3ToVector(box2.AxisX))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisX), Float3ToVector(box2.AxisY))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisX), Float3ToVector(box2.AxisZ))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisY), Float3ToVector(box2.AxisX))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisY), Float3ToVector(box2.AxisY))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisY), Float3ToVector(box2.AxisZ))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisZ), Float3ToVector(box2.AxisX))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisZ), Float3ToVector(box2.AxisY))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisZ), Float3ToVector(box2.AxisZ)))
+		};
 
-	//------------------------------------------Raycast Collisions
+		int AxisOfMinimumCollision;
+		float MinOverlap = 100;
 
-	static bool RaycastToSphere(const Raycast& ray, const Sphere sphere)
-	{
-		XMVECTOR StartToEnd = (XMVECTOR&)ray.End - (XMVECTOR&)ray.Start;
-		StartToEnd = XMVector3Normalize(StartToEnd);
-		XMVECTOR StartToTest = (XMVECTOR&)sphere.Pos - (XMVECTOR&)ray.Start;
-		float ClosestPointDist = VectorDot(StartToEnd, StartToTest);
-		XMFLOAT3 ClosestPoint;
-		if (ClosestPointDist < 0)
-			ClosestPoint = ray.Start;
-		else if (ClosestPointDist > ADPhysics::CalculateDistance(ray.Start, ray.End))
-			ClosestPoint = ray.End;
-		else
+		//Floating Point "Fix"
+		for (unsigned int i = 0; i < 15; i++)
 		{
-			XMVECTOR temp = StartToEnd * ClosestPointDist;
-			ClosestPoint = (XMFLOAT3&)((XMVECTOR&)ray.Start + temp);
-		}
-		float Distance = ADPhysics::CalculateDistance(ClosestPoint, sphere.Pos);
-		return Distance < sphere.Radius;
-	}
+			if (Axises[i].x < 0.00001f && Axises[i].x > -0.00001f)
+				Axises[i].x = 0;
 
-	static bool RaycastToAabb(const Raycast& ray, const AABB& box)
-	{
-		XMVECTOR StartToEnd = (XMVECTOR&)ray.End - (XMVECTOR&)ray.Start;
-		float Radius = abs(VectorDot(box.Extents, (XMFLOAT3&)StartToEnd));
-		Sphere temp = Sphere(box.Pos, Radius);
-		return ADPhysics::RaycastToSphere(ray, temp);
-	}
+			if (Axises[i].y < 0.00001f && Axises[i].y > -0.00001f)
+				Axises[i].y = 0;
 
-	static bool RaycastToObb(const Raycast& ray, const OBB& box)
-	{
-		XMVECTOR Z = Float3ToVector(ray.End) - Float3ToVector(ray.Start);
-		Z = XMVector3Normalize(Z);
-
-		XMVECTOR X = XMVector3Cross({ 0,1,0 }, Z);
-		X = XMVector3Normalize(X);
-
-		XMVECTOR Y = XMVector3Cross(Z, X);
-		Y = XMVector3Normalize(Y);
-
-		AxisPoint point = AxisPoint({ 0,0,0 }, (XMFLOAT3&)X, (XMFLOAT3&)Y, (XMFLOAT3&)Z);
-
-		XMVECTOR StartToTest = (XMVECTOR&)box.Pos - (XMVECTOR&)ray.Start;
-		float ClosestPointDist = VectorDot(Z, StartToTest);
-		XMFLOAT3 ClosestPoint;
-		if (ClosestPointDist < 0)
-			ClosestPoint = ray.Start;
-		else if (ClosestPointDist > CalculateDistance(ray.Start, ray.End))
-			ClosestPoint = ray.End;
-		else
-		{
-			XMVECTOR temp = Z * ClosestPointDist;
-			ClosestPoint = (XMFLOAT3&)((XMVECTOR&)ray.Start + temp);
+			if (Axises[i].z < 0.00001f && Axises[i].z > -0.00001f)
+				Axises[i].z = 0;
 		}
 
-		point.Pos = ClosestPoint;
-
-		static XMFLOAT3 Difference;
-		Difference = XMFLOAT3(point.Pos.x - box.Pos.x, point.Pos.y - box.Pos.y, point.Pos.z - box.Pos.z);
-
-		return !(
-			ADPhysics::SerparatingAxisTest(Difference, box.AxisX, box, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, box.AxisY, box, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, box.AxisZ, box, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, point.AxisX, box, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, point.AxisY, box, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, point.AxisZ, box, point));
-	}
-
-	static bool RaycastToPlane(const Raycast& ray, const Plane& plane)
-	{
-		if (VectorDot(ray.Start, plane.Normal) - VectorDot(plane.Pos, plane.Normal) < 0 &&
-			VectorDot(ray.End, plane.Normal) - VectorDot(plane.Pos, plane.Normal) < 0)
-			return false;
-
-		if (VectorDot(ray.Start, plane.Normal) - VectorDot(plane.Pos, plane.Normal) > 0 &&
-			VectorDot(ray.End, plane.Normal) - VectorDot(plane.Pos, plane.Normal) > 0)
-			return false;
-
-		XMVECTOR Z = Float3ToVector(ray.End) - Float3ToVector(ray.Start);
-		Z = XMVector4Normalize(Z);
-
-		XMVECTOR X = XMVector3Cross({ 0,1,0 }, Z);
-		X = XMVector3Normalize(X);
-
-		XMVECTOR Y = XMVector3Cross(Z, X);
-		Y = XMVector3Normalize(Y);
-
-		AxisPoint point = AxisPoint({ 0,0,0 }, (XMFLOAT3&)X, (XMFLOAT3&)Y, (XMFLOAT3&)Z);
-
-		XMVECTOR StartToTest = (XMVECTOR&)plane.Pos - (XMVECTOR&)ray.Start;
-		float ClosestPointDist = VectorDot(Z, StartToTest);
-		XMFLOAT3 ClosestPoint;
-		if (ClosestPointDist < 0)
-			ClosestPoint = ray.Start;
-		else if (ClosestPointDist > CalculateDistance(ray.Start, ray.End))
-			ClosestPoint = ray.End;
-		else
+		//Get the Interval of each Axis
+		for (unsigned int i = 0; i < 15; i++)
 		{
-			XMVECTOR temp = Z * ClosestPointDist;
-			ClosestPoint = (XMFLOAT3&)((XMVECTOR&)ray.Start + temp);
+			Interval a = GetInterval(box1, Axises[i]);
+			Interval b = GetInterval(box2, Axises[i]);
+
+			//If Seperates
+			if ((b.min <= a.max) && (a.min <= b.max))
+			{
+				//Grab Smallest Overlap of this Axis
+				float minBetween = min(b.max - a.min, a.max - b.min);
+				//Overlaps Can't be Zero
+				if (minBetween > 0)
+				{
+					if (MinOverlap > minBetween)
+					{
+						MinOverlap = minBetween;
+						AxisOfMinimumCollision = i;
+					}
+				}
+			}
+
 		}
 
-		point.Pos = ClosestPoint;
+		//Manifold Setup
+		m.Normal = Axises[AxisOfMinimumCollision];
 
-		static XMFLOAT3 Difference;
-		Difference = XMFLOAT3(point.Pos.x - plane.Pos.x, point.Pos.y - plane.Pos.y, point.Pos.z - plane.Pos.z);
+		if (VectorDot((XMVECTOR&)box2.Pos - (XMVECTOR&)box1.Pos, (XMVECTOR&)m.Normal) < 0)
+			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
 
-		return !(
-			ADPhysics::SerparatingAxisTest(Difference, plane.AxisX, plane, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, plane.AxisY, plane, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, plane.AxisZ, plane, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, point.AxisX, plane, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, point.AxisY, plane, point) ||
-			ADPhysics::SerparatingAxisTest(Difference, point.AxisZ, plane, point));
+		m.PenetrationDepth = MinOverlap;
+
+		return true;
 	}
 
 	//------------------------------------------Plane Collision
@@ -472,7 +509,7 @@ namespace ADPhysics
 	static bool AabbToPlaneCollision(const AABB& box, const Plane& plane, Manifold& m)
 	{
 		static XMFLOAT3 Difference;
-		Difference = XMFLOAT3(plane.Pos.x - box.Pos.x, plane.Pos.y - box.Pos.y, plane.Pos.z - box.Pos.z);
+		Difference = XMFLOAT3(box.Pos.x - plane.Pos.x, box.Pos.y - plane.Pos.y, box.Pos.z - plane.Pos.z);
 
 		bool temp = !(
 			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(1, 0, 0), box, plane) ||
@@ -482,7 +519,7 @@ namespace ADPhysics
 			ADPhysics::SerparatingAxisTest(Difference, plane.AxisY, box, plane) ||
 			ADPhysics::SerparatingAxisTest(Difference, plane.AxisZ, box, plane));
 
-		if (temp == false)
+		if (!temp)
 			return temp;
 
 		XMVECTOR NormalPosition = XMVectorSet(plane.Pos.x + plane.Normal.x, plane.Pos.y + plane.Normal.y, plane.Pos.z + plane.Normal.z, 1);
@@ -548,76 +585,163 @@ namespace ADPhysics
 		return true;
 	}
 
-	//------------------------------------------Find Closest Point from Origin To Target
+	//------------------------------------------Miscellaneous Collisions
 
-	//static XMFLOAT3 ClosestPoint(const XMFLOAT3& point, const Sphere& sphere)
-	//{
-	//	XMVECTOR sphereToPoint = ((XMVECTOR&)point - (XMVECTOR&)sphere.Pos);
-	//	sphereToPoint = XMVector3Normalize(sphereToPoint);
-	//	sphereToPoint *= sphere.Radius;
-	//	return (XMFLOAT3&)((XMVECTOR&)sphere.Pos + sphereToPoint);
-	//}
-
-	//static XMFLOAT3 ClosestPoint(const XMFLOAT3& point, const AABB& aabb)
-	//{
-	//	XMFLOAT3 result = point;
-	//	XMFLOAT3 max = aabb.Max;
-	//	XMFLOAT3 min = aabb.Min;
-
-	//	result.x = result.x < min.x ? min.x : result.x;
-	//	result.y = result.y < min.y ? min.y : result.y;
-	//	result.z = result.z < min.z ? min.z : result.z;
-
-	//	result.x = result.x > max.x ? max.x : result.x;
-	//	result.y = result.y > max.x ? max.y : result.y;
-	//	result.z = result.z > max.x ? max.z : result.z;
-
-	//	return result;
-	//}
-
-	/*static XMFLOAT3 ClosestPointToBox(const XMFLOAT3& point, const OBB& obb)
+	static bool SphereToAabbCollision(const Sphere& sphere, const AABB& aabb, Manifold& m)
 	{
-		XMFLOAT3 result = obb.Pos;
-		XMFLOAT3 Direction = (XMFLOAT3&)((XMVECTOR&)point - (XMVECTOR&)result);
+		XMFLOAT3 point = FindClosestPoint(sphere.Pos, aabb);
+		float MagSq = MagnitudeSq((XMFLOAT3&)((XMVECTOR&)sphere.Pos - (XMVECTOR&)point));
+		float RadSq = sphere.Radius * sphere.Radius;
 
-		float distance = VectorDot(Direction, obb.AxisX);
+		bool temp = MagSq < RadSq;
 
-		if (distance > obb.HalfSize.x)
-			distance = obb.HalfSize.x;
+		if (temp == false)
+			return temp;
 
-		if (distance < -obb.HalfSize.x)
-			distance = -obb.HalfSize.x;
+		//Axis relative to the sphere
+		m.Normal = (XMFLOAT3&)-((XMVECTOR&)sphere.Pos - (XMVECTOR&)point);
 
-		result = (XMFLOAT3&)((XMVECTOR&)result + ((XMVECTOR&)obb.AxisX * distance));
+		float DistFromClosestToCenter = CalculateSquaredDistance(point, sphere.Pos);
 
-		distance = VectorDot(Direction, obb.AxisY);
+		m.PenetrationDepth = sphere.Radius * sphere.Radius - DistFromClosestToCenter;
 
-		if (distance > obb.HalfSize.y)
-			distance = obb.HalfSize.y;
+		return true;
 
-		if (distance < -obb.HalfSize.y)
-			distance = -obb.HalfSize.y;
+	}
 
-		result = (XMFLOAT3&)((XMVECTOR&)result + ((XMVECTOR&)obb.AxisY * distance));
+	static bool SphereToObbCollision(const Sphere& sphere, const OBB& obb, Manifold& m)
+	{
+		XMFLOAT3 point = FindClosestPoint(sphere.Pos, obb);
+		float MagSq = MagnitudeSq((XMFLOAT3&)((XMVECTOR&)sphere.Pos - (XMVECTOR&)point));
+		float RadSq = sphere.Radius * sphere.Radius;
 
-		distance = VectorDot(Direction, obb.AxisZ);
+		bool temp = MagSq < RadSq;
 
-		if (distance > obb.HalfSize.z)
-			distance = obb.HalfSize.z;
+		if (temp == false)
+			return temp;
 
-		if (distance < -obb.HalfSize.z)
-			distance = -obb.HalfSize.z;
+		//Axis relative to the sphere
+		m.Normal = (XMFLOAT3&)-((XMVECTOR&)sphere.Pos - (XMVECTOR&)point);
 
-		result = (XMFLOAT3&)((XMVECTOR&)result + ((XMVECTOR&)obb.AxisZ * distance));
+		//Floating Point "Fix"
+		if (m.Normal.x < 0.00001f && m.Normal.x > -0.00001f)
+			m.Normal.x = 0;
 
-		return result;
-	}*/
+		if (m.Normal.y < 0.00001f && m.Normal.y > -0.00001f)
+			m.Normal.y = 0;
 
-	////------------------------------------------Miscellaneous Collision
+		if (m.Normal.z < 0.00001f && m.Normal.z > -0.00001f)
+			m.Normal.z = 0;
+
+		float DistFromClosestToCenter = CalculateSquaredDistance(point, sphere.Pos);
+
+		m.PenetrationDepth = sphere.Radius * sphere.Radius - DistFromClosestToCenter;
+
+		return true;
+	}
+
+	static bool AabbToObbCollision(const AABB& aabb, const OBB& obb, Manifold& m)
+	{
+		static XMFLOAT3 Difference;
+		Difference = XMFLOAT3(obb.Pos.x - aabb.Pos.x, obb.Pos.y - aabb.Pos.y, obb.Pos.z - aabb.Pos.z);
+
+		bool temp = !(
+			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(1, 0, 0), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(0, 1, 0), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(0, 0, 1), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, obb.AxisX, aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, obb.AxisY, aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, obb.AxisZ, aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisZ)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisZ)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)), aabb, obb));
+
+		if (temp == false)
+			return false;
+
+		//Axises Needed are required to be Normalized. First 6 should already be normalized
+		XMFLOAT3 Axises[] = {
+			 XMFLOAT3(1,0,0),
+			 XMFLOAT3(0,1,0),
+			 XMFLOAT3(0,0,1),
+			 obb.AxisX,
+			 obb.AxisY,
+			 obb.AxisZ,
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisX))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisY))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisZ))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisX))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisY))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisZ))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisX))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisY))),
+			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)))
+		};
+
+		int AxisOfMinimumCollision;
+		float MinOverlap = 100;
+
+		//Floating Point "Fix"
+		for (unsigned int i = 0; i < 15; i++)
+		{
+			if (Axises[i].x < 0.00001f && Axises[i].x > -0.00001f)
+				Axises[i].x = 0;
+
+			if (Axises[i].y < 0.00001f && Axises[i].y > -0.00001f)
+				Axises[i].y = 0;
+
+			if (Axises[i].z < 0.00001f && Axises[i].z > -0.00001f)
+				Axises[i].z = 0;
+		}
+
+		//Get the Interval of each Axis
+		for (unsigned int i = 0; i < 15; i++)
+		{
+			Interval a = GetInterval(aabb, Axises[i]);
+			Interval b = GetInterval(obb, Axises[i]);
+
+			//If Seperates
+			if ((b.min <= a.max) && (a.min <= b.max))
+			{
+				//Grab Smallest Overlap of this Axis
+				float minBetween = min(b.max - a.min, a.max - b.min);
+				//Overlaps Can't be Zero
+				if (minBetween > 0)
+				{
+					if (MinOverlap > minBetween)
+					{
+						MinOverlap = minBetween;
+						AxisOfMinimumCollision = i;
+					}
+				}
+			}
+
+		}
+
+		//Manifold Setup
+		m.Normal = Axises[AxisOfMinimumCollision];
+
+		if (VectorDot((XMVECTOR&)obb.Pos - (XMVECTOR&)aabb.Pos, (XMVECTOR&)m.Normal) < 0)
+			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
+
+		m.PenetrationDepth = MinOverlap;
+
+		return true;
+	}
+
+
+	//------------------------------------------Miscellaneous Collision
 	//static bool SphereToAabbCollision(const Sphere& sphere, const AABB& box)
 	//{
-	//	XMFLOAT3 Closest = ClosestPoint(sphere.Pos, box);
+	//	XMFLOAT3 Closest = FindClosestPoint(sphere.Pos, box);
 	//	XMFLOAT3 temp = (XMFLOAT3&)((XMVECTOR&)sphere.Pos - (XMVECTOR&)Closest);
+	//	end::debug_renderer::add_line((end::float3&)Closest, (end::float3&)sphere.Pos, { 0,1,0,1 });
 	//	float distSq = VectorDot(temp, temp);
 	//	return distSq <= sphere.Radius * sphere.Radius;
 	//}
@@ -631,28 +755,28 @@ namespace ADPhysics
 	//	return distSq < radiusSq;
 	//}
 
-	//static bool AabbToObbCollision(const AABB& aabb, const OBB& obb)
-	//{
-	//	static XMFLOAT3 Difference;
-	//	Difference = XMFLOAT3(obb.Pos.x - aabb.Pos.x, obb.Pos.y - aabb.Pos.y, obb.Pos.z - aabb.Pos.z);
+	/*static bool AabbToObbCollision(const AABB& aabb, const OBB& obb)
+	{
+		static XMFLOAT3 Difference;
+		Difference = XMFLOAT3(obb.Pos.x - aabb.Pos.x, obb.Pos.y - aabb.Pos.y, obb.Pos.z - aabb.Pos.z);
 
-	//	return !(
-	//		ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(1, 0, 0), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(0, 1, 0), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(0, 0, 1), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, obb.AxisX, aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, obb.AxisY, aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, obb.AxisZ, aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisZ)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisZ)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
-	//		ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)), aabb, obb));
-	//}
+		return !(
+			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(1, 0, 0), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(0, 1, 0), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, XMFLOAT3(0, 0, 1), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, obb.AxisX, aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, obb.AxisY, aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, obb.AxisZ, aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(1, 0, 0, 1), Float3ToVector(obb.AxisZ)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 1, 0, 1), Float3ToVector(obb.AxisZ)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisX)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisY)), aabb, obb) ||
+			ADPhysics::SerparatingAxisTest(Difference, (XMFLOAT3&)XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)), aabb, obb));
+	}*/
 
 	////Collision Resolution
 
