@@ -6,6 +6,8 @@
 #include "Engine.h"
 #include "ADPhysics.h"
 
+#include "ADUserInterface.h"
+#include "GameUserInterface.h"
 #include "AudioManager.h"
 #include "GameUtilities.h"
 
@@ -188,6 +190,9 @@ public:
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+		SpyroUISetup::GameUserInterface gameUI;
+		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
 
 		if (!engine->Initialize())
 		{

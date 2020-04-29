@@ -150,7 +150,6 @@ namespace ADResource
 
 	namespace AD_UI
 	{
-
 		struct UIVertex
 		{
 			XMFLOAT4 Color;     //If a pixel is white hue (grey/etc) it will bleech it this color.  Starts white.
@@ -161,6 +160,22 @@ namespace ADResource
 		struct UIHeader
 		{
 			char t_albedo[256];
+		};
+
+		class UIMessage
+		{
+		public:
+			UIMessage() {};
+			~UIMessage() {};
+
+			UINT messageType;
+			UINT controllerID;
+			union
+			{
+				UINT number;
+				std::string sentence;
+				bool boolean;
+			};
 		};
 
 		struct QuadData
@@ -191,19 +206,25 @@ namespace ADResource
 
 		class UIComponent
 		{
+		private:
+			UINT componentType;
 		public:
 			UINT quadCount = 0;
+			UINT labelCount = 0;
 			bool active;
 			bool visible;
 			bool controlFocus;
+			bool requiresRefresh;
 			virtual void Initialize() {};
 			virtual void Update(float delta_time) {};
-			virtual int ProcessInput() { return 0; };
+			virtual UIMessage* ProcessInput() { return nullptr; };
 			virtual QuadData** GetQuads() { return nullptr; };
 			virtual QuadData* GetQuad() { return nullptr; };
 			virtual UINT GetQuadCount() { return quadCount; };
 			virtual TextLabel* GetText() { return nullptr; };
-			virtual void Enable() { visible = true; active = true; };
+			virtual TextLabel** GetTexts() { return nullptr; };
+			virtual void Refresh() { requiresRefresh = true; };
+			virtual void Enable() { visible = true; active = true; requiresRefresh = true; };
 			virtual void Disable() { visible = false; active = false; };
 			virtual void CleanUp() {};
 		};
@@ -217,12 +238,15 @@ namespace ADResource
 		public:
 			bool active = true;
 			bool visible = true;
+			//Start Quad matches up with componentID.  
+			//Since some components pass up multiple quads this tells the system where the first quad for this component is in the vertices list so I can replace just that section.
+			std::vector<UINT> startQuad;
 			std::vector<UINT> componentIDs;
 			std::vector<ADResource::AD_UI::UIVertex> vertices;
 			std::vector<int> indices;
 			ComPtr<ID3D11Buffer> vertexBuffer;
 			ComPtr<ID3D11Buffer> indexBuffer;
-			
+
 			Overlay2D(UINT _myID, bool _visible = false, bool _active = false, bool _dynamic = true)
 			{
 				myId = _myID;
@@ -235,6 +259,11 @@ namespace ADResource
 			{
 				componentIDs.push_back(_compID);
 			};
+
+			//void RefreshAll()
+			//{
+			//	for(int i = 0; i < componentIDs.size(); )
+			//}
 
 			void Enable()
 			{
@@ -261,12 +290,6 @@ namespace ADResource
 
 		struct UIRendererResources
 		{
-			std::vector<ADResource::AD_UI::UIVertex> vertices;
-			std::vector<int> indices;
-
-			ComPtr<ID3D11Buffer> vertexBuffer;
-			ComPtr<ID3D11Buffer> indexBuffer;
-
 			ComPtr<ID3D11VertexShader> vertexShader;
 			ComPtr<ID3D11PixelShader> pixelShader;
 
