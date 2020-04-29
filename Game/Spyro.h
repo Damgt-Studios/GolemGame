@@ -8,10 +8,12 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
+
 		class Spyro : public Renderable
 		{
 		
 		public:
+			AABB collider;
 			virtual void Update(float time_delta);
 
 			void Damage(DAMAGE_TYPE d_type);
@@ -29,7 +31,6 @@ namespace ADResource
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
-			AABB collider;
 			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
 
 

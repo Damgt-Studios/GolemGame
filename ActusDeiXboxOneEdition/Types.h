@@ -150,7 +150,6 @@ namespace ADResource
 
 	namespace AD_UI
 	{
-
 		struct UIVertex
 		{
 			XMFLOAT4 Color;     //If a pixel is white hue (grey/etc) it will bleech it this color.  Starts white.
@@ -160,7 +159,23 @@ namespace ADResource
 
 		struct UIHeader
 		{
-			char t_albedo[256];
+			char atlas[256];
+		};
+
+		class UIMessage
+		{
+		public:
+			UIMessage() {};
+			~UIMessage() {};
+
+			UINT messageType;
+			UINT controllerID;
+			union
+			{
+				UINT number;
+				std::string sentence;
+				bool boolean;
+			};
 		};
 
 		struct QuadData
@@ -172,6 +187,7 @@ namespace ADResource
 			float maxU;
 			float minV;
 			float maxV;
+			float atlastID;
 		};
 
 		struct AnimData2d
@@ -191,19 +207,25 @@ namespace ADResource
 
 		class UIComponent
 		{
+		private:
+			UINT componentType;
 		public:
 			UINT quadCount = 0;
+			UINT labelCount = 0;
 			bool active;
 			bool visible;
 			bool controlFocus;
+			bool requiresRefresh;
 			virtual void Initialize() {};
 			virtual void Update(float delta_time) {};
-			virtual int ProcessInput() { return 0; };
+			virtual UIMessage* ProcessInput() { return nullptr; };
 			virtual QuadData** GetQuads() { return nullptr; };
 			virtual QuadData* GetQuad() { return nullptr; };
 			virtual UINT GetQuadCount() { return quadCount; };
 			virtual TextLabel* GetText() { return nullptr; };
-			virtual void Enable() { visible = true; active = true; };
+			virtual TextLabel** GetTexts() { return nullptr; };
+			virtual void Refresh() { requiresRefresh = true; };
+			virtual void Enable() { visible = true; active = true; requiresRefresh = true; };
 			virtual void Disable() { visible = false; active = false; };
 			virtual void CleanUp() {};
 		};
@@ -217,12 +239,15 @@ namespace ADResource
 		public:
 			bool active = true;
 			bool visible = true;
+			//Start Quad matches up with componentID.  
+			//Since some components pass up multiple quads this tells the system where the first quad for this component is in the vertices list so I can replace just that section.
+			std::vector<UINT> startQuad;
 			std::vector<UINT> componentIDs;
 			std::vector<ADResource::AD_UI::UIVertex> vertices;
 			std::vector<int> indices;
 			ComPtr<ID3D11Buffer> vertexBuffer;
 			ComPtr<ID3D11Buffer> indexBuffer;
-			
+
 			Overlay2D(UINT _myID, bool _visible = false, bool _active = false, bool _dynamic = true)
 			{
 				myId = _myID;
@@ -235,6 +260,11 @@ namespace ADResource
 			{
 				componentIDs.push_back(_compID);
 			};
+
+			//void RefreshAll()
+			//{
+			//	for(int i = 0; i < componentIDs.size(); )
+			//}
 
 			void Enable()
 			{
@@ -261,18 +291,13 @@ namespace ADResource
 
 		struct UIRendererResources
 		{
-			std::vector<ADResource::AD_UI::UIVertex> vertices;
-			std::vector<int> indices;
-
-			ComPtr<ID3D11Buffer> vertexBuffer;
-			ComPtr<ID3D11Buffer> indexBuffer;
-
 			ComPtr<ID3D11VertexShader> vertexShader;
 			ComPtr<ID3D11PixelShader> pixelShader;
 
 			ComPtr<ID3D11InputLayout> vertexBufferLayout;
 
 			ComPtr<ID3D11ShaderResourceView> uiTextures;
+			ComPtr<ID3D11ShaderResourceView> uiTextures2;
 
 			// Cbuffers - Orthogonal projection matrix for 2D
 			ComPtr<ID3D11Buffer> constantBuffer;
@@ -347,7 +372,7 @@ namespace ADResource
 
 		enum OBJECT_TYPE
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER
 			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
 		};
 		enum OBJECT_DEFENSE
@@ -362,6 +387,8 @@ namespace ADResource
 		class GameObject
 		{
 		public:
+			//ADPhysics::Collider* collider;
+
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
@@ -384,8 +411,13 @@ namespace ADResource
 			};
 			virtual void Remove()
 			{
-				//Drop your Gems and get return to pool,  You're done son.
+				active = false;
 			}
+
+			virtual void CheckCollision(ADPhysics::AABB& _object) {};
+			virtual void CheckCollision(ADPhysics::OBB& _object) {};
+			virtual void CheckCollision(ADPhysics::Sphere& _object) {};
+			virtual void CheckCollision(ADPhysics::Plane& _object) {};
 
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
@@ -431,7 +463,7 @@ namespace ADResource
 			}
 
 		public:
-			bool active;
+			bool active = true;
 			int type;
 			int GemCount;
 			AD_ULONG meshID;
@@ -443,43 +475,46 @@ namespace ADResource
 			bool has_mesh = false;
 		};
 
-		class Enemy : public GameObject
-		{
-			AD_AI::AI ai;
-			int health;
-			void Update()
-			{
-				ai.Update();
-			}
-			void Damage(DAMAGE_TYPE damageType) override
-			{
-				if (defenseType != INVULNERABLE && defenseType != damageType)
-				{
-					health--;
-					if (health < 1)
-					{
-						Remove();
-					}
-				}
-			};
-		};
 	}
-
-	//TODO Gage  (This is rough draft crap made by Dan.  Just do your thing.)
-	namespace ADPhysics
-	{
-		struct Collider
-		{
-			enum TYPE
-			{
-				AABB, SPHERE
-			};
-
-			int type;
-			int centerAnchor;
-			XMFLOAT3 sizeOffsets;
-			XMFLOAT3 positionOffset;
-		};
-
-	}
-}
+};
+//
+////Dan's collider stuff
+//namespace ADPhysics
+//{
+//	enum ColliderType
+//	{
+//		Box
+//	};
+//
+//	class Collider
+//	{
+//	public:
+//		int centerAnchor;
+//		ColliderType type;
+//		virtual void CheckCollision(ADResource::ADGameplay::GameObject& _object) = 0;
+//	};
+//
+//
+//	class BoxCollider : public Collider
+//	{
+//		AABB collider;
+//		virtual void CheckCollision(ADResource::ADGameplay::GameObject& _object)
+//		{
+//			Manifold m;
+//			if (AabbToAabbCollision(collider, , m))
+//			{
+//				XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+//				PhysicsMaterial temp(0, 0, 0);
+//				VelocityImpulse(Velocity, mat, tempV, temp, m);
+//				PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
+//
+//				float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0, 1, 0));
+//
+//				if (Dot > 0.5f)
+//					jumping = false;;
+//			}
+//
+//		}
+//	};
+//
+//}

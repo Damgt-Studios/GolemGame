@@ -21,6 +21,56 @@ ADResource::ADGameplay::Spyro* GameUtilities::LoadSpyroFromModelFile(std::string
 	return temp;
 }
 
+Collectable* GameUtilities::AddCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::Collectable* temp = new ADResource::ADGameplay::Collectable;
+
+	// Transform data
+	temp->SetPosition(position);
+	temp->SetRotation(rotation);
+	temp->SetScale(scale);
+
+	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	temp->SetMeshID(id);
+	temp->collider = ADPhysics::AABB(position, scale);
+
+	return temp;
+}
+
+Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
+
+	// Transform data
+	temp->SetPosition(position);
+	temp->SetRotation(rotation);
+	temp->SetScale(scale);
+
+	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	temp->SetMeshID(id);
+	temp->collider = ADPhysics::AABB(position, scale);
+
+	return temp;
+}
+
+Enemy* GameUtilities::AddEnemyFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::Enemy* temp = new ADResource::ADGameplay::Enemy;
+
+	// Transform data
+	temp->SetPosition(position);
+	temp->SetRotation(rotation);
+	temp->SetScale(scale);
+
+	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	temp->SetMeshID(id);
+	temp->collider = ADPhysics::AABB(position, scale);
+
+	return temp;
+}
+
+
+
 ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;

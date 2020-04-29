@@ -39,6 +39,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="ADUserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

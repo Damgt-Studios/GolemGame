@@ -203,16 +203,13 @@ void ADUtils::LoadUITextures(ADResource::AD_UI::UIHeader& header, ComPtr<ID3D11S
 	std::string texture_path = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\textures\\");
 
 	// Construct wide string with filename
-	std::string spath = header.t_albedo;
+	std::string spath = header.atlas;
 	spath = std::string(texture_path).append(spath);
 	std::wstring wpath = std::wstring(spath.begin(), spath.end());
-
-	// Load the albedo texture
+	// Load the atlas texture
 	result = CreateDDSTextureFromFile(device.Get(), wpath.c_str(), nullptr, &srv);
+
 	assert(!FAILED(result));
-
-
-
 }
 
 std::wstring ADUtils::GetTexturePath(const char* textName)

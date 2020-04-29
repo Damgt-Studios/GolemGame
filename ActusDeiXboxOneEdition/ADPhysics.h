@@ -25,7 +25,7 @@ namespace ADPhysics
 		};
 	};
 
-	struct OBB
+	struct OBB 
 	{
 		XMFLOAT3 Pos, AxisX, AxisY, AxisZ, HalfSize;
 		OBB()
@@ -46,7 +46,7 @@ namespace ADPhysics
 		}
 	};
 
-	struct Sphere
+	struct Sphere 
 	{
 		XMFLOAT3 Pos; float Radius;
 		Sphere()
@@ -58,7 +58,7 @@ namespace ADPhysics
 		Sphere(XMFLOAT3 Position, float Radius) : Pos(Position), Radius(Radius) { };
 	};
 
-	struct Plane
+	struct Plane 
 	{
 		XMFLOAT3 Pos, Normal, AxisX, AxisY, AxisZ, HalfSize;
 		Plane()

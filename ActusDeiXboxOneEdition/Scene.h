@@ -9,7 +9,7 @@ namespace ADGameplay
 	{
 	private:
 		Player player;
-		std::vector<ADResource::ADGameplay::Enemy> Enemies;
+		//std::vector<ADResource::ADGameplay::Enemy> Enemies;
 
 		void InitializeScene()
 		{
