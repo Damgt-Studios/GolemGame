@@ -41,63 +41,59 @@ void* MemoryManager::Allocate(size_t size)
 	return nullptr;
 }
 
-void MemoryManager::Deallocate(void* object)
+void MemoryManager::Deallocate(void* object, size_t hIndex)
 {
-	int index = -1;
-	int hIndex = -1;
-	for (int i = 0; i < ADMEMORY_ARRAY_SIZE; ++i)
+	if (object)
 	{
-		if (object == memPointers[i])
+		int index = -1;
+		for (int i = 0; i < ADMEMORY_ARRAY_SIZE; ++i)
 		{
-			index = i;
-			break;
+			if (object == memPointers[i])
+			{
+				index = i;
+				break;
+			}
 		}
-	}
-	for (int i = 0; i < ADMEMORY_ARRAY_SIZE; ++i)
-	{
-		if (object == handles[i])
+		if (index != -1 && hIndex != -1)
 		{
-			hIndex = i;
-			break;
-		}
-	}
-	if (index != -1 && hIndex != -1)
-	{
-		size_t size = sizes[index];
-		handles[hIndex] = NULL;
-		availableHandle = hIndex;
+			size_t size = sizes[index];
+			handles[hIndex] = NULL;
 
-		if (index == memPointerIndex - 1)
-		{
-			memset(memPointers[index], 0, size);
-			memPointers[index] = nullptr;
-			sizes[index] = 0;
-			allocatedSize -= size;
-			--memPointerIndex;
-			--sizesIndex;
-			handleIndex = GetNextHandle();
-		}
-		else
-		{
-			memset(memPointers[index], 0, size);
-			allocatedSize -= size;
-			memcpy(memPointers[index], memPointers[index] + size, allocatedSize);
-			for (int i = 0; i <= ADMEMORY_ARRAY_SIZE; ++i)
+			if (index == memPointerIndex - 1)
 			{
-				if (handles[i])
-					handles[i] -= size;
+				memset(memPointers[index], 0, size);
+				memPointers[index] = nullptr;
+				sizes[index] = 0;
+				allocatedSize -= size;
+				--memPointerIndex;
+				--sizesIndex;
+				handleIndex = GetNextHandle();
+				availableHandle = GetNextHandle();
 			}
-			int sizeDifference;
-			for (int i = index; memPointers[i + 1]; ++i)
+			else
 			{
-				sizeDifference = (int)size - (int)sizes[i];
-				memPointers[i] -= sizeDifference;
-				sizes[i] = sizes[i + 1];
+				memset(memPointers[index], 0, size);
+				allocatedSize -= size;
+				memcpy(memPointers[index], memPointers[index] + size, allocatedSize);
+				for (int i = 0; i <= ADMEMORY_ARRAY_SIZE; ++i)
+				{
+					if (handles[i])
+						if (handles[i] > memPointers[index])
+							handles[i] -= size;
+				}
+				int sizeDifference;
+				for (int i = index; memPointers[i + 1]; ++i)
+				{
+					sizeDifference = (int)size - (int)sizes[i];
+					memPointers[i] -= sizeDifference;
+					sizes[i] = sizes[i + 1];
+				}
+				memset(memPointers[0] + allocatedSize, 0, allocatedSize);
+				memPointers[--memPointerIndex] = nullptr;
+				sizes[--sizesIndex] = 0;
+				handleIndex = GetNextHandle();
+				availableHandle = GetNextHandle();
 			}
-			memset(memPointers[0] + allocatedSize, 0, allocatedSize);
-			memPointers[--memPointerIndex] = nullptr;
-			sizes[--sizesIndex] = 0;
-			handleIndex = GetNextHandle();
 		}
 	}
 }
