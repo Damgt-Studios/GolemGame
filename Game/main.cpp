@@ -168,11 +168,11 @@ public:
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Collectable* a3 = GameUtilities::AddCollectableFromModelFile("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(-10, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(-10, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(-10, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Collectable* a3 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
