@@ -120,6 +120,7 @@ namespace SpyroUISetup
                     Get<ADUI::Label2D*>(gemCountID)->GetText()->output.clear();
                     Get<ADUI::Label2D*>(gemCountID)->GetText()->output = std::to_string(timesPressed);
                     buttonPressed = true;
+
                     break;
                 }
                 default:
@@ -307,11 +308,13 @@ namespace SpyroUISetup
         ADUI::ADUI* myUI = new ADUI::ADUI();
         ADUI::UISetup* setup = new ADUI::UISetup();
         myUI->SetSetup(setup);
-        ADResource::AD_UI::UIHeader header = { "spyroatlas.dds" };
+        ADResource::AD_UI::UIHeader* header = new ADResource::AD_UI::UIHeader[2];
+        header[0] = { "spyroatlas.dds" };
+        header[1] = { "spyroatlas2.dds" };
         myUI->SetAltasHeader(header);
 
         // 0.35f * screenWidth, -0.3f * screenHeight
-        myUI->uiLog.InitializeLog(pxp(-565.f, screenWidth), pyp(440.f, screenHeight), screenWidth, screenHeight, { 0.3f * screenWidth, -0.25f * screenHeight, pxp(1150.f, screenWidth), pyp(900.f, screenHeight), 0.f, pup(2300.f), pvp(4320.f), pvp(5280.f) });
+        myUI->uiLog.InitializeLog(pxp(-565.f, screenWidth), pyp(440.f, screenHeight), screenWidth, screenHeight, { 0.3f * screenWidth, -0.25f * screenHeight, pxp(1150.f, screenWidth), pyp(900.f, screenHeight), 0.f, pup(2300.f), pvp(4320.f), pvp(5280.f), 1 });
         myUI->uiLog.WriteToLog("UI Log Created.");
         myUI->uiLog.WriteToLog("1.");
         myUI->uiLog.WriteToLog("2.");
@@ -324,13 +327,13 @@ namespace SpyroUISetup
 
         //TitleScreen
         UINT id = myUI->AddNewOverlay("TitleScreen", true, true, true);
-        ADUI::Image2D* titleImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f) });
+        ADUI::Image2D* titleImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f), 0 });
         UINT compId = myUI->AddUIComponent("TitleBG", titleImage);
         setup->overlays[id].AddComponent(compId);
 
         ////PauseScreen
         id = myUI->AddNewOverlay("PauseScreen");
-        ADUI::Image2D* pauseImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f) });
+        ADUI::Image2D* pauseImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f), 1 });
         compId = myUI->AddUIComponent("PauseBG", pauseImage);
         setup->overlays[id].AddComponent(compId);
 
@@ -340,19 +343,19 @@ namespace SpyroUISetup
 
         ////MusicScreen
         id = myUI->AddNewOverlay("MusicScreen");
-        ADUI::Image2D* musicImage = new ADUI::Image2D({ 0, 0, pxp(1150.f, screenWidth), pyp(900.f, screenHeight), 0.f, pup(2300.f), pvp(4320.f), pvp(5280.f) });
+        ADUI::Image2D* musicImage = new ADUI::Image2D({ 0, 0, pxp(1150.f, screenWidth), pyp(900.f, screenHeight), 0.f, pup(2300.f), pvp(4320.f), pvp(5280.f), 0 });
         compId = myUI->AddUIComponent("PauseBG", musicImage);
         setup->overlays[id].AddComponent(compId);
 
         ////SuccessScreen
         id = myUI->AddNewOverlay("SuccessScreen");
-        ADUI::Image2D* successImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f) });
+        ADUI::Image2D* successImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f), 0 });
         compId = myUI->AddUIComponent("SuccessBG", successImage);
         setup->overlays[id].AddComponent(compId);
 
         ////CreditsScreen
         id = myUI->AddNewOverlay("CreditsScreen");
-        ADUI::Image2D* creditsImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f) });
+        ADUI::Image2D* creditsImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f), 1 });
         compId = myUI->AddUIComponent("CreditsBG", creditsImage);
         //ADResource::AD_UI::TextLabel gemLabel = { false, GetPosition(0.1f, 0.1f, screenWidth, screenHeight), {"0"} };
         //AD_UI::Label2D* label1 = new AD_UI::Label2D();
@@ -372,8 +375,8 @@ namespace SpyroUISetup
 
         //HUD
         id = myUI->AddNewOverlay("HUD");
-        ADUI::Image2D* image1 = new ADUI::Image2D({ (-0.45f * screenWidth), (0.4f * screenHeight), pxp(225.f, screenWidth), pyp(205.f, screenHeight), pup(2300.f), pup(2525.f), pvp(4320.f), pvp(4525.f) });
-        ADUI::Image2D* image2 = new ADUI::Image2D({ (0.40f * screenWidth), (0.4f * screenHeight), pxp(252.f, screenWidth), pyp(252.f, screenHeight), pup(2525.f), pup(2782.f), pvp(4320.f), pvp(4572.f) });
+        ADUI::Image2D* image1 = new ADUI::Image2D({ (-0.45f * screenWidth), (0.4f * screenHeight), pxp(225.f, screenWidth), pyp(205.f, screenHeight), pup(2300.f), pup(2525.f), pvp(4320.f), pvp(4525.f), 1 });
+        ADUI::Image2D* image2 = new ADUI::Image2D({ (0.40f * screenWidth), (0.4f * screenHeight), pxp(252.f, screenWidth), pyp(252.f, screenHeight), pup(2525.f), pup(2782.f), pvp(4320.f), pvp(4572.f), 1 });
         compId = myUI->AddUIComponent("GemIcon", image1);
         setup->overlays[id].AddComponent(compId);
         compId = myUI->AddUIComponent("SpyroIcon", image2);
@@ -393,64 +396,64 @@ namespace SpyroUISetup
 
         //Button List for Start and Pause Menus
         ADUI::Button2D* ContinueBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         ContinueBtn->SetText("Continue", pxp(-90.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
         //button->actionValue = 1;
 
         ADUI::Button2D* SaveBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         SaveBtn->SetText("Save Slots", pxp(-115.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
         //button2->actionValue = 2;
 
         ADUI::Button2D* CreditsBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         CreditsBtn->SetText("Credits", pxp(-90.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* QuitBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         QuitBtn->SetText("Quit", pxp(-60.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* ExitBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         ExitBtn->SetText("Exit Level", pxp(-110.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* OptionsBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         OptionsBtn->SetText("Options", pxp(-85.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* GuidebookBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         GuidebookBtn->SetText("Guidebook", pxp(-115.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* ControlsBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         ControlsBtn->SetText("Controls", pxp(-50.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* SoundBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         SoundBtn->SetText("Sound", pxp(-50.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
         ADUI::Button2D* CameraBtn = new ADUI::Button2D(
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f), 0 }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f), 0 }, { 2, 0, 1, 6 })
             );
         CameraBtn->SetText("Camera", pxp(-50.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 

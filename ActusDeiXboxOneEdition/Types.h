@@ -159,7 +159,7 @@ namespace ADResource
 
 		struct UIHeader
 		{
-			char t_albedo[256];
+			char atlas[256];
 		};
 
 		class UIMessage
@@ -187,6 +187,7 @@ namespace ADResource
 			float maxU;
 			float minV;
 			float maxV;
+			float atlastID;
 		};
 
 		struct AnimData2d
@@ -296,6 +297,7 @@ namespace ADResource
 			ComPtr<ID3D11InputLayout> vertexBufferLayout;
 
 			ComPtr<ID3D11ShaderResourceView> uiTextures;
+			ComPtr<ID3D11ShaderResourceView> uiTextures2;
 
 			// Cbuffers - Orthogonal projection matrix for 2D
 			ComPtr<ID3D11Buffer> constantBuffer;

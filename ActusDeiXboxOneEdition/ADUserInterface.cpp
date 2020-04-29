@@ -468,9 +468,10 @@ ADUI::UILog* ADUI::ADUI::GetLogComponent()
     return &uiLog;
 }
 
-void ADUI::ADUI::SetAltasHeader(ADResource::AD_UI::UIHeader _header)
+void ADUI::ADUI::SetAltasHeader(ADResource::AD_UI::UIHeader* _header, UINT _headercount)
 {
     header = _header;
+    headerCount = _headercount;
 }
 
 void ADUI::ADUI::SetSetup(UISetup* _setup)
@@ -551,7 +552,8 @@ void ADUI::ADUI::Initialize(ID3D11Device1* device, ID3D11DeviceContext1* _contex
 
         // Load textures
 
-    ADUtils::LoadUITextures(header, uiResources.uiTextures, device);
+    ADUtils::LoadUITextures(header[0], uiResources.uiTextures, device);
+    ADUtils::LoadUITextures(header[1], uiResources.uiTextures2, device);
     visible = true;
 
     for (int over = 0; over < setup->overlays.size(); ++over)
@@ -728,9 +730,9 @@ void ADUI::ADUI::Update(float delta_time)
 void ADUI::ADUI::Render(ComPtr<ID3D11DeviceContext1> _context, ComPtr<ID3D11RenderTargetView> _rtv)
 {
     RefreshOverlay(_context);
-    ID3D11ShaderResourceView* resource_views[] = { uiResources.uiTextures.Get() };
+    ID3D11ShaderResourceView* resource_views[] = { uiResources.uiTextures.Get() , uiResources.uiTextures2.Get() };
 
-    _context->PSSetShaderResources(0, 1, resource_views);
+    _context->PSSetShaderResources(0, 2, resource_views);
     _context->VSSetShader(uiResources.vertexShader.Get(), 0, 0);
     _context->PSSetShader(uiResources.pixelShader.Get(), 0, 0);
     _context->IASetInputLayout(uiResources.vertexBufferLayout.Get());

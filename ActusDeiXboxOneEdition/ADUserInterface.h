@@ -214,7 +214,8 @@ namespace ADUI
     class ADUI
     {
     private:
-        ADResource::AD_UI::UIHeader header;
+        ADResource::AD_UI::UIHeader* header;
+        UINT headerCount;
         SpriteBatch* spriteBatch;
         Text2D text;
         UISetup* setup;
@@ -227,22 +228,22 @@ namespace ADUI
         inline void UpdateQuad(UINT _startQuad, ADResource::AD_UI::QuadData& _quad, std::vector<ADResource::AD_UI::UIVertex>& vertices)
         {
             UINT index = _startQuad * 4;
-            vertices[index].Color = { 1,1,1,1 };
+            vertices[index].Color = { _quad.atlastID,1,1,1 };
             vertices[index].Pos = { _quad.x - _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1 };
             vertices[index].Tex = { _quad.minU, _quad.maxV };
 
             index = (_startQuad * 4) + 1;
-            vertices[index].Color = { 1,1,1,1 };
+            vertices[index].Color = { _quad.atlastID,1,1,1 };
             vertices[index].Pos = { _quad.x - _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1 };
             vertices[index].Tex = { _quad.minU, _quad.minV };
 
             index = (_startQuad * 4) + 2;
-            vertices[index].Color = { 1,1,1,1 };
+            vertices[index].Color = { _quad.atlastID,1,1,1 };
             vertices[index].Pos = { _quad.x + _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1 };
             vertices[index].Tex = { _quad.maxU, _quad.minV };
 
             index = (_startQuad * 4) + 3;
-            vertices[index].Color = { 1,1,1,1 };
+            vertices[index].Color = { _quad.atlastID,1,1,1 };
             vertices[index].Pos = { _quad.x + _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1 };
             vertices[index].Tex = { _quad.maxU, _quad.maxV };
         }
@@ -250,10 +251,10 @@ namespace ADUI
         inline void CreateQuad(ADResource::AD_UI::QuadData& _quad, std::vector<ADResource::AD_UI::UIVertex>& vertices, std::vector<int>& indices)
         {
             UINT startIndex = vertices.size();
-            vertices.push_back({ {1,1,1,1},{_quad.x - _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.maxV} });
-            vertices.push_back({ {1,1,1,1},{_quad.x - _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.minV} });
-            vertices.push_back({ {1,1,1,1},{_quad.x + _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1},  {_quad.maxU, _quad.minV} });
-            vertices.push_back({ {1,1,1,1},{_quad.x + _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.maxU, _quad.maxV} });
+            vertices.push_back({ {_quad.atlastID,1,1,1},{_quad.x - _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.maxV} });
+            vertices.push_back({ {_quad.atlastID,1,1,1},{_quad.x - _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.minV} });
+            vertices.push_back({ {_quad.atlastID,1,1,1},{_quad.x + _quad.quadWidth / 2.f, _quad.y + _quad.quadHeight / 2.f, 1},  {_quad.maxU, _quad.minV} });
+            vertices.push_back({ {_quad.atlastID,1,1,1},{_quad.x + _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.maxU, _quad.maxV} });
 
             indices.push_back(startIndex);
             indices.push_back(startIndex + 1);
@@ -273,7 +274,7 @@ namespace ADUI
         UILog uiLog;
         UINT uiState = 1;
         ADUI::ADUI::UILog* GetLogComponent();
-        void SetAltasHeader(ADResource::AD_UI::UIHeader _header);
+        void SetAltasHeader(ADResource::AD_UI::UIHeader* _header, UINT _headercount = 1);
         void SetSetup(UISetup* _setup);
         void RefreshOverlay(ComPtr<ID3D11DeviceContext1> _context);
         void Initialize(ID3D11Device1* device, ID3D11DeviceContext1* _context);
