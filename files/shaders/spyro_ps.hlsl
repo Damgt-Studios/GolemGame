@@ -176,13 +176,13 @@ float4 main(OutputVertex input) : SV_TARGET
     //return float4(normalMap, 1);
     
     float3 white = float3(1, 1, 1);
-    //float3 directionToLight = normalize(lights[0].lightDirection.zyx);
-    float3 directionToLight = lights[1].position.xyz - input.posxyz;
+    float3 directionToLight = normalize(-lights[0].lightDirection.zyx);
+    //float3 directionToLight = lights[0].position.xyz - input.posxyz;
     
     float3 albedo = pow(t_albedo.Sample(t_sampler, input.tex).rgb, GAMMA);
     float ambient_occlusion = t_metallic.Sample(t_sampler, input.tex).r;
-    float roughness = t_metallic.Sample(t_sampler, input.tex).g * .1;
-    float metallic = t_metallic.Sample(t_sampler, input.tex).b * .1;
+    float roughness = t_metallic.Sample(t_sampler, input.tex).g;
+    float metallic = t_metallic.Sample(t_sampler, input.tex).b;
     
     // BDRF
     float3 N = normalize(normalMap);
@@ -197,11 +197,11 @@ float4 main(OutputVertex input) : SV_TARGET
     // Distance is 1 for dlights
     //float distance = 1; // 
     // Attenuation
-    float distance = length(lights[1].position.xyz - input.posxyz);
-    float attenuation = 1.0 - saturate(distance / lights[1].lightRadius);
-    attenuation *= attenuation;
-    //float attenuation = 1;
-    float3 radience = lights[1].diffuse * lights[1].diffuseIntensity * attenuation;
+    //float distance = length(lights[0].position.xyz - input.posxyz);
+    //float attenuation = 1.0 - saturate(distance / lights[0].lightRadius);
+    //attenuation *= attenuation;
+    float attenuation = 1;
+    float3 radience = lights[0].diffuse * lights[0].diffuseIntensity * attenuation;
     
     // Cook-torrence BRDF
     float NDF = DistributionGGX(N, H, roughness);
@@ -209,7 +209,7 @@ float4 main(OutputVertex input) : SV_TARGET
     float3 F = fresnelSchlick(max(dot(H, V), 0), F0);
     
     float3 KS = F;
-    float3 KD = float3(1.0, 1, 1) - KS;
+    float3 KD = float3(1.0, 1.0, 1.0) - KS;
     KD *= 1.0 - metallic;
     
     float3 numerator = NDF * G * F;

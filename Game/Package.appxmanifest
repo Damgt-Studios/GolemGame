@@ -9,7 +9,7 @@
   <Identity
     Name="75ea3685-5b2d-4e3f-9c61-e7a2a6056177"
     Publisher="CN=josep"
-    Version="1.0.0.0" />
+    Version="0.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="75ea3685-5b2d-4e3f-9c61-e7a2a6056177" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -43,8 +43,4 @@
       </uap:VisualElements>
     </Application>
   </Applications>
-
-  <Capabilities>
-    <Capability Name="internetClient" />
-  </Capabilities>
 </Package>

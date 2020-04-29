@@ -6,8 +6,11 @@
 #include "Engine.h"
 #include "ADPhysics.h"
 
+#include "ADUserInterface.h"
+#include "GameUserInterface.h"
 #include "AudioManager.h"
 #include "GameUtilities.h"
+#include "GameObjectClasses.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -41,8 +44,9 @@ private:
 
 	bool shutdown = false;
 
-	// Media player
-	MediaPlayer^ player;
+	// Temp music
+	int effect_id;
+	bool effect_triggered = false;
 
 	// Timing
 	XTime game_time;
@@ -65,11 +69,15 @@ private:
 	// Physics
 	ADPhysics::AABB test_colider;
 	ADPhysics::AABB test_colider1;
+	ADPhysics::Plane test_plane;
+
+
 
 public:
 	// some functions called by Windows
 	virtual void Initialize(CoreApplicationView^ AppView)
 	{
+
 		if (FULLSCREEN)
 		{
 			Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode =
@@ -99,8 +107,12 @@ public:
 	virtual void Run()
 	{
 		// Bruh
+		std::vector<std::string> sfx;
+		sfx.push_back("files\\audio\\main_theme.wav");
+		sfx.push_back("files\\audio\\main_theme.wav");
+		sfx.push_back("files\\audio\\main_theme.wav");
 		audio_manager = new AudioManager;
-		audio_manager->Initialize("files\\audio\\main_theme.wav");
+		audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -120,14 +132,14 @@ public:
 			XMFLOAT4(1, 1, 1, 1);
 		light.ambientIntensityDown = .1;
 		light.ambientIntensityUp = .1;
-		light.lightDirection = XMFLOAT4(0, 0, 10, 1);
+		light.lightDirection = XMFLOAT4(0, -1, 0, 1);
 		light.diffuseIntensity = 1;
 		light.specularIntensity = .2;
 		light.diffuse =
 			light.ambientUp =
 			light.ambientDown =
 			light.specular =
-			XMFLOAT4(0, 0, 1, 1);
+			XMFLOAT4(1, 1, 1, 1);
 		ResourceManager::AddLight(light);
 
 		// Point light
@@ -156,6 +168,14 @@ public:
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		Collectable* a3 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
+
 
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -172,13 +192,25 @@ public:
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
 		GameUtilities::AddGameObject(c1);
 		GameUtilities::AddGameObject(c2);
-		GameUtilities::AddGameObject(a1);
+		//GameUtilities::AddGameObject(a1);
 		GameUtilities::AddGameObject(a2);
+		GameUtilities::AddGameObject(a3);
+		GameUtilities::AddGameObject(e1);
+		GameUtilities::AddGameObject(e2);
+		GameUtilities::AddGameObject(e3);
+		GameUtilities::AddGameObject(t1);
+
+		//Add Game Objects to their collision groupings
+		//GameObject* passables[1];
+		//passables[0] = a3;
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+		SpyroUISetup::GameUserInterface gameUI;
+		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
 
 		if (!engine->Initialize())
 		{
@@ -194,6 +226,8 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
+		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(100, 0, 100));
+
 
 		while (!shutdown)
 		{
@@ -204,10 +238,10 @@ public:
 
 			ProcessInput();
 
-			// Audio
+			// Audio -Music doesn't play in debug mode -  annoying AF
 			if (main_music_loop_timer <= 0 && !music_triggered)
 			{
-#ifdef _RELEASE
+#ifdef NDEBUG
 				music_triggered = true;
 				audio_manager->PlayBackgroundMusic();
 #endif
@@ -223,6 +257,16 @@ public:
 			// Physics test
 			spyro->CheckCollision(test_colider);
 			spyro->CheckCollision(test_colider1);
+			spyro->CheckCollision(test_plane);
+			a3->CheckCollision(spyro->collider);
+			e1->CheckCollision(spyro->collider);
+			e2->CheckCollision(spyro->collider);
+			e3->CheckCollision(spyro->collider);
+			t1->CheckCollision(spyro->collider);
+
+			//Check Collision for groups
+			
+
 			// Test
 
 			// Poll input
@@ -231,6 +275,8 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
+
+
 
 			// Update framerate
 			if (timer > 1)
@@ -255,6 +301,19 @@ public:
 
 	void ProcessInput()
 	{
+		if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
+		{
+			if (effect_triggered) audio_manager->ResumeEffect(0, effect_id);
+			else {
+				effect_triggered = true;
+				effect_id = audio_manager->PlayEffect(0);
+			}
+		}
+		if (Input::QueryButtonDown(GamepadButtons::DPadRight))
+		{
+			audio_manager->PauseEffect(0, effect_id);
+		}
+
 		static float camera_rotation_thresh = 250;
 		float dt = delta_time;
 
@@ -280,7 +339,7 @@ public:
 			{
 				shutdown = true;
 			}
-			else if (Input::QueryButtonDown(GamepadButtons::DPadDown))
+			else if (Input::QueryButtonDown(GamepadButtons::RightThumbstick))
 			{
 				yaw = default_yaw;
 				pitch = default_pitch;
@@ -336,7 +395,6 @@ public:
 		}
 	}
 };
-
 
 // the class definition that creates an instance of our core framework class
 ref class AppSource sealed : IFrameworkViewSource

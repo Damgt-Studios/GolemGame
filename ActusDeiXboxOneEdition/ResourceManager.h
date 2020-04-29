@@ -16,18 +16,18 @@ namespace
 
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
-	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
-	std::vector<unsigned int> pbrIndxData;
+	ADVector<ADResource::ADRenderer::Vertex> pbrVertexData;
+	ADVector<unsigned int> pbrIndxData;
 
-	std::vector<ADResource::ADRenderer::Light> lights;
-	std::vector<ADResource::ADRenderer::Model> pbrmodels;
+	ADVector<ADResource::ADRenderer::Light> lights;
+	ADVector<ADResource::ADRenderer::Model> pbrmodels;
 
-	std::vector<ADResource::ADGameplay::GameObject> passables;
-	std::vector<ADResource::ADGameplay::GameObject> collidables;
+	ADVector<ADResource::ADGameplay::GameObject> passables;
+	ADVector<ADResource::ADGameplay::GameObject> collidables;
 
-	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
+	ADVector<ADResource::ADGameplay::GameObject*> gameobjects;
 
-	std::queue<ADResource::ADGameplay::GameObject*> render_queue;
+	ADQueue<ADResource::ADGameplay::GameObject*> render_queue;
 
 	// On/ Offs
 	ADResource::ADRenderer::Model skybox;
