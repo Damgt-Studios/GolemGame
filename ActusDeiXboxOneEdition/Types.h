@@ -370,7 +370,7 @@ namespace ADResource
 
 		enum OBJECT_TYPE
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER  
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER
 			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
 		};
 		enum OBJECT_DEFENSE
@@ -385,6 +385,8 @@ namespace ADResource
 		class GameObject
 		{
 		public:
+			//ADPhysics::Collider* collider;
+
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
@@ -407,8 +409,13 @@ namespace ADResource
 			};
 			virtual void Remove()
 			{
-				//Drop your Gems and get return to pool,  You're done son.
+				active = false;
 			}
+
+			virtual void CheckCollision(ADPhysics::AABB& _object) {};
+			virtual void CheckCollision(ADPhysics::OBB& _object) {};
+			virtual void CheckCollision(ADPhysics::Sphere& _object) {};
+			virtual void CheckCollision(ADPhysics::Plane& _object) {};
 
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
@@ -454,7 +461,7 @@ namespace ADResource
 			}
 
 		public:
-			bool active;
+			bool active = true;
 			int type;
 			int GemCount;
 			AD_ULONG meshID;
@@ -466,43 +473,46 @@ namespace ADResource
 			bool has_mesh = false;
 		};
 
-		class Enemy : public GameObject
-		{
-			AD_AI::AI ai;
-			int health;
-			void Update()
-			{
-				ai.Update();
-			}
-			void Damage(DAMAGE_TYPE damageType) override
-			{
-				if (defenseType != INVULNERABLE && defenseType != damageType)
-				{
-					health--;
-					if (health < 1)
-					{
-						Remove();
-					}
-				}
-			};
-		};
 	}
-
-	//TODO Gage  (This is rough draft crap made by Dan.  Just do your thing.)
-	namespace ADPhysics
-	{
-		struct Collider
-		{
-			enum TYPE
-			{
-				AABB, SPHERE
-			};
-
-			int type;
-			int centerAnchor;
-			XMFLOAT3 sizeOffsets;
-			XMFLOAT3 positionOffset;
-		};
-
-	}
-}
+};
+//
+////Dan's collider stuff
+//namespace ADPhysics
+//{
+//	enum ColliderType
+//	{
+//		Box
+//	};
+//
+//	class Collider
+//	{
+//	public:
+//		int centerAnchor;
+//		ColliderType type;
+//		virtual void CheckCollision(ADResource::ADGameplay::GameObject& _object) = 0;
+//	};
+//
+//
+//	class BoxCollider : public Collider
+//	{
+//		AABB collider;
+//		virtual void CheckCollision(ADResource::ADGameplay::GameObject& _object)
+//		{
+//			Manifold m;
+//			if (AabbToAabbCollision(collider, , m))
+//			{
+//				XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+//				PhysicsMaterial temp(0, 0, 0);
+//				VelocityImpulse(Velocity, mat, tempV, temp, m);
+//				PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
+//
+//				float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0, 1, 0));
+//
+//				if (Dot > 0.5f)
+//					jumping = false;;
+//			}
+//
+//		}
+//	};
+//
+//}

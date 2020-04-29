@@ -18,27 +18,35 @@ namespace SpyroUISetup
         return { (_percentageX * _screenWidth), (_percentageY * _screeHeight) };
     }
 
-    class GameplayUIControllerSPYROGAME : public AD_UI::OverlayController
+    class GameplayUIControllerSPYROGAME : public ADUI::OverlayController
     {
         int timesPressed = 0;
+        int health = 3;
     public:
-        GameplayUIControllerSPYROGAME(UINT& _uiState, AD_UI::UISetup& _setup) : AD_UI::OverlayController(_uiState, _setup) {};
+        GameplayUIControllerSPYROGAME(UINT& _uiState, ADUI::UISetup& _setup) : ADUI::OverlayController(_uiState, _setup) {};
         virtual bool ProcessResponse(ADResource::AD_UI::UIMessage* _message);
         virtual bool ProcessInput(float delta_time);
     };
 
-    class StartMenuUIControllerSPYROGAME : public AD_UI::OverlayController
+    class StartMenuUIControllerSPYROGAME : public ADUI::OverlayController
     {
     public:
-        StartMenuUIControllerSPYROGAME(UINT& _uiState, AD_UI::UISetup& _setup) : AD_UI::OverlayController(_uiState, _setup) {};
+        StartMenuUIControllerSPYROGAME(UINT& _uiState, ADUI::UISetup& _setup) : ADUI::OverlayController(_uiState, _setup) {};
         virtual bool ProcessInput(float delta_time);
         virtual bool ProcessResponse(ADResource::AD_UI::UIMessage* _message);
+    };
+
+    class EndMenuUIControllerSPYROGAME : public ADUI::OverlayController
+    {
+    public:
+        EndMenuUIControllerSPYROGAME(UINT& _uiState, ADUI::UISetup& _setup) : ADUI::OverlayController(_uiState, _setup) {};
+        virtual bool ProcessInput(float delta_time);
     };
 
     class GameUserInterface
     {
     public:
-        AD_UI::ADUI* SpyroGameUISetup();
+        ADUI::ADUI* SpyroGameUISetup();
     };
 
 };

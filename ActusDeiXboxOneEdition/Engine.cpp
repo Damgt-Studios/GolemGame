@@ -135,7 +135,7 @@ void Engine::RotateCamera(float yaw, float pitch)
 	camera->Rotate(yaw, pitch);
 }
 
-void Engine::SetupUserInterface(AD_UI::ADUI* _uiSetup)
+void Engine::SetupUserInterface(ADUI::ADUI* _uiSetup)
 {
 	userInterface = _uiSetup;
 }

@@ -41,7 +41,7 @@ public:
 	OrbitCamera* GetOrbitCamera();
 	void MoveCamera(XMFLOAT3 move_direction);
 	void RotateCamera(float yaw, float pitch);
-	void SetupUserInterface(AD_UI::ADUI* _uiSetup);
+	void SetupUserInterface(ADUI::ADUI* _uiSetup);
 	//AD_UI::ADUI* GetUserInterface();
 
 private:
@@ -62,7 +62,7 @@ private:
 	// New shit
 	ADResource::ADRenderer::PBRRenderer pbr;
 	ResourceManager rmanager;
-	AD_UI::ADUI* userInterface;
+	ADUI::ADUI* userInterface;
 
 	// Timing
 	XTime engine_time;

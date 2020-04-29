@@ -12,10 +12,10 @@ namespace SpyroUISetup
             if (_message)
             {
                 buttonPressed = true;
-                if (uiState == AD_UI::UISTATE::MENUSTATE)
+                if (uiState == ADUI::UISTATE::MENUSTATE)
                 {
 
-                    if (_message->messageType == AD_UI::UIMessageTypes::FromButton)
+                    if (_message->messageType == ADUI::UIMessageTypes::FromButton)
                     {
                         switch (_message->number)
                         {
@@ -26,12 +26,12 @@ namespace SpyroUISetup
                             {
                                 setup.overlays[pauseOverlayID].Disable();
                                 setup.overlays[setup.overlaysNameToID["HUD"]].visible = false;
-                                uiState = AD_UI::UISTATE::GAMEPLAY;
+                                uiState = ADUI::UISTATE::GAMEPLAY;
                             }
                             else
                             {
                                 setup.overlays[pauseOverlayID].Enable();
-                                uiState = AD_UI::UISTATE::MENUSTATE;
+                                uiState = ADUI::UISTATE::MENUSTATE;
                             }
                             buttonPressed = true;
                             break;
@@ -48,7 +48,7 @@ namespace SpyroUISetup
                             buttonPressed = true;
                             break;
                         case 4:
-                            uiState = AD_UI::UISTATE::QUIT;
+                            uiState = ADUI::UISTATE::QUIT;
                             buttonPressed = true;
                             break;
                         default:
@@ -59,13 +59,72 @@ namespace SpyroUISetup
                 }
             }
         }
-        if (setup.overlays[setup.overlaysNameToID["GuideScreen"]].visible)
+        else
         {
             if (Input::QueryButtonDown(GamepadButtons::B))
             {
                 setup.overlays[setup.overlaysNameToID["GuideScreen"]].Disable();
                 setup.overlays[setup.overlaysNameToID["PauseScreen"]].Enable();
                 buttonPressed = true;
+            }
+        }
+
+        if (_message)
+        {
+            if (_message->messageType == ADUI::UIMessageTypes::ExternalMsg)
+            {
+
+                switch (_message->number)
+                {
+                case 1:
+                {
+                    timesPressed += 1;
+                    UINT gemCountID = setup.componentsNameToID["GemCount"];
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output.clear();
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output = std::to_string(timesPressed);
+                    buttonPressed = true;
+                    break;
+                }
+                case 2:
+                {
+                    health -= 1;
+                    UINT gemCountID = setup.componentsNameToID["SpyroCount"];
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output.clear();
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output = std::to_string(health);
+                    if (health <= 0)
+                    {
+                        setup.overlays[setup.overlaysNameToID["CreditsScreen"]].Enable();
+                        setup.uiControllersEnabled[1] = false;
+                        setup.uiControllersEnabled[2] = true;
+                    }
+                    buttonPressed = true;
+                    break;
+                }
+                case 3:
+                {
+                    setup.overlays[setup.overlaysNameToID["SuccessScreen"]].Enable();
+                    setup.uiControllersEnabled[1] = false;
+                    setup.uiControllersEnabled[2] = true;
+                    buttonPressed = true;
+                    break;
+                }
+                case 4:
+                {
+                    health  = 3;
+                    UINT gemCountID = setup.componentsNameToID["SpyroCount"];
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output.clear();
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output = std::to_string(health);
+
+                    timesPressed = 0;
+                    gemCountID = setup.componentsNameToID["GemCount"];
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output.clear();
+                    Get<ADUI::Label2D*>(gemCountID)->GetText()->output = std::to_string(timesPressed);
+                    buttonPressed = true;
+                    break;
+                }
+                default:
+                    break;
+                }
             }
         }
 
@@ -83,14 +142,14 @@ namespace SpyroUISetup
             {
                 setup.overlays[pauseOverlayID].Disable();
                 setup.overlays[hudOverlayID].visible = false;
-                uiState = AD_UI::UISTATE::GAMEPLAY;
+                uiState = ADUI::UISTATE::GAMEPLAY;
             }
             else
             {
                 setup.uiControllersEnabled[pauseOverlayID] = true;
                 setup.overlays[hudOverlayID].visible = true;
                 setup.overlays[pauseOverlayID].Enable();
-                uiState = AD_UI::UISTATE::MENUSTATE;
+                uiState = ADUI::UISTATE::MENUSTATE;
             }
             buttonPressed = true;
         }
@@ -117,8 +176,8 @@ namespace SpyroUISetup
         {
             timesPressed += 1;
             UINT gemCountID = setup.componentsNameToID["GemCount"];
-            Get<AD_UI::Label2D*>(gemCountID)->GetText()->output.clear();
-            Get<AD_UI::Label2D*>(gemCountID)->GetText()->output = std::to_string(timesPressed);
+            Get<ADUI::Label2D*>(gemCountID)->GetText()->output.clear();
+            Get<ADUI::Label2D*>(gemCountID)->GetText()->output = std::to_string(timesPressed);
             buttonPressed = true;
         }
         return buttonPressed;
@@ -152,7 +211,7 @@ namespace SpyroUISetup
             if (_message)
             {
                 buttonPressed = true;
-                if (_message->messageType == AD_UI::UIMessageTypes::FromButton)
+                if (_message->messageType == ADUI::UIMessageTypes::FromButton)
                 {
                     switch (_message->number)
                     {
@@ -164,7 +223,7 @@ namespace SpyroUISetup
                         setup.overlays[hudID].visible = false;
                         setup.uiControllersEnabled[setup.controllersNameToID["HUD"]] = true;
                         setup.uiControllersEnabled[setup.controllersNameToID["TitleScreen"]] = false;
-                        uiState = AD_UI::UISTATE::GAMEPLAY;
+                        uiState = ADUI::UISTATE::GAMEPLAY;
                         buttonPressed = true;
                         break;
                     }
@@ -174,11 +233,11 @@ namespace SpyroUISetup
                     case 2: //guidebook/credits
                         setup.overlays[setup.overlaysNameToID["CreditsScreen"]].Enable();
                         setup.overlays[setup.overlaysNameToID["TitleScreen"]].Disable();
-                        uiState = AD_UI::UISTATE::GAMEPLAY;
+                        uiState = ADUI::UISTATE::GAMEPLAY;
                         buttonPressed = true;
                         break;
                     case 3:
-                        uiState = AD_UI::UISTATE::QUIT;
+                        uiState = ADUI::UISTATE::QUIT;
                         buttonPressed = true;
                         break;
                     default:
@@ -189,6 +248,35 @@ namespace SpyroUISetup
         }
         return buttonPressed;
     };
+
+    bool EndMenuUIControllerSPYROGAME::ProcessInput(float delta_time)
+    {
+        bool buttonPressed = false;
+        if (Input::QueryButtonDown(GamepadButtons::B))
+        {
+            setup.overlays[setup.overlaysNameToID["CreditsScreen"]].Disable();
+            setup.overlays[setup.overlaysNameToID["SuccessScreen"]].Disable();
+            setup.overlays[setup.overlaysNameToID["HUD"]].Disable();
+            setup.overlays[setup.overlaysNameToID["TitleScreen"]].Enable();
+
+            ADResource::AD_UI::UIMessage message;
+            message.controllerID = 1;
+            message.messageType = 2;
+            message.number = 4;
+
+            ADUI::MessageReceiver::SendMessage(&message);
+            setup.uiControllersEnabled[0] = true;
+            setup.uiControllersEnabled[2] = false;
+            
+            buttonPressed = true;
+        }
+        if (Input::QueryButtonDown(GamepadButtons::Y))
+        {
+            setup.overlays[setup.overlaysNameToID["Log"]].visible = !setup.overlays[setup.overlaysNameToID["Log"]].visible;
+            buttonPressed = true;
+        }
+        return buttonPressed;
+    }
 
     inline float pup(float _number)
     {
@@ -211,13 +299,13 @@ namespace SpyroUISetup
         return (_number / 2160.f) * _screenHeight;
     }
 
-    AD_UI::ADUI* GameUserInterface::SpyroGameUISetup()
+    ADUI::ADUI* GameUserInterface::SpyroGameUISetup()
     {
         Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
         float screenWidth = Window->Bounds.Width;
         float screenHeight = Window->Bounds.Height;
-        AD_UI::ADUI* myUI = new AD_UI::ADUI();
-        AD_UI::UISetup* setup = new AD_UI::UISetup();
+        ADUI::ADUI* myUI = new ADUI::ADUI();
+        ADUI::UISetup* setup = new ADUI::UISetup();
         myUI->SetSetup(setup);
         ADResource::AD_UI::UIHeader header = { "spyroatlas.dds" };
         myUI->SetAltasHeader(header);
@@ -236,13 +324,13 @@ namespace SpyroUISetup
 
         //TitleScreen
         UINT id = myUI->AddNewOverlay("TitleScreen", true, true, true);
-        AD_UI::Image2D* titleImage = new AD_UI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f) });
+        ADUI::Image2D* titleImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f) });
         UINT compId = myUI->AddUIComponent("TitleBG", titleImage);
         setup->overlays[id].AddComponent(compId);
 
         ////PauseScreen
         id = myUI->AddNewOverlay("PauseScreen");
-        AD_UI::Image2D* pauseImage = new AD_UI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f) });
+        ADUI::Image2D* pauseImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), 0,  pvp(2160.f) });
         compId = myUI->AddUIComponent("PauseBG", pauseImage);
         setup->overlays[id].AddComponent(compId);
 
@@ -252,19 +340,19 @@ namespace SpyroUISetup
 
         ////MusicScreen
         id = myUI->AddNewOverlay("MusicScreen");
-        AD_UI::Image2D* musicImage = new AD_UI::Image2D({ 0, 0, pxp(1150.f, screenWidth), pyp(900.f, screenHeight), 0.f, pup(2300.f), pvp(4320.f), pvp(5280.f) });
+        ADUI::Image2D* musicImage = new ADUI::Image2D({ 0, 0, pxp(1150.f, screenWidth), pyp(900.f, screenHeight), 0.f, pup(2300.f), pvp(4320.f), pvp(5280.f) });
         compId = myUI->AddUIComponent("PauseBG", musicImage);
         setup->overlays[id].AddComponent(compId);
 
         ////SuccessScreen
         id = myUI->AddNewOverlay("SuccessScreen");
-        AD_UI::Image2D* successImage = new AD_UI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f) });
+        ADUI::Image2D* successImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f) });
         compId = myUI->AddUIComponent("SuccessBG", successImage);
         setup->overlays[id].AddComponent(compId);
 
         ////CreditsScreen
         id = myUI->AddNewOverlay("CreditsScreen");
-        AD_UI::Image2D* creditsImage = new AD_UI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f) });
+        ADUI::Image2D* creditsImage = new ADUI::Image2D({ 0, 0, screenWidth, screenHeight, 0, pup(3840.f), pvp(2160.f),  pvp(4320.f) });
         compId = myUI->AddUIComponent("CreditsBG", creditsImage);
         //ADResource::AD_UI::TextLabel gemLabel = { false, GetPosition(0.1f, 0.1f, screenWidth, screenHeight), {"0"} };
         //AD_UI::Label2D* label1 = new AD_UI::Label2D();
@@ -284,89 +372,90 @@ namespace SpyroUISetup
 
         //HUD
         id = myUI->AddNewOverlay("HUD");
-        AD_UI::Image2D* image1 = new AD_UI::Image2D({ (-0.45f * screenWidth), (0.4f * screenHeight), pxp(225.f, screenWidth), pyp(205.f, screenHeight), pup(2300.f), pup(2525.f), pvp(4320.f), pvp(4525.f) });
-        AD_UI::Image2D* image2 = new AD_UI::Image2D({ (0.40f * screenWidth), (0.4f * screenHeight), pxp(252.f, screenWidth), pyp(252.f, screenHeight), pup(2525.f), pup(2782.f), pvp(4320.f), pvp(4572.f) });
+        ADUI::Image2D* image1 = new ADUI::Image2D({ (-0.45f * screenWidth), (0.4f * screenHeight), pxp(225.f, screenWidth), pyp(205.f, screenHeight), pup(2300.f), pup(2525.f), pvp(4320.f), pvp(4525.f) });
+        ADUI::Image2D* image2 = new ADUI::Image2D({ (0.40f * screenWidth), (0.4f * screenHeight), pxp(252.f, screenWidth), pyp(252.f, screenHeight), pup(2525.f), pup(2782.f), pvp(4320.f), pvp(4572.f) });
         compId = myUI->AddUIComponent("GemIcon", image1);
         setup->overlays[id].AddComponent(compId);
         compId = myUI->AddUIComponent("SpyroIcon", image2);
         setup->overlays[id].AddComponent(compId);
 
         ADResource::AD_UI::TextLabel gemLabel = { false, GetPosition(0.1f, 0.1f, screenWidth, screenHeight), {"0"} };
-        ADResource::AD_UI::TextLabel healthLabel = { false, GetPosition(0.95f, 0.1f, screenWidth, screenHeight), {"0"} };
-        AD_UI::Label2D* label1 = new AD_UI::Label2D();
+        ADResource::AD_UI::TextLabel healthLabel = { false, GetPosition(0.95f, 0.1f, screenWidth, screenHeight), {"3"} };
+        ADUI::Label2D* label1 = new ADUI::Label2D();
         label1->SetText(gemLabel);
         compId = myUI->AddUIComponent("GemCount", label1);
         setup->overlays[id].AddComponent(compId);
-        AD_UI::Label2D* label2 = new AD_UI::Label2D();
+        ADUI::Label2D* label2 = new ADUI::Label2D();
         label2->SetText(healthLabel);
         compId = myUI->AddUIComponent("SpyroCount", label2);
         setup->overlays[id].AddComponent(compId);
 
+
         //Button List for Start and Pause Menus
-        AD_UI::Button2D* ContinueBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* ContinueBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         ContinueBtn->SetText("Continue", pxp(-90.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
         //button->actionValue = 1;
 
-        AD_UI::Button2D* SaveBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* SaveBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         SaveBtn->SetText("Save Slots", pxp(-115.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
         //button2->actionValue = 2;
 
-        AD_UI::Button2D* CreditsBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* CreditsBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         CreditsBtn->SetText("Credits", pxp(-90.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* QuitBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* QuitBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         QuitBtn->SetText("Quit", pxp(-60.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* ExitBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* ExitBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         ExitBtn->SetText("Exit Level", pxp(-110.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* OptionsBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* OptionsBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         OptionsBtn->SetText("Options", pxp(-85.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* GuidebookBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* GuidebookBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         GuidebookBtn->SetText("Guidebook", pxp(-115.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* ControlsBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* ControlsBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         ControlsBtn->SetText("Controls", pxp(-50.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* SoundBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* SoundBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         SoundBtn->SetText("Sound", pxp(-50.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
-        AD_UI::Button2D* CameraBtn = new AD_UI::Button2D(
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
-            new AD_UI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
+        ADUI::Button2D* CameraBtn = new ADUI::Button2D(
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight), pup(2300.f), pup(3200.f), pvp(4320.f), pvp(4520.f) }),
+            new ADUI::Image2D({ 0, -100, pxp(600.f, screenWidth), pyp(150.f, screenHeight),  pup(2300.f), pup(3200.f), pvp(4520.f), pvp(4720.f) }, { 2, 0, 1, 6 })
             );
         CameraBtn->SetText("Camera", pxp(-50.f, screenWidth), pyp(25.f, screenHeight), screenWidth, screenHeight);
 
 
-        AD_UI::ButtonList* buttonList = new AD_UI::ButtonList(screenWidth, screenHeight);
+        ADUI::ButtonList* buttonList = new ADUI::ButtonList(screenWidth, screenHeight);
         buttonList->y = -160;
         buttonList->spacing = 20;
         buttonList->active = true;
@@ -381,7 +470,7 @@ namespace SpyroUISetup
         setup->overlays[0].AddComponent(compId);
 
 
-        AD_UI::ButtonList* buttonList2 = new AD_UI::ButtonList(screenWidth, screenHeight);
+        ADUI::ButtonList* buttonList2 = new ADUI::ButtonList(screenWidth, screenHeight);
         buttonList2->y = +80;
         buttonList2->spacing = 20;
         buttonList2->active = true;
@@ -396,7 +485,7 @@ namespace SpyroUISetup
         setup->overlays[1].AddComponent(compId2);
 
 
-        AD_UI::ButtonList* buttonList3 = new AD_UI::ButtonList(screenWidth, screenHeight);
+        ADUI::ButtonList* buttonList3 = new ADUI::ButtonList(screenWidth, screenHeight);
         buttonList3->y = +80;
         buttonList3->spacing = 20;
         buttonList3->active = true;
@@ -414,7 +503,7 @@ namespace SpyroUISetup
         id = myUI->AddNewOverlay("Log", true, true, true);
         UINT compId4 = myUI->AddUIComponent("Log", myUI->GetLogComponent());
         setup->overlays[id].AddComponent(compId4);
-        AD_UI::MessageReceiver::SetUI(myUI);
+        ADUI::MessageReceiver::SetUI(myUI);
 
         //TitleScreen Controller
         StartMenuUIControllerSPYROGAME* titleScreenController = new StartMenuUIControllerSPYROGAME(myUI->uiState, *setup);
@@ -431,6 +520,13 @@ namespace SpyroUISetup
         gameplayUIController->AddComponent(setup->componentsNameToID["GemCount"], label1);
         gameplayUIController->AddComponent(setup->componentsNameToID["SpyroCount"], label2);
         myUI->AddUIController("HUD", gameplayUIController);
+
+        EndMenuUIControllerSPYROGAME* endUIController = new EndMenuUIControllerSPYROGAME(myUI->uiState, *setup);
+        setup->uiControllersEnabled.push_back(false);
+        endUIController->AddComponent(compId3, myUI->GetLogComponent());
+        endUIController->AddComponent(setup->componentsNameToID["GemCount"], label1);
+        endUIController->AddComponent(setup->componentsNameToID["SpyroCount"], label2);
+        myUI->AddUIController("END", endUIController);
 
         return myUI;
     }

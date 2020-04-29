@@ -13,7 +13,7 @@
 #include <map>
 
 
-namespace AD_UI
+namespace ADUI
 {
     /*   enum COLORS
        {
@@ -103,7 +103,8 @@ namespace AD_UI
     enum UIMessageTypes
     {
         Ignore = 0,
-        FromButton = 1
+        FromButton = 1,
+        ExternalMsg = 2
     };
 
     enum ButtonResponses
@@ -271,7 +272,7 @@ namespace AD_UI
         XMFLOAT2 GetPosition(float _percentageX, float _percentageY, float _screenWidth, float _screeHeight);
         UILog uiLog;
         UINT uiState = 1;
-        AD_UI::ADUI::UILog* GetLogComponent();
+        ADUI::ADUI::UILog* GetLogComponent();
         void SetAltasHeader(ADResource::AD_UI::UIHeader _header);
         void SetSetup(UISetup* _setup);
         void RefreshOverlay(ComPtr<ID3D11DeviceContext1> _context);

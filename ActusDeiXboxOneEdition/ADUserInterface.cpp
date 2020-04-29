@@ -1,18 +1,18 @@
 #include "pch.h"
 #include "ADUserInterface.h"
 
-void AD_UI::Text2D::Initialize(ID3D11Device1* _device, SpriteBatch* _spriteBatch)
+void ADUI::Text2D::Initialize(ID3D11Device1* _device, SpriteBatch* _spriteBatch)
 {
     spriteBatch = _spriteBatch;
     spriteFont = std::make_unique<SpriteFont>(_device, ADUtils::GetTexturePath("SpyroFont.spritefont").c_str());
 }
 
-void AD_UI::Text2D::Render(ADResource::AD_UI::TextLabel* label)
+void ADUI::Text2D::Render(ADResource::AD_UI::TextLabel* label)
 {
     spriteFont->DrawString(spriteBatch, label->output.c_str(), label->position);
 }
 
-AD_UI::Image2D::Image2D()
+ADUI::Image2D::Image2D()
 {
     visible = true;
     active = false;
@@ -24,7 +24,7 @@ AD_UI::Image2D::Image2D()
     updateTimer = 0.f;
 }
 
-AD_UI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, int _textureID)
+ADUI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, int _textureID)
 {
     visible = true;
     active = false;
@@ -37,7 +37,7 @@ AD_UI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, int _textureID)
     quad = new ADResource::AD_UI::QuadData(_quad);
 }
 
-AD_UI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, ADResource::AD_UI::AnimData2d _animation, int _textureID)
+ADUI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, ADResource::AD_UI::AnimData2d _animation, int _textureID)
 {
     visible = true;
     active = true;
@@ -68,7 +68,7 @@ AD_UI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, ADResource::AD_UI::An
     updateThreshold = (1.0f / _animation.fps);
 }
 
-AD_UI::Image2D::~Image2D()
+ADUI::Image2D::~Image2D()
 {
     for (int i = 0; i < frameCount; ++i)
     {
@@ -77,19 +77,19 @@ AD_UI::Image2D::~Image2D()
     delete[] quad;
 }
 
-void AD_UI::Image2D::Enable()
+void ADUI::Image2D::Enable()
 {
     visible = true;
     requiresRefresh = true;
 }
 
-void AD_UI::Image2D::Disable()
+void ADUI::Image2D::Disable()
 {
     visible = false;
     requiresRefresh = true;
 }
 
-void AD_UI::Image2D::Update(float delta_time)
+void ADUI::Image2D::Update(float delta_time)
 {
     if (active && visible)
     {
@@ -110,25 +110,25 @@ void AD_UI::Image2D::Update(float delta_time)
     }
 }
 
-ADResource::AD_UI::QuadData* AD_UI::Image2D::GetQuad()
+ADResource::AD_UI::QuadData* ADUI::Image2D::GetQuad()
 {
     return &quad[currentFrame];
 }
 
 
-void AD_UI::UILog::InitializeLog(float textXOffset, float textYOffset, float screenWidth, float screenHeight, ADResource::AD_UI::QuadData _quad)
+void ADUI::UILog::InitializeLog(float textXOffset, float textYOffset, float screenWidth, float screenHeight, ADResource::AD_UI::QuadData _quad)
 {
     blackBox.quad = new ADResource::AD_UI::QuadData{ _quad }; //0.35f * screenWidth, -0.3f * screenHeight, 400, 250, 0.1046f, 0.2083f, 0.8645f, 0.9876f};
     blackBox.visible = true;
     consoleLabel = { true, componentPosToTextPos(XMFLOAT2(_quad.x + textXOffset, _quad.y + textYOffset), screenWidth, screenHeight), {"0"} };
 }
 
-ADResource::AD_UI::UIMessage* AD_UI::UILog::ProcessInput()
+ADResource::AD_UI::UIMessage* ADUI::UILog::ProcessInput()
 {
     return nullptr;
 }
 
-void AD_UI::UILog::WriteToLog(std::string message)
+void ADUI::UILog::WriteToLog(std::string message)
 {
     messageQueue.push_back(message);
 
@@ -144,18 +144,18 @@ void AD_UI::UILog::WriteToLog(std::string message)
     }
 }
 
-ADResource::AD_UI::QuadData* AD_UI::UILog::GetQuad()
+ADResource::AD_UI::QuadData* ADUI::UILog::GetQuad()
 {
     return blackBox.GetQuad();
 }
 
-ADResource::AD_UI::TextLabel* AD_UI::UILog::GetText()
+ADResource::AD_UI::TextLabel* ADUI::UILog::GetText()
 {
     return &consoleLabel;
 }
 
 
-AD_UI::Button2D::Button2D(Image2D* _image, Image2D* _imageOnFocus, bool _visible, bool _active, bool _controlFocus)
+ADUI::Button2D::Button2D(Image2D* _image, Image2D* _imageOnFocus, bool _visible, bool _active, bool _controlFocus)
 {
     image = _image;
     imageOnFocus = _imageOnFocus;
@@ -165,13 +165,13 @@ AD_UI::Button2D::Button2D(Image2D* _image, Image2D* _imageOnFocus, bool _visible
     quadCount = 1;
 }
 
-AD_UI::Button2D::~Button2D()
+ADUI::Button2D::~Button2D()
 {
     delete image;
     delete imageOnFocus;
 }
 
-ADResource::AD_UI::UIMessage* AD_UI::Button2D::ProcessInput()
+ADResource::AD_UI::UIMessage* ADUI::Button2D::ProcessInput()
 {
     if (Input::QueryButtonDown(GamepadButtons::A))
     {
@@ -183,7 +183,7 @@ ADResource::AD_UI::UIMessage* AD_UI::Button2D::ProcessInput()
     return nullptr;
 }
 
-void AD_UI::Button2D::Update(float delta_time)
+void ADUI::Button2D::Update(float delta_time)
 {
     if (controlFocus)
     {
@@ -197,7 +197,7 @@ void AD_UI::Button2D::Update(float delta_time)
     }
 }
 
-ADResource::AD_UI::QuadData* AD_UI::Button2D::GetQuad()
+ADResource::AD_UI::QuadData* ADUI::Button2D::GetQuad()
 {
     if (visible)
     {
@@ -210,24 +210,24 @@ ADResource::AD_UI::QuadData* AD_UI::Button2D::GetQuad()
 }
 
 
-void AD_UI::Button2D::SetText(char* _text, float _textXOffset, float _textYOffset, float screenWidth, float screenHeight, bool visible)
+void ADUI::Button2D::SetText(char* _text, float _textXOffset, float _textYOffset, float screenWidth, float screenHeight, bool visible)
 {
     textXOffset = _textXOffset;
     textYOffset = _textYOffset;
     buttonLabel = { visible, componentPosToTextPos(XMFLOAT2(image->quad->x + textXOffset, image->quad->y + textYOffset), screenWidth, screenHeight), {_text} };
 }
 
-void AD_UI::Button2D::ResetText(float _originalX, float _originalY, float screenWidth, float screenHeight, bool visible)
+void ADUI::Button2D::ResetText(float _originalX, float _originalY, float screenWidth, float screenHeight, bool visible)
 {
     buttonLabel = { visible, componentPosToTextPos(XMFLOAT2(_originalX + textXOffset, _originalY + textYOffset), screenWidth, screenHeight), buttonLabel.output };
 }
 
-ADResource::AD_UI::TextLabel* AD_UI::Button2D::GetText()
+ADResource::AD_UI::TextLabel* ADUI::Button2D::GetText()
 {
     return &buttonLabel;
 }
 
-void AD_UI::Button2D::Refresh()
+void ADUI::Button2D::Refresh()
 {
     requiresRefresh = true;
     image->requiresRefresh = true;
@@ -235,7 +235,7 @@ void AD_UI::Button2D::Refresh()
 }
 
 
-AD_UI::ButtonList::ButtonList(float _screenWidth, float _screenHeight, float _x, float _y, float _spacing, UINT _columns, UINT _maxRows, bool _active, bool _visible, bool _controlFocus)
+ADUI::ButtonList::ButtonList(float _screenWidth, float _screenHeight, float _x, float _y, float _spacing, UINT _columns, UINT _maxRows, bool _active, bool _visible, bool _controlFocus)
 {
     screenWidth = _screenWidth;
     screenHeight = _screenHeight;
@@ -251,7 +251,7 @@ AD_UI::ButtonList::ButtonList(float _screenWidth, float _screenHeight, float _x,
     quadCount = 0;
 }
 
-AD_UI::ButtonList::~ButtonList()
+ADUI::ButtonList::~ButtonList()
 {
     for (int i = 0; i < buttons.size(); ++i)
     {
@@ -262,13 +262,13 @@ AD_UI::ButtonList::~ButtonList()
     delete[] myQuads;
 }
 
-void AD_UI::ButtonList::AddButton(Button2D* _button)
+void ADUI::ButtonList::AddButton(Button2D* _button)
 {
     buttons.push_back(_button);
     quadCount++;
 }
 
-void AD_UI::ButtonList::RecalculatePositions()
+void ADUI::ButtonList::RecalculatePositions()
 {
     int XSpacing = 0;
     int YSpacing = 0;
@@ -282,7 +282,7 @@ void AD_UI::ButtonList::RecalculatePositions()
     }
 }
 
-void AD_UI::ButtonList::RepositionText()
+void ADUI::ButtonList::RepositionText()
 {
     labelCount = 0;
     for (int i = 0; i < buttons.size(); ++i)
@@ -310,7 +310,7 @@ void AD_UI::ButtonList::RepositionText()
     //Return an array of Text containing children text after previously returning count.
 }
 
-void AD_UI::ButtonList::Initialize()
+void ADUI::ButtonList::Initialize()
 {
     buttons[selectedButtonIndex]->controlFocus = true;  //This needs to move to Enable //Disable, etc..
     quadCount = buttons.size();
@@ -324,7 +324,7 @@ void AD_UI::ButtonList::Initialize()
     RepositionText();
 }
 
-void AD_UI::ButtonList::Update(float delta_time)
+void ADUI::ButtonList::Update(float delta_time)
 {
     for (int i = 0; i < buttons.size(); ++i)
     {
@@ -334,7 +334,7 @@ void AD_UI::ButtonList::Update(float delta_time)
     }
 }
 
-ADResource::AD_UI::UIMessage* AD_UI::ButtonList::ProcessInput()
+ADResource::AD_UI::UIMessage* ADUI::ButtonList::ProcessInput()
 {
     if (Input::QueryButtonDown(GamepadButtons::DPadUp))
     {
@@ -374,7 +374,7 @@ ADResource::AD_UI::UIMessage* AD_UI::ButtonList::ProcessInput()
     return btnvalue;
 }
 
-ADResource::AD_UI::QuadData** AD_UI::ButtonList::GetQuads()
+ADResource::AD_UI::QuadData** ADUI::ButtonList::GetQuads()
 {
     for (int i = 0; i < buttons.size(); ++i)
     {
@@ -385,7 +385,7 @@ ADResource::AD_UI::QuadData** AD_UI::ButtonList::GetQuads()
     return myQuads;
 }
 
-ADResource::AD_UI::TextLabel** AD_UI::ButtonList::GetTexts()
+ADResource::AD_UI::TextLabel** ADUI::ButtonList::GetTexts()
 {
     //Figure out how many buttons have text, can't be done here though becasue we need to return that first
     //Return an array of Text containing children text after previously returning count.
@@ -393,21 +393,21 @@ ADResource::AD_UI::TextLabel** AD_UI::ButtonList::GetTexts()
     return buttonLabel;
 }
 
-AD_UI::OverlayController::~OverlayController()
+ADUI::OverlayController::~OverlayController()
 {
 }
 
-bool AD_UI::OverlayController::ProcessInput(float delta_time)
-{
-    return false;
-}
-
-bool AD_UI::OverlayController::ProcessResponse(ADResource::AD_UI::UIMessage* responseID)
+bool ADUI::OverlayController::ProcessInput(float delta_time)
 {
     return false;
 }
 
-void AD_UI::OverlayController::AddComponent(UINT _compID, ADResource::AD_UI::UIComponent* _comp)
+bool ADUI::OverlayController::ProcessResponse(ADResource::AD_UI::UIMessage* responseID)
+{
+    return false;
+}
+
+void ADUI::OverlayController::AddComponent(UINT _compID, ADResource::AD_UI::UIComponent* _comp)
 {
     componentIDs.push_back(_compID);
     componentTypeMap.emplace(_compID, _comp);
@@ -418,17 +418,17 @@ void AD_UI::OverlayController::AddComponent(UINT _compID, ADResource::AD_UI::UIC
 //    componentTypeMap.emplace(_typeID, _comp);
 //}
 
-UINT AD_UI::OverlayController::GetComponentCount()
+UINT ADUI::OverlayController::GetComponentCount()
 {
     return componentIDs.size();
 }
 
-UINT* AD_UI::OverlayController::GetComponentIDS()
+UINT* ADUI::OverlayController::GetComponentIDS()
 {
     return componentIDs.data();
 }
 
-int AD_UI::ADUI::AddNewOverlay(std::string _name, bool _visible, bool _active, bool _dynamic)
+int ADUI::ADUI::AddNewOverlay(std::string _name, bool _visible, bool _active, bool _dynamic)
 {
     unsigned int index = setup->overlays.size();
     ADResource::AD_UI::Overlay2D temp(index, _visible, _active, _dynamic);
@@ -437,7 +437,7 @@ int AD_UI::ADUI::AddNewOverlay(std::string _name, bool _visible, bool _active, b
     return index;
 }
 
-AD_ULONG AD_UI::ADUI::AddUIComponent(std::string _name, ADResource::AD_UI::UIComponent* component)
+AD_ULONG ADUI::ADUI::AddUIComponent(std::string _name, ADResource::AD_UI::UIComponent* component)
 {
     unsigned int index = setup->uiComponents.size();
     setup->componentsNameToID[_name] = index;
@@ -446,39 +446,39 @@ AD_ULONG AD_UI::ADUI::AddUIComponent(std::string _name, ADResource::AD_UI::UICom
     return index;
 }
 
-void AD_UI::ADUI::AddUIController(std::string _name, OverlayController* _controller)
+void ADUI::ADUI::AddUIController(std::string _name, OverlayController* _controller)
 {
     unsigned int index = uiControllers.size();
     setup->controllersNameToID[_name] = index;
     uiControllers.push_back(_controller);
 }
 
-UINT AD_UI::ADUI::GetUIState()
+UINT ADUI::ADUI::GetUIState()
 {
     return uiState;
 }
 
-XMFLOAT2 AD_UI::ADUI::GetPosition(float _percentageX, float _percentageY, float _screenWidth, float _screeHeight)
+XMFLOAT2 ADUI::ADUI::GetPosition(float _percentageX, float _percentageY, float _screenWidth, float _screeHeight)
 {
     return { (_percentageX * _screenWidth), (_percentageY * _screeHeight) };
 }
 
-AD_UI::UILog* AD_UI::ADUI::GetLogComponent()
+ADUI::UILog* ADUI::ADUI::GetLogComponent()
 {
     return &uiLog;
 }
 
-void AD_UI::ADUI::SetAltasHeader(ADResource::AD_UI::UIHeader _header)
+void ADUI::ADUI::SetAltasHeader(ADResource::AD_UI::UIHeader _header)
 {
     header = _header;
 }
 
-void AD_UI::ADUI::SetSetup(UISetup* _setup)
+void ADUI::ADUI::SetSetup(UISetup* _setup)
 {
     setup = _setup;
 }
 
-void AD_UI::ADUI::RefreshOverlay(ComPtr<ID3D11DeviceContext1> _context)
+void ADUI::ADUI::RefreshOverlay(ComPtr<ID3D11DeviceContext1> _context)
 {
     for (int over = 0; over < setup->overlays.size(); ++over)
     {
@@ -526,7 +526,7 @@ void AD_UI::ADUI::RefreshOverlay(ComPtr<ID3D11DeviceContext1> _context)
     }
 }
 
-void AD_UI::ADUI::Initialize(ID3D11Device1* device, ID3D11DeviceContext1* _context)
+void ADUI::ADUI::Initialize(ID3D11Device1* device, ID3D11DeviceContext1* _context)
 {
     spriteBatch = new SpriteBatch(_context);
     //GameSideCode(640,480);
@@ -684,7 +684,7 @@ void AD_UI::ADUI::Initialize(ID3D11Device1* device, ID3D11DeviceContext1* _conte
 
 }
 
-void AD_UI::ADUI::Update(float delta_time)
+void ADUI::ADUI::Update(float delta_time)
 {
     if (inputTimer < responseTime)
     {
@@ -725,7 +725,7 @@ void AD_UI::ADUI::Update(float delta_time)
     }
 }
 
-void AD_UI::ADUI::Render(ComPtr<ID3D11DeviceContext1> _context, ComPtr<ID3D11RenderTargetView> _rtv)
+void ADUI::ADUI::Render(ComPtr<ID3D11DeviceContext1> _context, ComPtr<ID3D11RenderTargetView> _rtv)
 {
     RefreshOverlay(_context);
     ID3D11ShaderResourceView* resource_views[] = { uiResources.uiTextures.Get() };
@@ -796,12 +796,12 @@ void AD_UI::ADUI::Render(ComPtr<ID3D11DeviceContext1> _context, ComPtr<ID3D11Ren
     _context->OMSetDepthStencilState(nullptr, 1);
 }
 
-void AD_UI::ADUI::RecieveMessage(ADResource::AD_UI::UIMessage* _message)
+void ADUI::ADUI::RecieveMessage(ADResource::AD_UI::UIMessage* _message)
 {
     uiControllers[_message->controllerID]->ProcessResponse(_message);
 }
 
-void AD_UI::ADUI::ShutDown()
+void ADUI::ADUI::ShutDown()
 {
     for (int i = 0; setup->uiComponents.size(); ++i)
     {
@@ -814,20 +814,20 @@ void AD_UI::ADUI::ShutDown()
     }
 }
 
-AD_UI::ADUI* AD_UI::MessageReceiver::userInterface = nullptr;
+ADUI::ADUI* ADUI::MessageReceiver::userInterface = nullptr;
 
-void AD_UI::MessageReceiver::SetUI(ADUI* _userInterface)
+void ADUI::MessageReceiver::SetUI(ADUI* _userInterface)
 {
     userInterface = _userInterface;
 }
 
-void AD_UI::MessageReceiver::Log(std::string _message)
+void ADUI::MessageReceiver::Log(std::string _message)
 {
     if (userInterface)
         userInterface->uiLog.WriteToLog(_message);
 }
 
-void AD_UI::MessageReceiver::SendMessage(ADResource::AD_UI::UIMessage* _message)
+void ADUI::MessageReceiver::SendMessage(ADResource::AD_UI::UIMessage* _message)
 {
     if (userInterface)
     {
@@ -835,17 +835,17 @@ void AD_UI::MessageReceiver::SendMessage(ADResource::AD_UI::UIMessage* _message)
     }
 }
 
-void AD_UI::Label2D::SetText(std::string message)
+void ADUI::Label2D::SetText(std::string message)
 {
     consoleLabel.output = message;
 }
 
-void AD_UI::Label2D::SetText(ADResource::AD_UI::TextLabel message)
+void ADUI::Label2D::SetText(ADResource::AD_UI::TextLabel message)
 {
     consoleLabel = message;
 }
 
-ADResource::AD_UI::TextLabel* AD_UI::Label2D::GetText()
+ADResource::AD_UI::TextLabel* ADUI::Label2D::GetText()
 {
     return &consoleLabel;
 }
