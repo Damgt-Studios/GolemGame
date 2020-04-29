@@ -10,7 +10,7 @@
 namespace
 {
 	const int ADMEMORY_ARRAY_SIZE = 1000;
-	const long long FIVE_GB = 4000000000;
+	const long long FIVE_GB = 2000000000;
 }
 
 class MemoryManager
