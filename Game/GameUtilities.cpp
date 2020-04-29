@@ -32,6 +32,10 @@ Collectable* GameUtilities::AddCollectableFromModelFile(std::string modelname, X
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
+
+	scale.x *= 1.8f;
+	scale.y *= 1.8f;
+	scale.z *= 1.8f;
 	temp->collider = ADPhysics::AABB(position, scale);
 
 	return temp;
@@ -48,6 +52,10 @@ Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, XMFLOAT3 
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
+
+	scale.x *= 1.8f;
+	scale.y *= 1.8f;
+	scale.z *= 1.8f;
 	temp->collider = ADPhysics::AABB(position, scale);
 
 	return temp;
@@ -64,6 +72,10 @@ Enemy* GameUtilities::AddEnemyFromModelFile(std::string modelname, XMFLOAT3 posi
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
+
+	scale.x *= 1.8f;
+	scale.y *= 1.8f;
+	scale.z *= 1.8f;
 	temp->collider = ADPhysics::AABB(position, scale);
 
 	return temp;
