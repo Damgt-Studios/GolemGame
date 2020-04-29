@@ -64,6 +64,7 @@ ADUI::Image2D::Image2D(ADResource::AD_UI::QuadData _quad, ADResource::AD_UI::Ani
         quad[i].maxU = quad[0].maxU + UDelta * currentColumn;
         quad[i].minV = quad[0].minV + VDelta * currentRow;
         quad[i].maxV = quad[0].maxV + VDelta * currentRow;
+        quad[i].atlastID = quad[0].atlastID;
     }
     updateThreshold = (1.0f / _animation.fps);
 }
