@@ -4,9 +4,21 @@
 
 namespace ADPhysics
 {
-	struct AABB
+	enum class ColliderType
 	{
-		XMFLOAT3 Pos, Min, Max, Extents, HalfSize;
+		Sphere, Aabb, Obb, Plane, Triangle
+	};
+
+	struct Collider 
+	{
+		XMFLOAT3 Pos;
+		ColliderType type;
+		bool trigger;
+	};
+
+	struct AABB : Collider
+	{
+		XMFLOAT3 Min, Max, Extents, HalfSize;
 		AABB()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
@@ -14,6 +26,7 @@ namespace ADPhysics
 			Max = XMFLOAT3(Pos.x + HalfSize.x, Pos.y + HalfSize.y, Pos.z + HalfSize.z);
 			Min = XMFLOAT3(Pos.x - HalfSize.x, Pos.y - HalfSize.y, Pos.z - HalfSize.z);
 			Extents = XMFLOAT3(Max.x - Pos.x, Max.y - Pos.y, Max.z - Pos.z);
+			type = ColliderType::Aabb;
 		};
 		AABB(XMFLOAT3 Position, XMFLOAT3 Size)
 		{
@@ -22,12 +35,13 @@ namespace ADPhysics
 			Max = XMFLOAT3(Pos.x + HalfSize.x, Pos.y + HalfSize.y, Pos.z + HalfSize.z);
 			Min = XMFLOAT3(Pos.x - HalfSize.x, Pos.y - HalfSize.y, Pos.z - HalfSize.z);
 			Extents = XMFLOAT3(Max.x - Pos.x, Max.y - Pos.y, Max.z - Pos.z);
+			type = ColliderType::Aabb;
 		};
 	};
 
-	struct OBB
+	struct OBB : Collider
 	{
-		XMFLOAT3 Pos, AxisX, AxisY, AxisZ, HalfSize;
+		XMFLOAT3 AxisX, AxisY, AxisZ, HalfSize;
 		OBB()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
@@ -35,6 +49,7 @@ namespace ADPhysics
 			AxisY = XMFLOAT3(0, 1, 0);
 			AxisZ = XMFLOAT3(0, 0, 1);
 			HalfSize = XMFLOAT3(0.5f, 0.5f, 0.5f);
+			type = ColliderType::Obb;
 		};
 		OBB(XMMATRIX Transform, XMFLOAT3 Size)
 		{
@@ -43,24 +58,26 @@ namespace ADPhysics
 			AxisY = (XMFLOAT3&)Transform.r[1];
 			AxisZ = (XMFLOAT3&)Transform.r[2];
 			HalfSize = Size;
+			type = ColliderType::Obb;
 		}
 	};
 
-	struct Sphere
+	struct Sphere : Collider
 	{
-		XMFLOAT3 Pos; float Radius;
+		float Radius;
 		Sphere()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
 			Radius = 0.5f;
+			type = ColliderType::Sphere;
 		}
 
-		Sphere(XMFLOAT3 Position, float Radius) : Pos(Position), Radius(Radius) { };
+		Sphere(XMFLOAT3 Position, float Radius) : Radius(Radius) { Pos = Position; type = ColliderType::Sphere; };
 	};
 
-	struct Plane
+	struct Plane : Collider
 	{
-		XMFLOAT3 Pos, Normal, AxisX, AxisY, AxisZ, HalfSize;
+		XMFLOAT3 Normal, AxisX, AxisY, AxisZ, HalfSize;
 		Plane()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
@@ -69,6 +86,7 @@ namespace ADPhysics
 			AxisY = Normal;
 			AxisZ = XMFLOAT3(0, 0, 1);
 			HalfSize = XMFLOAT3(0.5f, 0.5f, 0.5f);
+			type = ColliderType::Plane;
 		}
 
 		Plane(XMMATRIX Transform, XMFLOAT3 Size)
@@ -79,6 +97,7 @@ namespace ADPhysics
 			AxisZ = (XMFLOAT3&)Transform.r[2];
 			Normal = AxisY;
 			HalfSize = Size;
+			type = ColliderType::Plane;
 		}
 	};
 
@@ -89,16 +108,14 @@ namespace ADPhysics
 		Segment(XMFLOAT3 s, XMFLOAT3 e) : Start(s), End(e) {};
 	};
 
-	struct Triangle
+	struct Triangle : Collider
 	{
 		XMFLOAT3 a;
 		XMFLOAT3 b;
 		XMFLOAT3 c;
-		int index;
 
-		Triangle() {};
-		//Needs to be filled out in COUNTER CLOCKWISE order
-		Triangle(XMFLOAT3 A, XMFLOAT3 B, XMFLOAT3 C) : a(A), b(B), c(C) {};
+		Triangle(XMFLOAT3 A, XMFLOAT3 B, XMFLOAT3 C) : a(A), b(B), c(C) 
+		{ Pos = (XMFLOAT3&)(((XMVECTOR&)a + (XMVECTOR&)b + (XMVECTOR&)c) / 3); type = ColliderType::Triangle; };
 	};
 
 	struct PhysicsMaterial
