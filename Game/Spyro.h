@@ -17,7 +17,7 @@ namespace ADResource
 			void Damage(DAMAGE_TYPE d_type);
 
 			void Remove();
-
+			void GetView(XMMATRIX& view);
 			void CheckCollision(AABB& item);
 			void CheckCollision(Plane& item);
 
@@ -32,7 +32,6 @@ namespace ADResource
 			AABB collider;
 			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
 
-
 			// Gameplay
 			float jump_time_up = .4;
 			float jump_time_length = 1;
@@ -45,9 +44,10 @@ namespace ADResource
 			float floatiness = 0.25f;
 			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
 
+			XMMATRIX camera;
 			// Turning
 			float spyro_turn_speed = 5;
-			float spyro_move_speed = 5;
+			float spyro_move_speed = 30;
 		};
 	}
 }

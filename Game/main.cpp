@@ -229,12 +229,15 @@ public:
 			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
 
 			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
-
+			XMMATRIX view;
+			engine->GetOrbitCamera()->GetViewMatrix(view);
+			spyro->GetView(view);
+		
 			// Physics test
 			spyro->CheckCollision(test_colider);
 			spyro->CheckCollision(test_colider1);
 			spyro->CheckCollision(test_plane);
-
+		
 			// Test
 
 			// Poll input

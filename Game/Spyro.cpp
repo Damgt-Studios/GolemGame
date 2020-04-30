@@ -19,6 +19,12 @@ void ADResource::ADGameplay::Spyro::Remove()
 
 }
 
+void ADResource::ADGameplay::Spyro::GetView(XMMATRIX& view)
+{
+	camera = view;
+}
+
+
 void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 {
 	Manifold m;
@@ -30,7 +36,7 @@ void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 		VelocityImpulse(Velocity, mat, tempV, temp, m);
 		PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
 
-		float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0,1,0));
+		float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0, 1, 0));
 
 		if (Dot > 0.5f)
 			jumping = false;;
@@ -54,25 +60,34 @@ void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);
-
-	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::UP)
+	XMFLOAT4 forward;
+	XMStoreFloat4(&forward,Spyro::transform.r[2]);
+	
+	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
 	{
-		Velocity.z += spyro_move_speed * delta_time;
 		
+
+		
+		Velocity.x += forward.x * delta_time * spyro_move_speed;
+		Velocity.y += forward.y * delta_time * spyro_move_speed;
+		Velocity.z += forward.z * delta_time * spyro_move_speed;
+
+
 	}
-	else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
+	
+	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
 	{
-		Velocity.z += -spyro_move_speed * delta_time;
+		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
+			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
+
+		angle = (180 / 3.14) * angle;
+
+		Spyro::RotationBasedOnView(camera,angle);
+
+
 	}
 
-	if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
-	{
-		Velocity.x += -spyro_move_speed * delta_time;
-	}
-	else if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
-	{
-		Velocity.x += spyro_move_speed * delta_time;
-	}
+	
 
 	if (Velocity.y > maxDownwardVelocity)
 		Velocity.y += Gravity * delta_time * floatiness;

@@ -416,10 +416,82 @@ namespace ADResource
 			void SetMeshID(AD_ULONG id) { meshID = id; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
-			void SetRotation(XMFLOAT3 rotation)
+			void SetRotation(XMMATRIX newRot)
 			{
+				transform.r[0] = newRot.r[0];
+				transform.r[1] = newRot.r[1];
+				transform.r[2] = newRot.r[2];
 			}
+			void RotationYBasedOnView( XMMATRIX cam,float angle)
+			{
+				cam = XMMatrixInverse(nullptr, cam);
+				XMVECTOR cameulerAngles = GetRotation(cam);
+				
+				cameulerAngles.m128_f32[1] = cameulerAngles.m128_f32[1] * (180 / 3.14);
 
+				angle += -cameulerAngles.m128_f32[1];
+				angle *= (3.14 / 180);
+ 
+				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
+
+				SetRotation(RotationY);
+				
+				
+
+
+			
+
+			}
+			XMVECTOR GetRotation()
+			{
+				float Yaw; float Pitch; float Roll;
+				if (transform.r[0].m128_f32[0] == 1.0f)
+				{
+					Yaw = atan2f(transform.r[0].m128_f32[2], transform.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+
+				}
+				else if (transform.r[0].m128_f32[0] == -1.0f)
+				{
+					Yaw = atan2f(transform.r[0].m128_f32[2], transform.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+				}
+				else
+				{
+
+					Yaw = atan2(-transform.r[2].m128_f32[0], transform.r[0].m128_f32[0] );
+					Pitch = asin(transform.r[1].m128_f32[0]);
+					Roll = atan2(-transform.r[1].m128_f32[2], transform.r[1].m128_f32[1]);
+				}
+				return { Pitch, Yaw, Roll };
+			}
+			XMVECTOR GetRotation(XMMATRIX matrix)
+			{
+				float Yaw; float Pitch; float Roll;
+				if (matrix.r[0].m128_f32[0] == 1.0f)
+				{
+					Yaw = atan2f(matrix.r[0].m128_f32[2], matrix.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+
+				}
+				else if (matrix.r[0].m128_f32[0] == -1.0f)
+				{
+					Yaw = atan2f(matrix.r[0].m128_f32[2], matrix.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+				}
+				else
+				{
+
+					Yaw = atan2(-matrix.r[2].m128_f32[0], matrix.r[0].m128_f32[0]);
+					Pitch = asin(matrix.r[1].m128_f32[0]);
+					Roll = atan2(-matrix.r[1].m128_f32[2], matrix.r[1].m128_f32[1]);
+				}
+				return { Pitch, Yaw, Roll };
+			}
 			void SetScale(XMFLOAT3 scale)
 			{
 				transform = XMMatrixMultiply(transform, XMMatrixScaling(scale.x, scale.y, scale.z));
