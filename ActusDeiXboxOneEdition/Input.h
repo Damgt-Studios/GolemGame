@@ -42,7 +42,7 @@ public:
 	static int QueryTriggerUpDown(TRIGGERS trigger, float tolerance = TOLERANCE);
 	static float QueryTriggerValueExact(TRIGGERS trigger);
 	static float QueryTriggerValueWithTolerance(TRIGGERS trigger, float tolerance = TOLERANCE);
-	static int QueryThumbSticLeftRightX(THUMBSTICKS stick);
+	static int QueryThumbStickLeftRightX(THUMBSTICKS stick);
 	static float QueryThumbStickValueExactX(THUMBSTICKS stick);
 	static float QueryThumbStickValueWithToleranceX(THUMBSTICKS stick, float tolerance = TOLERANCE);
 	static int QueryThumbStickUpDownY(THUMBSTICKS stick);

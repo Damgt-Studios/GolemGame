@@ -416,27 +416,34 @@ namespace ADResource
 			void SetMeshID(AD_ULONG id) { meshID = id; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
-			void SetRotation(XMMATRIX newRot)
+			void SetRotation(XMFLOAT3 rotation)
+			{
+			}
+
+			void SetRotationMatrix(XMMATRIX newRot)
 			{
 				transform.r[0] = newRot.r[0];
 				transform.r[1] = newRot.r[1];
 				transform.r[2] = newRot.r[2];
 			}
-			void RotationYBasedOnView( XMMATRIX cam,float angle)
+			void RotationYBasedOnView( XMMATRIX& cam,float angle, float PI)
 			{
+				angle *= (180.0f / PI);
+
 				cam = XMMatrixInverse(nullptr, cam);
 				XMVECTOR cameulerAngles = GetRotation(cam);
-				
-				cameulerAngles.m128_f32[1] = cameulerAngles.m128_f32[1] * (180 / 3.14);
+				cam = XMMatrixInverse(nullptr, cam);
+				cameulerAngles.m128_f32[1] *= (180 / PI);
 
 				angle += -cameulerAngles.m128_f32[1];
-				angle *= (3.14 / 180);
+				angle *= (PI / 180);
  
 				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
 
-				SetRotation(RotationY);
+				SetRotationMatrix(RotationY);
 				
 				
+		
 
 
 			

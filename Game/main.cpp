@@ -57,11 +57,11 @@ private:
 	// Rotation
 	float rot = 0;
 
-	float yaw = 180;
-	float pitch = 30;
+	float yaw = 180.0f;
+	float pitch = 30.0f;
 	
-	float default_yaw = 180;
-	float default_pitch = 30;
+	float default_yaw = 180.0f;
+	float default_pitch = 30.0f;
 
 	// Physics
 	ADPhysics::AABB test_colider;
@@ -115,7 +115,7 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 20, -100), 0, 0, 45);
+		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
@@ -291,10 +291,10 @@ public:
 		if (Input::ControllerPresent())
 		{
 			// Camera rotation
-			if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
+			if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
 			{
 				yaw += camera_rotation_thresh * dt;
-			} else if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
+			} else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
 			{
 				yaw += -camera_rotation_thresh * dt;
 			}

@@ -60,32 +60,29 @@ void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);
-	XMFLOAT4 forward;
-	XMStoreFloat4(&forward,Spyro::transform.r[2]);
-	
-	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
+	if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) && Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))|| Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) )
 	{
 		
+		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK), 
+			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK) );
 
-		
+
+		Spyro::RotationYBasedOnView(camera,angle, WMATH_PI);
+
+
+	
+	XMFLOAT4 forward;
+	XMStoreFloat4(&forward, Spyro::transform.r[2]);
+
+
+
 		Velocity.x += forward.x * delta_time * spyro_move_speed;
 		Velocity.y += forward.y * delta_time * spyro_move_speed;
 		Velocity.z += forward.z * delta_time * spyro_move_speed;
 
 
 	}
-	
-	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
-	{
-		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
-			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
 
-		angle = (180 / 3.14) * angle;
-
-		Spyro::RotationBasedOnView(camera,angle);
-
-
-	}
 
 	
 
