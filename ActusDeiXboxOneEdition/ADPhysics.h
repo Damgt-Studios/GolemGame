@@ -726,11 +726,6 @@ namespace ADPhysics
 	{
 		XMFLOAT3 Closest = FindClosestPoint(sphere.Pos, tri);
 
-		if (tri.index == 69 || tri.index == 89)
-		{
-			end::debug_renderer::add_line((end::float3&)sphere.Pos, (end::float3&)Closest, { 0,0,0,0 });
-		}
-
 		float MagSq = MagnitudeSq((XMFLOAT3&)((XMVECTOR&)Closest - (XMVECTOR&)sphere.Pos));
 		bool temp = MagSq <= sphere.Radius * sphere.Radius;
 
@@ -823,7 +818,6 @@ namespace ADPhysics
 		if (VectorDot((XMVECTOR&)aabb.Pos - (XMVECTOR&)Closest, (XMVECTOR&)m.Normal) <= 0)
 			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
 
-		end::debug_renderer::add_line((end::float3&)tri.a, (end::float3&)tri.a + (end::float3&)m.Normal, { 1,1,1,1 });
 		m.PenetrationDepth = MinOverlap;
 
 		return true;
@@ -908,8 +902,6 @@ namespace ADPhysics
 
 		if (VectorDot((XMVECTOR&)obb.Pos - (XMVECTOR&)Closest, (XMVECTOR&)m.Normal) <= 0)
 			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
-
-		end::debug_renderer::add_line((end::float3&)tri.a, (end::float3&)tri.a + (end::float3&)m.Normal, { 1,1,1,1 });
 
 		m.PenetrationDepth = MinOverlap;
 
