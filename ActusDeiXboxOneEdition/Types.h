@@ -7,7 +7,9 @@
 #include <string>
 #include "ADPhysics.h"
 
+#ifndef AD_MEMORY_DEFAULT
 #include "ADMemoryManager.h"
+#endif // !1
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
@@ -69,8 +71,13 @@ namespace ADResource
 
 		struct Model
 		{
+#ifdef AD_MEMORY_DEFAULT
+			std::vector<Vertex> vertices;
+			std::vector<int> indices;
+#else
 			ADVector<Vertex> vertices;
 			ADVector<int> indices;
+#endif
 
 			XMFLOAT3 position;
 			XMFLOAT3 rotation;

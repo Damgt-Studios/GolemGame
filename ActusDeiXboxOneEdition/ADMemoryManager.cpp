@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ADMemoryManager.h"
 
+#ifndef AD_MEMORY_DEFAULT
 MemoryManager memoryManager;
 
 MemoryManager::MemoryManager()
@@ -120,3 +121,4 @@ size_t MemoryManager::GetNextHandle()
 	assert(NULL);
 	return 0;
 }
+#endif

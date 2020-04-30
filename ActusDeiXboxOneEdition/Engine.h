@@ -53,8 +53,12 @@ private:
 	std::string write_path;
 	std::string read_path;
 
+#if AD_MEMORY_DEFAULT
+	std::vector<Light> lights;
+#else
 	ADVector<Light> lights;
-
+#endif
+	
 	FPSCamera* camera;
 	OrbitCamera* ocamera;
 
