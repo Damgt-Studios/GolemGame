@@ -26,12 +26,12 @@ private:
 	char* memoryBuffer;										// Buffer that holds 5 GB of allocated memory
 	long long allocatedSize;								// Variable that holds the current amount of memory being used
 	char* memPointers[ADMEMORY_ARRAY_SIZE] = {};			// Array that holds the pointers to different locations in the memory buffer
-	size_t memPointerIndex = 0;								// Current index of the memPointers array
+	size_t memPointerIndex;									// Current index of the memPointers array
 	size_t sizes[ADMEMORY_ARRAY_SIZE] = {};					// Array that stores the sizes of all the objects that were allocated
-	size_t sizesIndex = 0;									// Current index of the sizes array
+	size_t sizesIndex;										// Current index of the sizes array
 	char* handles[ADMEMORY_ARRAY_SIZE] = {};				// Array the holds indirect paths to memory
-	size_t handleIndex = 0;									// Current index of the handles array
-	size_t availableHandle = 0;								// Current available handle for the Handle class
+	size_t handleIndex;										// Current index of the handles array
+	size_t availableHandle;									// Current available handle for the Handle class
 
 	size_t GetNextHandle();									// Helper function that returns the next available index of the handles array
 };
@@ -257,7 +257,7 @@ public:
 	// CALL THIS FUNCTION ONLY AFTER CALLING ANY VARIATION OF New()
 	void Delete()
 	{
-		if (handleIndex >= 0)
+		if (handleIndex >= 0  && handleIndex < ADMEMORY_ARRAY_SIZE)
 		{
 			ptr = (Type*)memoryManager.GetHandleObject(handleIndex);
 			memoryManager.Deallocate(ptr, handleIndex);

@@ -91,7 +91,11 @@ namespace ADUI
     public:
         Image2D blackBox;
         ADResource::AD_UI::TextLabel consoleLabel;
+#ifdef AD_MEMORY_DEFAULT
         std::deque<std::string> messageQueue;
+#else
+        ADVector<std::string> messageQueue;
+#endif
 
         void InitializeLog(float textXOffset, float textYOffset, float screenWidth, float screenHeight, ADResource::AD_UI::QuadData _quad);
         virtual ADResource::AD_UI::UIMessage* ProcessInput();
@@ -152,7 +156,11 @@ namespace ADUI
         UINT maxRows;
         UINT selectedButtonIndex;
         ADResource::AD_UI::QuadData** myQuads;
+#ifdef AD_MEMORY_DEFAULT
         std::vector<Button2D*> buttons;
+#else
+        ADVector<Button2D*> buttons;
+#endif
         ADResource::AD_UI::TextLabel** buttonLabel;
 
 
@@ -175,9 +183,15 @@ namespace ADUI
         std::map<std::string, UINT> componentsNameToID;
         std::map<std::string, UINT> overlaysNameToID;
         std::map<std::string, UINT> controllersNameToID;
+#ifdef AD_MEMORY_DEFAULT
         std::vector<ADResource::AD_UI::Overlay2D> overlays;
         std::vector<ADResource::AD_UI::UIComponent*> uiComponents;
         std::vector<bool> uiControllersEnabled;
+#else
+        ADVector<ADResource::AD_UI::Overlay2D> overlays;
+        ADVector<ADResource::AD_UI::UIComponent*> uiComponents;
+        ADVector<bool> uiControllersEnabled;
+#endif
     };
 
     class OverlayController
@@ -185,8 +199,13 @@ namespace ADUI
     protected:
         UISetup& setup;
         UINT& uiState;
+#ifdef AD_MEMORY_DEFAULT
         std::vector<UINT> componentIDs;
         std::vector<UINT> componentNames;
+#else
+        ADVector<UINT> componentIDs;
+        ADVector<UINT> componentNames;
+#endif
         std::map<UINT, ADResource::AD_UI::UIComponent*> componentTypeMap;  //Keep to access them from editor  BOTH come in from AddCompoenent.  We won't use types.
 
     public:
@@ -220,12 +239,19 @@ namespace ADUI
         Text2D text;
         UISetup* setup;
         ID3D11DeviceContext1* context;
+#ifdef AD_MEMORY_DEFAULT
         std::vector<OverlayController*> uiControllers;
+#else
+        ADVector<OverlayController*> uiControllers;
+#endif
         ADResource::AD_UI::UIRendererResources uiResources;
         float responseTime;
         float inputTimer;
-
+#ifdef AD_MEMORY_DEFAULT
         inline void UpdateQuad(UINT _startQuad, ADResource::AD_UI::QuadData& _quad, std::vector<ADResource::AD_UI::UIVertex>& vertices)
+#else
+        inline void UpdateQuad(UINT _startQuad, ADResource::AD_UI::QuadData& _quad, ADVector<ADResource::AD_UI::UIVertex>& vertices)
+#endif
         {
             UINT index = _startQuad * 4;
             vertices[index].Color = { _quad.atlastID,1,1,1 };
@@ -247,8 +273,11 @@ namespace ADUI
             vertices[index].Pos = { _quad.x + _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1 };
             vertices[index].Tex = { _quad.maxU, _quad.maxV };
         }
-
+#ifdef AD_MEMORY_DEFAULT
         inline void CreateQuad(ADResource::AD_UI::QuadData& _quad, std::vector<ADResource::AD_UI::UIVertex>& vertices, std::vector<int>& indices)
+#else
+        inline void CreateQuad(ADResource::AD_UI::QuadData& _quad, ADVector<ADResource::AD_UI::UIVertex>& vertices, ADVector<int>& indices)
+#endif
         {
             UINT startIndex = vertices.size();
             vertices.push_back({ {_quad.atlastID,1,1,1},{_quad.x - _quad.quadWidth / 2.f, _quad.y - _quad.quadHeight / 2.f, 1},  {_quad.minU, _quad.maxV} });

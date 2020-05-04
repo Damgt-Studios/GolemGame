@@ -250,10 +250,17 @@ namespace ADResource
 			bool visible = true;
 			//Start Quad matches up with componentID.  
 			//Since some components pass up multiple quads this tells the system where the first quad for this component is in the vertices list so I can replace just that section.
+#ifdef AD_MEMORY_DEFAULT
 			std::vector<UINT> startQuad;
 			std::vector<UINT> componentIDs;
 			std::vector<ADResource::AD_UI::UIVertex> vertices;
 			std::vector<int> indices;
+#else
+			ADVector<UINT> startQuad;
+			ADVector<UINT> componentIDs;
+			ADVector<ADResource::AD_UI::UIVertex> vertices;
+			ADVector<int> indices;
+#endif
 			ComPtr<ID3D11Buffer> vertexBuffer;
 			ComPtr<ID3D11Buffer> indexBuffer;
 
