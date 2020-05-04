@@ -381,7 +381,7 @@ namespace ADResource
 
 		enum OBJECT_TYPE
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, STATIC
 			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
 		};
 		enum OBJECT_DEFENSE
@@ -486,6 +486,16 @@ namespace ADResource
 
 	}
 };
+
+namespace ADPhysics
+{
+	struct CollisionPacket 
+	{
+		ADResource::ADGameplay::GameObject* A;
+		ADResource::ADGameplay::GameObject* B;
+		ADPhysics::Manifold m;
+	};
+}
 //
 ////Dan's collider stuff
 //namespace ADPhysics
