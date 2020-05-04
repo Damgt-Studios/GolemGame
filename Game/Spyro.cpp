@@ -51,6 +51,41 @@ void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
 	}
 }
 
+void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
+{
+
+}
+
+void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other) 
+{
+	jumping = false;
+}
+
+void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj) 
+{
+	Manifold m;
+
+	if (obj->active) 
+	{
+		if (obj->collider->isCollision(&collider, m))
+		{
+			if (obj->collider->trigger)
+			{
+				OnTrigger(obj);
+			}
+			else
+			{
+				CollisionPacket	temp;
+				temp.A = this;
+				temp.B = obj;
+				temp.m = m;
+				collisionQueue.push(temp);
+				OnCollision(obj);
+			}
+		}
+	}
+}
+
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);

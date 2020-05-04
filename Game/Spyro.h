@@ -23,6 +23,11 @@ namespace ADResource
 			void CheckCollision(AABB& item);
 			void CheckCollision(Plane& item);
 
+			void CheckCollision(GameObject* obj);
+
+			virtual void OnCollision(GameObject* other);
+			virtual void OnTrigger(GameObject* other);
+
 		private:
 			void HandleInput(float delta_time);
 
@@ -44,7 +49,6 @@ namespace ADResource
 			bool jumping = false;
 
 			float floatiness = 0.25f;
-			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
 
 			// Turning
 			float spyro_turn_speed = 5;

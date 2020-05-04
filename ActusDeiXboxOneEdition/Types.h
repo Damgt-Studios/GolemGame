@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include <vector>
+#include <queue>
 
 #include <string>
 #include "ADPhysics.h"
@@ -396,8 +397,6 @@ namespace ADResource
 		class GameObject
 		{
 		public:
-			//ADPhysics::Collider* collider;
-
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
@@ -427,6 +426,9 @@ namespace ADResource
 			virtual void CheckCollision(ADPhysics::OBB& _object) {};
 			virtual void CheckCollision(ADPhysics::Sphere& _object) {};
 			virtual void CheckCollision(ADPhysics::Plane& _object) {};
+
+			//virtual void OnTrigger(GameObject* other);
+			//virtual void OnCollision(GameObject* other);
 
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
@@ -477,25 +479,60 @@ namespace ADResource
 			int GemCount;
 			AD_ULONG meshID;
 			OBJECT_DEFENSE defenseType;
+			XMFLOAT4 Velocity;
 			XMMATRIX transform;
 			XMMATRIX postTransform;
+
+			ADPhysics::Collider* collider;
+			ADPhysics::PhysicsMaterial pmat = ADPhysics::PhysicsMaterial();
 
 		public:
 			bool has_mesh = false;
 		};
 
+#ifndef AD_COLLISION_QUEUE
+#define AD_COLLISION_QUEUE
+
+		class ADResource::ADGameplay::GameObject;
+
+		struct CollisionPacket
+		{
+			ADResource::ADGameplay::GameObject* A;
+			ADResource::ADGameplay::GameObject* B;
+			ADPhysics::Manifold m;
+		};
+
+		//If multiple instances will select one out of all of them and use only that one. 
+		//Not sure if extra ones still take up memory. Don't think they do
+		__declspec(selectany) std::queue<CollisionPacket> collisionQueue;
+#endif
+
+		static void ResolveCollisions()
+		{
+			while (!collisionQueue.empty()) {
+				CollisionPacket current = collisionQueue.front();
+				collisionQueue.pop();
+				if (current.B->type = OBJECT_TYPE::STATIC)
+				{
+					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+					ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+
+					//VelocityImpulse(current.A->Velocity, current.A->pmat, temp, current.B->pmat, current.m);
+					//PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, temp, current.B->pmat, current.m);
+					VelocityImpulse(tempV, temp, current.A->Velocity, current.A->pmat, current.m);
+					PositionalCorrection(tempV, temp, (XMFLOAT4&)current.A->transform.r[3], current.A->pmat, current.m);
+				}
+				else 
+				{
+					VelocityImpulse(current.A->Velocity, current.B->pmat, current.B->Velocity, current.B->pmat, current.m);
+					PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, (XMFLOAT4&)current.B->transform.r[3], current.B->pmat, current.m);
+				}
+			}
+		}
+
 	}
 };
 
-namespace ADPhysics
-{
-	struct CollisionPacket 
-	{
-		ADResource::ADGameplay::GameObject* A;
-		ADResource::ADGameplay::GameObject* B;
-		ADPhysics::Manifold m;
-	};
-}
 //
 ////Dan's collider stuff
 //namespace ADPhysics

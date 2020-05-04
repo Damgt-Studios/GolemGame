@@ -4,6 +4,21 @@
 
 namespace ADPhysics
 {
+	//Forward
+	struct AABB;
+	struct OBB;
+	struct Sphere;
+	struct Plane;
+	struct Manifold;
+
+	static bool SphereToAabbCollision(const Sphere& sphere, const AABB& aabb, Manifold& m);
+	static bool AabbToAabbCollision(const AABB& box1, const AABB& box2, Manifold& m);
+	static bool AabbToObbCollision(const AABB& aabb, const OBB& obb, Manifold& m);
+	static bool AabbToPlaneCollision(const AABB& aabb, const Plane& plane, Manifold& m);
+	static bool SphereToPlaneCollision(const Sphere& sphere, const Plane& plane, Manifold& m);
+	static bool ObbToPlaneCollision(const OBB& obb, const Plane& plane, Manifold& m);
+
+
 	enum class ColliderType
 	{
 		Sphere, Aabb, Obb, Plane, Triangle
@@ -13,7 +28,23 @@ namespace ADPhysics
 	{
 		XMFLOAT3 Pos;
 		ColliderType type;
-		bool trigger;
+		bool trigger = false;
+
+		virtual bool isCollision(Sphere* other, Manifold& m) {
+			return false;
+		}
+
+		virtual bool isCollision(AABB* other, Manifold& m) {
+			return false;
+		}
+
+		virtual bool isCollision(OBB* other, Manifold& m) {
+			return false;
+		}
+
+		virtual bool isCollision(Plane* other, Manifold& m) {
+			return false;
+		}
 	};
 
 	struct AABB : Collider
@@ -37,6 +68,22 @@ namespace ADPhysics
 			Extents = XMFLOAT3(Max.x - Pos.x, Max.y - Pos.y, Max.z - Pos.z);
 			type = ColliderType::Aabb;
 		};
+
+		virtual bool isCollision(Sphere* other, Manifold& m) {
+			return SphereToAabbCollision(*other, *this, m);
+		}
+
+		virtual bool isCollision(AABB* other, Manifold& m) {
+			return AabbToAabbCollision(*this, *other, m);
+		}
+
+		virtual bool isCollision(OBB* other, Manifold& m) {
+			return AabbToObbCollision(*this, *other, m);
+		}
+
+		virtual bool isCollision(Plane* other, Manifold& m) {
+			return AabbToPlaneCollision(*this, *other, m);
+		}
 	};
 
 	struct OBB : Collider
@@ -99,6 +146,19 @@ namespace ADPhysics
 			HalfSize = Size;
 			type = ColliderType::Plane;
 		}
+
+		virtual bool isCollision(Sphere* other, Manifold& m) {
+			return SphereToPlaneCollision(*other, *this, m);
+		}
+
+		virtual bool isCollision(AABB* other, Manifold& m) {
+			return AabbToPlaneCollision(*other, *this, m);
+		}
+
+		virtual bool isCollision(OBB* other, Manifold& m) {
+			return ObbToPlaneCollision(*other, *this, m);
+		}
+		
 	};
 
 	struct Segment
