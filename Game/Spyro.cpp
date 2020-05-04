@@ -1,12 +1,18 @@
 #include "pchgame.h"
 #include "Spyro.h"
 
+ADResource::ADGameplay::Spyro::Spyro()
+{
+	collider = &colliderSpecific;
+	typeID = ADResource::ADGameplay::GAME_OBJECT_TAGS::SPYRO;
+}
+
 void ADResource::ADGameplay::Spyro::Update(float delta_time)
 {
 	HandleInput(delta_time);
 
 	// Physics
-	collider = AABB(GetPosition(), XMFLOAT3(2, 2, 2));
+	colliderSpecific = AABB(GetPosition(), XMFLOAT3(2, 2, 2));
 }
 
 void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
@@ -19,18 +25,46 @@ void ADResource::ADGameplay::Spyro::Remove()
 
 }
 
-void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
+void ADResource::ADGameplay::Spyro::CheckCollision(GameObject& _other)
 {
-	Manifold m;
+	ADPhysics::Manifold m;
+	if (_other.collider->ColliderCollision(&colliderSpecific, m))
+	{
+		ResolveCollision(_other, m);
 
-	if (AabbToAabbCollision(collider, item, m))
+		_other.ResolveCollision(*this, m);
+	}
+}
+
+void ADResource::ADGameplay::Spyro::ResolveCollision(GameObject& _other, Manifold& m)
+{
+	if (!_other.isTrigger)
 	{
 		XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 		PhysicsMaterial temp(0, 0, 0);
 		VelocityImpulse(Velocity, mat, tempV, temp, m);
 		PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
 
-		float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0,1,0));
+		float Dot = VectorDot(XMFLOAT3(colliderSpecific.Pos.x - _other.collider->Pos.x, colliderSpecific.Pos.y - _other.collider->Pos.y, colliderSpecific.Pos.z - _other.collider->Pos.z), XMFLOAT3(0, 1, 0));
+
+		if (Dot > 0.5f)
+			jumping = false;
+	}
+};
+
+
+void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
+{
+	Manifold m;
+
+	if (AabbToAabbCollision(colliderSpecific, item, m))
+	{
+		XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+		PhysicsMaterial temp(0, 0, 0);
+		VelocityImpulse(Velocity, mat, tempV, temp, m);
+		PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
+
+		float Dot = VectorDot(XMFLOAT3(colliderSpecific.Pos.x - item.Pos.x, colliderSpecific.Pos.y - item.Pos.y, colliderSpecific.Pos.z - item.Pos.z), XMFLOAT3(0,1,0));
 
 		if (Dot > 0.5f)
 			jumping = false;;
@@ -41,7 +75,7 @@ void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
 {
 	Manifold m;
 
-	if (AabbToPlaneCollision(collider, item, m))
+	if (AabbToPlaneCollision(colliderSpecific, item, m))
 	{
 		XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 		PhysicsMaterial temp(0, 0, 0);

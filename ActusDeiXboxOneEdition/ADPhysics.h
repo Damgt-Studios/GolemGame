@@ -4,7 +4,38 @@
 
 namespace ADPhysics
 {
-	struct AABB
+	//Forward declarations.  Formulas use Shapes, Shapes use formulas.  
+	struct Manifold;
+	struct PhysicsShape;
+	struct AABB;
+	struct OBB;
+	struct Sphere;
+	struct Plane;
+	static bool AabbToAabbCollision(const AABB& box1, const AABB& box2, Manifold& m);
+	static bool AabbToObbCollision(const AABB& box1, const OBB& box2, Manifold& m);
+	static bool SphereToAabbCollision(const Sphere& box1, const AABB& box2, Manifold& m);
+	static bool AabbToPlaneCollision(const AABB& box1, const Plane& box2, Manifold& m);
+
+	class Collider 
+	{
+	public:
+		XMFLOAT3 Pos;
+
+		virtual bool ColliderCollision(AABB* _other, Manifold& m) {
+			return false;
+		}
+		virtual bool ColliderCollision(OBB* _other, Manifold& m) {
+			return false;
+		}
+		virtual bool ColliderCollision(Sphere* _other, Manifold& m) {
+			return false;
+		}
+		virtual bool ColliderCollision(Plane* _other, Manifold& m) {
+			return false;
+		}
+	};
+
+	struct AABB : public Collider
 	{
 		XMFLOAT3 Pos, Min, Max, Extents, HalfSize;
 		AABB()
@@ -23,6 +54,20 @@ namespace ADPhysics
 			Min = XMFLOAT3(Pos.x - HalfSize.x, Pos.y - HalfSize.y, Pos.z - HalfSize.z);
 			Extents = XMFLOAT3(Max.x - Pos.x, Max.y - Pos.y, Max.z - Pos.z);
 		};
+
+	public:
+		virtual bool ColliderCollision(AABB* _other, Manifold& m) {
+			return AabbToAabbCollision(*this, *_other, m);
+		}
+		virtual bool ColliderCollision(OBB* _other, Manifold& m) {
+			return AabbToObbCollision(*this, *_other, m);
+		}
+		virtual bool ColliderCollision(Sphere* _other, Manifold& m) {
+			return SphereToAabbCollision(*_other, *this, m);
+		}
+		virtual bool ColliderCollision(Plane* _other, Manifold& m) {
+			return AabbToPlaneCollision(*this, *_other, m);
+		}
 	};
 
 	struct OBB

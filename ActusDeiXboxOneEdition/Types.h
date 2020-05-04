@@ -386,7 +386,7 @@ namespace ADResource
 		};
 		enum OBJECT_DEFENSE
 		{
-			NONE, IGNORE_RAM, IGNORE_FIRE, INVULNERABLE
+			NON, IGNORE_RAM, IGNORE_FIRE, INVULNERABLE
 		};
 		enum DAMAGE_TYPE
 		{
@@ -396,7 +396,9 @@ namespace ADResource
 		class GameObject
 		{
 		public:
-			//ADPhysics::Collider* collider;
+			UINT typeID;
+			bool isTrigger;
+			ADPhysics::Collider* collider;
 
 			GameObject()
 			{
@@ -422,6 +424,9 @@ namespace ADResource
 			{
 				active = false;
 			}
+
+			virtual void CheckCollision(GameObject& _other) {};
+			virtual void ResolveCollision(GameObject& _other, ADPhysics::Manifold& m) {};
 
 			virtual void CheckCollision(ADPhysics::AABB& _object) {};
 			virtual void CheckCollision(ADPhysics::OBB& _object) {};

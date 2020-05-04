@@ -168,7 +168,8 @@ public:
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Collectable* a3 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Collectable* gem1 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Collectable* gem2 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -194,15 +195,22 @@ public:
 		GameUtilities::AddGameObject(c2);
 		//GameUtilities::AddGameObject(a1);
 		GameUtilities::AddGameObject(a2);
-		GameUtilities::AddGameObject(a3);
+		GameUtilities::AddGameObject(gem1);
+		GameUtilities::AddGameObject(gem2);
 		GameUtilities::AddGameObject(e1);
 		GameUtilities::AddGameObject(e2);
 		GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(t1);
 
 		//Add Game Objects to their collision groupings
-		//GameObject* passables[1];
-		//passables[0] = a3;
+		UINT passablesCount = 2;
+		GameObject** passables = new GameObject * [passablesCount];
+		passables[0] = gem1;
+		passables[1] = gem2;
+
+		UINT collidablesCount = 1;
+		GameObject** collidables = new GameObject * [collidablesCount];
+		collidables[0] = spyro;      //He wouldn't actually go in this group but to show GO vs GO.  He could but he's better off on his own for our list.
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
@@ -258,11 +266,22 @@ public:
 			spyro->CheckCollision(test_colider);
 			spyro->CheckCollision(test_colider1);
 			spyro->CheckCollision(test_plane);
-			a3->CheckCollision(spyro->collider);
-			e1->CheckCollision(spyro->collider);
-			e2->CheckCollision(spyro->collider);
-			e3->CheckCollision(spyro->collider);
-			t1->CheckCollision(spyro->collider);
+			//a3->CheckCollision(spyro->colliderSpecific);
+
+			for (int i = 0; i < passablesCount; ++i)
+			{
+				if (passables[i]->active)
+				{
+					passables[i]->CheckCollision(*collidables[0]);
+					//collidables[0]->CheckCollision(*passables[i]);
+				}
+			}
+
+
+			e1->CheckCollision(spyro->colliderSpecific);
+			e2->CheckCollision(spyro->colliderSpecific);
+			e3->CheckCollision(spyro->colliderSpecific);
+			t1->CheckCollision(spyro->colliderSpecific);
 
 			//Check Collision for groups
 			

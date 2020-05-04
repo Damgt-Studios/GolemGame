@@ -36,7 +36,8 @@ Collectable* GameUtilities::AddCollectableFromModelFile(std::string modelname, X
 	scale.x *= 1.8f;
 	scale.y *= 1.8f;
 	scale.z *= 1.8f;
-	temp->collider = ADPhysics::AABB(position, scale);
+
+	temp->SetupCollider(position, scale);
 
 	return temp;
 }

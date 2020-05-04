@@ -1,5 +1,6 @@
 #pragma once
 #include "GameplayBaseClasses.h"
+#include "GameObjectClasses.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -13,12 +14,17 @@ namespace ADResource
 		{
 		
 		public:
-			AABB collider;
+			AABB colliderSpecific;
+			Spyro();
+
 			virtual void Update(float time_delta);
 
 			void Damage(DAMAGE_TYPE d_type);
 
 			void Remove();
+
+			void CheckCollision(GameObject& _other) override;
+			virtual void ResolveCollision(GameObject& _other, Manifold& m) override;
 
 			void CheckCollision(AABB& item);
 			void CheckCollision(Plane& item);
