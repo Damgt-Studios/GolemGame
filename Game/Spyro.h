@@ -40,10 +40,11 @@ namespace ADResource
 			float og_y_pos = 0;
 			float gravity = 50;
 			bool jumping = false;
+			bool gliding = false;
 
 			float floatiness = 0.25f;
 			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
-
+			bool buttonup = false;
 			XMMATRIX camera;
 			// Turning
 			float spyro_turn_speed = 5;

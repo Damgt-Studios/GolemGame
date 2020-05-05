@@ -54,13 +54,15 @@ void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
 		VelocityImpulse(tempV, temp, Velocity, mat, m);
 		PositionalCorrection(tempV, temp, (XMFLOAT4&)transform.r[3], mat, m);
 		jumping = false;
+		gliding = false;
+
 	}
 }
 
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);
-	if (Input::QueryButtonDown(GamepadButtons::Y))
+	if (Input::QueryButtonDown(GamepadButtons::X))
 	{
 		spyro_move_speed = 50;
 
@@ -70,22 +72,16 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 
 		spyro_move_speed = 30;
 	}
-
-
-	if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) && Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))|| Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) )
-	{
-		
-		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK), 
-			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK) );
-
-
-		Spyro::RotationYBasedOnView(camera,angle, WMATH_PI);
-
-
-	
 	XMFLOAT4 forward;
 	XMStoreFloat4(&forward, Spyro::transform.r[2]);
+	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
+	{
 
+		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
+			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
+
+
+		Spyro::RotationYBasedOnView(camera, angle, WMATH_PI);
 
 
 		Velocity.x += forward.x * delta_time * spyro_move_speed;
@@ -96,7 +92,27 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	}
 
 
-	
+	if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
+	{
+
+
+		gliding = true;
+		floatiness = 0.05f;
+
+
+	}
+
+
+	if (Input::QueryButtonUp(GamepadButtons::A))
+	{
+		buttonup = true;
+		if (gliding == true)
+		{
+			gliding = false;
+			floatiness = 0.25f;
+		}
+
+	}
 
 	if (Velocity.y > maxDownwardVelocity)
 		Velocity.y += Gravity * delta_time * floatiness;
@@ -108,13 +124,24 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	Velocity.x = 0;
 	Velocity.z = 0;
 
+
 	// Actions
 	if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)
 	{
-		/*jumping = true;
-		og_y_pos = GetPosition().y;*/
+		buttonup = false;
+		floatiness = 0.25f;
 		jumping = true;
 		Velocity.y = (-Gravity * delta_time * floatiness) * 20;
+
+
+
+
 	}
+
+
+
+
+
+
 
 }
