@@ -20,9 +20,6 @@ namespace ADResource
 
 			void Remove();
 
-			void CheckCollision(AABB& item);
-			void CheckCollision(Plane& item);
-
 			void CheckCollision(GameObject* obj);
 
 			virtual void OnCollision(GameObject* other);

@@ -490,11 +490,6 @@ namespace ADResource
 			bool has_mesh = false;
 		};
 
-#ifndef AD_COLLISION_QUEUE
-#define AD_COLLISION_QUEUE
-
-		class ADResource::ADGameplay::GameObject;
-
 		struct CollisionPacket
 		{
 			ADResource::ADGameplay::GameObject* A;
@@ -505,7 +500,6 @@ namespace ADResource
 		//If multiple instances will select one out of all of them and use only that one. 
 		//Not sure if extra ones still take up memory. Don't think they do
 		__declspec(selectany) std::queue<CollisionPacket> collisionQueue;
-#endif
 
 		static void ResolveCollisions()
 		{
@@ -517,8 +511,6 @@ namespace ADResource
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 					ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
 
-					//VelocityImpulse(current.A->Velocity, current.A->pmat, temp, current.B->pmat, current.m);
-					//PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, temp, current.B->pmat, current.m);
 					VelocityImpulse(tempV, temp, current.A->Velocity, current.A->pmat, current.m);
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)current.A->transform.r[3], current.A->pmat, current.m);
 				}

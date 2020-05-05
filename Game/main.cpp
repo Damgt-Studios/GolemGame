@@ -180,7 +180,7 @@ public:
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(10, 0.01, 10), XMFLOAT3(0, 0, 0));
+		Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -228,10 +228,15 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(20, 0, 20));
+		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(15 * 1.8, 0, 15 * 1.8));
 		
+		c1->collider = &test_colider;
+		c1->type = OBJECT_TYPE::STATIC;
+
+		c2->collider = &test_colider1;
+		c2->type = OBJECT_TYPE::STATIC;
+
 		p1->collider = &test_plane;
-		p1->pmat.Restitution = 0;
 		p1->type = OBJECT_TYPE::STATIC;
 
 		while (!shutdown)
@@ -260,9 +265,10 @@ public:
 			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
 
 			// Physics test
-			spyro->CheckCollision(test_colider);
-			spyro->CheckCollision(test_colider1);
+
 			//spyro->CheckCollision(test_plane);
+			spyro->CheckCollision(c1);
+			spyro->CheckCollision(c2);
 			spyro->CheckCollision(p1);
 			a3->CheckCollision(spyro->collider);
 			e1->CheckCollision(spyro->collider);

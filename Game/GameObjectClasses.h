@@ -12,25 +12,29 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			virtual void CheckCollision(ADPhysics::AABB& _object) 
+			virtual void CheckCollision(GameObject* obj) 
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
 
-					if (AabbToAabbCollision(collider, _object, m))
+					if (this->collider.isCollision(obj->collider, m))
 					{
-						//XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-						//ADPhysics::PhysicsMaterial temp(0, 0, 0);
 
-						ADResource::AD_UI::UIMessage message;
-						message.controllerID = 1;
-						message.messageType = 2;
-						message.number = 1;
-					
-						ADUI::MessageReceiver::SendMessage(&message);
-						Remove();
 					}
+					//if (AabbToAabbCollision(collider, _object, m))
+					//{
+					//	//XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+					//	//ADPhysics::PhysicsMaterial temp(0, 0, 0);
+
+					//	ADResource::AD_UI::UIMessage message;
+					//	message.controllerID = 1;
+					//	message.messageType = 2;
+					//	message.number = 1;
+					//
+					//	ADUI::MessageReceiver::SendMessage(&message);
+					//	Remove();
+					//}
 				}
 				
 
