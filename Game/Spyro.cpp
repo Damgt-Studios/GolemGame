@@ -60,6 +60,18 @@ void ADResource::ADGameplay::Spyro::CheckCollision(Plane& item)
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);
+	if (Input::QueryButtonDown(GamepadButtons::Y))
+	{
+		spyro_move_speed = 50;
+
+	}
+	else
+	{
+
+		spyro_move_speed = 30;
+	}
+
+
 	if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) && Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))|| Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) )
 	{
 		

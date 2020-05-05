@@ -473,7 +473,7 @@ namespace AD_UI
                 }
                 buttonPressed = true;
             }
-            if (Input::QueryButtonDown(GamepadButtons::Y))
+            if (Input::QueryButtonDown(GamepadButtons::DPadUp))
             {
                 if (setup.overlays[2].visible )
                 {
