@@ -39,6 +39,8 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="ADUserInterface.cpp" />
+    <ClCompile Include="ADMemoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -56,6 +58,7 @@
     <ClInclude Include="XTime.h" />
     <ClInclude Include="ADUserInterface.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="ADMemoryManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

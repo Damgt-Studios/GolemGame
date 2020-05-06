@@ -8,18 +8,23 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
+
 		class Spyro : public Renderable
 		{
 		
 		public:
+			Spyro();
+
 			virtual void Update(float time_delta);
 
 			void Damage(DAMAGE_TYPE d_type);
 
 			void Remove();
-			void GetView(XMMATRIX& view);
-			void CheckCollision(AABB& item);
-			void CheckCollision(Plane& item);
+
+			void CheckCollision(GameObject* obj);
+
+			virtual void OnCollision(GameObject* other);
+			virtual void OnTrigger(GameObject* other);
 
 		private:
 			void HandleInput(float delta_time);
@@ -29,8 +34,9 @@ namespace ADResource
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
-			AABB collider;
+			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
 			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
+
 
 			// Gameplay
 			float jump_time_up = .4;
@@ -40,14 +46,12 @@ namespace ADResource
 			float og_y_pos = 0;
 			float gravity = 50;
 			bool jumping = false;
-			bool gliding = false;
 
 			float floatiness = 0.25f;
-			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
-			bool buttonup = false;
-			XMMATRIX camera;
+
 			// Turning
 			float spyro_turn_speed = 5;
+			float spyro_move_speed = 5;
 			float spyro_move_speed = 30;
 		};
 	}

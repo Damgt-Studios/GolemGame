@@ -16,6 +16,7 @@ namespace
 
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
+#ifdef AD_MEMORY_DEFAULT
 	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
 	std::vector<unsigned int> pbrIndxData;
 
@@ -28,6 +29,20 @@ namespace
 	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
 
 	std::queue<ADResource::ADGameplay::GameObject*> render_queue;
+#else
+	ADVector<ADResource::ADRenderer::Vertex> pbrVertexData;
+	ADVector<unsigned int> pbrIndxData;
+
+	ADVector<ADResource::ADRenderer::Light> lights;
+	ADVector<ADResource::ADRenderer::Model> pbrmodels;
+
+	ADVector<ADResource::ADGameplay::GameObject> passables;
+	ADVector<ADResource::ADGameplay::GameObject> collidables;
+
+	ADVector<ADResource::ADGameplay::GameObject*> gameobjects;
+
+	ADQueue<ADResource::ADGameplay::GameObject*> render_queue;
+#endif
 
 	// On/ Offs
 	ADResource::ADRenderer::Model skybox;

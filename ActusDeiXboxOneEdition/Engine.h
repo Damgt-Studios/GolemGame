@@ -41,8 +41,8 @@ public:
 	OrbitCamera* GetOrbitCamera();
 	void MoveCamera(XMFLOAT3 move_direction);
 	void RotateCamera(float yaw, float pitch);
-	void SetupUserInterface(AD_UI::UISetup* _setup);
-	AD_UI::ADUI* GetUserInterface();
+	void SetupUserInterface(ADUI::ADUI* _uiSetup);
+	//AD_UI::ADUI* GetUserInterface();
 
 private:
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();
@@ -53,8 +53,12 @@ private:
 	std::string write_path;
 	std::string read_path;
 
+#if AD_MEMORY_DEFAULT
 	std::vector<Light> lights;
-
+#else
+	ADVector<Light> lights;
+#endif
+	
 	FPSCamera* camera;
 	OrbitCamera* ocamera;
 
@@ -62,7 +66,7 @@ private:
 	// New shit
 	ADResource::ADRenderer::PBRRenderer pbr;
 	ResourceManager rmanager;
-	AD_UI::ADUI userInterface;
+	ADUI::ADUI* userInterface;
 
 	// Timing
 	XTime engine_time;

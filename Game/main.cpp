@@ -6,8 +6,11 @@
 #include "Engine.h"
 #include "ADPhysics.h"
 
+#include "ADUserInterface.h"
+#include "GameUserInterface.h"
 #include "AudioManager.h"
 #include "GameUtilities.h"
+#include "GameObjectClasses.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -57,16 +60,14 @@ private:
 	// Rotation
 	float rot = 0;
 
-	float yaw = 180.0f;
-	float pitch = 30.0f;
 	
-	float default_yaw = 180.0f;
-	float default_pitch = 30.0f;
 
 	// Physics
 	ADPhysics::AABB test_colider;
 	ADPhysics::AABB test_colider1;
 	ADPhysics::Plane test_plane;
+
+
 
 public:
 	// some functions called by Windows
@@ -115,7 +116,6 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
@@ -163,11 +163,20 @@ public:
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Renderable* a3 = GameUtilities::AddPBRStaticAsset("files/models/gems/TriangleGem_purple.wobj", XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Collectable* a3 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
+
 
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Why do I have to put this as -415 y for it to be below spyro?
+		Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -183,11 +192,23 @@ public:
 		//GameUtilities::AddGameObject(a1);
 		GameUtilities::AddGameObject(a2);
 		GameUtilities::AddGameObject(a3);
+		GameUtilities::AddGameObject(e1);
+		GameUtilities::AddGameObject(e2);
+		GameUtilities::AddGameObject(e3);
+		GameUtilities::AddGameObject(t1);
+		GameUtilities::AddGameObject(p1);
+
+		//Add Game Objects to their collision groupings
+		//GameObject* passables[1];
+		//passables[0] = a3;
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+		SpyroUISetup::GameUserInterface gameUI;
+		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
 
 		if (!engine->Initialize())
 		{
@@ -203,7 +224,17 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(100, 0, 100));
+		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(15 * 1.8, 0, 15 * 1.8));
+		
+		//Needed to add this to the colliders for the collision queue
+		c1->colliderPtr = &test_colider;
+		c1->type = OBJECT_TYPE::STATIC;
+
+		c2->colliderPtr = &test_colider1;
+		c2->type = OBJECT_TYPE::STATIC;
+
+		p1->colliderPtr = &test_plane;
+		p1->type = OBJECT_TYPE::STATIC;
 
 		while (!shutdown)
 		{
@@ -234,10 +265,48 @@ public:
 			spyro->GetView(view);
 		
 			// Physics test
-			spyro->CheckCollision(test_colider);
-			spyro->CheckCollision(test_colider1);
-			spyro->CheckCollision(test_plane);
 		
+			/*spyro->CheckCollision(c1);
+			spyro->CheckCollision(c2);
+			spyro->CheckCollision(p1);
+			a3->CheckCollision(spyro);
+			e1->CheckCollision(spyro);
+			e2->CheckCollision(spyro);
+			e3->CheckCollision(spyro);
+			t1->CheckCollision(spyro);*/
+
+
+			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
+
+			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
+
+			//Works the exact same as the commented code above
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+
+			for (int i = 0; i < OBJ_COUNT; i++)
+			{
+				for (unsigned int j = 0; j < OBJ_COUNT; j++)
+				{
+					if (i != j) 
+					{
+						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+						{
+							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+							{
+								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
+								{
+									OBJS[i]->CheckCollision(OBJS[j]);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//Resolve all collisions that occurred this frame
+			ADResource::ADGameplay::ResolveCollisions();
+
 			// Test
 
 			// Poll input
