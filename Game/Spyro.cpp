@@ -58,8 +58,6 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 
 		if (Dot > 0.5f)
 			jumping = false;
-
-		gliding = false;
 	}
 }
 
@@ -84,8 +82,6 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 				OnCollision(obj);
 			}
 		}
-	
-
 	}
 }
 

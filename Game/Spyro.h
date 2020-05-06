@@ -53,7 +53,7 @@ namespace ADResource
 			bool gliding = false;
 
 			float floatiness = 0.25f;
-			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
+
 			bool buttonup = false;
 			XMMATRIX camera;
 			// Turning
