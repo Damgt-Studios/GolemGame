@@ -278,7 +278,7 @@ public:
 
 			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
 
-			//This is just tmporary code for a simple layered loop
+			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
 
 			//Works the exact same as the commented code above
 			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
