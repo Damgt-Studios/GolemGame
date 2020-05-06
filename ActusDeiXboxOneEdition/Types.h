@@ -422,13 +422,7 @@ namespace ADResource
 				active = false;
 			}
 
-			virtual void CheckCollision(ADPhysics::AABB& _object) {};
-			virtual void CheckCollision(ADPhysics::OBB& _object) {};
-			virtual void CheckCollision(ADPhysics::Sphere& _object) {};
-			virtual void CheckCollision(ADPhysics::Plane& _object) {};
-
-			//virtual void OnTrigger(GameObject* other);
-			//virtual void OnCollision(GameObject* other);
+			virtual void CheckCollision(GameObject* obj) {};
 
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
@@ -483,7 +477,7 @@ namespace ADResource
 			XMMATRIX transform;
 			XMMATRIX postTransform;
 
-			ADPhysics::Collider* colliderPtr;
+			ADPhysics::Collider* colliderPtr = nullptr;
 			ADPhysics::PhysicsMaterial pmat = ADPhysics::PhysicsMaterial();
 
 		public:

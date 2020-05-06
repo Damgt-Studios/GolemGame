@@ -265,16 +265,44 @@ public:
 			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
 
 			// Physics test
-			//spyro->collider = &OBB(spyro->transform, XMFLOAT3(2, 2, 2));
 
-			spyro->CheckCollision(c1);
+			/*spyro->CheckCollision(c1);
 			spyro->CheckCollision(c2);
 			spyro->CheckCollision(p1);
 			a3->CheckCollision(spyro);
 			e1->CheckCollision(spyro);
 			e2->CheckCollision(spyro);
 			e3->CheckCollision(spyro);
-			t1->CheckCollision(spyro);
+			t1->CheckCollision(spyro);*/
+
+
+			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
+
+			//This is just tmporary code for a simple layered loop
+
+			//Works the exact same as the commented code above
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+
+			for (int i = 0; i < OBJ_COUNT; i++)
+			{
+				for (unsigned int j = 0; j < OBJ_COUNT; j++)
+				{
+					if (i != j) 
+					{
+						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+						{
+							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+							{
+								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
+								{
+									OBJS[i]->CheckCollision(OBJS[j]);
+								}
+							}
+						}
+					}
+				}
+			}
 
 			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();

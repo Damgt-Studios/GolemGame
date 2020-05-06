@@ -12,6 +12,8 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
+			Collectable() { colliderPtr = &collider; };
+
 			virtual void CheckCollision(GameObject* obj) 
 			{
 				if (this->active)
@@ -38,6 +40,8 @@ namespace ADResource
 		{
 		public:
 			ADPhysics::AABB collider;
+
+			Trigger() { colliderPtr = &collider; };
 
 			virtual void CheckCollision(GameObject* obj)
 			{
@@ -91,6 +95,8 @@ namespace ADResource
 
 		public:
 			ADPhysics::AABB collider;
+
+			Enemy() { colliderPtr = &collider; };
 
 			virtual void CheckCollision(GameObject* obj)
 			{
