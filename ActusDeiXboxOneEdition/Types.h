@@ -483,7 +483,7 @@ namespace ADResource
 			XMMATRIX transform;
 			XMMATRIX postTransform;
 
-			ADPhysics::Collider* collider;
+			ADPhysics::Collider* colliderPtr;
 			ADPhysics::PhysicsMaterial pmat = ADPhysics::PhysicsMaterial();
 
 		public:
@@ -495,6 +495,9 @@ namespace ADResource
 			ADResource::ADGameplay::GameObject* A;
 			ADResource::ADGameplay::GameObject* B;
 			ADPhysics::Manifold m;
+
+			CollisionPacket() = delete;
+			CollisionPacket(GameObject* a, GameObject* b, ADPhysics::Manifold& manifold) : A(a), B(b), m(manifold) {};
 		};
 
 		//If multiple instances will select one out of all of them and use only that one. 

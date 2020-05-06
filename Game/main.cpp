@@ -230,13 +230,13 @@ public:
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
 		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(15 * 1.8, 0, 15 * 1.8));
 		
-		c1->collider = &test_colider;
+		c1->colliderPtr = &test_colider;
 		c1->type = OBJECT_TYPE::STATIC;
 
-		c2->collider = &test_colider1;
+		c2->colliderPtr = &test_colider1;
 		c2->type = OBJECT_TYPE::STATIC;
 
-		p1->collider = &test_plane;
+		p1->colliderPtr = &test_plane;
 		p1->type = OBJECT_TYPE::STATIC;
 
 		while (!shutdown)
@@ -265,18 +265,18 @@ public:
 			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
 
 			// Physics test
+			//spyro->collider = &OBB(spyro->transform, XMFLOAT3(2, 2, 2));
 
-			//spyro->CheckCollision(test_plane);
 			spyro->CheckCollision(c1);
 			spyro->CheckCollision(c2);
 			spyro->CheckCollision(p1);
-			a3->CheckCollision(spyro->collider);
-			e1->CheckCollision(spyro->collider);
-			e2->CheckCollision(spyro->collider);
-			e3->CheckCollision(spyro->collider);
-			t1->CheckCollision(spyro->collider);
+			a3->CheckCollision(spyro);
+			e1->CheckCollision(spyro);
+			e2->CheckCollision(spyro);
+			e3->CheckCollision(spyro);
+			t1->CheckCollision(spyro);
 
-			//Check Collision for groups
+			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();
 
 			// Test

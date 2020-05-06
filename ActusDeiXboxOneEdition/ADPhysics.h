@@ -17,6 +17,8 @@ namespace ADPhysics
 	static bool AabbToPlaneCollision(const AABB& aabb, const Plane& plane, Manifold& m);
 	static bool SphereToPlaneCollision(const Sphere& sphere, const Plane& plane, Manifold& m);
 	static bool ObbToPlaneCollision(const OBB& obb, const Plane& plane, Manifold& m);
+	static bool SphereToObbCollision(const Sphere& sphere, const OBB& obb, Manifold& m);
+	static bool ObbToObbCollision(const OBB& box1, const OBB& box2, Manifold& m);
 
 
 	enum class ColliderType
@@ -106,6 +108,22 @@ namespace ADPhysics
 			AxisZ = (XMFLOAT3&)Transform.r[2];
 			HalfSize = Size;
 			type = ColliderType::Obb;
+		}
+
+		virtual bool isCollision(Sphere* other, Manifold& m) {
+			return SphereToObbCollision(*other, *this, m);
+		}
+
+		virtual bool isCollision(AABB* other, Manifold& m) {
+			return AabbToObbCollision(*other, *this, m);
+		}
+
+		virtual bool isCollision(OBB* other, Manifold& m) {
+			return ObbToObbCollision(*this, *other, m);
+		}
+
+		virtual bool isCollision(Plane* other, Manifold& m) {
+			return ObbToPlaneCollision(*this, *other, m);
 		}
 	};
 

@@ -1,12 +1,18 @@
 #include "pchgame.h"
 #include "Spyro.h"
 
+ADResource::ADGameplay::Spyro::Spyro() {
+	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	colliderPtr = &collider;
+}
+
 void ADResource::ADGameplay::Spyro::Update(float delta_time)
 {
 	HandleInput(delta_time);
 
 	// Physics
-	collider = AABB(GetPosition(), XMFLOAT3(2, 2, 2));
+	collider = OBB(transform, XMFLOAT3(2,2,2));
+	colliderPtr = &collider;
 }
 
 void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
@@ -22,12 +28,27 @@ void ADResource::ADGameplay::Spyro::Remove()
 void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
 {
 	//Do whatever we need upon trigger
+
+	//Function is mainly for gameplay
 }
 
 void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other) 
 {
 	//Do whatever we need upon collision
-	jumping = false;
+
+	//Function is mainly for gameplay
+
+	//Sample of what to do with what we have right now
+	if (other->colliderPtr->type == ColliderType::Plane || other->colliderPtr->type == ColliderType::Aabb)
+	{
+		float Dot = VectorDot(XMFLOAT3(
+			collider.Pos.x - other->colliderPtr->Pos.x,
+			collider.Pos.y - other->colliderPtr->Pos.y,
+			collider.Pos.z - other->colliderPtr->Pos.z), XMFLOAT3(0, 1, 0));
+
+		if (Dot > 0.5f)
+			jumping = false;
+	}
 }
 
 void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj) 
@@ -36,24 +57,17 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 
 	if (obj->active) 
 	{
-		if (obj->collider->isCollision(&collider, m))
+		if (obj->colliderPtr->isCollision(&collider, m))
 		{
-			if (obj->collider->trigger)
+			//If collision and collision object is a trigger then go to OnTrigger Function
+			if (obj->colliderPtr->trigger)
 			{
 				OnTrigger(obj);
 			}
+			//If collision and collision object is a collider then go to OnCollision Function
 			else
 			{
-				float Dot = VectorDot(XMFLOAT3(collider.Pos.x - obj->collider->Pos.x, collider.Pos.y - obj->collider->Pos.y, collider.Pos.z - obj->collider->Pos.z), XMFLOAT3(0, 1, 0));
-
-				if (Dot > 0.5f)
-					jumping = false;
-
-				CollisionPacket	temp;
-				temp.A = this;
-				temp.B = obj;
-				temp.m = m;
-				collisionQueue.push(temp);
+				collisionQueue.push(CollisionPacket(this, obj, m));
 				OnCollision(obj);
 			}
 		}

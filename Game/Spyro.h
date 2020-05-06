@@ -13,7 +13,8 @@ namespace ADResource
 		{
 		
 		public:
-			AABB collider;
+			Spyro();
+
 			virtual void Update(float time_delta);
 
 			void Damage(DAMAGE_TYPE d_type);
@@ -33,6 +34,7 @@ namespace ADResource
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
+			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
 			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
 
 
