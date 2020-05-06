@@ -503,6 +503,8 @@ namespace ADResource
 			while (!collisionQueue.empty()) {
 				CollisionPacket current = collisionQueue.front();
 				collisionQueue.pop();
+				//If the object is of the object type STATIC it will only apply a velocty change to the other objects.
+				//Mainly will be used for Spyro against Ground, Enemies against Ground, Chests and Gems against Spyro, etc.
 				if (current.B->type = OBJECT_TYPE::STATIC)
 				{
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
@@ -511,6 +513,7 @@ namespace ADResource
 					VelocityImpulse(tempV, temp, current.A->Velocity, current.A->pmat, current.m);
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)current.A->transform.r[3], current.A->pmat, current.m);
 				}
+				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
 				else 
 				{
 					VelocityImpulse(current.A->Velocity, current.B->pmat, current.B->Velocity, current.B->pmat, current.m);

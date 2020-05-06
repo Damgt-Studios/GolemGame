@@ -51,6 +51,7 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 	}
 }
 
+//Checks collision, If collides with a trigger, calls OnTrigger, if colliders with a collider, calls OnCollision
 void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj) 
 {
 	Manifold m;

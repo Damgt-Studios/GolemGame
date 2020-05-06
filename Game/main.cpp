@@ -180,6 +180,7 @@ public:
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Why do I have to put this as -415 y for it to be below spyro?
 		Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
@@ -230,6 +231,7 @@ public:
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
 		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(15 * 1.8, 0, 15 * 1.8));
 		
+		//Needed to add this to the colliders for the collision queue
 		c1->colliderPtr = &test_colider;
 		c1->type = OBJECT_TYPE::STATIC;
 
