@@ -6,6 +6,7 @@
 #include <memory>
 #include <assert.h>
 #include <string>
+#include <exception>
 
 namespace
 {
@@ -64,33 +65,49 @@ public:
 	Type* GetPointer()
 	{
 		ptr = (Type*)memoryManager.GetHandleObject(handleIndex);
-		if (!ptr)
-			assert(NULL);
+		assert(ptr);
 		return ptr;
 	}
 
 	Type& operator[](int index)
 	{
 		ptr = (Type*)memoryManager.GetHandleObject(handleIndex);
-		if (!ptr)
-			assert(NULL);
+		assert(ptr);
 		return ptr[index];
 	}
 
 	Type* operator->()
 	{
 		ptr = (Type*)memoryManager.GetHandleObject(handleIndex);
-		if (!ptr)
-			assert(NULL);
+		assert(ptr);
 		return ptr;
 	}
 
 	Type& operator*()
 	{
 		ptr = (Type*)memoryManager.GetHandleObject(handleIndex);
-		if (!ptr)
-			assert(NULL);
+		assert(ptr);
 		return *ptr;
+	}
+
+	void EqualPointer(Type* tPtr)
+	{
+		if (ptr)
+			Delete();
+		ptr = (Type*)memoryManager.Allocate(sizeof(Type));
+		memcpy(ptr, tPtr, sizeof(Type));
+		handleIndex = memoryManager.GetAvailableHandle();
+		delete tPtr;
+	}
+
+	void EqualArray(Type* tPtr, size_t arraySize)
+	{
+		if (ptr)
+			Delete();
+		ptr = (Type*)memoryManager.Allocate(sizeof(Type) * arraySize);
+		memcpy(ptr, tPtr, sizeof(Type) * arraySize);
+		handleIndex = memoryManager.GetAvailableHandle();
+		delete[] tPtr;
 	}
 
 #pragma region New()
@@ -257,7 +274,7 @@ public:
 	// CALL THIS FUNCTION ONLY AFTER CALLING ANY VARIATION OF New()
 	void Delete()
 	{
-		if (handleIndex >= 0  && handleIndex < ADMEMORY_ARRAY_SIZE)
+		if (handleIndex >= 0 && handleIndex < ADMEMORY_ARRAY_SIZE)
 		{
 			ptr = (Type*)memoryManager.GetHandleObject(handleIndex);
 			memoryManager.Deallocate(ptr, handleIndex);
@@ -314,48 +331,44 @@ public:
 
 	void push_back(Type var)
 	{
-		bool isString = false;
-		if (std::is_same<Type, std::string>::value)
-			isString = true;
 		if (_capacity == 0)
 		{
 			_capacity = 2;
 			_array.NewArray(_capacity);
 		}
 		else if (_size == _capacity)
-			resize(_size * 2, false);
+			push_back_resize(_size * 2);
 
-		if (isString)
+		if (std::is_same<Type, std::string>::value)
+		{
 			memcpy(&_array[_size++], &var, sizeof(var));
+		}
 		else
+		{
 			_array[_size++] = var;
+		}
 	}
 
-	void resize(unsigned int newCapacity, bool isCalled = true)
+	void resize(unsigned int newCapacity)
 	{
-		bool isFirst = false;
-		if (_capacity == 0)
-			isFirst = true;
-		if (newCapacity > _capacity)
-			_capacity = newCapacity;
-		else
+		if (newCapacity <= _capacity)
 			return;
 
-		if (isFirst)
+		if (_capacity == 0)
 		{
 			_array.NewArray(newCapacity);
 		}
 		else
 		{
-			Handle<Type> tempData(_capacity);
+			Handle<Type> tempData(newCapacity);
 			memcpy(tempData.GetPointer(), _array.GetPointer(), _size * sizeof(Type));
 			_array.Delete();
-			_array.NewArray(_capacity);
+			_array.NewArray(newCapacity);
 			memcpy(_array.GetPointer(), tempData.GetPointer(), _size * sizeof(Type));
 			tempData.Delete();
 		}
-		if (isCalled)
-			_size = newCapacity;
+		_capacity = newCapacity;
+		_size = newCapacity;
 	}
 
 	Type* data()
@@ -366,6 +379,17 @@ private:
 	Handle<Type> _array;
 	unsigned int _size;
 	unsigned int _capacity;
+
+	void push_back_resize(unsigned int newCapacity)
+	{
+		_capacity = newCapacity;
+		Handle<Type> tempData(_capacity);
+		memcpy(tempData.GetPointer(), _array.GetPointer(), _size * sizeof(Type));
+		_array.Delete();
+		_array.NewArray(_capacity);
+		memcpy(_array.GetPointer(), tempData.GetPointer(), _size * sizeof(Type));
+		tempData.Delete();
+	}
 };
 
 template <typename Type>

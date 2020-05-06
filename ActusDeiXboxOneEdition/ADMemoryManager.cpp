@@ -7,18 +7,22 @@ MemoryManager memoryManager;
 MemoryManager::MemoryManager()
 {
 	// Allocate 5 GB of RAM for application
-	memoryBuffer = (char*)calloc(FIVE_GB, sizeof(char));
+	memoryBuffer = new char[FIVE_GB];
+	memset(memoryBuffer, NULL, FIVE_GB);
 	allocatedSize = 0;
 	memPointerIndex = 0;
 	sizesIndex = 0;
 	handleIndex = 0;
 	availableHandle = 0;
+	memset(memPointers, NULL, ADMEMORY_ARRAY_SIZE * sizeof(char*));
+	memset(sizes, NULL, ADMEMORY_ARRAY_SIZE * sizeof(size_t));
 	memset(handles, NULL, ADMEMORY_ARRAY_SIZE * sizeof(char*));
+	assert(memoryBuffer);
 }
 
 MemoryManager::~MemoryManager()
 {
-	free(memoryBuffer);
+	delete[] memoryBuffer;
 }
 
 void* MemoryManager::Allocate(size_t size)
@@ -44,8 +48,7 @@ void* MemoryManager::Allocate(size_t size)
 			return memPointers[memPointerIndex - 1];
 		}
 	}
-	assert(NULL);
-	return nullptr;
+	throw std::bad_alloc();
 }
 
 void MemoryManager::Deallocate(void* object, size_t hIndex)
@@ -127,7 +130,6 @@ size_t MemoryManager::GetNextHandle()
 		if (handles[i] == NULL)
 			return i;
 	}
-	assert(NULL);
-	return 0;
+	throw std::bad_alloc();
 }
 #endif
