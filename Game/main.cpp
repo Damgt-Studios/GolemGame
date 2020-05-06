@@ -60,7 +60,11 @@ private:
 	// Rotation
 	float rot = 0;
 
+	float yaw = 180.0f;
+	float pitch = 30.0f;
 	
+	float default_yaw = 180.0f;
+	float default_pitch = 30.0f;
 
 	// Physics
 	ADPhysics::AABB test_colider;
@@ -116,6 +120,7 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
+		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));

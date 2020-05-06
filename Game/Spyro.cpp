@@ -26,6 +26,9 @@ void ADResource::ADGameplay::Spyro::Remove()
 }
 
 void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
+{
+
+}
 void ADResource::ADGameplay::Spyro::GetView(XMMATRIX& view)
 {
 	camera = view;
@@ -55,6 +58,8 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 
 		if (Dot > 0.5f)
 			jumping = false;
+
+		gliding = false;
 	}
 }
 
@@ -79,7 +84,7 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 				OnCollision(obj);
 			}
 		}
-		gliding = false;
+	
 
 	}
 }

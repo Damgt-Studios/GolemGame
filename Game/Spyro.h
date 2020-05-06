@@ -23,8 +23,12 @@ namespace ADResource
 
 			void CheckCollision(GameObject* obj);
 
+			void CheckCollision(AABB& item);
+
 			virtual void OnCollision(GameObject* other);
 			virtual void OnTrigger(GameObject* other);
+
+			void GetView(XMMATRIX& view);
 
 		private:
 			void HandleInput(float delta_time);
@@ -46,12 +50,14 @@ namespace ADResource
 			float og_y_pos = 0;
 			float gravity = 50;
 			bool jumping = false;
+			bool gliding = false;
 
 			float floatiness = 0.25f;
-
+			XMFLOAT4 Velocity = XMFLOAT4(0,0,0,0);
+			bool buttonup = false;
+			XMMATRIX camera;
 			// Turning
 			float spyro_turn_speed = 5;
-			float spyro_move_speed = 5;
 			float spyro_move_speed = 30;
 		};
 	}
