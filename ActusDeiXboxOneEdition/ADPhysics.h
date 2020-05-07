@@ -194,6 +194,18 @@ namespace ADPhysics
 
 		Triangle(XMFLOAT3 A, XMFLOAT3 B, XMFLOAT3 C) : a(A), b(B), c(C) 
 		{ Pos = (XMFLOAT3&)(((XMVECTOR&)a + (XMVECTOR&)b + (XMVECTOR&)c) / 3); type = ColliderType::Triangle; };
+
+		virtual bool isCollision(Sphere* other, Manifold& m) {
+			return TriangleToSphereCollision(*this, *other, m);
+		}
+
+		virtual bool isCollision(AABB* other, Manifold& m) {
+			return TriangleToAabbCollision(*this, *other, m);
+		}
+
+		virtual bool isCollision(OBB* other, Manifold& m) {
+			return TriangleToObbCollision(*this, *other, m);
+		}
 	};
 
 	struct PhysicsMaterial
