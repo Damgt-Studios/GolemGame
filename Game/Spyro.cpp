@@ -177,7 +177,7 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	{
 		fire = true;
 	}
-	if (Input::QueryButtonUp(GamepadButtons::B))
+	else if (Input::QueryButtonUp(GamepadButtons::B))
 	{
 		fire = false;
 
