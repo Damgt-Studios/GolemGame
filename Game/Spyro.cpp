@@ -4,6 +4,18 @@
 ADResource::ADGameplay::Spyro::Spyro() {
 	collider = OBB(transform, XMFLOAT3(2, 2, 2));
 	colliderPtr = &collider;
+
+	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+	chargeCollider.trigger = true;
+	chargeCPtr = &chargeCollider;
+
+	fireCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+	fireCollider.trigger = true;
+
+	fireCPtr = &fireCollider;
+
+
+
 }
 
 void ADResource::ADGameplay::Spyro::Update(float delta_time)
@@ -13,6 +25,16 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 	// Physics
 	collider = OBB(transform, XMFLOAT3(2,2,2));
 	colliderPtr = &collider;
+
+	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+	chargeCollider.trigger = true;
+	chargeCPtr = &chargeCollider;
+
+	fireCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+	fireCollider.trigger = true;
+
+	fireCPtr = &fireCollider;
+
 }
 
 void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
@@ -47,7 +69,9 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 	//Do whatever we need upon collision
 
 	//Function is mainly for gameplay
-
+	
+	
+	
 	//Sample of what to do with what we have right now
 	if (other->colliderPtr->type == ColliderType::Plane || other->colliderPtr->type == ColliderType::Aabb)
 	{
@@ -60,6 +84,31 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 			jumping = false;
 	}
 }
+void ADResource::ADGameplay::Spyro::OnTriggerCharge(GameObject* other)
+{
+
+	if (charging == true)
+	{
+		other->Damage(DAMAGE_TYPE::RAM);
+
+
+
+	}
+}
+void ADResource::ADGameplay::Spyro::OnTriggerFire(GameObject* other)
+{
+
+	if (fire == true)
+	{
+		other->Damage(DAMAGE_TYPE::FIRE);
+
+
+
+	}
+
+
+}
+
 
 //Checks collision, If collides with a trigger, calls OnTrigger, if colliders with a collider, calls OnCollision
 void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj) 
@@ -68,8 +117,30 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 
 	if (obj->active) 
 	{
+		if (charging == true)
+		{
+			if (obj->colliderPtr->isCollision(&chargeCollider, m))
+			{
+				
+				
+					OnTriggerCharge(obj);
+				
+			}
+		}
+		else if (fire == true)
+		{
+			if (obj->colliderPtr->isCollision(&fireCollider, m))
+			{
+
+
+				OnTriggerFire(obj);
+
+			}
+		}
+
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
+			
 			//If collision and collision object is a trigger then go to OnTrigger Function
 			if (obj->colliderPtr->trigger)
 			{
@@ -85,19 +156,33 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 	}
 }
 
+
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);
 	if (Input::QueryButtonDown(GamepadButtons::X))
 	{
 		spyro_move_speed = 50;
+		charging = true;
 
 	}
 	else
 	{
+		charging = false;
 
 		spyro_move_speed = 30;
 	}
+
+	if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER ) == 1)&& fire == false)
+	{
+		fire = true;
+	}
+	if (Input::QueryButtonUp(GamepadButtons::B))
+	{
+		fire = false;
+
+	}
+	
 	XMFLOAT4 forward;
 	XMStoreFloat4(&forward, Spyro::transform.r[2]);
 	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))

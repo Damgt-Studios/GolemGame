@@ -26,6 +26,8 @@ namespace ADResource
 			void CheckCollision(AABB& item);
 
 			virtual void OnCollision(GameObject* other);
+			void OnTriggerCharge(GameObject* other);
+			void OnTriggerFire(GameObject* other);
 			virtual void OnTrigger(GameObject* other);
 
 			void GetView(XMMATRIX& view);
@@ -39,6 +41,13 @@ namespace ADResource
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
 			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
+
+			OBB chargeCollider = OBB(transform, XMFLOAT3(2, 2, 2));
+			Collider* chargeCPtr = nullptr;
+			OBB fireCollider = OBB(transform, XMFLOAT3(2, 2, 2));
+			Collider* fireCPtr = nullptr;
+
+
 			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
 
 
@@ -51,8 +60,11 @@ namespace ADResource
 			float gravity = 50;
 			bool jumping = false;
 			bool gliding = false;
-
+			bool charging = false;
+			bool fire = false;
 			float floatiness = 0.25f;
+			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
+
 
 			bool buttonup = false;
 			XMMATRIX camera;
