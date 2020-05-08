@@ -274,6 +274,7 @@
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADMemoryManager.h" />
     <ClInclude Include="ADPhysics.h" />
+    <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="ADUserInterface.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
