@@ -98,7 +98,7 @@ float Input::QueryTriggerValueWithTolerance(TRIGGERS trigger, float tolerance /*
 	return button_value;
 }
 
-int Input::QueryThumbSticLeftRightX(THUMBSTICKS stick)
+int Input::QueryThumbStickLeftRightX(THUMBSTICKS stick)
 {
 	int stick_state = 0;
 

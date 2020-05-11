@@ -32,6 +32,38 @@ DirectX::XMFLOAT3& Camera::GetPosition()
 	return m_position;
 }
 
+XMFLOAT3& Camera::GetRotationEuler()
+{
+	XMMATRIX viewMatrix;
+	GetViewMatrix(viewMatrix);
+	
+	viewMatrix = XMMatrixInverse(nullptr,viewMatrix);
+
+	float Yaw; float Pitch; float Roll;
+	if (viewMatrix.r[0].m128_f32[0] == 1.0f)
+	{
+		Yaw = atan2f(viewMatrix.r[0].m128_f32[2], viewMatrix.r[2].m128_f32[3]);
+		Pitch = 0;
+		Roll = 0;
+
+	}
+	else if (viewMatrix.r[0].m128_f32[0] == -1.0f)
+	{
+		Yaw = atan2f(viewMatrix.r[0].m128_f32[2], viewMatrix.r[2].m128_f32[3]);
+		Pitch = 0;
+		Roll = 0;
+	}
+	else
+	{
+
+		Yaw = atan2(-viewMatrix.r[2].m128_f32[0], viewMatrix.r[0].m128_f32[0]);
+		Pitch = asin(viewMatrix.r[1].m128_f32[0]);
+		Roll = atan2(-viewMatrix.r[1].m128_f32[2], viewMatrix.r[1].m128_f32[1]);
+	}
+
+	return XMFLOAT3{ Pitch, Yaw, Roll };
+}
+
 float Camera::GetFOV()
 {
 	return m_fov;
