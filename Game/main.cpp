@@ -174,6 +174,7 @@ public:
 		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
+
 		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
 
@@ -181,7 +182,8 @@ public:
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		//Why do I have to put this as -415 y for it to be below spyro?
-		Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
+		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.5f, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		//Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -201,7 +203,7 @@ public:
 		GameUtilities::AddGameObject(e2);
 		GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(t1);
-		GameUtilities::AddGameObject(p1);
+		GameUtilities::AddGameObject(testPlane);
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
@@ -229,7 +231,7 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(15 * 1.8, 0, 15 * 1.8));
+		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
 		
 		//Needed to add this to the colliders for the collision queue
 		c1->colliderPtr = &test_colider;
@@ -238,8 +240,8 @@ public:
 		c2->colliderPtr = &test_colider1;
 		c2->type = OBJECT_TYPE::STATIC;
 
-		p1->colliderPtr = &test_plane;
-		p1->type = OBJECT_TYPE::STATIC;
+		testPlane->colliderPtr = &test_plane;
+		testPlane->type = OBJECT_TYPE::STATIC;
 
 		while (!shutdown)
 		{

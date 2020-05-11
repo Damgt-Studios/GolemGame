@@ -9,6 +9,7 @@ namespace ADPhysics
 	struct OBB;
 	struct Sphere;
 	struct Plane;
+	struct Triangle;
 	struct Manifold;
 
 	static bool SphereToAabbCollision(const Sphere& sphere, const AABB& aabb, Manifold& m);
@@ -19,6 +20,9 @@ namespace ADPhysics
 	static bool ObbToPlaneCollision(const OBB& obb, const Plane& plane, Manifold& m);
 	static bool SphereToObbCollision(const Sphere& sphere, const OBB& obb, Manifold& m);
 	static bool ObbToObbCollision(const OBB& box1, const OBB& box2, Manifold& m);
+	static bool TriangleToSphereCollision(const Triangle& tri, const Sphere& sphere, Manifold& m);
+	static bool TriangleToAabbCollision(const Triangle& tri, const AABB& aabb, Manifold& m);
+	static bool TriangleToObbCollision(const Triangle& tri, const OBB& obb, Manifold& m);
 
 
 	enum class ColliderType
@@ -511,14 +515,14 @@ namespace ADPhysics
 
 		XMVECTOR C = (XMVECTOR&)obb.Pos;
 
-		vertex[0] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[1] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[2] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[3] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[4] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[5] = (XMFLOAT3&)(C + (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[6] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x + (XMVECTOR&)obb.AxisY * obb.HalfSize.y - (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
-		vertex[7] = (XMFLOAT3&)(C - (XMVECTOR&)obb.AxisX * obb.HalfSize.x - (XMVECTOR&)obb.AxisY * obb.HalfSize.y + (XMVECTOR&)obb.AxisZ * obb.HalfSize.z);
+		vertex[0] = (XMFLOAT3&)(C + Float3ToVector(obb.AxisX) * obb.HalfSize.x + Float3ToVector(obb.AxisY) * obb.HalfSize.y + Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[1] = (XMFLOAT3&)(C - Float3ToVector(obb.AxisX) * obb.HalfSize.x + Float3ToVector(obb.AxisY) * obb.HalfSize.y + Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[2] = (XMFLOAT3&)(C + Float3ToVector(obb.AxisX) * obb.HalfSize.x - Float3ToVector(obb.AxisY) * obb.HalfSize.y + Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[3] = (XMFLOAT3&)(C + Float3ToVector(obb.AxisX) * obb.HalfSize.x + Float3ToVector(obb.AxisY) * obb.HalfSize.y - Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[4] = (XMFLOAT3&)(C - Float3ToVector(obb.AxisX) * obb.HalfSize.x - Float3ToVector(obb.AxisY) * obb.HalfSize.y - Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[5] = (XMFLOAT3&)(C + Float3ToVector(obb.AxisX) * obb.HalfSize.x - Float3ToVector(obb.AxisY) * obb.HalfSize.y - Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[6] = (XMFLOAT3&)(C - Float3ToVector(obb.AxisX) * obb.HalfSize.x + Float3ToVector(obb.AxisY) * obb.HalfSize.y - Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
+		vertex[7] = (XMFLOAT3&)(C - Float3ToVector(obb.AxisX) * obb.HalfSize.x - Float3ToVector(obb.AxisY) * obb.HalfSize.y + Float3ToVector(obb.AxisZ) * obb.HalfSize.z);
 
 		result.min = result.max = VectorDot(axis, vertex[0]);
 
@@ -815,7 +819,7 @@ namespace ADPhysics
 		if (testDot < 0)
 			tempZ = XMFLOAT3(-tempZ.x, -tempZ.y, -tempZ.z);
 
-		XMFLOAT3 tempF = (XMFLOAT3&)(((XMVECTOR&)tempX + (XMVECTOR&)tempY + (XMVECTOR&)tempZ) * (XMVECTOR&)obb.HalfSize);
+		XMFLOAT3 tempF = (XMFLOAT3&)((Float3ToVector(tempX) + Float3ToVector(tempY) + Float3ToVector(tempZ)) * Float3ToVector(obb.HalfSize));
 		float Distance = ADPhysics::CalculateDistance((XMFLOAT3&)ClosestPoint, plane.Pos);
 		float radius = (abs(plane.Normal.x) * abs(tempF.x)) + (abs(plane.Normal.y) * abs(tempF.y)) + (abs(plane.Normal.z) * abs(tempF.z));
 		float overlap = radius - Distance;
@@ -1157,7 +1161,7 @@ namespace ADPhysics
 		//Manifold Setup
 		m.Normal = Axises[AxisOfMinimumCollision];
 
-		if (VectorDot((XMVECTOR&)obb.Pos - (XMVECTOR&)aabb.Pos, (XMVECTOR&)m.Normal) < 0)
+		if (VectorDot(Float3ToVector(obb.Pos) - Float3ToVector(aabb.Pos), Float3ToVector(m.Normal)) < 0)
 			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
 
 		m.PenetrationDepth = MinOverlap;
