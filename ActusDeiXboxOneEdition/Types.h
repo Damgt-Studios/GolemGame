@@ -584,18 +584,28 @@ namespace ADResource
 				collisionQueue.pop();
 				//If the object is of the object type STATIC it will only apply a velocty change to the other objects.
 				//Mainly will be used for Spyro against Ground, Enemies against Ground, Chests and Gems against Spyro, etc.
-				if (current.B->type = OBJECT_TYPE::STATIC)
+				if (current.B->type == (int)OBJECT_TYPE::STATIC)
 				{
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-					ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+					XMFLOAT4 aVelocity = current.A->Velocity;
+					const ADPhysics::PhysicsMaterial aMat = current.A->pmat;
 
-					VelocityImpulse(tempV, temp, current.A->Velocity, current.A->pmat, current.m);
-					PositionalCorrection(tempV, temp, (XMFLOAT4&)current.A->transform.r[3], current.A->pmat, current.m);
+					VelocityImpulse(tempV, temp, aVelocity, aMat, current.m);
+
+					(*current.A).Velocity = aVelocity;
+					(*current.A).pmat = aMat;
+
+					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.A->transform.r[3]), current.A->pmat, current.m);
 				}
 				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
 				else 
 				{
-					VelocityImpulse(current.A->Velocity, current.B->pmat, current.B->Velocity, current.B->pmat, current.m);
+					XMFLOAT4 aTemp = current.A->Velocity, bTemp = current.B->Velocity;
+					const ADPhysics::PhysicsMaterial aMat = current.A->pmat, bMat = current.B->pmat;
+					VelocityImpulse(aTemp, aMat, bTemp, bMat, current.m);
+					(*current.A).Velocity = aTemp; (*current.B).Velocity = bTemp;
+					(*current.A).pmat = aMat; (*current.B).pmat = bMat;
 					PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, (XMFLOAT4&)current.B->transform.r[3], current.B->pmat, current.m);
 				}
 			}
