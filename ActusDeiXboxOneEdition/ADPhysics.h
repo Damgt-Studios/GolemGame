@@ -183,6 +183,18 @@ namespace ADPhysics
 		
 	};
 
+	struct InfinitePlane
+	{
+		XMFLOAT3 normal;
+		float distance;
+	};
+
+	struct Ray {
+		XMFLOAT3 Origin, Direction;
+
+		Ray(XMFLOAT3 origin, XMFLOAT3 direction) : Origin(origin), Direction(direction) {};
+	};
+
 	struct Segment
 	{
 		XMFLOAT3 Start, End;
@@ -326,6 +338,50 @@ namespace ADPhysics
 		return pow(Vector.x, 2) + pow(Vector.y, 2) + pow(Vector.z, 2);
 	}
 
+	static XMFLOAT3 Project(const XMFLOAT3& length, const XMFLOAT3& direction)
+	{
+		float dot = VectorDot(length, direction);
+		float magSq = MagnitudeSq(direction);
+		return (XMFLOAT3&)(Float3ToVector(direction) * (dot / magSq));
+	}
+
+	static XMFLOAT3 Perpendicular(const XMFLOAT3& length, const XMFLOAT3& direction) 
+	{
+		return (XMFLOAT3&)(Float3ToVector(length) - Float3ToVector(Project(length, direction)));
+	}
+
+	static XMFLOAT3 FindBarycentric(XMFLOAT3& Point, const Triangle& tri)
+	{
+		XMVECTOR ap = Float3ToVector(Point) - Float3ToVector(tri.a);
+		XMVECTOR bp = Float3ToVector(Point) - Float3ToVector(tri.b);
+		XMVECTOR cp = Float3ToVector(Point) - Float3ToVector(tri.c);
+
+		XMVECTOR ab = Float3ToVector(tri.b) - Float3ToVector(tri.a);
+		XMVECTOR ac = Float3ToVector(tri.c) - Float3ToVector(tri.a);
+		XMVECTOR bc = Float3ToVector(tri.c) - Float3ToVector(tri.b);
+		XMVECTOR cb = Float3ToVector(tri.b) - Float3ToVector(tri.c);
+		XMVECTOR ca = Float3ToVector(tri.a) - Float3ToVector(tri.c);
+
+		XMVECTOR v = ab - Float3ToVector(Project((XMFLOAT3&)ab, (XMFLOAT3&)cb));
+		float a = 1.0f - (VectorDot(v, ap) / VectorDot(v, ab));
+
+		v = bc - Float3ToVector(Project((XMFLOAT3&)bc, (XMFLOAT3&)ac));
+		float b = 1.0f - (VectorDot(v, bp) / VectorDot(v, bc));
+
+		v = ca - Float3ToVector(Project((XMFLOAT3&)ca, (XMFLOAT3&)ab));
+		float c = 1.0f - (VectorDot(v, cp) / VectorDot(v, ca));
+
+		return XMFLOAT3(a, b, c);
+	}
+
+	static InfinitePlane FromTriangle(const Triangle& t)
+	{
+		InfinitePlane result;
+		result.normal = (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(t.b) - Float3ToVector(t.a), Float3ToVector(t.c) - Float3ToVector(t.a)));
+		result.distance = VectorDot(result.normal, t.a);
+		return result;
+	};
+
 	static bool PointToTriangle(const XMFLOAT3& Point, const Triangle& tri)
 	{
 		XMVECTOR a = (XMVECTOR&)tri.a - (XMVECTOR&)Point;
@@ -370,28 +426,14 @@ namespace ADPhysics
 
 	static XMFLOAT3 FindClosestPoint(const XMFLOAT3& Point, const Triangle& tri) 
 	{
-		struct FakePlane
-		{
-			XMFLOAT3 normal;
-			float distance;
-		};
-
-		auto FromTriangle = [](const Triangle& t) -> FakePlane
-		{
-			FakePlane result;
-			result.normal = (XMFLOAT3&)XMVector3Normalize(XMVector3Cross((XMVECTOR&)t.b - (XMVECTOR&)t.a, (XMVECTOR&)t.c - (XMVECTOR&)t.a));
-			result.distance = VectorDot(result.normal, t.a);
-			return result;
-		};
-
-		auto ClosestPointPlane = [](const XMFLOAT3& point, const FakePlane plane) -> XMFLOAT3
+		auto ClosestPointPlane = [](const XMFLOAT3& point, const InfinitePlane plane) -> XMFLOAT3
 		{
 			float dot = VectorDot(plane.normal, point);
 			float distance = dot - plane.distance;
 			return (XMFLOAT3&)((XMVECTOR&)point - (XMVECTOR&)plane.normal * distance);
 		};
 
-		FakePlane plane = FromTriangle(tri);
+		InfinitePlane plane = FromTriangle(tri);
 		XMFLOAT3 Closest = ClosestPointPlane(Point, plane);
 		if (PointToTriangle(Closest, tri))
 			return Closest;
@@ -549,6 +591,57 @@ namespace ADPhysics
 		result.max = fmaxf(result.max, value);
 
 		return result;
+	}
+
+	static float RaycastToPlane(const Ray& r, const InfinitePlane& inf)
+	{
+		float nd = VectorDot(r.Direction, inf.normal);
+		float np = VectorDot(r.Origin, inf.normal);
+
+		if (nd >= 0.0f)
+			return -1;
+
+		float t = (inf.distance - np) / nd;
+
+		if (t >= 0.0f)
+			return t;
+
+		return -1;
+	}
+
+	static float RaycastToTriangle(const Ray& r, const Triangle& tri, Manifold& m)
+	{
+		InfinitePlane plane = FromTriangle(tri);
+		float t = RaycastToPlane(r, plane);
+		if (t < 0.0f) {
+			return t;
+		}
+
+		XMFLOAT3 result = (XMFLOAT3&)(Float3ToVector(r.Origin) + Float3ToVector(r.Direction) * t);
+
+		XMFLOAT3 barycentric = FindBarycentric(result, tri);
+		if (barycentric.x >= 0.0f && barycentric.x <= 1.0f &&
+			barycentric.y >= 0.0f && barycentric.y <= 1.0f &&
+			barycentric.z >= 0.0f && barycentric.z <= 1.0f) 
+		{
+			m.ContactPoint = XMFLOAT4(result.x, result.y, result.z, 1);
+			return t;
+		}
+
+		return -1;
+	}
+
+	static bool LineSegmentToTriangle(const Segment& line, const Triangle& tri, Manifold& m)
+	{
+		Ray r = Ray(line.Start, (XMFLOAT3&)XMVector3Normalize(Float3ToVector(line.End) - Float3ToVector(line.Start)));
+		float t = RaycastToTriangle(r, tri, m);
+
+		bool temp = t >= 0 && t * t <= MagnitudeSq((XMFLOAT3&)(Float3ToVector(line.End) - Float3ToVector(line.Start)));
+
+		if (temp == false)
+			return false;
+
+		return true;
 	}
 
 	//------------------------------------------Self Collision

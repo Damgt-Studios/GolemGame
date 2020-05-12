@@ -182,7 +182,7 @@ public:
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
-		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.5f, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -312,7 +312,7 @@ public:
 					{
 						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
 						{
-							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+							if (!OBJS[i]->colliderPtr->trigger && !OBJS[j]->colliderPtr->trigger)
 							{
 								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
 								{
@@ -324,23 +324,17 @@ public:
 				}
 			}
 
+			Segment line = Segment((XMFLOAT3&)(spyro->transform.r[3] + XMVectorSet(0, 1, 0, 0)), (XMFLOAT3&)(spyro->transform.r[3] - XMVectorSet(0, 1, 0, 0)));
+
 			for (unsigned int i = 0; i < ground.size(); i++)
 			{
 				Manifold m;
-				if (ground[i].isCollision(&spyro->collider, m))
+				if (LineSegmentToTriangle(line, ground[i], m))
 				{
-					//collisionQueue.push(CollisionPacket())
-					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
-					XMFLOAT4 aVelocity = spyro->Velocity;
-					const ADPhysics::PhysicsMaterial aMat = spyro->pmat;
-
-					VelocityImpulse(tempV, temp, aVelocity, aMat, m);
-					//VelocityImpulse(aVelocity, aMat, tempV, temp, m);
-					(*spyro).Velocity = aVelocity;
-					(*spyro).pmat = aMat;
-
-					PositionalCorrection(tempV, temp, (XMFLOAT4&)(spyro->transform.r[3]), spyro->pmat, m);
+					spyro->transform.r[3] = (XMVECTOR&)m.ContactPoint;
+					spyro->transform.r[3].m128_f32[1] += spyro->collider.HalfSize.y / 2 ;
+					//spyro->Velocity = XMFLOAT4(0, 0, 0, 0);
+					spyro->Velocity = (XMFLOAT4&)((XMVECTOR&)spyro->Velocity + (-(XMVECTOR&)spyro->Velocity * delta_time * 20));
 					spyro->jumping = false;
 				}
 			}
