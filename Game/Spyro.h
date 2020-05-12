@@ -26,6 +26,11 @@ namespace ADResource
 			virtual void OnCollision(GameObject* other);
 			virtual void OnTrigger(GameObject* other);
 
+			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
+			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
+			bool jumping = false;
+
+
 		private:
 			void HandleInput(float delta_time);
 
@@ -33,9 +38,6 @@ namespace ADResource
 			int health;
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
-
-			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
-			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
 
 
 			// Gameplay
@@ -45,7 +47,6 @@ namespace ADResource
 			float jump_height = 15;
 			float og_y_pos = 0;
 			float gravity = 50;
-			bool jumping = false;
 
 			float floatiness = 0.25f;
 

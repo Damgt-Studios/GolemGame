@@ -181,9 +181,8 @@ public:
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Why do I have to put this as -415 y for it to be below spyro?
+
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.5f, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		//Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -204,6 +203,26 @@ public:
 		GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(t1);
 		GameUtilities::AddGameObject(testPlane);
+
+		testPlane->colliderPtr = nullptr;
+
+		
+		Model* models = ResourceManager::GetPBRPtr();
+		int models_count = ResourceManager::GetPBRModelCount();
+		Model planeModel = models[testPlane->GetMeshId() - 2];
+		std::vector<ADPhysics::Triangle> ground;
+		XMMATRIX groundWorld = XMMatrixIdentity();
+		testPlane->GetWorldMatrix(groundWorld);
+		for(unsigned int i = 0; i < planeModel.indices.size(); i+=3)
+		{
+			ADPhysics::Triangle tri = ADPhysics::Triangle(planeModel.vertices[planeModel.indices[i]].Pos, planeModel.vertices[planeModel.indices[i + 1]].Pos, planeModel.vertices[planeModel.indices[i + 2]].Pos);
+			tri.a = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri.a), groundWorld));
+			tri.b = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri.b), groundWorld));
+			tri.c = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri.c), groundWorld));
+			ground.push_back(tri);
+		}
+
+
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
@@ -231,7 +250,7 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
+		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
 		
 		//Needed to add this to the colliders for the collision queue
 		c1->colliderPtr = &test_colider;
@@ -239,9 +258,6 @@ public:
 
 		c2->colliderPtr = &test_colider1;
 		c2->type = OBJECT_TYPE::STATIC;
-
-		testPlane->colliderPtr = &test_plane;
-		testPlane->type = OBJECT_TYPE::STATIC;
 
 		while (!shutdown)
 		{
@@ -305,6 +321,27 @@ public:
 							}
 						}
 					}
+				}
+			}
+
+			for (unsigned int i = 0; i < ground.size(); i++)
+			{
+				Manifold m;
+				if (ground[i].isCollision(&spyro->collider, m))
+				{
+					//collisionQueue.push(CollisionPacket())
+					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+					XMFLOAT4 aVelocity = spyro->Velocity;
+					const ADPhysics::PhysicsMaterial aMat = spyro->pmat;
+
+					VelocityImpulse(tempV, temp, aVelocity, aMat, m);
+					//VelocityImpulse(aVelocity, aMat, tempV, temp, m);
+					(*spyro).Velocity = aVelocity;
+					(*spyro).pmat = aMat;
+
+					PositionalCorrection(tempV, temp, (XMFLOAT4&)(spyro->transform.r[3]), spyro->pmat, m);
+					spyro->jumping = false;
 				}
 			}
 
