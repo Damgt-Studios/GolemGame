@@ -209,6 +209,7 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 
 		gliding = true;
 		floatiness = 0.05f;
+		ADPhysics::maxDownwardVelocity = -0.5f;
 
 
 	}
@@ -221,6 +222,7 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 		{
 			gliding = false;
 			floatiness = 0.25f;
+			ADPhysics::maxDownwardVelocity = -20;
 		}
 
 	}
