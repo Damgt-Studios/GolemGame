@@ -30,14 +30,11 @@ namespace ADResource
 			void OnTriggerFire(GameObject* other);
 			virtual void OnTrigger(GameObject* other);
 
-<<<<<<< HEAD
 			void GetView(XMMATRIX& view);
-=======
 			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 
->>>>>>> remotes/origin/Gage-QuadTree
 
 		private:
 			void HandleInput(float delta_time);
@@ -47,19 +44,10 @@ namespace ADResource
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
-<<<<<<< HEAD
-			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
-
 			OBB chargeCollider = OBB(transform, XMFLOAT3(2, 2, 2));
 			Collider* chargeCPtr = nullptr;
 			OBB fireCollider = OBB(transform, XMFLOAT3(2, 2, 2));
 			Collider* fireCPtr = nullptr;
-
-
-			PhysicsMaterial mat = PhysicsMaterial(1,1,0.5f);
-
-=======
->>>>>>> remotes/origin/Gage-QuadTree
 
 			// Gameplay
 			float jump_time_up = .4;
@@ -68,14 +56,10 @@ namespace ADResource
 			float jump_height = 15;
 			float og_y_pos = 0;
 			float gravity = 50;
-<<<<<<< HEAD
-			bool jumping = false;
 			bool gliding = false;
 			bool charging = false;
 			bool fire = false;
-=======
 
->>>>>>> remotes/origin/Gage-QuadTree
 			float floatiness = 0.25f;
 			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
 
