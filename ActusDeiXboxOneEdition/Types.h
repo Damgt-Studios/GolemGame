@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include <vector>
+#include <queue>
 
 #include <string>
 #include "ADPhysics.h"
@@ -388,7 +389,7 @@ namespace ADResource
 
 		enum OBJECT_TYPE
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, HITBOX, TRIGGER
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, STATIC
 			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
 		};
 		enum OBJECT_DEFENSE
@@ -403,8 +404,6 @@ namespace ADResource
 		class GameObject
 		{
 		public:
-			//ADPhysics::Collider* collider;
-
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
@@ -430,10 +429,7 @@ namespace ADResource
 				active = false;
 			}
 
-			virtual void CheckCollision(ADPhysics::AABB& _object) {};
-			virtual void CheckCollision(ADPhysics::OBB& _object) {};
-			virtual void CheckCollision(ADPhysics::Sphere& _object) {};
-			virtual void CheckCollision(ADPhysics::Plane& _object) {};
+			virtual void CheckCollision(GameObject* obj) {};
 
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
@@ -468,6 +464,85 @@ namespace ADResource
 			{
 			}
 
+			void SetRotationMatrix(XMMATRIX newRot)
+			{
+				transform.r[0] = newRot.r[0];
+				transform.r[1] = newRot.r[1];
+				transform.r[2] = newRot.r[2];
+			}
+			void RotationYBasedOnView( XMMATRIX& cam,float angle, float PI)
+			{
+				angle *= (180.0f / PI);
+
+				cam = XMMatrixInverse(nullptr, cam);
+				XMVECTOR cameulerAngles = GetRotation(cam);
+				cam = XMMatrixInverse(nullptr, cam);
+				cameulerAngles.m128_f32[1] *= (180.0f / PI);
+
+				angle += -cameulerAngles.m128_f32[1];
+				angle *= (PI / 180.0f);
+ 
+				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
+
+				SetRotationMatrix(RotationY);
+				
+				
+		
+
+
+			
+
+			}
+			XMVECTOR GetRotation()
+			{
+				float Yaw; float Pitch; float Roll;
+				if (transform.r[0].m128_f32[0] == 1.0f)
+				{
+					Yaw = atan2f(transform.r[0].m128_f32[2], transform.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+
+				}
+				else if (transform.r[0].m128_f32[0] == -1.0f)
+				{
+					Yaw = atan2f(transform.r[0].m128_f32[2], transform.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+				}
+				else
+				{
+
+					Yaw = atan2(-transform.r[2].m128_f32[0], transform.r[0].m128_f32[0] );
+					Pitch = asin(transform.r[1].m128_f32[0]);
+					Roll = atan2(-transform.r[1].m128_f32[2], transform.r[1].m128_f32[1]);
+				}
+				return { Pitch, Yaw, Roll };
+			}
+			XMVECTOR GetRotation(XMMATRIX matrix)
+			{
+				float Yaw; float Pitch; float Roll;
+				if (matrix.r[0].m128_f32[0] == 1.0f)
+				{
+					Yaw = atan2f(matrix.r[0].m128_f32[2], matrix.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+
+				}
+				else if (matrix.r[0].m128_f32[0] == -1.0f)
+				{
+					Yaw = atan2f(matrix.r[0].m128_f32[2], matrix.r[2].m128_f32[3]);
+					Pitch = 0;
+					Roll = 0;
+				}
+				else
+				{
+
+					Yaw = atan2(-matrix.r[2].m128_f32[0], matrix.r[0].m128_f32[0]);
+					Pitch = asin(matrix.r[1].m128_f32[0]);
+					Roll = atan2(-matrix.r[1].m128_f32[2], matrix.r[1].m128_f32[1]);
+				}
+				return { Pitch, Yaw, Roll };
+			}
 			void SetScale(XMFLOAT3 scale)
 			{
 				transform = XMMatrixMultiply(transform, XMMatrixScaling(scale.x, scale.y, scale.z));
@@ -484,15 +559,58 @@ namespace ADResource
 			int GemCount;
 			AD_ULONG meshID;
 			OBJECT_DEFENSE defenseType;
+			XMFLOAT4 Velocity;
 			XMMATRIX transform;
 			XMMATRIX postTransform;
+
+			ADPhysics::Collider* colliderPtr = nullptr;
+			ADPhysics::PhysicsMaterial pmat = ADPhysics::PhysicsMaterial();
 
 		public:
 			bool has_mesh = false;
 		};
 
+		struct CollisionPacket
+		{
+			ADResource::ADGameplay::GameObject* A;
+			ADResource::ADGameplay::GameObject* B;
+			ADPhysics::Manifold m;
+
+			CollisionPacket() = delete;
+			CollisionPacket(GameObject* a, GameObject* b, ADPhysics::Manifold& manifold) : A(a), B(b), m(manifold) {};
+		};
+
+		//If multiple instances will select one out of all of them and use only that one. 
+		//Not sure if extra ones still take up memory. Don't think they do
+		__declspec(selectany) std::queue<CollisionPacket> collisionQueue;
+
+		static void ResolveCollisions()
+		{
+			while (!collisionQueue.empty()) {
+				CollisionPacket current = collisionQueue.front();
+				collisionQueue.pop();
+				//If the object is of the object type STATIC it will only apply a velocty change to the other objects.
+				//Mainly will be used for Spyro against Ground, Enemies against Ground, Chests and Gems against Spyro, etc.
+				if (current.B->type = OBJECT_TYPE::STATIC)
+				{
+					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+					ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+
+					VelocityImpulse(tempV, temp, current.A->Velocity, current.A->pmat, current.m);
+					PositionalCorrection(tempV, temp, (XMFLOAT4&)current.A->transform.r[3], current.A->pmat, current.m);
+				}
+				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
+				else 
+				{
+					VelocityImpulse(current.A->Velocity, current.B->pmat, current.B->Velocity, current.B->pmat, current.m);
+					PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, (XMFLOAT4&)current.B->transform.r[3], current.B->pmat, current.m);
+				}
+			}
+		}
+
 	}
 };
+
 //
 ////Dan's collider stuff
 //namespace ADPhysics

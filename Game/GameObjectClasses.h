@@ -12,24 +12,23 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			virtual void CheckCollision(ADPhysics::AABB& _object) 
+			Collectable() { colliderPtr = &collider; };
+
+			virtual void CheckCollision(GameObject* obj) 
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
 
-					if (AabbToAabbCollision(collider, _object, m))
+					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						//XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-						//ADPhysics::PhysicsMaterial temp(0, 0, 0);
-
-						ADResource::AD_UI::UIMessage message;
-						message.controllerID = 1;
-						message.messageType = 2;
-						message.number = 1;
-					
-						ADUI::MessageReceiver::SendMessage(&message);
-						Remove();
+							ADResource::AD_UI::UIMessage message;
+							message.controllerID = 1;
+							message.messageType = 2;
+							message.number = 1;
+						
+							ADUI::MessageReceiver::SendMessage(&message);
+							Remove();
 					}
 				}
 				
@@ -42,17 +41,16 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			virtual void CheckCollision(ADPhysics::AABB& _object)
+			Trigger() { colliderPtr = &collider; };
+
+			virtual void CheckCollision(GameObject* obj)
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
 
-					if (AabbToAabbCollision(collider, _object, m))
+					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						//XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-						//ADPhysics::PhysicsMaterial temp(0, 0, 0);
-
 						ADResource::AD_UI::UIMessage message;
 						message.controllerID = 1;
 						message.messageType = 2;
@@ -98,17 +96,16 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			virtual void CheckCollision(ADPhysics::AABB& _object)
+			Enemy() { colliderPtr = &collider; };
+
+			virtual void CheckCollision(GameObject* obj)
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
 
-					if (AabbToAabbCollision(collider, _object, m))
+					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						//XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-						//ADPhysics::PhysicsMaterial temp(0, 0, 0);
-
 						ADResource::AD_UI::UIMessage message;
 						message.controllerID = 1;
 						message.messageType = 2;

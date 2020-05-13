@@ -60,11 +60,11 @@ private:
 	// Rotation
 	float rot = 0;
 
-	float yaw = 180;
-	float pitch = 30;
+	float yaw = 180.0f;
+	float pitch = 30.0f;
 	
-	float default_yaw = 180;
-	float default_pitch = 30;
+	float default_yaw = 180.0f;
+	float default_pitch = 30.0f;
 
 	// Physics
 	ADPhysics::AABB test_colider;
@@ -120,7 +120,7 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 20, -100), 0, 0, 45);
+		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
@@ -180,6 +180,8 @@ public:
 		// Colliders
 		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Why do I have to put this as -415 y for it to be below spyro?
+		Renderable* p1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, -415, 0), XMFLOAT3(15, 0.01, 15), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -199,6 +201,7 @@ public:
 		GameUtilities::AddGameObject(e2);
 		GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(t1);
+		GameUtilities::AddGameObject(p1);
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
@@ -226,8 +229,17 @@ public:
 		// Construct physics stuff
 		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
 		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(100, 0, 100));
+		test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(15 * 1.8, 0, 15 * 1.8));
+		
+		//Needed to add this to the colliders for the collision queue
+		c1->colliderPtr = &test_colider;
+		c1->type = OBJECT_TYPE::STATIC;
 
+		c2->colliderPtr = &test_colider1;
+		c2->type = OBJECT_TYPE::STATIC;
+
+		p1->colliderPtr = &test_plane;
+		p1->type = OBJECT_TYPE::STATIC;
 
 		while (!shutdown)
 		{
@@ -253,19 +265,52 @@ public:
 			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
 
 			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
-
+			XMMATRIX view;
+			engine->GetOrbitCamera()->GetViewMatrix(view);
+			spyro->GetView(view);
+		
 			// Physics test
-			spyro->CheckCollision(test_colider);
-			spyro->CheckCollision(test_colider1);
-			spyro->CheckCollision(test_plane);
-			a3->CheckCollision(spyro->collider);
-			e1->CheckCollision(spyro->collider);
-			e2->CheckCollision(spyro->collider);
-			e3->CheckCollision(spyro->collider);
-			t1->CheckCollision(spyro->collider);
+		
+			/*spyro->CheckCollision(c1);
+			spyro->CheckCollision(c2);
+			spyro->CheckCollision(p1);
+			a3->CheckCollision(spyro);
+			e1->CheckCollision(spyro);
+			e2->CheckCollision(spyro);
+			e3->CheckCollision(spyro);
+			t1->CheckCollision(spyro);*/
 
-			//Check Collision for groups
-			
+
+			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
+
+			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
+
+			//Works the exact same as the commented code above
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+
+			for (int i = 0; i < OBJ_COUNT; i++)
+			{
+				for (unsigned int j = 0; j < OBJ_COUNT; j++)
+				{
+					if (i != j) 
+					{
+						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+						{
+							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+							{
+								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
+								{
+									OBJS[i]->CheckCollision(OBJS[j]);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//Resolve all collisions that occurred this frame
+			ADResource::ADGameplay::ResolveCollisions();
 
 			// Test
 
@@ -320,10 +365,10 @@ public:
 		if (Input::ControllerPresent())
 		{
 			// Camera rotation
-			if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
+			if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
 			{
 				yaw += camera_rotation_thresh * dt;
-			} else if (Input::QueryThumbSticLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
+			} else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
 			{
 				yaw += -camera_rotation_thresh * dt;
 			}
