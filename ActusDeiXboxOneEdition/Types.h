@@ -382,7 +382,7 @@ namespace ADResource
 
 		enum OBJECT_TYPE
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, STATIC
+			PLAYER, ENEMY, DESTRUCTABLE, GEM, TRIGGER, STATIC
 			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
 		};
 		enum OBJECT_DEFENSE
@@ -478,12 +478,6 @@ namespace ADResource
 				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
 
 				SetRotationMatrix(RotationY);
-				
-				
-		
-
-
-			
 
 			}
 			XMVECTOR GetRotation()
@@ -504,7 +498,6 @@ namespace ADResource
 				}
 				else
 				{
-
 					Yaw = atan2(-transform.r[2].m128_f32[0], transform.r[0].m128_f32[0] );
 					Pitch = asin(transform.r[1].m128_f32[0]);
 					Roll = atan2(-transform.r[1].m128_f32[2], transform.r[1].m128_f32[1]);
@@ -529,7 +522,6 @@ namespace ADResource
 				}
 				else
 				{
-
 					Yaw = atan2(-matrix.r[2].m128_f32[0], matrix.r[0].m128_f32[0]);
 					Pitch = asin(matrix.r[1].m128_f32[0]);
 					Roll = atan2(-matrix.r[1].m128_f32[2], matrix.r[1].m128_f32[1]);
@@ -613,45 +605,3 @@ namespace ADResource
 
 	}
 };
-
-//
-////Dan's collider stuff
-//namespace ADPhysics
-//{
-//	enum ColliderType
-//	{
-//		Box
-//	};
-//
-//	class Collider
-//	{
-//	public:
-//		int centerAnchor;
-//		ColliderType type;
-//		virtual void CheckCollision(ADResource::ADGameplay::GameObject& _object) = 0;
-//	};
-//
-//
-//	class BoxCollider : public Collider
-//	{
-//		AABB collider;
-//		virtual void CheckCollision(ADResource::ADGameplay::GameObject& _object)
-//		{
-//			Manifold m;
-//			if (AabbToAabbCollision(collider, , m))
-//			{
-//				XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
-//				PhysicsMaterial temp(0, 0, 0);
-//				VelocityImpulse(Velocity, mat, tempV, temp, m);
-//				PositionalCorrection((XMFLOAT4&)transform.r[3], mat, tempV, temp, m);
-//
-//				float Dot = VectorDot(XMFLOAT3(collider.Pos.x - item.Pos.x, collider.Pos.y - item.Pos.y, collider.Pos.z - item.Pos.z), XMFLOAT3(0, 1, 0));
-//
-//				if (Dot > 0.5f)
-//					jumping = false;;
-//			}
-//
-//		}
-//	};
-//
-//}

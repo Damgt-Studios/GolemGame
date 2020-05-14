@@ -13,9 +13,6 @@ ADResource::ADGameplay::Spyro::Spyro() {
 	fireCollider.trigger = true;
 
 	fireCPtr = &fireCollider;
-
-
-
 }
 
 void ADResource::ADGameplay::Spyro::Update(float delta_time)
@@ -35,11 +32,38 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 
 	fireCPtr = &fireCollider;
 
+	if (invulnerable_timer > 0)
+	{
+		invulnerable_timer -= delta_time;
+		if (invulnerable_timer <= 0)
+		{
+			defenseType = OBJECT_DEFENSE::NONE;
+		}
+	}
 }
 
 void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
 {
+	--health;
 
+	ADResource::AD_UI::UIMessage message;
+	message.controllerID = 1;
+	message.messageType = 2;
+	message.number = 2;
+
+	ADUI::MessageReceiver::SendMessage(&message);
+	invulnerable_timer = invulnerable_peroid;
+	defenseType = OBJECT_DEFENSE::INVULNERABLE;
+
+	if (audioManager)
+	{
+		playingSound = true;
+		collectionNoiseID = audioManager->PlayEffect(HurtSound);
+		//if (playingSound)
+		//{
+		//	audioManager->ResumeEffect(HurtSound, collectionNoiseID);
+		//}
+	}
 }
 
 void ADResource::ADGameplay::Spyro::Remove()
@@ -47,10 +71,6 @@ void ADResource::ADGameplay::Spyro::Remove()
 
 }
 
-void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
-{
-
-}
 void ADResource::ADGameplay::Spyro::GetView(XMMATRIX& view)
 {
 	camera = view;
@@ -59,17 +79,58 @@ void ADResource::ADGameplay::Spyro::GetView(XMMATRIX& view)
 
 void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 {
-	//Do whatever we need upon trigger
+}
 
-	//Function is mainly for gameplay
+void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
+{
+	if (other->type == OBJECT_TYPE::GEM)
+	{
+		GemCount += other->GemCount;
+		other->GemCount = 0;
+
+		ADResource::AD_UI::UIMessage message;
+		message.controllerID = 1;
+		message.messageType = 2;
+		message.number = 1;
+
+		ADUI::MessageReceiver::SendMessage(&message);
+
+		if (audioManager)
+		{
+			playingSound = true;
+			collectionNoiseID = audioManager->PlayEffect(0);
+			//if (playingSound)
+			//{
+			//	audioManager->ResumeEffect(0, collectionNoiseID);
+			//}
+		}
+		other->Remove();
+	}
+	if (other->type == OBJECT_TYPE::TRIGGER)
+	{
+		if (GemCount >= 10)
+		{
+			ADResource::AD_UI::UIMessage message;
+			message.controllerID = 1;
+			message.messageType = 2;
+			message.number = 3;
+
+			ADUI::MessageReceiver::SendMessage(&message);
+
+		}
+	}
 }
 
 void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other) 
 {
-	//Do whatever we need upon collision
 
-	//Function is mainly for gameplay
-	
+	if (defenseType != OBJECT_DEFENSE::INVULNERABLE)
+	{
+		if (other->type == OBJECT_TYPE::ENEMY && !charging)
+		{
+			Damage(DAMAGE_TYPE::RAM);
+		}
+	}
 	
 	
 	//Sample of what to do with what we have right now
@@ -89,9 +150,6 @@ void ADResource::ADGameplay::Spyro::OnTriggerCharge(GameObject* other)
 
 	if (charging == true)
 	{
-		other->Damage(DAMAGE_TYPE::RAM);
-
-
 
 	}
 }
@@ -121,20 +179,27 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 		{
 			if (obj->colliderPtr->isCollision(&chargeCollider, m))
 			{
-				
-				
-					OnTriggerCharge(obj);
-				
+				OnTriggerCharge(obj);
+				obj->Damage(DAMAGE_TYPE::RAM);
+				if (audioManager)
+				{
+					if (playingSound)
+					{
+						audioManager->ResumeEffect(EnemyDeathSound, collectionNoiseID);
+					}
+					else
+					{
+						playingSound = true;
+						collectionNoiseID = audioManager->PlayEffect(EnemyDeathSound);
+					}
+				}
 			}
 		}
 		else if (fire == true)
 		{
 			if (obj->colliderPtr->isCollision(&fireCollider, m))
 			{
-
-
 				OnTriggerFire(obj);
-
 			}
 		}
 
@@ -156,6 +221,11 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 	}
 }
 
+
+void ADResource::ADGameplay::Spyro::SetAudio(AudioManager* _audioManager)
+{
+	audioManager = _audioManager;
+}
 
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
@@ -205,13 +275,9 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 
 	if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
 	{
-
-
 		gliding = true;
 		floatiness = 0.05f;
 		ADPhysics::maxDownwardVelocity = -0.5f;
-
-
 	}
 
 
