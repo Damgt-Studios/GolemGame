@@ -108,11 +108,23 @@ public:
 	{
 		// Bruh
 		std::vector<std::string> sfx;
-		sfx.push_back("files\\audio\\main_theme.wav");
-		sfx.push_back("files\\audio\\main_theme.wav");
-		sfx.push_back("files\\audio\\main_theme.wav");
+		sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
+		sfx.push_back("files\\audio\\SFK_Destructable_Break.wav");
+		sfx.push_back("files\\audio\\SFK_Enemy_Death.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Charging.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Death.wav");
+		sfx.push_back("files\\audio\\SFK_Player_FireBreath.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Glide.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Hurt.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Jump.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Land.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Object_Hit.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Running_Jump.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Walking.wav");
+		sfx.push_back("files\\audio\\SFK_Player_Water_Splash.wav");
 		audio_manager = new AudioManager;
 		audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
+		
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -163,12 +175,19 @@ public:
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
+		spyro->SetAudio(audio_manager);
+
 
 		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Collectable* a3 = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Collectable** collectables = new Collectable*[10];
+		for (int i = 0; i < 10; ++i)
+		{
+			collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			GameUtilities::AddGameObject(collectables[i]);
+		}
 		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -197,7 +216,6 @@ public:
 		GameUtilities::AddGameObject(c2);
 		//GameUtilities::AddGameObject(a1);
 		GameUtilities::AddGameObject(a2);
-		GameUtilities::AddGameObject(a3);
 		GameUtilities::AddGameObject(e1);
 		GameUtilities::AddGameObject(e2);
 		GameUtilities::AddGameObject(e3);
@@ -315,7 +333,7 @@ public:
 					{
 						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
 						{
-							if (!OBJS[i]->colliderPtr->trigger && !OBJS[j]->colliderPtr->trigger)
+							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
 							{
 								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
 								{
@@ -381,10 +399,10 @@ public:
 	{
 		if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
 		{
-			if (effect_triggered) audio_manager->ResumeEffect(0, effect_id);
+			if (effect_triggered) audio_manager->ResumeEffect(7, effect_id);
 			else {
 				effect_triggered = true;
-				effect_id = audio_manager->PlayEffect(0);
+				effect_id = audio_manager->PlayEffect(7);
 			}
 		}
 		if (Input::QueryButtonDown(GamepadButtons::DPadRight))

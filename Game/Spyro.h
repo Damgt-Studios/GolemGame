@@ -1,5 +1,7 @@
 #pragma once
 #include "GameplayBaseClasses.h"
+#include "ADUserInterface.h"
+#include "AudioManager.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -8,6 +10,23 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
+		enum SoundIds
+		{
+			GemCollectSound = 0,
+			DestructableBreakSound,
+			EnemyDeathSound,
+			PlayerChargeSound,
+			PlayerDeathSound,
+			FireBrathSound,
+			GlideSound,
+			HurtSound,
+			JumpSound,
+			LandSound,
+			ObjectHitSound,
+			RunningJumpSound,
+			WalkingSound,
+			WaterSplashSound
+		};
 
 		class Spyro : public Renderable
 		{
@@ -35,12 +54,17 @@ namespace ADResource
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 
+			void SetAudio(AudioManager* _audioManager);
 
 		private:
 			void HandleInput(float delta_time);
 
 		private:
 			int health;
+
+			bool playingSound = false;
+			UINT collectionNoiseID;
+			AudioManager* audioManager;
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
@@ -50,6 +74,9 @@ namespace ADResource
 			Collider* fireCPtr = nullptr;
 
 			// Gameplay
+			const float invulnerable_peroid = 1.6f;
+			float invulnerable_timer = 0;
+
 			float jump_time_up = .4;
 			float jump_time_length = 1;
 			float jump_count_down = 0;
@@ -59,6 +86,7 @@ namespace ADResource
 			bool gliding = false;
 			bool charging = false;
 			bool fire = false;
+
 
 			float floatiness = 0.25f;
 			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);

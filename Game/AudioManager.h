@@ -30,10 +30,10 @@ public:
 
 	void PlayBackgroundMusic();
 
-	int PlayEffect(int effect_id, float volume = 1.0);
-	void PauseEffect(int effect_id, int track);
-	void ResumeEffect(int effect_id, int track);
-	void StopEffect(int effect_id, int track);
+	int PlayEffect(UINT effect_id, float volume = 1.0);
+	void PauseEffect(UINT effect_id, int track);
+	void ResumeEffect(UINT effect_id, int track);
+	void StopEffect(UINT effect_id, int track);
 
 	void PauseAllMusic();
 	void ResumeAllMusic();

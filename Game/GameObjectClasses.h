@@ -7,32 +7,31 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
+		enum class ObjectTag
+		{
+			Spyro = 0,
+			Gem,
+
+		};
+
 		class Collectable : public Renderable
 		{
 		public:
 			ADPhysics::AABB collider;
 
-			Collectable() { colliderPtr = &collider; };
+			Collectable() { 
+				colliderPtr = &collider; type = OBJECT_TYPE::GEM; colliderPtr->trigger = true; GemCount = 1;
+			};
+
+
 
 			virtual void CheckCollision(GameObject* obj) 
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
-
-					if (obj->colliderPtr->isCollision(&collider, m))
-					{
-							ADResource::AD_UI::UIMessage message;
-							message.controllerID = 1;
-							message.messageType = 2;
-							message.number = 1;
-						
-							ADUI::MessageReceiver::SendMessage(&message);
-							Remove();
-					}
+					obj->colliderPtr->isCollision(&collider, m);
 				}
-				
-
 			}
 		};
 
@@ -41,24 +40,14 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			Trigger() { colliderPtr = &collider; };
+			Trigger() { colliderPtr = &collider; type = OBJECT_TYPE::TRIGGER; colliderPtr->trigger = true; };
 
 			virtual void CheckCollision(GameObject* obj)
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
-
-					if (obj->colliderPtr->isCollision(&collider, m))
-					{
-						ADResource::AD_UI::UIMessage message;
-						message.controllerID = 1;
-						message.messageType = 2;
-						message.number = 3;
-
-						ADUI::MessageReceiver::SendMessage(&message);
-						Remove();
-					}
+					obj->colliderPtr->isCollision(&collider, m);
 				}
 			}
 		};
@@ -96,26 +85,24 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			Enemy() { colliderPtr = &collider; };
+			Enemy() { colliderPtr = &collider; type = OBJECT_TYPE::ENEMY; };
 
 			virtual void CheckCollision(GameObject* obj)
 			{
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
-
-					if (obj->colliderPtr->isCollision(&collider, m))
-					{
-						ADResource::AD_UI::UIMessage message;
-						message.controllerID = 1;
-						message.messageType = 2;
-						message.number = 2;
-
-						ADUI::MessageReceiver::SendMessage(&message);
-						Remove();
-					}
+					obj->colliderPtr->isCollision(&collider, m);
 				}
 			}
+
+			void Damage(DAMAGE_TYPE damageType)
+			{
+				if (defenseType != INVULNERABLE && defenseType != damageType)
+				{
+					Remove();
+				}
+			};
 		};
 	}
 }

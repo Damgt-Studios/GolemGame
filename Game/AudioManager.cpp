@@ -67,7 +67,7 @@ void AudioManager::PlayBackgroundMusic()
 	music_loop->Play();
 }
 
-int AudioManager::PlayEffect(int effect_id, float volume)
+int AudioManager::PlayEffect(UINT effect_id, float volume)
 {
 	// Validate source
 	assert(effect_id < effects.size());
@@ -87,7 +87,7 @@ int AudioManager::PlayEffect(int effect_id, float volume)
 	return track;
 }
 
-void AudioManager::PauseEffect(int effect_id, int track)
+void AudioManager::PauseEffect(UINT effect_id, int track)
 {
 	if (sfx_player[track]->Source == effects[effect_id])
 	{
@@ -95,7 +95,7 @@ void AudioManager::PauseEffect(int effect_id, int track)
 	}
 }
 
-void AudioManager::ResumeEffect(int effect_id, int track)
+void AudioManager::ResumeEffect(UINT effect_id, int track)
 {
 	if (sfx_player[track]->Source == effects[effect_id])
 	{
@@ -103,7 +103,7 @@ void AudioManager::ResumeEffect(int effect_id, int track)
 	}
 }
 
-void AudioManager::StopEffect(int effect_id, int track)
+void AudioManager::StopEffect(UINT effect_id, int track)
 {
 	if (sfx_player[track]->Source == effects[effect_id])
 	{
