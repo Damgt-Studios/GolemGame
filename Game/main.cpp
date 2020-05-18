@@ -5,6 +5,7 @@
 #include <collection.h>
 #include "Engine.h"
 #include "ADPhysics.h"
+#include "ADQuadTree.h"
 
 #include "ADUserInterface.h"
 #include "GameUserInterface.h"
@@ -229,18 +230,30 @@ public:
 		int models_count = ResourceManager::GetPBRModelCount();
 		Model planeModel = models[testPlane->GetMeshId() - 2];
 		std::vector<ADPhysics::Triangle> ground;
+		std::vector<ADQuadTreePoint> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
 		testPlane->GetWorldMatrix(groundWorld);
 		for(unsigned int i = 0; i < planeModel.indices.size(); i+=3)
 		{
-			ADPhysics::Triangle tri = ADPhysics::Triangle(planeModel.vertices[planeModel.indices[i]].Pos, planeModel.vertices[planeModel.indices[i + 1]].Pos, planeModel.vertices[planeModel.indices[i + 2]].Pos);
-			tri.a = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri.a), groundWorld));
-			tri.b = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri.b), groundWorld));
-			tri.c = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri.c), groundWorld));
-			ground.push_back(tri);
+			ADPhysics::Triangle* tri = new ADPhysics::Triangle(planeModel.vertices[planeModel.indices[i]].Pos, planeModel.vertices[planeModel.indices[i + 1]].Pos, planeModel.vertices[planeModel.indices[i + 2]].Pos);
+			tri->a = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->a), groundWorld));
+			tri->b = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->b), groundWorld));
+			tri->c = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->c), groundWorld));
+
+			ground.push_back(*tri);
+
+			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
+			ADQuadTreePoint point = ADQuadTreePoint(centroid.x, centroid.z, *tri);
+			treePoints.push_back(point);
 		}
 
+		ADQuad boundary = ADQuad(planeModel.position.x, planeModel.position.z, 50, 50);
+		QuadTree* tree = new QuadTree(boundary);
 
+		for (unsigned int i = 0; i < treePoints.size(); i++)
+		{
+			tree->Insert(treePoints[i]);
+		}
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
@@ -345,20 +358,16 @@ public:
 				}
 			}
 
-			Segment line = Segment((XMFLOAT3&)(spyro->transform.r[3] + XMVectorSet(0, 1, 0, 0)), (XMFLOAT3&)(spyro->transform.r[3] - XMVectorSet(0, 1, 0, 0)));
-
-			for (unsigned int i = 0; i < ground.size(); i++)
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(spyro->GetPosition().x, spyro->GetPosition().z, 10, 10));
+			std::vector<Triangle> trisInRange;
+			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
-				Manifold m;
-				if (LineSegmentToTriangle(line, ground[i], m))
-				{
-					spyro->transform.r[3] = (XMVECTOR&)m.ContactPoint;
-					spyro->transform.r[3].m128_f32[1] += spyro->collider.HalfSize.y / 2 ;
-					//spyro->Velocity = XMFLOAT4(0, 0, 0, 0);
-					spyro->Velocity = (XMFLOAT4&)((XMVECTOR&)spyro->Velocity + (-(XMVECTOR&)spyro->Velocity * delta_time * 20));
-					spyro->jumping = false;
-				}
+				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
+
+			if (GroundClamping(spyro, trisInRange, delta_time))
+				spyro->jumping = false;
+
 
 			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();

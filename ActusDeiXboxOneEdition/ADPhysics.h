@@ -51,6 +51,19 @@ namespace ADPhysics
 		virtual bool isCollision(Plane* other, Manifold& m) {
 			return false;
 		}
+
+		virtual float GetWidth() {
+			return 0;
+		}
+
+		virtual float GetHeight() {
+			return 0;
+		}
+
+		virtual float GetLength() {
+			return 0;
+		}
+
 	};
 
 	struct AABB : Collider
@@ -89,6 +102,18 @@ namespace ADPhysics
 
 		virtual bool isCollision(Plane* other, Manifold& m) {
 			return AabbToPlaneCollision(*this, *other, m);
+		}
+
+		virtual float GetWidth() {
+			return HalfSize.x;
+		}
+
+		virtual float GetHeight() {
+			return HalfSize.y;
+		}
+
+		virtual float GetLength() {
+			return HalfSize.z;
 		}
 	};
 
@@ -129,6 +154,18 @@ namespace ADPhysics
 		virtual bool isCollision(Plane* other, Manifold& m) {
 			return ObbToPlaneCollision(*this, *other, m);
 		}
+
+		virtual float GetWidth() {
+			return HalfSize.x;
+		}
+
+		virtual float GetHeight() {
+			return HalfSize.y;
+		}
+
+		virtual float GetLength() {
+			return HalfSize.z;
+		}
 	};
 
 	struct Sphere : Collider
@@ -142,6 +179,18 @@ namespace ADPhysics
 		}
 
 		Sphere(XMFLOAT3 Position, float Radius) : Radius(Radius) { Pos = Position; type = ColliderType::Sphere; };
+
+		virtual float GetWidth() {
+			return Radius;
+		}
+
+		virtual float GetHeight() {
+			return Radius;
+		}
+
+		virtual float GetLength() {
+			return Radius;
+		}
 	};
 
 	struct Plane : Collider
@@ -179,6 +228,18 @@ namespace ADPhysics
 
 		virtual bool isCollision(OBB* other, Manifold& m) {
 			return ObbToPlaneCollision(*other, *this, m);
+		}
+
+		virtual float GetWidth() {
+			return HalfSize.x;
+		}
+
+		virtual float GetHeight() {
+			return HalfSize.y;
+		}
+
+		virtual float GetLength() {
+			return HalfSize.z;
 		}
 		
 	};
@@ -221,6 +282,24 @@ namespace ADPhysics
 
 		virtual bool isCollision(OBB* other, Manifold& m) {
 			return TriangleToObbCollision(*this, *other, m);
+		}
+
+		virtual float GetWidth() {
+			float min = this->a.x < this->b.x ? this->a.x : this->b.x; min = min < this->c.x ? min : this->c.x;
+			float max = this->a.x > this->b.x ? this->a.x : this->b.x; max = max > this->c.x ? max : this->c.x;
+			return max - min;
+		}
+
+		virtual float GetHeight() {
+			float min = this->a.y < this->b.y ? this->a.y : this->b.y; min = min < this->c.y ? min : this->c.y;
+			float max = this->a.y > this->b.y ? this->a.y : this->b.y; max = max > this->c.y ? max : this->c.y;
+			return max - min;
+		}
+
+		virtual float GetLength() {
+			float min = this->a.z < this->b.z ? this->a.z : this->b.z; min = min < this->c.z ? min : this->c.z;
+			float max = this->a.z > this->b.z ? this->a.z : this->b.z; max = max > this->c.z ? max : this->c.z;
+			return max - min;
 		}
 	};
 
