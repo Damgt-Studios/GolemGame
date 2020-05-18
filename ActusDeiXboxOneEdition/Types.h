@@ -614,7 +614,7 @@ namespace ADResource
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
 					obj->transform.r[3].m128_f32[1] += obj->colliderPtr->GetHeight() / 2;
-					obj->Velocity = (XMFLOAT4&)((XMVECTOR&)obj->Velocity + (-(XMVECTOR&)obj->Velocity * delta_time * 20));
+					obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
 					return true;
 				}
 			}
