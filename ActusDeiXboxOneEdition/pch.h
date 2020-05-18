@@ -11,6 +11,11 @@
 #include <DirectXColors.h>
 #include <DirectXMath.h>
 #include <memory>
+#include <d3d11.h>
+#include <vector>
+#include <string>
+#include <fstream>
+#include <array>
 //#include <agile.h>
 #include <concrt.h>
 #include <time.h>
