@@ -603,5 +603,23 @@ namespace ADResource
 			}
 		}
 
+		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time) 
+		{
+			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 1, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 1, 0, 0)));
+
+			for (unsigned int i = 0; i < ground.size(); i++)
+			{
+				ADPhysics::Manifold m;
+				if (LineSegmentToTriangle(line, ground[i], m))
+				{
+					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
+					obj->transform.r[3].m128_f32[1] += obj->colliderPtr->GetHeight() / 2;
+					obj->Velocity = (XMFLOAT4&)((XMVECTOR&)obj->Velocity + (-(XMVECTOR&)obj->Velocity * delta_time * 20));
+					return true;
+				}
+			}
+
+			return false;
+		}
 	}
 };
