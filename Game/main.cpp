@@ -12,6 +12,7 @@
 #include "AudioManager.h"
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
+#include "FBXLoader.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -254,6 +255,9 @@ public:
 		{
 			tree->Insert(treePoints[i]);
 		}
+
+		SimpleMesh mesh;
+		Load_FBX("files/models/ForestGolem_1.mesh", mesh);
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];

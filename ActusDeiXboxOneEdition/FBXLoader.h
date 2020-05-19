@@ -5,10 +5,10 @@ using namespace std;
 using namespace DirectX;
 using file_path_t = std::array<char, 260>; // Simple max size file path string
 
-int numVertices = 0;
-int* indices;
-int numIndices = 0;
-float scale = 1.0f;
+static int numVertices = 0;
+static int* indices;
+static int numIndices = 0;
+static float scale = 1.0f;
 struct SimpleVertex
 {
 
@@ -17,7 +17,7 @@ struct SimpleVertex
 	XMFLOAT3 Normal;
 	XMFLOAT3 Tangent;
 };
-SimpleVertex* vertices;
+static SimpleVertex* vertices;
 
 
 struct SimpleMesh
