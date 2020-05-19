@@ -25,6 +25,25 @@ AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, 
 	return InitializePBRModel(modelname, position, scale, rotation, shader);
 }
 
+AD_ULONG ResourceManager::AddModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+	ADUtils::SHADER shader = { 0 };
+
+	if (!wireframe)
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\base_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\base_ps.hlsl");
+	}
+	else
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
+	}
+
+	shader.wireframe = wireframe;
+
+	return InitializeModel(modelname, position, scale, rotation, shader);
+}
+
 AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe /*= false*/)
 {
 	ADUtils::SHADER shader = { 0 };
@@ -113,6 +132,90 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 	unsigned int index = pbrmodels.size();
 	pbrmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
 	pbrmodels.push_back(temp);
+
+	return id;
+}
+
+AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader) 
+{
+	SimpleModel temp;
+	SimpleMesh mesh;
+	Load_FBX(modelname.c_str(), mesh);
+
+	temp.vertices = mesh.vertexList;
+	temp.indices = mesh.indicesList;
+
+	temp.position = position;
+	temp.scale = scale;
+	temp.rotation = rotation;
+
+	D3D11_BUFFER_DESC bdesc;
+	D3D11_SUBRESOURCE_DATA subData;
+	ZeroMemory(&bdesc, sizeof(bdesc));
+	ZeroMemory(&subData, sizeof(subData));
+
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bdesc.ByteWidth = sizeof(SimpleVertex) * temp.vertices.size();
+	bdesc.CPUAccessFlags = 0;
+	bdesc.MiscFlags = 0;
+	bdesc.StructureByteStride = 0;
+	bdesc.Usage = D3D11_USAGE_IMMUTABLE;
+
+	subData.pSysMem = temp.vertices.data();
+
+	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.vertexBuffer);
+
+	bdesc.ByteWidth = sizeof(unsigned int) * temp.indices.size();
+
+	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.indexBuffer);
+
+	// Load shaders // Thanks Whittington
+	ComPtr<ID3D10Blob> vertexblob;
+	ComPtr<ID3D10Blob> pixelblob;
+
+	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+	std::string vname(shader.vshader);
+	std::string pname(shader.pshader);
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
+
+	//The Whittington Bruh aka Wruh
+	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
+
+	std::wstring vshadername(v.begin(), v.end());
+	std::wstring pshadername(p.begin(), p.end());
+
+	HRESULT result;
+
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	assert(!FAILED(result));
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	assert(!FAILED(result));
+
+	result = ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &temp.vertexShader);
+	assert(!FAILED(result));
+	result = ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &temp.pixelShader);
+	assert(!FAILED(result));
+
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		/*{ "JOINTS", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "WEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
+	};
+
+	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateInputLayout(layout, ARRAYSIZE(layout), nullptr, 0, &temp.inputLayout);
+
+	// grab id and add stuff
+	AD_ULONG id = GenerateUniqueID();
+	unsigned int index = fbxmodels.size();
+	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	fbxmodels.push_back(temp);
 
 	return id;
 }

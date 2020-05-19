@@ -2,6 +2,8 @@
 
 #include "Types.h"
 #include "Utils.h"
+#include <d3dcompiler.h>
+#include "DDSTextureLoader.h"
 
 #include <unordered_map>
 #include <string>
@@ -16,12 +18,16 @@ namespace
 
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
+	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
+
 #ifdef AD_MEMORY_DEFAULT
 	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
 	std::vector<unsigned int> pbrIndxData;
 
 	std::vector<ADResource::ADRenderer::Light> lights;
 	std::vector<ADResource::ADRenderer::Model> pbrmodels;
+
+	std::vector<ADResource::ADRenderer::SimpleModel> fbxmodels;
 
 	std::vector<ADResource::ADGameplay::GameObject> passables;
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
@@ -59,6 +65,9 @@ class ResourceManager
 public:
 
 	static AD_ULONG AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+
+	static AD_ULONG AddModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+
 	static AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
@@ -69,6 +78,7 @@ public:
 	static AD_ULONG GenerateUniqueID();
 
 	static AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializeModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
 public:
 	// Rendering init shit

@@ -7,6 +7,7 @@
 
 #include <string>
 #include "ADPhysics.h"
+#include "FBXLoader.h"
 
 #ifndef AD_MEMORY_DEFAULT
 #include "ADMemoryManager.h"
@@ -102,6 +103,36 @@ namespace ADResource
 			ComPtr<ID3D11ShaderResourceView> roughness;
 			ComPtr<ID3D11ShaderResourceView> metallic;
 			ComPtr<ID3D11ShaderResourceView> ambient_occlusion;
+		};
+
+		struct SimpleModel
+		{
+#ifdef AD_MEMORY_DEFAULT
+			std::vector<SimpleVertex> vertices;
+			std::vector<int> indices;
+#else
+			ADVector<SimpleVertex> vertices;
+			ADVector<int> indices;
+#endif
+
+			XMFLOAT3 position;
+			XMFLOAT3 rotation;
+			XMFLOAT3 scale;
+
+			ComPtr<ID3D11Buffer> vertexBuffer;
+			ComPtr<ID3D11Buffer> indexBuffer;
+
+			ComPtr<ID3D11VertexShader> vertexShader;
+			ComPtr<ID3D11PixelShader> pixelShader;
+
+			ComPtr<ID3D11InputLayout> inputLayout;
+
+			// Texture stuff
+			ComPtr<ID3D11SamplerState> sampler;
+
+			ComPtr<ID3D11ShaderResourceView> albedo;
+			ComPtr<ID3D11ShaderResourceView> normal;
+			ComPtr<ID3D11ShaderResourceView> emissive;
 		};
 
 		struct WVP
