@@ -28,12 +28,11 @@ cbuffer SHADER_VARIABLES : register(b0)
 OutputVertex main( InputVertex vertex )
 {
     OutputVertex output = (OutputVertex) 0;
-    output.pos = float4(vertex.pos, 1);
     output.tex = vertex.tex;
     output.normal = vertex.normal;
     output.tanget = vertex.tanget;
     
-    output.pos = mul(output.pos, worldMatrix);
+    output.pos = mul(float4(vertex.pos, 1), worldMatrix);
     output.pos = mul(output.pos, viewMatrix);
     output.pos = mul(output.pos, projectionMatrix);
     return output;

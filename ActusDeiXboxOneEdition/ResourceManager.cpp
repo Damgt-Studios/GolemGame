@@ -167,6 +167,8 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bdesc.ByteWidth = sizeof(unsigned int) * temp.indices.size();
 
+	subData.pSysMem = temp.indices.data();
+
 	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.indexBuffer);
 
 	// Load shaders // Thanks Whittington
@@ -213,6 +215,19 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 	};
 
 	result = device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &temp.inputLayout);
+	assert(!FAILED(result));
+
+	D3D11_SAMPLER_DESC sdesc;
+	ZeroMemory(&sdesc, sizeof(sdesc));
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sdesc.MinLOD = 0;
+
+	result = device->CreateSamplerState(&sdesc, &temp.sampler);
 	assert(!FAILED(result));
 
 	// grab id and add stuff
