@@ -283,7 +283,7 @@
     <ClInclude Include="ADUserInterface.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="FBXLoader.h" />
+    <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="pch.h" />
@@ -300,7 +300,7 @@
     <ClCompile Include="ADUserInterface.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="FBXLoader.cpp" />
+    <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="pch.cpp">

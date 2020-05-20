@@ -41,7 +41,7 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="ADUserInterface.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
-    <ClCompile Include="FBXLoader.cpp" />
+    <ClCompile Include="MeshLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -61,7 +61,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="ADMemoryManager.h" />
     <ClInclude Include="ADQuadTree.h" />
-    <ClInclude Include="FBXLoader.h" />
+    <ClInclude Include="MeshLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
