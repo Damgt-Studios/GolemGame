@@ -3,12 +3,7 @@
 
 using namespace std;
 using namespace DirectX;
-using file_path_t = std::array<char, 260>; // Simple max size file path string
 
-static int numVertices = 0;
-static int* indices;
-static int numIndices = 0;
-static float scale = 1.0f;
 struct SimpleVertex
 {
 
@@ -17,7 +12,6 @@ struct SimpleVertex
 	XMFLOAT3 Normal;
 	XMFLOAT3 Tangent;
 };
-static SimpleVertex* vertices;
 
 
 struct SimpleMesh
@@ -27,12 +21,45 @@ struct SimpleMesh
 };
 // Simple material definition
 
+//Animation
+struct SimpleVertexAnim
+{
+	XMFLOAT3 Position;
+	XMFLOAT3 Tex;
+	XMFLOAT3 Normal;
+	XMFLOAT3 Tangent;
+
+	XMINT4 Joint;
+	XMFLOAT4 Weight;
+
+};
+struct SimpleMeshAnim
+{
+	vector<SimpleVertexAnim> vertexList;
+	vector<int> indicesList;
+};
+
+struct bones
+{
+	XMMATRIX global_xform; int parent_index; int childCount;
+
+};
+struct keyframe
+{
+	double time; vector<XMMATRIX> jointsMatrix; vector<int> parents;
+};
 
 
+struct anim_clip
+{
+	double duration;
+	vector<keyframe> frames;
+};
 
 
-
-void Load_FBX(const char* meshFileName, SimpleMesh& mesh);
+void Load_Mesh(const char* meshFileName, SimpleMesh& mesh);
+void Load_AnimMesh(const char* meshFileName, SimpleMeshAnim& mesh);
+void Load_AnimFile(const char* animFileName, vector<bones>& skeleton, vector<XMMATRIX>& inverse, anim_clip& clip);
 
 
 

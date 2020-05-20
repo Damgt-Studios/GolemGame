@@ -257,7 +257,7 @@ public:
 		}
 
 		SimpleMesh mesh;
-		Load_FBX("files/models/ForestGolem_1.mesh", mesh);
+		Load_Mesh("files/models/ForestGolem_1.mesh", mesh);
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
