@@ -12,7 +12,7 @@
 #include "AudioManager.h"
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
-#include "FBXLoader.h"
+#include "MeshLoader.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
