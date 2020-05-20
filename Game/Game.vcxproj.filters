@@ -202,5 +202,6 @@
     <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameObjectClasses.h" />
+    <ClInclude Include="GameEffects.h" />
   </ItemGroup>
 </Project>

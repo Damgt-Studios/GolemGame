@@ -184,16 +184,21 @@ public:
 
 		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
 		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Collectable** collectables = new Collectable*[10];
+		Trigger** collectables = new Trigger *[10];
 		for (int i = 0; i < 10; ++i)
 		{
-			collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			collectables[i] = GameUtilities::AddTinyEssenceFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(i * 5 + -10, 1, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 			GameUtilities::AddGameObject(collectables[i]);
 		}
-		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Destructable* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		spyro->testAttack.active = false;
+		spyro->testAttack.hitboxCount = 1;
+		spyro->testAttack.cooldownDuration = 0.5;
+		spyro->testAttack.hitbox = myHitBox;
+		//Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Trigger* t1 = GameUtilities::AddEndGameTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 
 		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
@@ -219,9 +224,10 @@ public:
 		//GameUtilities::AddGameObject(a1);
 		GameUtilities::AddGameObject(a2);
 		GameUtilities::AddGameObject(e1);
-		GameUtilities::AddGameObject(e2);
-		GameUtilities::AddGameObject(e3);
+		//GameUtilities::AddGameObject(e2);
+		//GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(t1);
+		GameUtilities::AddGameObject(myHitBox);
 		GameUtilities::AddGameObject(testPlane);
 
 		testPlane->colliderPtr = nullptr;
@@ -289,10 +295,10 @@ public:
 		
 		//Needed to add this to the colliders for the collision queue
 		c1->colliderPtr = &test_colider;
-		c1->type = OBJECT_TYPE::STATIC;
+		c1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 
 		c2->colliderPtr = &test_colider1;
-		c2->type = OBJECT_TYPE::STATIC;
+		c2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 
 		while (!shutdown)
 		{
