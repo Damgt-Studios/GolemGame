@@ -138,9 +138,9 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 
 AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader) 
 {
-	SimpleModel temp;
-	SimpleMesh mesh;
-	Load_FBX(modelname.c_str(), mesh);
+	SimpleAnimModel temp;
+	SimpleMeshAnim mesh;
+	Load_AnimMesh(modelname.c_str(), mesh);
 
 	temp.vertices = mesh.vertexList;
 	temp.indices = mesh.indicesList;
@@ -155,7 +155,7 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 	ZeroMemory(&subData, sizeof(subData));
 
 	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bdesc.ByteWidth = sizeof(SimpleVertex) * temp.vertices.size();
+	bdesc.ByteWidth = sizeof(SimpleVertexAnim) * temp.vertices.size();
 	bdesc.CPUAccessFlags = 0;
 	bdesc.MiscFlags = 0;
 	bdesc.StructureByteStride = 0;
@@ -206,12 +206,12 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 
 	// Make input layout for vertex buffer
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	/*{ "JOINTS", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{ "WEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "JOINTS",		0, DXGI_FORMAT_R32G32B32A32_SINT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "WEIGHTS",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 64, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	result = device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &temp.inputLayout);
@@ -379,9 +379,9 @@ ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG m
 	return temp;
 }
 
-ADResource::ADRenderer::SimpleModel* ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
+ADResource::ADRenderer::SimpleAnimModel* ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
 {
-	SimpleModel* temp = nullptr;
+	SimpleAnimModel* temp = nullptr;
 	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = fbxmodel_map.find(mesh_id);
 
 	if (iter != fbxmodel_map.end())

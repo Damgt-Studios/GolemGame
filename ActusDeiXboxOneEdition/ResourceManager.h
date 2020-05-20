@@ -27,7 +27,7 @@ namespace
 	std::vector<ADResource::ADRenderer::Light> lights;
 	std::vector<ADResource::ADRenderer::Model> pbrmodels;
 
-	std::vector<ADResource::ADRenderer::SimpleModel> fbxmodels;
+	std::vector<ADResource::ADRenderer::SimpleAnimModel> fbxmodels;
 
 	std::vector<ADResource::ADGameplay::GameObject> passables;
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
@@ -109,7 +109,7 @@ public:
 	static ADResource::ADGameplay::GameObject** GetGameObjectPtr();
 
 	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
-	static ADResource::ADRenderer::SimpleModel* GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
+	static ADResource::ADRenderer::SimpleAnimModel* GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
 	static AD_ULONG current_id;

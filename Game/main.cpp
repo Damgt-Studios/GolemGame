@@ -12,7 +12,7 @@
 #include "AudioManager.h"
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
-#include "FBXLoader.h"
+#include "MeshLoader.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -205,7 +205,7 @@ public:
 
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
-		Renderable* testGolem = GameUtilities::AddSimpleAsset("files/models/ForestGolem_2.mesh", XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 90));
+		Renderable* testGolem = GameUtilities::AddSimpleAsset("files/models/TestAnim.AnimMesh", XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -258,9 +258,6 @@ public:
 		{
 			tree->Insert(treePoints[i]);
 		}
-
-		SimpleMesh mesh;
-		Load_FBX("files/models/ForestGolem_1.mesh", mesh);
 
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];

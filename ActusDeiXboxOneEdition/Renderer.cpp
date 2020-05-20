@@ -451,7 +451,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	//pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	ADResource::ADGameplay::GameObject* current_obj = nullptr;
-	SimpleModel* current_model = nullptr;
+	SimpleAnimModel* current_model = nullptr;
 
 	while(!ResourceManager::RenderQueueEmpty())
 	{
@@ -481,14 +481,10 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		// Model stuff
 		// World matrix projection
 		// TODO: Translate rotation to quaternion
-		//XMMATRIX rotation = XMMatrixRotationX(XMConvertToDegrees(90));
 		XMMATRIX scaling = XMMatrixScaling(0.1, 0.1, 0.1);
-		//current_obj->SetRotationMatrix(rotation);
 		current_obj->GetWorldMatrix(temp);
-		//temp = temp * rotation;
-		temp = temp * scaling;
-		temp = XMMatrixRotationX(-3.14 / 2) * temp;
-		//temp = rotation * temp;
+		//temp = temp * scaling;
+		//temp = XMMatrixRotationX(-3.14 / 2) * temp;
 		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 		// View
 		//camera->GetViewMatrix(temp);
