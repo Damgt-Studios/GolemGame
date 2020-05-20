@@ -67,6 +67,7 @@ public:
 
 	// Utils
 	static AD_ULONG GenerateUniqueID();
+	static AD_ULONG GenerateEffectID();
 
 	static AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
@@ -102,6 +103,7 @@ public:
 
 private:
 	static AD_ULONG current_id;
+	static AD_ULONG effect_id;
 };
 
 // Note: Update uuid to use long long

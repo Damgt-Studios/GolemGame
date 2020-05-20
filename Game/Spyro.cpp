@@ -13,10 +13,14 @@ ADResource::ADGameplay::Spyro::Spyro() {
 	fireCollider.trigger = true;
 
 	fireCPtr = &fireCollider;
+	team = 1;
 }
 
 void ADResource::ADGameplay::Spyro::Update(float delta_time)
 {
+	ProcessEffects(delta_time);
+	testAttack.Update(delta_time);
+
 	HandleInput(delta_time);
 
 	// Physics
@@ -32,39 +36,39 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 
 	fireCPtr = &fireCollider;
 
-	if (invulnerable_timer > 0)
-	{
-		invulnerable_timer -= delta_time;
-		if (invulnerable_timer <= 0)
-		{
-			defenseType = OBJECT_DEFENSE::NONE;
-		}
-	}
+	//if (invulnerable_timer > 0)
+	//{
+	//	invulnerable_timer -= delta_time;
+	//	if (invulnerable_timer <= 0)
+	//	{
+	//		defenseType = OBJECT_DEFENSE::NONE;
+	//	}
+	//}
 }
-
-void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
-{
-	--health;
-
-	ADResource::AD_UI::UIMessage message;
-	message.controllerID = 1;
-	message.messageType = 2;
-	message.number = 2;
-
-	ADUI::MessageReceiver::SendMessage(&message);
-	invulnerable_timer = invulnerable_peroid;
-	defenseType = OBJECT_DEFENSE::INVULNERABLE;
-
-	if (audioManager)
-	{
-		playingSound = true;
-		collectionNoiseID = audioManager->PlayEffect(HurtSound);
-		//if (playingSound)
-		//{
-		//	audioManager->ResumeEffect(HurtSound, collectionNoiseID);
-		//}
-	}
-}
+//
+//void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
+//{
+//	--health;
+//
+//	ADResource::AD_UI::UIMessage message;
+//	message.controllerID = 1;
+//	message.messageType = 2;
+//	message.number = 2;
+//
+//	ADUI::MessageReceiver::SendMessage(&message);
+//	invulnerable_timer = invulnerable_peroid;
+//	defenseType = OBJECT_DEFENSE::INVULNERABLE;
+//
+//	if (audioManager)
+//	{
+//		playingSound = true;
+//		collectionNoiseID = audioManager->PlayEffect(HurtSound);
+//		//if (playingSound)
+//		//{
+//		//	audioManager->ResumeEffect(HurtSound, collectionNoiseID);
+//		//}
+//	}
+//}
 
 void ADResource::ADGameplay::Spyro::Remove()
 {
@@ -83,54 +87,54 @@ void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
 
 void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
 {
-	if (other->type == OBJECT_TYPE::GEM)
-	{
-		GemCount += other->GemCount;
-		other->GemCount = 0;
+	//if (other->type == OBJECT_TYPE::GEM)
+	//{
+	//	GemCount += other->GemCount;
+	//	other->GemCount = 0;
 
-		ADResource::AD_UI::UIMessage message;
-		message.controllerID = 1;
-		message.messageType = 2;
-		message.number = 1;
+	//	ADResource::AD_UI::UIMessage message;
+	//	message.controllerID = 1;
+	//	message.messageType = 2;
+	//	message.number = 1;
 
-		ADUI::MessageReceiver::SendMessage(&message);
+	//	ADUI::MessageReceiver::SendMessage(&message);
 
-		if (audioManager)
-		{
-			playingSound = true;
-			collectionNoiseID = audioManager->PlayEffect(0);
-			//if (playingSound)
-			//{
-			//	audioManager->ResumeEffect(0, collectionNoiseID);
-			//}
-		}
-		other->Remove();
-	}
-	if (other->type == OBJECT_TYPE::TRIGGER)
-	{
-		if (GemCount >= 10)
-		{
-			ADResource::AD_UI::UIMessage message;
-			message.controllerID = 1;
-			message.messageType = 2;
-			message.number = 3;
+	//	if (audioManager)
+	//	{
+	//		playingSound = true;
+	//		collectionNoiseID = audioManager->PlayEffect(0);
+	//		//if (playingSound)
+	//		//{
+	//		//	audioManager->ResumeEffect(0, collectionNoiseID);
+	//		//}
+	//	}
+	//	other->Remove();
+	//}
+	//if (other->physicsType == OBJECT_PHYSICS_TYPE::TRIGGER)
+	//{
+	//	if (GemCount >= 10)
+	//	{
+	//		ADResource::AD_UI::UIMessage message;
+	//		message.controllerID = 1;
+	//		message.messageType = 2;
+	//		message.number = 3;
 
-			ADUI::MessageReceiver::SendMessage(&message);
+	//		ADUI::MessageReceiver::SendMessage(&message);
 
-		}
-	}
+	//	}
+	//}
 }
 
 void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other) 
 {
 
-	if (defenseType != OBJECT_DEFENSE::INVULNERABLE)
-	{
-		if (other->type == OBJECT_TYPE::ENEMY && !charging)
-		{
-			Damage(DAMAGE_TYPE::RAM);
-		}
-	}
+	//if (defenseType != OBJECT_DEFENSE::INVULNERABLE)
+	//{
+	//	if (other->type == OBJECT_TYPE::ENEMY && !charging)
+	//	{
+	//		Damage(DAMAGE_TYPE::RAM);
+	//	}
+	//}
 	
 	
 	//Sample of what to do with what we have right now
@@ -147,22 +151,21 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 }
 void ADResource::ADGameplay::Spyro::OnTriggerCharge(GameObject* other)
 {
+	//if (charging == true)
+	//{
 
-	if (charging == true)
-	{
-
-	}
+	//}
 }
 void ADResource::ADGameplay::Spyro::OnTriggerFire(GameObject* other)
 {
 
-	if (fire == true)
-	{
-		other->Damage(DAMAGE_TYPE::FIRE);
+	//if (fire == true)
+	//{
+	//	other->Damage(DAMAGE_TYPE::FIRE);
 
 
 
-	}
+	//}
 
 
 }
@@ -180,7 +183,6 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 			if (obj->colliderPtr->isCollision(&chargeCollider, m))
 			{
 				OnTriggerCharge(obj);
-				obj->Damage(DAMAGE_TYPE::RAM);
 				if (audioManager)
 				{
 					if (playingSound)
@@ -251,6 +253,10 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	{
 		fire = false;
 
+	}
+	if (Input::QueryButtonDown(GamepadButtons::Y))
+	{
+		testAttack.StartAttack();
 	}
 	
 	XMFLOAT4 forward;

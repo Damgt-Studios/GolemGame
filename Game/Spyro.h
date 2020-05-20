@@ -2,6 +2,7 @@
 #include "GameplayBaseClasses.h"
 #include "ADUserInterface.h"
 #include "AudioManager.h"
+#include "GameObjectClasses.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -28,15 +29,16 @@ namespace ADResource
 			WaterSplashSound
 		};
 
-		class Spyro : public Renderable
+		class Spyro : public Destructable
 		{
 		
 		public:
+			Attack testAttack;
 			Spyro();
 
 			virtual void Update(float time_delta);
 
-			void Damage(DAMAGE_TYPE d_type);
+			//void Damage(DAMAGE_TYPE d_type);
 
 			void Remove();
 
@@ -61,7 +63,6 @@ namespace ADResource
 
 		private:
 			int health;
-
 			bool playingSound = false;
 			UINT collectionNoiseID;
 			AudioManager* audioManager;

@@ -312,6 +312,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="GameEffects.h" />
     <ClInclude Include="GameObjectClasses.h" />
     <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
