@@ -443,29 +443,40 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	// Set depth buffer
 	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, pbr_renderer_resources.depthStencil.Get());
 
-	// sET THE PIPELINE
-	UINT strides[] = { sizeof(Vertex) };
-	UINT offsets[] = { 0 };
-	ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
-	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	//// sET THE PIPELINE
+	//UINT strides[] = { sizeof(Vertex) };
+	//UINT offsets[] = { 0 };
+	//ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
+	//pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
+	//pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	ADResource::ADGameplay::GameObject* current_obj = nullptr;
-	Model* current_model = nullptr;
+	SimpleModel* current_model = nullptr;
 
 	while(!ResourceManager::RenderQueueEmpty())
 	{
 		current_obj = ResourceManager::PopFromRenderQueue();
-		current_model = ResourceManager::GetModelPtrFromMeshId(current_obj->GetMeshId());
-		bool bruh = current_model->desc.wireframe_mode;
-		if (bruh)
-		{
-			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.wireframeRasterizerState.Get());
-		}
-		else
-		{
-			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
-		}
+		current_model = ResourceManager::GetSimpleModelPtrFromMeshId(current_obj->GetMeshId());
+
+		if (current_model == nullptr)
+			continue;
+		//bool bruh = current_model->desc.wireframe_mode;
+		//if (bruh)
+		//{
+		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.wireframeRasterizerState.Get());
+		//}
+		//else
+		//{
+		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+		//}
+
+		pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+
+		UINT strides[] = { sizeof(SimpleVertex) };
+		UINT offsets[] = { 0 };
+		ID3D11Buffer* modelVertexBuffers[] = { current_model->vertexBuffer.Get() };
+		pbr_renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+		pbr_renderer_resources.context->IASetIndexBuffer(current_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 		// Model stuff
 		// World matrix projection
@@ -500,22 +511,22 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		ID3D11ShaderResourceView* resource_views[] = {
 			current_model->albedo.Get(),
 			current_model->normal.Get(),
-			current_model->metallic.Get(),
-			current_model->roughness.Get(),
-			current_model->ambient_occlusion.Get(),
+			current_model->emissive.Get()
 		};
 
-		pbr_renderer_resources.context->PSSetShaderResources(0, 5, resource_views);
+		pbr_renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
 		pbr_renderer_resources.context->VSSetShaderResources(0, 1, current_model->normal.GetAddressOf());
 
 		pbr_renderer_resources.context->VSSetShader(current_model->vertexShader.Get(), 0, 0);
 		pbr_renderer_resources.context->PSSetShader(current_model->pixelShader.Get(), 0, 0);
-		pbr_renderer_resources.context->IASetInputLayout(current_model->vertexBufferLayout.Get());
+		pbr_renderer_resources.context->IASetInputLayout(current_model->inputLayout.Get());
+		
 
-		int istart = current_model->desc.index_start;
-		int ibase = current_model->desc.base_vertex_location;
-		int icount = current_model->desc.index_count;
-		pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+		//int istart = current_model->desc.index_start;
+		//int ibase = current_model->desc.base_vertex_location;
+		//int icount = current_model->desc.index_count;
+		//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+		pbr_renderer_resources.context->DrawIndexed(current_model->indices.size(), 0, 0);
 	}
 
 	return true;

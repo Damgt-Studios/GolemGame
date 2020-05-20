@@ -109,6 +109,7 @@ public:
 	static ADResource::ADGameplay::GameObject** GetGameObjectPtr();
 
 	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
+	static ADResource::ADRenderer::SimpleModel* GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
 	static AD_ULONG current_id;

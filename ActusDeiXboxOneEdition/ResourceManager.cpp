@@ -30,8 +30,8 @@ AD_ULONG ResourceManager::AddModel(std::string modelname, XMFLOAT3 position, XMF
 
 	if (!wireframe)
 	{
-		strcpy_s(shader.vshader, "files\\shaders\\base_vs.hlsl");
-		strcpy_s(shader.pshader, "files\\shaders\\base_ps.hlsl");
+		strcpy_s(shader.vshader, "files\\shaders\\simple_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\simple_ps.hlsl");
 	}
 	else
 	{
@@ -136,7 +136,7 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 	return id;
 }
 
-AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader) 
+AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader) 
 {
 	SimpleModel temp;
 	SimpleMesh mesh;
@@ -164,7 +164,7 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 	subData.pSysMem = temp.vertices.data();
 
 	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.vertexBuffer);
-
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bdesc.ByteWidth = sizeof(unsigned int) * temp.indices.size();
 
 	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.indexBuffer);
@@ -182,7 +182,7 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
 	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
 
-	//The Whittington Bruh aka Wruh
+	//The Whittington Bruh aka The Wruh
 	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
 
 	std::wstring vshadername(v.begin(), v.end());
@@ -190,26 +190,30 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 
 	HRESULT result;
 
+	ComPtr<ID3D11Device1> device = ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device;
+
 	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
 	assert(!FAILED(result));
 	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
 	assert(!FAILED(result));
 
-	result = ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &temp.vertexShader);
+	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &temp.vertexShader);
 	assert(!FAILED(result));
-	result = ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &temp.pixelShader);
+	result = device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &temp.pixelShader);
 	assert(!FAILED(result));
 
+	// Make input layout for vertex buffer
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		/*{ "JOINTS", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "WEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	/*{ "JOINTS", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{ "WEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
 	};
 
-	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateInputLayout(layout, ARRAYSIZE(layout), nullptr, 0, &temp.inputLayout);
+	result = device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &temp.inputLayout);
+	assert(!FAILED(result));
 
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();
@@ -355,6 +359,20 @@ ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG m
 	{
 		// Found
 		temp = &pbrmodels[iter->second];
+	}
+
+	return temp;
+}
+
+ADResource::ADRenderer::SimpleModel* ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
+{
+	SimpleModel* temp = nullptr;
+	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = fbxmodel_map.find(mesh_id);
+
+	if (iter != fbxmodel_map.end())
+	{
+		// Found
+		temp = &fbxmodels[iter->second];
 	}
 
 	return temp;

@@ -205,6 +205,8 @@ public:
 
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
+		Renderable* testGolem = GameUtilities::AddSimpleAsset("files/models/ForestGolem_1.mesh", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
 		// Add gameobjects
 		// Comment this out - will run at 1fps
 		/*int COUNT = 2500;
@@ -223,6 +225,7 @@ public:
 		GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(t1);
 		GameUtilities::AddGameObject(testPlane);
+		GameUtilities::AddGameObject(testGolem);
 
 		testPlane->colliderPtr = nullptr;
 
