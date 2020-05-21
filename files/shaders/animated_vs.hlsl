@@ -1,40 +1,42 @@
 
 #pragma pack_matrix(row_major)
 
-struct InputVertex
+struct Vertex
 {
-    float3 pos : POSITION;
+    float3 xyzw : POSITION;
     float3 tex : TEXCOORD;
-    float3 normal : NORMAL;
+    float3 normals : NORMAL;
     float3 tangent : TANGENT;
     int4 joints : JOINTS;
     float4 weights : WEIGHTS;
 };
+
 
 struct OutputVertex
 {
-    float4 pos : SV_Position;
+    float4 xyzw : SV_Position;
     float3 tex : TEXCOORD;
-    float3 normal : NORMAL;
+    float3 normals : NORMAL;
     float3 tangent : TANGENT;
     int4 joints : JOINTS;
     float4 weights : WEIGHTS;
+    float4 worldPos : WorldPos;
 };
 
-cbuffer SHADER_VARIABLES : register(b0)
+cbuffer ShaderVars : register(b0)
 {
-    float4x4 worldMatrix;
-    float4x4 viewMatrix;
-    float4x4 projectionMatrix;
-    float4 cameraPosition;
-};
+    float4x4 World;
+    float4x4 View;
+    float4x4 Per;
+    float4 timer;
+}
 
-cbuffer ANIMATION_VARIABLES : register(b1)
+cbuffer AnimVars : register(b1)
 {
     float4x4 m[27];
 }
-
-OutputVertex main(InputVertex vertex)
+    
+OutputVertex main(Vertex v)
 {
     OutputVertex output = (OutputVertex) 0;
     
@@ -44,11 +46,11 @@ OutputVertex main(InputVertex vertex)
         
     //int miss_count = 0;
     
-    for (int i = 0; i < 4; i++)
-    {
-        skinned_position += mul(float4(vertex.pos, 1), m[vertex.joints[i]]) * vertex.weights[i];
-        skinned_normal += mul(float4(vertex.pos, 0), m[vertex.joints[i]]) * vertex.weights[i];
-    }
+    //for (int i = 0; i < 4; i++)
+    //{
+    //    skinned_position += mul(float4(v.xyzw, 1), m[v.joints[i]]) * v.weights[i];
+    //    skinned_normal += mul(float4(v.normals, 0), m[v.joints[i]]) * v.weights[i];
+    //}
         
     //skinned_position = float4(v.xyzw, 1);
     //skinned_normal = float4(v.normals, 0);
@@ -57,20 +59,59 @@ OutputVertex main(InputVertex vertex)
     //skinned_normal.w = 0;
     
         // Applymatrices
-    skinned_position = mul(skinned_position, worldMatrix);
-    //output.worldPos = skinned_position;
-    skinned_position = mul(skinned_position, viewMatrix);
-    skinned_position = mul(skinned_position, projectionMatrix);
+    skinned_position = mul(float4(v.xyzw, 1), World);
+    output.worldPos = skinned_position;
+    skinned_position = mul(skinned_position, View);
+    skinned_position = mul(skinned_position, Per);
     
-    skinned_normal = mul(float4(skinned_normal.xyz, 0), worldMatrix);
+    skinned_normal = mul(float4(skinned_normal.xyz, 0), World);
     
-    output.pos = skinned_position;
-    output.tex = vertex.tex;
-    output.normal = skinned_normal;
-    output.tangent = vertex.tangent;
-    output.joints = vertex.joints;
-    output.weights = vertex.weights;
+    output.xyzw = skinned_position;
+    output.tex = v.tex;
+    output.normals = skinned_normal;
+    output.tangent = v.tangent;
+    output.joints = v.joints;
+    output.weights = v.weights;
     
     return output;
-
+    
 }
+    
+//OutputVertex output = (OutputVertex) 0;
+    
+//float4 skinned_pos = { 0, 0, 0, 0 };
+//float4 skinned_norms = { 0, 0, 0, 0 };
+    
+//    for (
+//int j = 0;j < 4; ++j)
+//    {
+//        skinned_pos += mul(float4(v.xyzw.xyz, 1.0f), m[v.joints[j]]) * v.
+//weights[ j];
+//        skinned_norms += mul(float4(v.normals.xyz, 0.0f), m[v.joints[j]]) * v.
+//weights[ j];
+//    }
+    
+//    output.xyzw =
+//skinned_pos;
+//    output.tex = v.
+//tex;
+//    output.normals =
+//skinned_norms;
+//    output.tangent = v.
+//tangent;
+    
+//    output.xyzw = mul(output.xyzw, World);
+//    output.worldPos = output.
+//xyzw;
+//    output.xyzw = mul(output.xyzw, View);
+//    output.xyzw = mul(output.xyzw, Per);
+    
+//    output.normals = mul(float4(output.normals, 0), World);
+    
+//    output.joints = v.
+//joints;
+//    output.weights = v.
+//weights;
+    
+//    return
+//output;

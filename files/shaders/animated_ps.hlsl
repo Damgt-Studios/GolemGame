@@ -1,11 +1,12 @@
 struct OutputVertex
 {
-    float4 pos : SV_Position;
+    float4 xyzw : SV_Position;
     float3 tex : TEXCOORD;
-    float3 normal : NORMAL;
+    float3 normals : NORMAL;
     float3 tangent : TANGENT;
     int4 joints : JOINTS;
-    float4 weights : WEIGHTS;
+    float4 weights : WEIGHT;
+    float4 worldPos : WorldPos;
 };
 
 float4 main(OutputVertex v) : SV_TARGET

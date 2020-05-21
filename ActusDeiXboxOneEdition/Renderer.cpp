@@ -470,84 +470,84 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 
-		static float elapsedTime = 0;
-		static int counter = 0;
-		elapsedTime += delta_time;
-		std::vector<XMMATRIX> positions; positions.resize(current_model->animations[0].frames[0].jointsMatrix.size());
-		static float modifier = current_model->animations[0].frames.size();
+		//static float elapsedTime = 0;
+		//static int counter = 0;
+		//elapsedTime += delta_time;
+		//std::vector<XMMATRIX> positions; positions.resize(current_model->animations[0].frames[0].jointsMatrix.size());
+		//static float modifier = current_model->animations[0].frames.size();
 
-		//Error in Here
+		////Error in Here
 
-		if (elapsedTime >= 1.0f / modifier)
-		{
-			counter++;
-			if (counter >= current_model->animations[0].frames.size())
-			{
-				counter = 1;
-			}
+		//if (elapsedTime >= 1.0f / modifier)
+		//{
+		//	counter++;
+		//	if (counter >= current_model->animations[0].frames.size())
+		//	{
+		//		counter = 1;
+		//	}
 
-			elapsedTime = 0;
-		}
+		//	elapsedTime = 0;
+		//}
 
-		int pCounter = 0;
-		int cbCounter = 0;
-		for (int i = current_model->animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
-		{
-			int parent = current_model->skeleton[i].parent_index;
-			if (parent == -1)
-			{
-				parent = 0;
-			}
+		//int pCounter = 0;
+		//int cbCounter = 0;
+		//for (int i = current_model->animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+		//{
+		//	int parent = current_model->skeleton[i].parent_index;
+		//	if (parent == -1)
+		//	{
+		//		parent = 0;
+		//	}
 
-			int nextKeyframe = 0;
+		//	int nextKeyframe = 0;
 
-			if (counter + 1 < current_model->animations[0].frames.size())
-			{
-				nextKeyframe = counter + 1;
-			}
-			else if (counter + 1 == current_model->animations[0].frames.size())
-			{
-				nextKeyframe = 1;
-			}
+		//	if (counter + 1 < current_model->animations[0].frames.size())
+		//	{
+		//		nextKeyframe = counter + 1;
+		//	}
+		//	else if (counter + 1 == current_model->animations[0].frames.size())
+		//	{
+		//		nextKeyframe = 1;
+		//	}
 
-			XMVECTOR currentFrame = current_model->animations[0].frames[counter].jointsMatrix[i].r[3];
-			XMVECTOR nextFrame = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i].r[3];
+		//	XMVECTOR currentFrame = current_model->animations[0].frames[counter].jointsMatrix[i].r[3];
+		//	XMVECTOR nextFrame = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i].r[3];
 
-			/*XMVECTOR vCurrent = { currentFrame.x, currentFrame.y, currentFrame.z, currentFrame.w };
-			XMVECTOR vNext = { nextFrame.x, nextFrame.y, nextFrame.z, nextFrame.w };*/
+		//	/*XMVECTOR vCurrent = { currentFrame.x, currentFrame.y, currentFrame.z, currentFrame.w };
+		//	XMVECTOR vNext = { nextFrame.x, nextFrame.y, nextFrame.z, nextFrame.w };*/
 
-			XMVECTOR lerped = XMVectorLerp(currentFrame, nextFrame, elapsedTime * modifier);
-			XMFLOAT4 transition; XMStoreFloat4(&transition, lerped);
+		//	XMVECTOR lerped = XMVectorLerp(currentFrame, nextFrame, elapsedTime * modifier);
+		//	XMFLOAT4 transition; XMStoreFloat4(&transition, lerped);
 
-			//XMFLOAT4 temp = transition;
+		//	//XMFLOAT4 temp = transition;
 
-			/*points[pCounter].color = XMFLOAT4(1, 1, 1, 1);
-			points[pCounter++].xyzw = transition;*/
+		//	/*points[pCounter].color = XMFLOAT4(1, 1, 1, 1);
+		//	points[pCounter++].xyzw = transition;*/
 
-			currentFrame = current_model->animations[0].frames[counter].jointsMatrix[parent].r[3];
-			nextFrame = current_model->animations[0].frames[nextKeyframe].jointsMatrix[parent].r[3];
+		//	currentFrame = current_model->animations[0].frames[counter].jointsMatrix[parent].r[3];
+		//	nextFrame = current_model->animations[0].frames[nextKeyframe].jointsMatrix[parent].r[3];
 
-			/*vCurrent = { currentFrame.x, currentFrame.y, currentFrame.z, currentFrame.w };
-			vNext = { nextFrame.x, nextFrame.y, nextFrame.z, nextFrame.w };*/
+		//	/*vCurrent = { currentFrame.x, currentFrame.y, currentFrame.z, currentFrame.w };
+		//	vNext = { nextFrame.x, nextFrame.y, nextFrame.z, nextFrame.w };*/
 
-			lerped = XMVectorLerp(currentFrame, nextFrame, elapsedTime * modifier);
-			XMStoreFloat4(&transition, lerped);
+		//	lerped = XMVectorLerp(currentFrame, nextFrame, elapsedTime * modifier);
+		//	XMStoreFloat4(&transition, lerped);
 
-			/*points[pCounter].color = XMFLOAT4(1, 1, 1, 1);
-			points[pCounter++].xyzw = transition;*/
+		//	/*points[pCounter].color = XMFLOAT4(1, 1, 1, 1);
+		//	points[pCounter++].xyzw = transition;*/
 
-			XMMATRIX current = current_model->animations[0].frames[counter].jointsMatrix[i];
-			XMMATRIX next = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i];
+		//	XMMATRIX current = current_model->animations[0].frames[counter].jointsMatrix[i];
+		//	XMMATRIX next = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i];
 
-			XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
+		//	XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
 
-			XMMATRIX matrixToGPU = XMMatrixMultiply(current_model->inverse_transforms[i], Tween);
-			positions[i] = matrixToGPU;
-		}
+		//	XMMATRIX matrixToGPU = XMMatrixMultiply(current_model->inverse_transforms[i], Tween);
+		//	positions[i] = matrixToGPU;
+		//}
 
 		//Error In Here
 
-		pbr_renderer_resources.context->UpdateSubresource(current_model->animationBuffer.Get(), NULL, nullptr, positions.data(), 0, 0);
+		//pbr_renderer_resources.context->UpdateSubresource(current_model->animationBuffer.Get(), NULL, nullptr, positions.data(), 0, 0);
 
 		pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 
@@ -560,10 +560,11 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		// Model stuff
 		// World matrix projection
 		// TODO: Translate rotation to quaternion
-		XMMATRIX scaling = XMMatrixScaling(0.1, 0.1, 0.1);
+		temp = XMMatrixIdentity();
+		//XMMATRIX scaling = XMMatrixScaling(0.1, 0.1, 0.1);
 		current_obj->GetWorldMatrix(temp);
 		//temp = temp * scaling;
-		//temp = XMMatrixRotationX(-3.14 / 2) * temp;
+		temp = XMMatrixRotationY(3.14) * temp;
 		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 		// View
 		//camera->GetViewMatrix(temp);
