@@ -46,11 +46,11 @@ OutputVertex main(Vertex v)
         
     //int miss_count = 0;
     
-    //for (int i = 0; i < 4; i++)
-    //{
-    //    skinned_position += mul(float4(v.xyzw, 1), m[v.joints[i]]) * v.weights[i];
-    //    skinned_normal += mul(float4(v.normals, 0), m[v.joints[i]]) * v.weights[i];
-    //}
+    for (int i = 0; i < 4; i++)
+    {
+        skinned_position += mul(float4(v.xyzw, 1), m[v.joints[i]]) * v.weights[i];
+        skinned_normal += mul(float4(v.normals, 0), m[v.joints[i]]) * v.weights[i];
+    }
         
     //skinned_position = float4(v.xyzw, 1);
     //skinned_normal = float4(v.normals, 0);
@@ -59,7 +59,7 @@ OutputVertex main(Vertex v)
     //skinned_normal.w = 0;
     
         // Applymatrices
-    skinned_position = mul(float4(v.xyzw, 1), World);
+    skinned_position = mul(skinned_position, World);
     output.worldPos = skinned_position;
     skinned_position = mul(skinned_position, View);
     skinned_position = mul(skinned_position, Per);
