@@ -140,9 +140,16 @@ namespace ADResource
 #ifdef AD_MEMORY_DEFAULT
 			std::vector<SimpleVertexAnim> vertices;
 			std::vector<int> indices;
+			std::vector<bones> skeleton;
+			std::vector<XMMATRIX> inverse_transforms;
+			std::vector<anim_clip> animations;
+
 #else
 			ADVector<SimpleVertexAnim> vertices;
 			ADVector<int> indices;
+			ADVector<bones> skeleton;
+			ADVector<XMMATRIX> inverse_transforms;
+			ADVector<anim_clip> animations;
 #endif
 
 			XMFLOAT3 position;
@@ -156,6 +163,8 @@ namespace ADResource
 			ComPtr<ID3D11PixelShader> pixelShader;
 
 			ComPtr<ID3D11InputLayout> inputLayout;
+
+			ComPtr<ID3D11Buffer> animationBuffer;
 
 			// Texture stuff
 			ComPtr<ID3D11SamplerState> sampler;

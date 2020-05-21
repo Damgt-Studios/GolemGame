@@ -76,7 +76,7 @@ bool Engine::Render()
 		OBJS[i]->Render();
 	}
 
-	pbr.Render(camera, ocamera);
+	pbr.Render(camera, ocamera, delta_time_sf);
 	userInterface->Render(pbr.GetPBRRendererResources()->context.Get(), pbr.GetPBRRendererResources()->render_target_view.Get());
 	pbr.Frame();
 

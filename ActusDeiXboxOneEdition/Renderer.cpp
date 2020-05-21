@@ -73,7 +73,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 		&scd,
 		nullptr,
 		&pbr_renderer_resources.chain
-	);
+		);
 	assert(!FAILED(result));
 
 	// Setup viewport
@@ -354,7 +354,7 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 	return true;
 }
 
-bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera* ocamera)
+bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera* ocamera, float delta_time)
 {
 	float color[4] = { 0, 0, 0, 1 };
 
@@ -453,10 +453,10 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ADResource::ADGameplay::GameObject* current_obj = nullptr;
 	SimpleAnimModel* current_model = nullptr;
 
-	while(!ResourceManager::RenderQueueEmpty())
+	while (!ResourceManager::RenderQueueEmpty())
 	{
 		current_obj = ResourceManager::PopFromRenderQueue();
-		current_model = ResourceManager::GetSimpleModelPtrFromMeshId(current_obj->GetMeshId());
+		current_model = ResourceManager::GetSimpleAnimModelPtrFromMeshId(current_obj->GetMeshId());
 
 		if (current_model == nullptr)
 			continue;
@@ -470,9 +470,88 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 
+		static float elapsedTime = 0;
+		static int counter = 0;
+		elapsedTime += delta_time;
+		std::vector<XMMATRIX> positions; positions.resize(current_model->animations[0].frames[0].jointsMatrix.size());
+		static float modifier = current_model->animations[0].frames.size();
+
+		//Error in Here
+
+		if (elapsedTime >= 1.0f / modifier)
+		{
+			counter++;
+			if (counter >= current_model->animations[0].frames.size())
+			{
+				counter = 1;
+			}
+
+			elapsedTime = 0;
+		}
+
+		int pCounter = 0;
+		int cbCounter = 0;
+		for (int i = current_model->animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+		{
+			int parent = current_model->skeleton[i].parent_index;
+			if (parent == -1)
+			{
+				parent = 0;
+			}
+
+			int nextKeyframe = 0;
+
+			if (counter + 1 < current_model->animations[0].frames.size())
+			{
+				nextKeyframe = counter + 1;
+			}
+			else if (counter + 1 == current_model->animations[0].frames.size())
+			{
+				nextKeyframe = 1;
+			}
+
+			XMVECTOR currentFrame = current_model->animations[0].frames[counter].jointsMatrix[i].r[3];
+			XMVECTOR nextFrame = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i].r[3];
+
+			/*XMVECTOR vCurrent = { currentFrame.x, currentFrame.y, currentFrame.z, currentFrame.w };
+			XMVECTOR vNext = { nextFrame.x, nextFrame.y, nextFrame.z, nextFrame.w };*/
+
+			XMVECTOR lerped = XMVectorLerp(currentFrame, nextFrame, elapsedTime * modifier);
+			XMFLOAT4 transition; XMStoreFloat4(&transition, lerped);
+
+			//XMFLOAT4 temp = transition;
+
+			/*points[pCounter].color = XMFLOAT4(1, 1, 1, 1);
+			points[pCounter++].xyzw = transition;*/
+
+			currentFrame = current_model->animations[0].frames[counter].jointsMatrix[parent].r[3];
+			nextFrame = current_model->animations[0].frames[nextKeyframe].jointsMatrix[parent].r[3];
+
+			/*vCurrent = { currentFrame.x, currentFrame.y, currentFrame.z, currentFrame.w };
+			vNext = { nextFrame.x, nextFrame.y, nextFrame.z, nextFrame.w };*/
+
+			lerped = XMVectorLerp(currentFrame, nextFrame, elapsedTime * modifier);
+			XMStoreFloat4(&transition, lerped);
+
+			/*points[pCounter].color = XMFLOAT4(1, 1, 1, 1);
+			points[pCounter++].xyzw = transition;*/
+
+			XMMATRIX current = current_model->animations[0].frames[counter].jointsMatrix[i];
+			XMMATRIX next = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i];
+
+			XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
+
+			XMMATRIX matrixToGPU = XMMatrixMultiply(current_model->inverse_transforms[i], Tween);
+			positions[i] = matrixToGPU;
+		}
+
+		//Error In Here
+
+		pbr_renderer_resources.context->UpdateSubresource(current_model->animationBuffer.Get(), NULL, nullptr, positions.data(), 0, 0);
+
 		pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 
-		UINT strides[] = { sizeof(SimpleVertex) };
+		UINT strides[] = { sizeof(SimpleVertexAnim) };
 		UINT offsets[] = { 0 };
 		ID3D11Buffer* modelVertexBuffers[] = { current_model->vertexBuffer.Get() };
 		pbr_renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
@@ -493,7 +572,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		// Projection
 		temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
 		XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-		
+
 		WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
 		// Send the matrix to constant buffer
@@ -502,8 +581,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
 		pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
 		// Connect constant buffer to the pipeline
-		ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get() };
-		pbr_renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+		ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get(), current_model->animationBuffer.Get() };
+		pbr_renderer_resources.context->VSSetConstantBuffers(0, 2, modelCBuffers);
 		// Model stuff
 
 		// Render stuff
@@ -523,7 +602,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		pbr_renderer_resources.context->VSSetShader(current_model->vertexShader.Get(), 0, 0);
 		pbr_renderer_resources.context->PSSetShader(current_model->pixelShader.Get(), 0, 0);
 		pbr_renderer_resources.context->IASetInputLayout(current_model->inputLayout.Get());
-		
+
 		ID3D11SamplerState* current_samplers[] = { current_model->sampler.Get() };
 
 		pbr_renderer_resources.context->PSSetSamplers(0, 1, current_samplers);

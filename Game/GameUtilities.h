@@ -21,6 +21,7 @@ public:
 	static Renderable* AddPBRStaticAsset(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	static Renderable* AddSimpleAsset(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static Renderable* AddSimpleAnimAsset(std::string modelname, std::vector<std::string> AnimationFiles, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 public:
 	// Game object shit

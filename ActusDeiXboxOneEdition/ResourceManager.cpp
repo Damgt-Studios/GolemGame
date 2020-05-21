@@ -44,6 +44,25 @@ AD_ULONG ResourceManager::AddModel(std::string modelname, XMFLOAT3 position, XMF
 	return InitializeModel(modelname, position, scale, rotation, shader);
 }
 
+AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+	ADUtils::SHADER shader = { 0 };
+
+	if (!wireframe)
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\animated_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\animated_ps.hlsl");
+	}
+	else
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
+	}
+
+	shader.wireframe = wireframe;
+
+	return InitializeAnimatedModel(modelname, animations, position, scale, rotation, shader);
+}
+
 AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe /*= false*/)
 {
 	ADUtils::SHADER shader = { 0 };
@@ -138,9 +157,119 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 
 AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader) 
 {
+	SimpleModel temp;
+	SimpleMesh mesh;
+	Load_Mesh(modelname.c_str(), mesh);
+
+	temp.vertices = mesh.vertexList;
+	temp.indices = mesh.indicesList;
+
+	temp.position = position;
+	temp.scale = scale;
+	temp.rotation = rotation;
+
+	D3D11_BUFFER_DESC bdesc;
+	D3D11_SUBRESOURCE_DATA subData;
+	ZeroMemory(&bdesc, sizeof(bdesc));
+	ZeroMemory(&subData, sizeof(subData));
+
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bdesc.ByteWidth = sizeof(SimpleVertex) * temp.vertices.size();
+	bdesc.CPUAccessFlags = 0;
+	bdesc.MiscFlags = 0;
+	bdesc.StructureByteStride = 0;
+	bdesc.Usage = D3D11_USAGE_IMMUTABLE;
+
+	subData.pSysMem = temp.vertices.data();
+
+	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.vertexBuffer);
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bdesc.ByteWidth = sizeof(unsigned int) * temp.indices.size();
+
+	subData.pSysMem = temp.indices.data();
+
+	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.indexBuffer);
+
+	// Load shaders // Thanks Whittington
+	ComPtr<ID3D10Blob> vertexblob;
+	ComPtr<ID3D10Blob> pixelblob;
+
+	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+	std::string vname(shader.vshader);
+	std::string pname(shader.pshader);
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
+
+	//The Whittington Bruh aka The Wruh
+	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
+
+	std::wstring vshadername(v.begin(), v.end());
+	std::wstring pshadername(p.begin(), p.end());
+
+	HRESULT result;
+
+	ComPtr<ID3D11Device1> device = ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device;
+
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	assert(!FAILED(result));
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	assert(!FAILED(result));
+
+	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &temp.vertexShader);
+	assert(!FAILED(result));
+	result = device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &temp.pixelShader);
+	assert(!FAILED(result));
+
+	// Make input layout for vertex buffer
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		/*{ "JOINTS",		0, DXGI_FORMAT_R32G32B32A32_SINT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "WEIGHTS",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 64, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
+	};
+
+	result = device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &temp.inputLayout);
+	assert(!FAILED(result));
+
+	D3D11_SAMPLER_DESC sdesc;
+	ZeroMemory(&sdesc, sizeof(sdesc));
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sdesc.MinLOD = 0;
+
+	result = device->CreateSamplerState(&sdesc, &temp.sampler);
+	assert(!FAILED(result));
+
+	// grab id and add stuff
+	AD_ULONG id = GenerateUniqueID();
+	unsigned int index = fbxmodels.size();
+	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	fbxmodels.push_back(temp);
+
+	return id;
+}
+
+AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
+{
 	SimpleAnimModel temp;
 	SimpleMeshAnim mesh;
 	Load_AnimMesh(modelname.c_str(), mesh);
+
+	temp.animations.resize(animations.size());
+
+	for (unsigned int i = 0; i < animations.size(); i++)
+	{
+		Load_AnimFile(animations[i].c_str(), temp.skeleton, temp.inverse_transforms, temp.animations[i]);
+	}
 
 	temp.vertices = mesh.vertexList;
 	temp.indices = mesh.indicesList;
@@ -170,6 +299,12 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 	subData.pSysMem = temp.indices.data();
 
 	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, &subData, &temp.indexBuffer);
+
+	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bdesc.ByteWidth = sizeof(XMMATRIX) * temp.inverse_transforms.size();
+	bdesc.Usage = D3D11_USAGE_DEFAULT;
+
+	ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device->CreateBuffer(&bdesc, nullptr, &temp.animationBuffer);
 
 	// Load shaders // Thanks Whittington
 	ComPtr<ID3D10Blob> vertexblob;
@@ -233,8 +368,8 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();
 	unsigned int index = fbxmodels.size();
-	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
-	fbxmodels.push_back(temp);
+	animated_fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	animated_fbxmodels.push_back(temp);
 
 	return id;
 }
@@ -379,15 +514,29 @@ ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG m
 	return temp;
 }
 
-ADResource::ADRenderer::SimpleAnimModel* ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
+ADResource::ADRenderer::SimpleModel* ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
 {
-	SimpleAnimModel* temp = nullptr;
+	SimpleModel* temp = nullptr;
 	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = fbxmodel_map.find(mesh_id);
 
 	if (iter != fbxmodel_map.end())
 	{
 		// Found
 		temp = &fbxmodels[iter->second];
+	}
+
+	return temp;
+}
+
+ADResource::ADRenderer::SimpleAnimModel* ResourceManager::GetSimpleAnimModelPtrFromMeshId(AD_ULONG mesh_id)
+{
+	SimpleAnimModel* temp = nullptr;
+	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = animated_fbxmodel_map.find(mesh_id);
+
+	if (iter != animated_fbxmodel_map.end())
+	{
+		// Found
+		temp = &animated_fbxmodels[iter->second];
 	}
 
 	return temp;
