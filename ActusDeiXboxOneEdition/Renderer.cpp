@@ -509,7 +509,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
 
-			XMMATRIX matrixToGPU = XMMatrixMultiply(XMMatrixInverse(nullptr, current_model->inverse_transforms[i]), Tween);
+			XMMATRIX matrixToGPU = XMMatrixMultiply(current_model->inverse_transforms[i], Tween);
 			positions[i] = matrixToGPU;
 		}
 
@@ -531,7 +531,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		XMMATRIX scaling = XMMatrixScaling(0.1, 0.1, 0.1);
 		current_obj->GetWorldMatrix(temp);
 		//temp = temp * scaling;
-		temp = XMMatrixRotationY(3.14) * temp;
+		temp = XMMatrixRotationY(3.14f) * temp;
 		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 		// View
 		//camera->GetViewMatrix(temp);
