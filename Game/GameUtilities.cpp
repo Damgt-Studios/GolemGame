@@ -130,7 +130,7 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 	return temp;
 }
 
-ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAnimAsset(std::string modelname, std::vector<std::string> AnimationFiles, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAnimAsset(std::string modelname, std::string materials, std::vector<std::string> AnimationFiles, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
@@ -138,7 +138,7 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAnimAsset(std::strin
 	temp->SetRotation(rotation);
 	temp->SetScale(scale);
 
-	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, AnimationFiles, position, scale, rotation);
+	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, AnimationFiles, position, scale, rotation);
 	temp->SetMeshID(id);
 
 	return temp;

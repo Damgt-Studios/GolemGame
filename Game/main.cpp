@@ -208,7 +208,7 @@ public:
 		std::vector<std::string> animationFiles;
 		animationFiles.push_back("files/models/Test.animfile");
 
-		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/TestAnim.AnimMesh", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
+		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/TestAnim.AnimMesh", "files/textures/BattleMage,mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps

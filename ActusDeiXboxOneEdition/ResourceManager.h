@@ -69,7 +69,7 @@ public:
 	static AD_ULONG AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 
 	static AD_ULONG AddModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
-	static AD_ULONG AddAnimatedModel(std::string modelname, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+	static AD_ULONG AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 
 	static AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
@@ -83,7 +83,7 @@ public:
 	static AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
 	static AD_ULONG InitializeModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
-	static AD_ULONG InitializeAnimatedModel(std::string modelname,std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
 public:
 	// Rendering init shit

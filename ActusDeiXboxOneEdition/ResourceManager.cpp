@@ -44,7 +44,7 @@ AD_ULONG ResourceManager::AddModel(std::string modelname, XMFLOAT3 position, XMF
 	return InitializeModel(modelname, position, scale, rotation, shader);
 }
 
-AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
 	ADUtils::SHADER shader = { 0 };
 
 	if (!wireframe)
@@ -60,7 +60,7 @@ AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::vector<st
 
 	shader.wireframe = wireframe;
 
-	return InitializeAnimatedModel(modelname, animations, position, scale, rotation, shader);
+	return InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 }
 
 AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe /*= false*/)
@@ -258,7 +258,7 @@ AD_ULONG ResourceManager::InitializeModel(std::string modelname, XMFLOAT3 positi
 	return id;
 }
 
-AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
+AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
 {
 	SimpleAnimModel temp;
 	SimpleMeshAnim mesh;
