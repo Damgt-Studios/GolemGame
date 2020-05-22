@@ -156,7 +156,61 @@ namespace ADResource
 			ADVector<XMMATRIX> inverse_transforms;
 			ADVector<anim_clip> animations;
 #endif
+			float elapsedTime = 0;
+			int counter = 0;
+
+			float modifier = 1;
+
 			ComPtr<ID3D11Buffer> animationBuffer;
+
+			std::vector<XMMATRIX> UpdateAnimation(float delta_time)
+			{
+				elapsedTime += delta_time;
+				std::vector<XMMATRIX> positions;
+				positions.resize(animations[0].frames[0].jointsMatrix.size());
+
+				if (animations.size() > 0)
+				{
+					modifier = animations[0].frames.size();
+
+					//Animations
+
+					if (elapsedTime >= 1.0f / modifier)
+					{
+						counter++;
+						if (counter == animations[0].frames.size())
+						{
+							counter = 1;
+						}
+
+						elapsedTime = 0;
+					}
+
+					for (int i = animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+					{
+						int nextKeyframe = 0;
+
+						if (counter + 1 < animations[0].frames.size())
+						{
+							nextKeyframe = counter + 1;
+						}
+						else if (counter + 1 == animations[0].frames.size())
+						{
+							nextKeyframe = 1;
+						}
+
+						XMMATRIX current = animations[0].frames[counter].jointsMatrix[i];
+						XMMATRIX next = animations[0].frames[nextKeyframe].jointsMatrix[i];
+
+						XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
+
+						XMMATRIX matrixToGPU = XMMatrixMultiply(inverse_transforms[i], Tween);
+						positions[i] = matrixToGPU;
+					}
+				}
+
+				return positions;
+			}
 		};
 
 		struct WVP

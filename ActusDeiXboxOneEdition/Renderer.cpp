@@ -461,60 +461,18 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 		if (current_model == nullptr)
 			continue;
-	
+
 		//Animations
-		if ((*current_model)->animated) 
+		if ((*current_model)->animated)
 		{
 			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);
 
-			static float elapsedTime = 0;
-			static int counter = 0;
-			elapsedTime += delta_time;
-			std::vector<XMMATRIX> positions; positions.resize(current_animated_model->animations[0].frames[0].jointsMatrix.size());
-			static float modifier = current_animated_model->animations[0].frames.size();
-
-			//Animations
-
-			if (elapsedTime >= 1.0f / modifier)
-			{
-				counter++;
-				if (counter >= current_animated_model->animations[0].frames.size())
-				{
-					counter = 1;
-				}
-
-				elapsedTime = 0;
-			}
-
-			int pCounter = 0;
-			int cbCounter = 0;
-			for (int i = current_animated_model->animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
-			{
-				int nextKeyframe = 0;
-
-				if (counter + 1 < current_animated_model->animations[0].frames.size())
-				{
-					nextKeyframe = counter + 1;
-				}
-				else if (counter + 1 == current_animated_model->animations[0].frames.size())
-				{
-					nextKeyframe = 1;
-				}
-
-				XMMATRIX current = current_animated_model->animations[0].frames[counter].jointsMatrix[i];
-				XMMATRIX next = current_animated_model->animations[0].frames[nextKeyframe].jointsMatrix[i];
-
-				XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
-
-				XMMATRIX matrixToGPU = XMMatrixMultiply(current_animated_model->inverse_transforms[i], Tween);
-				positions[i] = matrixToGPU;
-			}
+			std::vector<XMMATRIX> joints = current_animated_model->UpdateAnimation(delta_time);
 
 			//Update Buffers
+			pbr_renderer_resources.context->UpdateSubresource(current_animated_model->animationBuffer.Get(), NULL, nullptr, joints.data(), 0, 0);
 
-			pbr_renderer_resources.context->UpdateSubresource(current_animated_model->animationBuffer.Get(), NULL, nullptr, positions.data(), 0, 0);
-
-			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+			//pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 
 			UINT strides[] = { sizeof(SimpleVertexAnim) };
 			UINT offsets[] = { 0 };
@@ -529,7 +487,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			current_obj->GetWorldMatrix(temp);
 			temp.r[3].m128_f32[1] = -5;
-			temp = XMMatrixRotationY(3.14f) * temp;
+			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
+			//temp = XMMatrixRotationZ(3.14f) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 			// View
 
@@ -580,7 +539,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
 			pbr_renderer_resources.context->DrawIndexed(current_animated_model->indices.size(), 0, 0);
 		}
-		
+
 		//Statics
 		else
 		{
@@ -619,7 +578,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
 			pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
 			// Connect constant buffer to the pipeline
-			ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get()};
+			ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get() };
 			pbr_renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
 			// Model stuff
 

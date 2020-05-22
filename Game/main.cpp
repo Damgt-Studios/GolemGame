@@ -206,9 +206,11 @@ public:
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
 		std::vector<std::string> animationFiles;
-		animationFiles.push_back("files/models/Test.animfile");
+		animationFiles.push_back("files/models/Idle.animfile");
 
-		Renderable* StaticTester = GameUtilities::AddSimpleAsset("files/models/ForestGolem_2.mesh", "files/textures/Golem_2.mat", XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/SomeEmpty.AnimMesh", "files/textures/Golem_1.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+
+		animationFiles[0] = "files/models/Test.animfile";
 		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/TestAnim.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
@@ -229,7 +231,7 @@ public:
 		//GameUtilities::AddGameObject(e3);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
-		GameUtilities::AddGameObject(StaticTester);
+		GameUtilities::AddGameObject(Golem_1);
 		GameUtilities::AddGameObject(AnimationTester);
 
 		testPlane->colliderPtr = nullptr;

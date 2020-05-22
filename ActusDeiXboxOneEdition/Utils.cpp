@@ -259,7 +259,7 @@ void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, st
 	device->CreateBuffer(&bdesc, &subData, &model.indexBuffer);
 
 	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bdesc.ByteWidth = sizeof(XMMATRIX) * model.inverse_transforms.size();
+	bdesc.ByteWidth = sizeof(XMMATRIX) * 30;
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
 
 	device->CreateBuffer(&bdesc, nullptr, &model.animationBuffer);
@@ -412,7 +412,7 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 	//Diffuse
 	std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
 	std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
-	
+
 	CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
 
 	//Emissive
