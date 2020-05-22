@@ -129,6 +129,201 @@ void ADUtils::LoadWobjectMesh(const char* meshname, Model& _model, ComPtr<ID3D11
 	assert(!FAILED(result));
 }
 
+void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, ComPtr<ID3D11Device1> device, SHADER& shader, std::string materials)
+{
+	SimpleMesh mesh;
+	Load_Mesh(modelname, mesh);
+
+	model.vertices = mesh.vertexList;
+	model.indices = mesh.indicesList;
+
+	D3D11_BUFFER_DESC bdesc;
+	D3D11_SUBRESOURCE_DATA subData;
+	ZeroMemory(&bdesc, sizeof(bdesc));
+	ZeroMemory(&subData, sizeof(subData));
+
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bdesc.ByteWidth = sizeof(SimpleVertex) * model.vertices.size();
+	bdesc.CPUAccessFlags = 0;
+	bdesc.MiscFlags = 0;
+	bdesc.StructureByteStride = 0;
+	bdesc.Usage = D3D11_USAGE_IMMUTABLE;
+
+	subData.pSysMem = model.vertices.data();
+
+	device->CreateBuffer(&bdesc, &subData, &model.vertexBuffer);
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bdesc.ByteWidth = sizeof(unsigned int) * model.indices.size();
+
+	subData.pSysMem = model.indices.data();
+
+	device->CreateBuffer(&bdesc, &subData, &model.indexBuffer);
+
+	// Load shaders // Thanks Whittington
+	ComPtr<ID3D10Blob> vertexblob;
+	ComPtr<ID3D10Blob> pixelblob;
+
+	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+	std::string vname(shader.vshader);
+	std::string pname(shader.pshader);
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
+
+	//The Whittington Bruh aka The Wruh
+	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
+
+	std::wstring vshadername(v.begin(), v.end());
+	std::wstring pshadername(p.begin(), p.end());
+
+	HRESULT result;
+
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	assert(!FAILED(result));
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	assert(!FAILED(result));
+
+	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &model.vertexShader);
+	assert(!FAILED(result));
+	result = device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &model.pixelShader);
+	assert(!FAILED(result));
+
+	// Make input layout for vertex buffer
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		/*{ "JOINTS",		0, DXGI_FORMAT_R32G32B32A32_SINT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "WEIGHTS",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 64, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
+	};
+
+	result = device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &model.inputLayout);
+	assert(!FAILED(result));
+
+	D3D11_SAMPLER_DESC sdesc;
+	ZeroMemory(&sdesc, sizeof(sdesc));
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sdesc.MinLOD = 0;
+
+	result = device->CreateSamplerState(&sdesc, &model.sampler);
+	assert(!FAILED(result));
+
+	LoadTextures(materials, &model, device);
+}
+
+void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, std::vector<std::string> animations, ComPtr<ID3D11Device1> device, SHADER& shader, std::string materials)
+{
+	SimpleMeshAnim mesh;
+	Load_AnimMesh(modelname, mesh);
+
+	model.animations.resize(animations.size());
+
+	for (unsigned int i = 0; i < animations.size(); i++)
+	{
+		Load_AnimFile(animations[i].c_str(), model.skeleton, model.inverse_transforms, model.animations[i]);
+	}
+
+	model.vertices = mesh.vertexList;
+	model.indices = mesh.indicesList;
+
+	model.animated = true;
+
+	D3D11_BUFFER_DESC bdesc;
+	D3D11_SUBRESOURCE_DATA subData;
+	ZeroMemory(&bdesc, sizeof(bdesc));
+	ZeroMemory(&subData, sizeof(subData));
+
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bdesc.ByteWidth = sizeof(SimpleVertexAnim) * model.vertices.size();
+	bdesc.CPUAccessFlags = 0;
+	bdesc.MiscFlags = 0;
+	bdesc.StructureByteStride = 0;
+	bdesc.Usage = D3D11_USAGE_IMMUTABLE;
+
+	subData.pSysMem = model.vertices.data();
+
+	device->CreateBuffer(&bdesc, &subData, &model.vertexBuffer);
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bdesc.ByteWidth = sizeof(unsigned int) * model.indices.size();
+
+	subData.pSysMem = model.indices.data();
+
+	device->CreateBuffer(&bdesc, &subData, &model.indexBuffer);
+
+	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bdesc.ByteWidth = sizeof(XMMATRIX) * model.inverse_transforms.size();
+	bdesc.Usage = D3D11_USAGE_DEFAULT;
+
+	device->CreateBuffer(&bdesc, nullptr, &model.animationBuffer);
+
+	// Load shaders // Thanks Whittington
+	ComPtr<ID3D10Blob> vertexblob;
+	ComPtr<ID3D10Blob> pixelblob;
+
+	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+	std::string vname(shader.vshader);
+	std::string pname(shader.pshader);
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
+
+	//The Whittington Bruh aka The Wruh
+	std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
+
+	std::wstring vshadername(v.begin(), v.end());
+	std::wstring pshadername(p.begin(), p.end());
+
+	HRESULT result;
+
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	assert(!FAILED(result));
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	assert(!FAILED(result));
+
+	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &model.vertexShader);
+	assert(!FAILED(result));
+	result = device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &model.pixelShader);
+	assert(!FAILED(result));
+
+	// Make input layout for vertex buffer
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 0 , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "JOINTS",		0, DXGI_FORMAT_R32G32B32A32_SINT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "WEIGHTS",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 64, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	result = device->CreateInputLayout(layout, ARRAYSIZE(layout), vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &model.inputLayout);
+	assert(!FAILED(result));
+
+	D3D11_SAMPLER_DESC sdesc;
+	ZeroMemory(&sdesc, sizeof(sdesc));
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sdesc.MinLOD = 0;
+
+	result = device->CreateSamplerState(&sdesc, &model.sampler);
+	assert(!FAILED(result));
+
+	LoadTextures(materials, &model, device);
+}
+
 void ADUtils::LoadTextures(Header& header, Model& _model, ComPtr<ID3D11Device1> dev)
 {
 	HRESULT result;
@@ -189,6 +384,42 @@ void ADUtils::LoadTextures(Header& header, Model& _model, ComPtr<ID3D11Device1> 
 	// Create the sampler state
 	result = device->CreateSamplerState(&sdesc, &_model.sampler);
 	assert(!FAILED(result));
+}
+
+void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D11Device1> device)
+{
+	if (filepath == "")
+		return;
+
+	std::ifstream file(filepath, std::ios::binary);
+
+	assert(file.is_open());
+
+	uint32_t count;
+	using file_path_t = std::array<char, 260>;
+	std::vector<file_path_t> mats;
+
+	file.read((char*)&count, sizeof(uint32_t));
+
+	mats.resize(count);
+
+	file.read((char*)&mats[0], sizeof(file_path_t) * count);
+
+	file.close();
+
+	std::string texture_Path = std::string(ADUtils::READ_PATH.begin(), ADUtils::READ_PATH.end()).append("files\\textures\\");
+
+	//Diffuse
+	std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
+	std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
+	
+	CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
+
+	//Emissive
+	textureName = std::string(texture_Path).append((char*)&mats[1]);
+	wTextureName = std::wstring(textureName.begin(), textureName.end());
+
+	CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->emissive);
 }
 
 

@@ -451,15 +451,210 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	//pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	ADResource::ADGameplay::GameObject* current_obj = nullptr;
-	SimpleAnimModel* current_model = nullptr;
-
+	SimpleModel** current_model = nullptr;
+	SimpleStaticModel* current_static_model = nullptr;
+	SimpleAnimModel* current_animated_model = nullptr;
 	while (!ResourceManager::RenderQueueEmpty())
 	{
 		current_obj = ResourceManager::PopFromRenderQueue();
-		current_model = ResourceManager::GetSimpleAnimModelPtrFromMeshId(current_obj->GetMeshId());
+		current_model = ResourceManager::GetSimpleModelPtrFromMeshId(current_obj->GetMeshId());
 
 		if (current_model == nullptr)
 			continue;
+	
+		//Animations
+		if ((*current_model)->animated) 
+		{
+			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);
+
+			static float elapsedTime = 0;
+			static int counter = 0;
+			elapsedTime += delta_time;
+			std::vector<XMMATRIX> positions; positions.resize(current_animated_model->animations[0].frames[0].jointsMatrix.size());
+			static float modifier = current_animated_model->animations[0].frames.size();
+
+			//Animations
+
+			if (elapsedTime >= 1.0f / modifier)
+			{
+				counter++;
+				if (counter >= current_animated_model->animations[0].frames.size())
+				{
+					counter = 1;
+				}
+
+				elapsedTime = 0;
+			}
+
+			int pCounter = 0;
+			int cbCounter = 0;
+			for (int i = current_animated_model->animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+			{
+				int nextKeyframe = 0;
+
+				if (counter + 1 < current_animated_model->animations[0].frames.size())
+				{
+					nextKeyframe = counter + 1;
+				}
+				else if (counter + 1 == current_animated_model->animations[0].frames.size())
+				{
+					nextKeyframe = 1;
+				}
+
+				XMMATRIX current = current_animated_model->animations[0].frames[counter].jointsMatrix[i];
+				XMMATRIX next = current_animated_model->animations[0].frames[nextKeyframe].jointsMatrix[i];
+
+				XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
+
+				XMMATRIX matrixToGPU = XMMatrixMultiply(current_animated_model->inverse_transforms[i], Tween);
+				positions[i] = matrixToGPU;
+			}
+
+			//Update Buffers
+
+			pbr_renderer_resources.context->UpdateSubresource(current_animated_model->animationBuffer.Get(), NULL, nullptr, positions.data(), 0, 0);
+
+			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+
+			UINT strides[] = { sizeof(SimpleVertexAnim) };
+			UINT offsets[] = { 0 };
+			ID3D11Buffer* modelVertexBuffers[] = { current_animated_model->vertexBuffer.Get() };
+			pbr_renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+			pbr_renderer_resources.context->IASetIndexBuffer(current_animated_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			// Model stuff
+			// World matrix projection
+			// TODO: Translate rotation to quaternion
+			fbxmodel_map;
+
+			current_obj->GetWorldMatrix(temp);
+			temp.r[3].m128_f32[1] = -5;
+			temp = XMMatrixRotationY(3.14f) * temp;
+			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+			// View
+
+			ocamera->GetViewMatrix(temp);
+			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+			// Projection
+
+			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
+
+			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+
+			// Send the matrix to constant buffer
+			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+			HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+			memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
+			pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
+			// Connect constant buffer to the pipeline
+			ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get(), current_animated_model->animationBuffer.Get() };
+			pbr_renderer_resources.context->VSSetConstantBuffers(0, 2, modelCBuffers);
+			// Model stuff
+
+			// Render stuff
+			// Set sampler
+			ID3D11SamplerState* samplers[] = { current_animated_model->sampler.Get(), pbr_renderer_resources.normal_sampler.Get() };
+			pbr_renderer_resources.context->PSSetSamplers(0, 2, samplers);
+
+			ID3D11ShaderResourceView* resource_views[] = {
+				current_animated_model->albedo.Get(),
+				current_animated_model->normal.Get(),
+				current_animated_model->emissive.Get()
+			};
+
+			pbr_renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
+			pbr_renderer_resources.context->VSSetShaderResources(0, 1, current_animated_model->normal.GetAddressOf());
+
+			pbr_renderer_resources.context->VSSetShader(current_animated_model->vertexShader.Get(), 0, 0);
+			pbr_renderer_resources.context->PSSetShader(current_animated_model->pixelShader.Get(), 0, 0);
+			pbr_renderer_resources.context->IASetInputLayout(current_animated_model->inputLayout.Get());
+
+			ID3D11SamplerState* current_samplers[] = { current_animated_model->sampler.Get() };
+
+			pbr_renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
+
+			//int istart = current_model->desc.index_start;
+			//int ibase = current_model->desc.base_vertex_location;
+			//int icount = current_model->desc.index_count;
+			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+			pbr_renderer_resources.context->DrawIndexed(current_animated_model->indices.size(), 0, 0);
+		}
+		
+		//Statics
+		else
+		{
+			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
+
+			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+
+			UINT strides[] = { sizeof(SimpleVertex) };
+			UINT offsets[] = { 0 };
+			ID3D11Buffer* modelVertexBuffers[] = { current_static_model->vertexBuffer.Get() };
+			pbr_renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+			pbr_renderer_resources.context->IASetIndexBuffer(current_static_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			// Model stuff
+			// World matrix projection
+			// TODO: Translate rotation to quaternion
+			current_obj->GetWorldMatrix(temp);
+			temp.r[3].m128_f32[1] = -5;
+			temp.r[3].m128_f32[2] = -10;
+			temp = XMMatrixRotationX(-3.14f / 2) * temp;
+			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+			// View
+
+			ocamera->GetViewMatrix(temp);
+			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+			// Projection
+
+			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
+
+			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+
+			// Send the matrix to constant buffer
+			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+			HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+			memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
+			pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
+			// Connect constant buffer to the pipeline
+			ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get()};
+			pbr_renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+			// Model stuff
+
+			// Render stuff
+			// Set sampler
+			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get(), pbr_renderer_resources.normal_sampler.Get() };
+			pbr_renderer_resources.context->PSSetSamplers(0, 2, samplers);
+
+			ID3D11ShaderResourceView* resource_views[] = {
+				current_static_model->albedo.Get(),
+				current_static_model->normal.Get(),
+				current_static_model->emissive.Get()
+			};
+
+			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
+
+			pbr_renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
+			pbr_renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
+
+
+			pbr_renderer_resources.context->VSSetShaderResources(0, 1, current_static_model->normal.GetAddressOf());
+
+			pbr_renderer_resources.context->VSSetShader(current_static_model->vertexShader.Get(), 0, 0);
+			pbr_renderer_resources.context->PSSetShader(current_static_model->pixelShader.Get(), 0, 0);
+			pbr_renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
+
+
+			//int istart = current_model->desc.index_start;
+			//int ibase = current_model->desc.base_vertex_location;
+			//int icount = current_model->desc.index_count;
+			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+			pbr_renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
+		}
+
+
 		//bool bruh = current_model->desc.wireframe_mode;
 		//if (bruh)
 		//{
@@ -469,117 +664,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//{
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
-
-		static float elapsedTime = 0;
-		static int counter = 0;
-		elapsedTime += delta_time;
-		std::vector<XMMATRIX> positions; positions.resize(current_model->animations[0].frames[0].jointsMatrix.size());
-		static float modifier = current_model->animations[0].frames.size();
-
-		//Error in Here
-
-		if (elapsedTime >= 1.0f / modifier)
-		{
-			counter++;
-			if (counter >= current_model->animations[0].frames.size())
-			{
-				counter = 1;
-			}
-
-			elapsedTime = 0;
-		}
-
-		int pCounter = 0;
-		int cbCounter = 0;
-		for (int i = current_model->animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
-		{
-			int nextKeyframe = 0;
-
-			if (counter + 1 < current_model->animations[0].frames.size())
-			{
-				nextKeyframe = counter + 1;
-			}
-			else if (counter + 1 == current_model->animations[0].frames.size())
-			{
-				nextKeyframe = 1;
-			}
-
-			XMMATRIX current = current_model->animations[0].frames[counter].jointsMatrix[i];
-			XMMATRIX next = current_model->animations[0].frames[nextKeyframe].jointsMatrix[i];
-
-			XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
-
-			XMMATRIX matrixToGPU = XMMatrixMultiply(current_model->inverse_transforms[i], Tween);
-			positions[i] = matrixToGPU;
-		}
-
-		//Error In Here
-
-		pbr_renderer_resources.context->UpdateSubresource(current_model->animationBuffer.Get(), NULL, nullptr, positions.data(), 0, 0);
-
-		pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
-
-		UINT strides[] = { sizeof(SimpleVertexAnim) };
-		UINT offsets[] = { 0 };
-		ID3D11Buffer* modelVertexBuffers[] = { current_model->vertexBuffer.Get() };
-		pbr_renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
-		pbr_renderer_resources.context->IASetIndexBuffer(current_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-		// Model stuff
-		// World matrix projection
-		// TODO: Translate rotation to quaternion
-		XMMATRIX scaling = XMMatrixScaling(0.1, 0.1, 0.1);
-		current_obj->GetWorldMatrix(temp);
-		//temp = temp * scaling;
-		temp = XMMatrixRotationY(3.14f) * temp;
-		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
-		// View
-		//camera->GetViewMatrix(temp);
-		ocamera->GetViewMatrix(temp);
-		XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-		// Projection
-		temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-		XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-
-		WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
-
-		// Send the matrix to constant buffer
-		D3D11_MAPPED_SUBRESOURCE gpuBuffer;
-		HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
-		memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
-		pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
-		// Connect constant buffer to the pipeline
-		ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get(), current_model->animationBuffer.Get() };
-		pbr_renderer_resources.context->VSSetConstantBuffers(0, 2, modelCBuffers);
-		// Model stuff
-
-		// Render stuff
-		// Set sampler
-		ID3D11SamplerState* samplers[] = { current_model->sampler.Get(), pbr_renderer_resources.normal_sampler.Get() };
-		pbr_renderer_resources.context->PSSetSamplers(0, 2, samplers);
-
-		ID3D11ShaderResourceView* resource_views[] = {
-			current_model->albedo.Get(),
-			current_model->normal.Get(),
-			current_model->emissive.Get()
-		};
-
-		pbr_renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
-		pbr_renderer_resources.context->VSSetShaderResources(0, 1, current_model->normal.GetAddressOf());
-
-		pbr_renderer_resources.context->VSSetShader(current_model->vertexShader.Get(), 0, 0);
-		pbr_renderer_resources.context->PSSetShader(current_model->pixelShader.Get(), 0, 0);
-		pbr_renderer_resources.context->IASetInputLayout(current_model->inputLayout.Get());
-
-		ID3D11SamplerState* current_samplers[] = { current_model->sampler.Get() };
-
-		pbr_renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
-
-		//int istart = current_model->desc.index_start;
-		//int ibase = current_model->desc.base_vertex_location;
-		//int icount = current_model->desc.index_count;
-		//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
-		pbr_renderer_resources.context->DrawIndexed(current_model->indices.size(), 0, 0);
 	}
 
 	return true;

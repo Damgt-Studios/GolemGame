@@ -26,22 +26,22 @@ void Load_Mesh(const char* meshFileName, SimpleMesh& mesh)
 	//Example mesh conditioning if needed - this flips handedness
 	for (auto& v : mesh.vertexList)
 	{
-		v.Position.x = -v.Position.x;
-		v.Normal.x = -v.Normal.x;
+		/*v.Position.x = -v.Position.x;
+		v.Normal.x = -v.Normal.x;*/
 		v.Tex.y = 1.0f - v.Tex.y;
 
 	}
 
-	int tri_count = (int)(mesh.indicesList.size() / 3);
+	//int tri_count = (int)(mesh.indicesList.size() / 3);
 
-	for (int i = 0; i < tri_count; ++i)
-	{
-		int* tri = mesh.indicesList.data() + i * 3;
+	//for (int i = 0; i < tri_count; ++i)
+	//{
+	//	int* tri = mesh.indicesList.data() + i * 3;
 
-		int temp = tri[0];
-		tri[0] = tri[2];
-		tri[2] = temp;
-	}
+	//	int temp = tri[0];
+	//	tri[0] = tri[2];
+	//	tri[2] = temp;
+	//}
 	file.close();
 };
 
@@ -67,24 +67,24 @@ void Load_AnimMesh(const char* meshFileName, SimpleMeshAnim& mesh)
 	file.read((char*)mesh.vertexList.data(), sizeof(SimpleVertexAnim) * player_vertex_count);
 
 	//Example mesh conditioning if needed - this flips handedness
-	//for (auto& v : mesh.vertexList)
-	//{
-	//	v.Position.x = -v.Position.x;
-	//	v.Normal.x = -v.Normal.x;
-	//	v.Tex.y = 1.0f - v.Tex.y;
+	for (auto& v : mesh.vertexList)
+	{
+		//v.Position.x = -v.Position.x;
+		//v.Normal.x = -v.Normal.x;
+		v.Tex.y = 1.0f - v.Tex.y;
 
-	//}
+	}
 
-	//int tri_count = (int)(mesh.indicesList.size() / 3);
+	/*int tri_count = (int)(mesh.indicesList.size() / 3);
 
-	//for (int i = 0; i < tri_count; ++i)
-	//{
-	//	int* tri = mesh.indicesList.data() + i * 3;
+	for (int i = 0; i < tri_count; ++i)
+	{
+		int* tri = mesh.indicesList.data() + i * 3;
 
-	//	int temp = tri[0];
-	//	tri[0] = tri[2];
-	//	tri[2] = temp;
-	//}
+		int temp = tri[0];
+		tri[0] = tri[2];
+		tri[2] = temp;
+	}*/
 	file.close();
 };
 void Load_AnimFile(const char* animFileName, vector<bones>& skeleton, vector<XMMATRIX>& inverse, anim_clip& clip)

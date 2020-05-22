@@ -1,3 +1,9 @@
+Texture2D diffuse : register(t0);
+Texture2D normal : register(t1);
+Texture2D emissive : register(t2);
+
+SamplerState textureSampler : register(s0);
+
 struct OutputVertex
 {
     float4 pos : SV_Position;
@@ -10,5 +16,7 @@ struct OutputVertex
 
 float4 main(OutputVertex v) : SV_TARGET
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 texelColor = diffuse.Sample(textureSampler, v.tex.xy);
+    float4 emissiveColor = emissive.Sample(textureSampler, v.tex.xy);
+    return texelColor + emissiveColor;
 }

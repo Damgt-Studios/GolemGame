@@ -107,13 +107,7 @@ namespace ADResource
 
 		struct SimpleModel
 		{
-#ifdef AD_MEMORY_DEFAULT
-			std::vector<SimpleVertex> vertices;
-			std::vector<int> indices;
-#else
-			ADVector<SimpleVertex> vertices;
-			ADVector<int> indices;
-#endif
+			bool animated = false;
 
 			XMFLOAT3 position;
 			XMFLOAT3 rotation;
@@ -135,7 +129,18 @@ namespace ADResource
 			ComPtr<ID3D11ShaderResourceView> emissive;
 		};
 
-		struct SimpleAnimModel
+		struct SimpleStaticModel : public SimpleModel
+		{
+#ifdef AD_MEMORY_DEFAULT
+			std::vector<SimpleVertex> vertices;
+			std::vector<int> indices;
+#else
+			ADVector<SimpleVertex> vertices;
+			ADVector<int> indices;
+#endif
+		};
+
+		struct SimpleAnimModel :  public SimpleModel
 		{
 #ifdef AD_MEMORY_DEFAULT
 			std::vector<SimpleVertexAnim> vertices;
@@ -151,27 +156,7 @@ namespace ADResource
 			ADVector<XMMATRIX> inverse_transforms;
 			ADVector<anim_clip> animations;
 #endif
-
-			XMFLOAT3 position;
-			XMFLOAT3 rotation;
-			XMFLOAT3 scale;
-
-			ComPtr<ID3D11Buffer> vertexBuffer;
-			ComPtr<ID3D11Buffer> indexBuffer;
-
-			ComPtr<ID3D11VertexShader> vertexShader;
-			ComPtr<ID3D11PixelShader> pixelShader;
-
-			ComPtr<ID3D11InputLayout> inputLayout;
-
 			ComPtr<ID3D11Buffer> animationBuffer;
-
-			// Texture stuff
-			ComPtr<ID3D11SamplerState> sampler;
-
-			ComPtr<ID3D11ShaderResourceView> albedo;
-			ComPtr<ID3D11ShaderResourceView> normal;
-			ComPtr<ID3D11ShaderResourceView> emissive;
 		};
 
 		struct WVP

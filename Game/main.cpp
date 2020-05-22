@@ -180,35 +180,36 @@ public:
 		spyro->SetAudio(audio_manager);
 
 
-		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
+		//ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
 
-		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Collectable** collectables = new Collectable*[10];
-		for (int i = 0; i < 10; ++i)
-		{
-			collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-			GameUtilities::AddGameObject(collectables[i]);
-		}
-		Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		//Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		//Collectable** collectables = new Collectable*[10];
+		//for (int i = 0; i < 10; ++i)
+		//{
+		//	collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//	GameUtilities::AddGameObject(collectables[i]);
+		//}
+		//Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 
-		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
+		//ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
 
 		// Colliders
-		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
 		std::vector<std::string> animationFiles;
 		animationFiles.push_back("files/models/Test.animfile");
 
-		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/TestAnim.AnimMesh", "files/textures/BattleMage,mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
+		Renderable* StaticTester = GameUtilities::AddSimpleAsset("files/models/ForestGolem_2.mesh", "files/textures/Golem_2.mat", XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/TestAnim.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -219,15 +220,16 @@ public:
 		}*/
 		// Comment this out - will run at 1fps
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
-		GameUtilities::AddGameObject(c1);
-		GameUtilities::AddGameObject(c2);
-		//GameUtilities::AddGameObject(a1);
-		GameUtilities::AddGameObject(a2);
-		GameUtilities::AddGameObject(e1);
-		GameUtilities::AddGameObject(e2);
-		GameUtilities::AddGameObject(e3);
-		GameUtilities::AddGameObject(t1);
-		GameUtilities::AddGameObject(testPlane);
+		//GameUtilities::AddGameObject(c1);
+		//GameUtilities::AddGameObject(c2);
+		////GameUtilities::AddGameObject(a1);
+		//GameUtilities::AddGameObject(a2);
+		//GameUtilities::AddGameObject(e1);
+		//GameUtilities::AddGameObject(e2);
+		//GameUtilities::AddGameObject(e3);
+		//GameUtilities::AddGameObject(t1);
+		//GameUtilities::AddGameObject(testPlane);
+		GameUtilities::AddGameObject(StaticTester);
 		GameUtilities::AddGameObject(AnimationTester);
 
 		testPlane->colliderPtr = nullptr;
@@ -291,11 +293,11 @@ public:
 		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
 		
 		//Needed to add this to the colliders for the collision queue
-		c1->colliderPtr = &test_colider;
+		/*c1->colliderPtr = &test_colider;
 		c1->type = OBJECT_TYPE::STATIC;
 
 		c2->colliderPtr = &test_colider1;
-		c2->type = OBJECT_TYPE::STATIC;
+		c2->type = OBJECT_TYPE::STATIC;*/
 
 		while (!shutdown)
 		{

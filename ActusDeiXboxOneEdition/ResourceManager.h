@@ -19,7 +19,7 @@ namespace
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
 	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
-	std::unordered_map<AD_ULONG, unsigned int> animated_fbxmodel_map;
+	//std::unordered_map<AD_ULONG, unsigned int> animated_fbxmodel_map;
 
 #ifdef AD_MEMORY_DEFAULT
 	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
@@ -28,8 +28,8 @@ namespace
 	std::vector<ADResource::ADRenderer::Light> lights;
 	std::vector<ADResource::ADRenderer::Model> pbrmodels;
 
-	std::vector<ADResource::ADRenderer::SimpleModel> fbxmodels;
-	std::vector<ADResource::ADRenderer::SimpleAnimModel> animated_fbxmodels;
+	std::vector<ADResource::ADRenderer::SimpleModel*> fbxmodels;
+	//std::vector<ADResource::ADRenderer::SimpleAnimModel> animated_fbxmodels;
 
 	std::vector<ADResource::ADGameplay::GameObject> passables;
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
@@ -68,7 +68,7 @@ public:
 
 	static AD_ULONG AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 
-	static AD_ULONG AddModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+	static AD_ULONG AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 	static AD_ULONG AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 
 	static AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
@@ -82,7 +82,7 @@ public:
 
 	static AD_ULONG InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
-	static AD_ULONG InitializeModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 	static AD_ULONG InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 
 public:
@@ -114,7 +114,7 @@ public:
 	static ADResource::ADGameplay::GameObject** GetGameObjectPtr();
 
 	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
-	static ADResource::ADRenderer::SimpleModel* GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
+	static ADResource::ADRenderer::SimpleModel** GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
 	static ADResource::ADRenderer::SimpleAnimModel* GetSimpleAnimModelPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
