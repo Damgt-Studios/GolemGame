@@ -13,6 +13,7 @@
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
 #include "MeshLoader.h"
+#include "../ActusDeiXboxOneEdition/Scene.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -136,43 +137,46 @@ public:
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
 
-		Light light;
-		ZeroMemory(&light, sizeof(Light));
-		light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-		light.diffuse = 
-			light.ambientUp = 
-			light.ambientDown = 
-			light.specular = 
-			XMFLOAT4(1, 1, 1, 1);
-		light.ambientIntensityDown = .1;
-		light.ambientIntensityUp = .1;
-		light.lightDirection = XMFLOAT4(0, -1, 0, 1);
-		light.diffuseIntensity = 1;
-		light.specularIntensity = .2;
-		light.diffuse =
-			light.ambientUp =
-			light.ambientDown =
-			light.specular =
-			XMFLOAT4(1, 1, 1, 1);
-		ResourceManager::AddLight(light);
+		//Light light;
+		//ZeroMemory(&light, sizeof(Light));
+		//light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
+		//light.diffuse = 
+		//	light.ambientUp = 
+		//	light.ambientDown = 
+		//	light.specular = 
+		//	XMFLOAT4(1, 1, 1, 1);
+		//light.ambientIntensityDown = .1;
+		//light.ambientIntensityUp = .1;
+		//light.lightDirection = XMFLOAT4(0, -1, 0, 1);
+		//light.diffuseIntensity = 1;
+		//light.specularIntensity = .2;
+		//light.diffuse =
+		//	light.ambientUp =
+		//	light.ambientDown =
+		//	light.specular =
+		//	XMFLOAT4(1, 1, 1, 1);
+		//ResourceManager::AddLight(light);
 
-		// Point light
-		Light light1;
-		ZeroMemory(&light1, sizeof(Light));
-		light1.ambientIntensityDown = .1;
-		light1.ambientIntensityUp = .1;
-		light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
-		light1.diffuseIntensity = .5;
-		light1.specularIntensity = .2;
-		light1.diffuse =
-			light1.ambientUp =
-			light1.ambientDown =
-			light1.specular =
-			XMFLOAT4(1, 1, 1, 1);
-		light1.lightType = (int)LIGHTTYPE::POINT;
-		light1.position = XMFLOAT4(10, 0, 0, 1);
-		light1.lightRadius = 100;
-		ResourceManager::AddLight(light1);
+		//// Point light
+		//Light light1;
+		//ZeroMemory(&light1, sizeof(Light));
+		//light1.ambientIntensityDown = .1;
+		//light1.ambientIntensityUp = .1;
+		//light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
+		//light1.diffuseIntensity = .5;
+		//light1.specularIntensity = .2;
+		//light1.diffuse =
+		//	light1.ambientUp =
+		//	light1.ambientDown =
+		//	light1.specular =
+		//	XMFLOAT4(1, 1, 1, 1);
+		//light1.lightType = (int)LIGHTTYPE::POINT;
+		//light1.position = XMFLOAT4(10, 0, 0, 1);
+		//light1.lightRadius = 100;
+		//ResourceManager::AddLight(light1);
+
+		ADGameplay::Scene tempScene;
+		tempScene.LoadScene();
 
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -219,18 +223,18 @@ public:
 		}*/
 		// Comment this out - will run at 1fps
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
-		GameUtilities::AddGameObject(c1);
-		GameUtilities::AddGameObject(c2);
-		//GameUtilities::AddGameObject(a1);
-		GameUtilities::AddGameObject(a2);
-		GameUtilities::AddGameObject(e1);
-		//GameUtilities::AddGameObject(e2);
-		//GameUtilities::AddGameObject(e3);
-		GameUtilities::AddGameObject(t1);
-		GameUtilities::AddGameObject(myHitBox);
-		GameUtilities::AddGameObject(testPlane);
+		//GameUtilities::AddGameObject(c1);
+		//GameUtilities::AddGameObject(c2);
+		////GameUtilities::AddGameObject(a1);
+		//GameUtilities::AddGameObject(a2);
+		//GameUtilities::AddGameObject(e1);
+		////GameUtilities::AddGameObject(e2);
+		////GameUtilities::AddGameObject(e3);
+		//GameUtilities::AddGameObject(t1);
+		//GameUtilities::AddGameObject(myHitBox);
+		//GameUtilities::AddGameObject(testPlane);
 
-		testPlane->colliderPtr = nullptr;
+		//testPlane->colliderPtr = nullptr;
 
 		
 		Model* models = ResourceManager::GetPBRPtr();
@@ -277,6 +281,7 @@ public:
 		SpyroUISetup::GameUserInterface gameUI;
 		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
 
+		tempScene.Render();
 		if (!engine->Initialize())
 		{
 			return;
@@ -299,6 +304,7 @@ public:
 
 		c2->colliderPtr = &test_colider1;
 		c2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+
 
 		while (!shutdown)
 		{
