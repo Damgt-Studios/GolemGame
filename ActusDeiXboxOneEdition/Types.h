@@ -165,9 +165,10 @@ namespace ADResource
 
 			std::vector<XMMATRIX> UpdateAnimation(float delta_time)
 			{
-				elapsedTime += delta_time;
 				std::vector<XMMATRIX> positions;
 				positions.resize(animations[0].frames[0].jointsMatrix.size());
+
+				elapsedTime += delta_time;
 
 				if (animations.size() > 0)
 				{

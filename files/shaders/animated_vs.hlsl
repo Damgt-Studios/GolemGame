@@ -33,7 +33,7 @@ cbuffer ShaderVars : register(b0)
 
 cbuffer AnimVars : register(b1)
 {
-    float4x4 m[27];
+    float4x4 m[50];
 }
     
 OutputVertex main(Vertex v)

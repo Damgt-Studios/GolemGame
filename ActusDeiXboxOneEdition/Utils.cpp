@@ -259,7 +259,7 @@ void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, st
 	device->CreateBuffer(&bdesc, &subData, &model.indexBuffer);
 
 	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bdesc.ByteWidth = sizeof(XMMATRIX) * 30;
+	bdesc.ByteWidth = sizeof(XMMATRIX) * 50;
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
 
 	device->CreateBuffer(&bdesc, nullptr, &model.animationBuffer);
@@ -409,17 +409,28 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 
 	std::string texture_Path = std::string(ADUtils::READ_PATH.begin(), ADUtils::READ_PATH.end()).append("files\\textures\\");
 
-	//Diffuse
-	std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
-	std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
+	if (mats.size() > 1) 
+	{
+		//Diffuse
+		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
+		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-	CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
+		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
 
-	//Emissive
-	textureName = std::string(texture_Path).append((char*)&mats[1]);
-	wTextureName = std::wstring(textureName.begin(), textureName.end());
+		//Emissive
+		textureName = std::string(texture_Path).append((char*)&mats[1]);
+		wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-	CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->emissive);
+		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->emissive);
+	}
+	else
+	{
+		//Diffuse
+		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
+		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
+
+		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
+	}
 }
 
 

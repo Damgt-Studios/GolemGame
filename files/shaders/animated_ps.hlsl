@@ -20,5 +20,8 @@ float4 main(OutputVertex v) : SV_TARGET
 {
     float4 texelColor = diffuse.Sample(textureSampler, v.tex.xy);
     float4 emissiveColor = emissive.Sample(textureSampler, v.tex.xy);
+    
+    clip(texelColor.a < 0.1f ? -1 : 1);
+    
     return texelColor + emissiveColor;
 }
