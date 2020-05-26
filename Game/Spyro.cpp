@@ -293,10 +293,10 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 
 	}
 
-	if (Velocity.y > maxDownwardVelocity)
-		Velocity.y += Gravity * delta_time * floatiness;
-	else
-		Velocity.y = maxDownwardVelocity;
+	//if (Velocity.y > maxDownwardVelocity)
+	//	Velocity.y += Gravity * delta_time * floatiness;
+	//else
+	//	Velocity.y = maxDownwardVelocity;
 
 	AddToPositionVector((XMFLOAT3&)Velocity);
 
@@ -307,10 +307,10 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	// Actions
 	if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)
 	{
-		buttonup = false;
-		floatiness = 0.25f;
-		jumping = true;
-		Velocity.y = (-Gravity * delta_time * floatiness) * 20;
+		//buttonup = false;
+		//floatiness = 0.25f;
+		//jumping = true;
+		//Velocity.y = (-Gravity * delta_time * floatiness) * 20;
 
 
 

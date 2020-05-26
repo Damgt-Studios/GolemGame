@@ -9,6 +9,7 @@ inline namespace ADMath
 {
 	inline float Lerp(float a, float b, float r) { return a + (b - a) * r; };
 	inline XMFLOAT4 VectorToFloat4(const XMVECTOR& vector) { XMFLOAT4 temp; XMStoreFloat4(&temp, vector); return temp; };
+	inline XMFLOAT3 VectorToFloat3(const XMVECTOR& vector) { XMFLOAT3 temp; XMStoreFloat3(&temp, vector); return temp; };
 	inline XMVECTOR Float3ToVector(const XMFLOAT3& floats) { return XMLoadFloat3(&floats); }
 	inline XMVECTOR Float4ToVector(const XMFLOAT4& floats) { return XMLoadFloat4(&floats); };
 	inline XMFLOAT4X4 MatrixToFloat4x4(const XMMATRIX& matrix) { XMFLOAT4X4 temp; XMStoreFloat4x4(&temp, matrix); return temp; };

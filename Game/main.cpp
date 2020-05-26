@@ -39,8 +39,8 @@ ref class App sealed : public IFrameworkView
 {
 private:
 	Engine* engine;
-	ADResource::ADGameplay::Spyro* spyro;
-	AD_ULONG spyro_collider = 0;
+	ADResource::ADGameplay::Spyro* golem;
+	AD_ULONG golem_collider = 0;
 
 	AudioManager* audio_manager;
 
@@ -175,9 +175,9 @@ public:
 		ResourceManager::AddLight(light1);
 
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
-		spyro->SetAudio(audio_manager);
+		golem = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		golem_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
+		golem->SetAudio(audio_manager);
 
 
 		//ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
@@ -203,12 +203,22 @@ public:
 		//Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		//Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
-		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
+		//Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
 		std::vector<std::string> animationFiles;
-		animationFiles.push_back("files/models/Golem_3_GroundSlam.animfile");
+		animationFiles.push_back("files/models/Golem_2_Idle.animfile");
 
-		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/Golem_3.AnimMesh", "files/textures/Golem_3.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/Golem_2.AnimMesh", "files/textures/Golem_2.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+
+		animationFiles[0] = "files/models/BattleMage.animfile";
+		//animationFiles[0] = "files/models/Trebuchet_Attack.animfile";
+
+		Renderable* AnimationTester = //GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(50, 50, 50), XMFLOAT3(0, 0, 0));
+			GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(500, 100, 500), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -218,7 +228,7 @@ public:
 			GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
 		}*/
 		// Comment this out - will run at 1fps
-		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
+		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
 		//GameUtilities::AddGameObject(c1);
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
@@ -230,23 +240,34 @@ public:
 		//GameUtilities::AddGameObject(testPlane);
 		GameUtilities::AddGameObject(Golem_1);
 		GameUtilities::AddGameObject(AnimationTester);
+		GameUtilities::AddGameObject(tempPlane);
 
-		testPlane->colliderPtr = nullptr;
+		//testPlane->colliderPtr = nullptr;
 
 		
-		Model* models = ResourceManager::GetPBRPtr();
-		int models_count = ResourceManager::GetPBRModelCount();
-		Model planeModel = models[testPlane->GetMeshId() - 2];
+		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
 		std::vector<ADQuadTreePoint> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
-		testPlane->GetWorldMatrix(groundWorld);
-		for(unsigned int i = 0; i < planeModel.indices.size(); i+=3)
+		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
+		tempPlane->GetWorldMatrix(groundWorld);
+		for(unsigned int i = 0; i < (*planeModel).indices.size(); i+=3)
 		{
-			ADPhysics::Triangle* tri = new ADPhysics::Triangle(planeModel.vertices[planeModel.indices[i]].Pos, planeModel.vertices[planeModel.indices[i + 1]].Pos, planeModel.vertices[planeModel.indices[i + 2]].Pos);
-			tri->a = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->a), groundWorld));
-			tri->b = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->b), groundWorld));
-			tri->c = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->c), groundWorld));
+			//ADPhysics::Triangle* tri = 
+				//new ADPhysics::Triangle(
+				//(*planeModel).vertices[(*planeModel).indices[i]].Position,
+				//(*planeModel).vertices[(*planeModel).indices[i + 1]].Position, 
+				//(*planeModel).vertices[(*planeModel).indices[i + 2]].Position);
+
+			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
+			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
+			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
+
+			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
+			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
+			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
+
+			ADPhysics::Triangle* tri = new Triangle(A, B, C);
 
 			ground.push_back(*tri);
 
@@ -255,7 +276,7 @@ public:
 			treePoints.push_back(point);
 		}
 
-		ADQuad boundary = ADQuad(planeModel.position.x, planeModel.position.z, 50, 50);
+		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
 		QuadTree* tree = new QuadTree(boundary);
 
 		for (unsigned int i = 0; i < treePoints.size(); i++)
@@ -268,7 +289,7 @@ public:
 		//passables[0] = a3;
 
 		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
+		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(golem->GetMeshId())->position);
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
 
@@ -319,12 +340,12 @@ public:
 			// Test
 			//spyro->Update(delta_time);
 			// Debug draw
-			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
+			ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = ResourceManager::GetModelPtrFromMeshId(golem->GetMeshId())->position;
 
-			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
+			engine->GetOrbitCamera()->SetLookAtAndRotate(golem->GetPosition(), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
-			spyro->GetView(view);
+			golem->GetView(view);
 		
 			// Physics test
 		
@@ -366,15 +387,16 @@ public:
 				}
 			}
 
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(spyro->GetPosition().x, spyro->GetPosition().z, 10, 10));
+			XMFLOAT3 SpyrosPosition = VectorToFloat3(golem->transform.r[3]);
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(SpyrosPosition.x, SpyrosPosition.z, 100, 100));
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
 				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
-			if (GroundClamping(spyro, trisInRange, delta_time))
-				spyro->jumping = false;
+			if (GroundClamping(golem, trisInRange, delta_time))
+				golem->jumping = false;
 
 
 			//Resolve all collisions that occurred this frame

@@ -259,7 +259,7 @@ void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, st
 	device->CreateBuffer(&bdesc, &subData, &model.indexBuffer);
 
 	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bdesc.ByteWidth = sizeof(XMMATRIX) * 50;
+	bdesc.ByteWidth = sizeof(XMMATRIX) * model.skeleton.size();
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
 
 	device->CreateBuffer(&bdesc, nullptr, &model.animationBuffer);

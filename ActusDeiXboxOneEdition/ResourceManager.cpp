@@ -106,7 +106,7 @@ void ResourceManager::AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOA
 	strcpy_s(shader.vshader, "files\\shaders\\skybox_vs.hlsl");
 	strcpy_s(shader.pshader, "files\\shaders\\skybox_ps.hlsl");
 
-	ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader);
+	ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
 	skybox.position = position;
 	skybox.scale = scale;
 	skybox.rotation = rotation;
@@ -120,7 +120,7 @@ AD_ULONG ResourceManager::GenerateUniqueID()
 AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
 {
 	ADResource::ADRenderer::Model temp;
-	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader);
+	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
 	temp.position = position;
 	temp.scale = scale;
 	temp.rotation = rotation;
@@ -163,7 +163,7 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 	temp->scale = scale;
 	temp->rotation = rotation;
 
-	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader, materials);
+	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
 
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();
@@ -182,7 +182,7 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 	temp->scale = scale;
 	temp->rotation = rotation;
 
-	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader, materials);
+	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
 
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();

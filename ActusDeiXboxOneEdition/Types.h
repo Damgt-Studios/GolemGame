@@ -240,32 +240,6 @@ namespace ADResource
 			float ambientIntensityUp, ambientIntensityDown, diffuseIntensity, specularIntensity;
 			float lightLength, p1, p2, p3;
 		};
-
-		// Renderer Types
-		struct PBRRendererResources
-		{
-			ComPtr<ID3D11Device1> device;
-			ComPtr<ID3D11DeviceContext1> context;
-			ComPtr<IDXGISwapChain1> chain;
-
-			ComPtr<ID3D11RenderTargetView> render_target_view;
-			D3D11_VIEWPORT viewport;
-
-			// States
-			ComPtr<ID3D11RasterizerState> defaultRasterizerState;
-			ComPtr<ID3D11RasterizerState> wireframeRasterizerState;
-
-			// Z Buffer
-			ComPtr<ID3D11Texture2D> zBuffer;
-			ComPtr<ID3D11DepthStencilView> depthStencil;
-
-			// Cbuffers
-			ComPtr<ID3D11Buffer> constantBuffer;
-			ComPtr<ID3D11Buffer> lightBuffer;
-
-			// Samplers
-			ComPtr<ID3D11SamplerState> normal_sampler;
-		};
 	}
 
 	namespace AD_UI
@@ -715,7 +689,7 @@ namespace ADResource
 
 		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time) 
 		{
-			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 1, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 1, 0, 0)));
+			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
 
 			for (unsigned int i = 0; i < ground.size(); i++)
 			{
@@ -724,7 +698,7 @@ namespace ADResource
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
 					obj->transform.r[3].m128_f32[1] += obj->colliderPtr->GetHeight() / 2;
-					obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
+					//obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
 					return true;
 				}
 			}
