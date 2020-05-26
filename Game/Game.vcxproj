@@ -223,12 +223,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalDependencies>$(SolutionDir)lib\Debug\ActusDeiEngine.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(SolutionDir)api\studio\lib\x64\fmodstudioL.lib;$(SolutionDir)api\core\lib\x64\fmodL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64;..\api\core\lib;..\api\studio\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64;$(SolutionDir)api\core\lib;$(SolutionDir)api\studio\lib</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pchgame.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pchgame.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)/ActusDeiXboxOneEdition;%(AdditionalIncludeDirectories);$(SolutionDir)ActusDeiEngine\;..\api\studio\inc;..\api\core\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)/ActusDeiXboxOneEdition;%(AdditionalIncludeDirectories);$(SolutionDir)ActusDeiEngine\;$(SolutionDir)api\studio\inc;$(SolutionDir)api\core\inc</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>AD_MEMORY_DEFAULT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
