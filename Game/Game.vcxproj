@@ -235,9 +235,7 @@
     </ClCompile>
     <PostBuildEvent>
       <Command>xcopy /y /r $(SolutionDir)api\studio\lib\x64\fmodstudioL.dll $(SolutionDir)x64\Debug\Game\AppX
-xcopy /y /r $(SolutionDir)api\core\lib\x64\fmodL.dll $(SolutionDir)x64\Debug\Game\AppX
-xcopy /y /r  $(SolutionDir)api\studio\lib\x64\fmodstudio.dll $(SolutionDir)x64\Release\Game\AppX
-xcopy /y /r $(SolutionDir)api\core\lib\x64\fmod.dll $(SolutionDir)x64\Release\Game\AppX</Command>
+xcopy /y /r $(SolutionDir)api\core\lib\x64\fmodL.dll $(SolutionDir)x64\Debug\Game\AppX</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -253,6 +251,10 @@ xcopy /y /r $(SolutionDir)api\core\lib\x64\fmod.dll $(SolutionDir)x64\Release\Ga
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>AD_MEMORY_DEFAULT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy /y /r  $(SolutionDir)api\studio\lib\x64\fmodstudio.dll $(SolutionDir)x64\Release\Game\AppX
+xcopy /y /r $(SolutionDir)api\core\lib\x64\fmod.dll $(SolutionDir)x64\Release\Game\AppX</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Image Include="Assets\BadgeLogo.scale-100.png" />
