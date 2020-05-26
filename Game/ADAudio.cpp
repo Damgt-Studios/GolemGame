@@ -110,9 +110,10 @@ namespace AD_ADUIO
                 FMOD_VECTOR position = VectorToFmod(vPosition);
                 ADAudio::AudioErrorCheck(pChannel->set3DAttributes(&position, nullptr));
             }
-            ADAudio::AudioErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
+            //ADAudio::AudioErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
             ADAudio::AudioErrorCheck(pChannel->setPaused(false));
             audioImp->channelsByName[nChannelId] = pChannel;
+            ADAudio::AudioErrorCheck(audioImp->channelsByName[nChannelId]->setVolume(fVolumedB));
         }
         return nChannelId;
     }
@@ -138,8 +139,13 @@ namespace AD_ADUIO
 
     bool ADAudio::IsPlaying(int nChannelId) const
     {
+
         bool isPlaying = false;
-        ADAudio::AudioErrorCheck(audioImp->channelsByName[nChannelId]->isPlaying(&isPlaying));
+        auto tFoundIt = audioImp->channelsByName.find(nChannelId);
+        if (tFoundIt != audioImp->channelsByName.end())
+        {
+            ADAudio::AudioErrorCheck(audioImp->channelsByName[nChannelId]->isPlaying(&isPlaying));
+        }
         return isPlaying;
     }
 
@@ -185,13 +191,13 @@ namespace AD_ADUIO
             float volume = personalVolume;
             switch (audioSourceType)
             {
-            case 1:
+            case 0:
                 volume *= engine->masterMusicVolume;
                 break;
-            case 2:
+            case 1:
                 volume *= engine->masterSoundFXVolume;
                 break;
-            case 3:
+            case 2:
                 volume *= engine->masterUISoundFXVolume;
                 break;
             default:

@@ -27,7 +27,7 @@ namespace AD_ADUIO
         FMOD::Studio::System* studioSystem;
         FMOD::System* audioSystem;
 
-        int nextChannelId;
+        int nextChannelId = 0;
 
         std::map<std::string, FMOD::Sound*> soundsByName;
         std::map<int, FMOD::Channel*> channelsByName;
@@ -62,7 +62,7 @@ namespace AD_ADUIO
         ADAudio* engine;
         std::string soundName;
         XMFLOAT3 vPos;
-        float personalVolume = 1;
+        float personalVolume;
         UINT audioSourceType;
         int currentChannel;
         void LoadSound(bool is3D = true, bool isLooping = false, bool isStream = false);

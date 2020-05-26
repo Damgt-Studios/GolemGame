@@ -112,27 +112,32 @@ public:
 	virtual void Run()
 	{
 		AD_ADUIO::ADAudio audioEngine;
-
 		audioEngine.Init();
-		audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
-		audioEngine.LoadSound("files\\audio\\main_theme.wav", false, true, true);
 
-		// Bruh
+		AD_ADUIO::AudioSource titleMusic;
+		titleMusic.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::MUSIC;
+		titleMusic.engine = &audioEngine;
+		titleMusic.personalVolume = 0.02f;
+		titleMusic.soundName = "files\\audio\\Opening.mp3";
+		titleMusic.LoadSound(false, true, true);
+		audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
+		//audioEngine.LoadSound("", );
+
 		//std::vector<std::string> sfx;
 		//sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
-		//sfx.push_back("files\\audio\\SFK_Destructable_Break.wav");
-		//sfx.push_back("files\\audio\\SFK_Enemy_Death.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Charging.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Death.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_FireBreath.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Glide.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Hurt.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Jump.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Land.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Object_Hit.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Running_Jump.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Walking.wav");
-		//sfx.push_back("files\\audio\\SFK_Player_Water_Splash.wav");
+		//sfx.push_back("files\\audio\\SFX_Destructable_Break.wav");
+		//sfx.push_back("files\\audio\\SFX_Enemy_Death.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Charging.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Death.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_FireBreath.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Glide.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Hurt.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Jump.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Land.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Object_Hit.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Running_Jump.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Walking.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Water_Splash.wav");
 		//audio_manager = new AudioManager;
 		//audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
 		
@@ -309,9 +314,9 @@ public:
 		c2->colliderPtr = &test_colider1;
 		c2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 
-#ifdef NDEBUG
-			audioEngine.PlaySounds("files\\audio\\main_theme.wav", { 0,0,0 }, 10);
-#endif
+//#ifdef NDEBUG
+		titleMusic.Play();
+//#endif
 
 		while (!shutdown)
 		{
