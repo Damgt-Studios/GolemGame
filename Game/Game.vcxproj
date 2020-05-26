@@ -222,31 +222,39 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>$(SolutionDir)lib\Debug\ActusDeiEngine.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories); $(VCInstallDir)\lib\store\amd64; $(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(SolutionDir)lib\Debug\ActusDeiEngine.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(SolutionDir)api\studio\lib\x64\fmodstudioL.lib;$(SolutionDir)api\core\lib\x64\fmodL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64;$(SolutionDir)api\core\lib;$(SolutionDir)api\studio\lib</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pchgame.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pchgame.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)/ActusDeiXboxOneEdition;%(AdditionalIncludeDirectories);$(SolutionDir)ActusDeiEngine\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);$(SolutionDir)/ActusDeiXboxOneEdition;%(AdditionalIncludeDirectories);$(SolutionDir)ActusDeiEngine\;$(SolutionDir)api\studio\inc;$(SolutionDir)api\core\inc</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>AD_MEMORY_DEFAULT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>$(SolutionDir)lib\Release\ActusDeiEngine.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories); $(VCInstallDir)\lib\store\amd64; $(VCInstallDir)\lib\amd64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(SolutionDir)lib\Release\ActusDeiEngine.lib;d2d1.lib;d3d11.lib;dxgi.lib;windowscodecs.lib;dwrite.lib;$(SolutionDir)api\studio\lib\x64\fmodstudio.lib;$(SolutionDir)api\core\lib\x64\fmod.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(VCInstallDir)\lib\store\amd64;$(VCInstallDir)\lib\amd64;..\api\core\lib;..\api\studio\lib</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pchgame.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pchgame.pch</PrecompiledHeaderOutputFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories);$(SolutionDir)/ActusDeiXboxOneEdition\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(IntermediateOutputPath);%(AdditionalIncludeDirectories);$(SolutionDir)/ActusDeiXboxOneEdition\;..\api\core\inc;..\api\studio\inc</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>AD_MEMORY_DEFAULT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Image Include="Assets\BadgeLogo.scale-100.png" />
@@ -311,6 +319,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-400.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ADAudio.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="GameEffects.h" />
     <ClInclude Include="GameObjectClasses.h" />
@@ -322,6 +331,7 @@
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ADAudio.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="GameObjectClasses.cpp" />
     <ClCompile Include="GameplayBaseClasses.cpp" />

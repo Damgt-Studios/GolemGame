@@ -1,7 +1,8 @@
 #pragma once
 #include "GameplayBaseClasses.h"
 #include "ADUserInterface.h"
-#include "AudioManager.h"
+//#include "AudioManager.h"
+#include "ADAudio.h"
 #include "GameObjectClasses.h"
 
 using namespace ADResource::ADGameplay;
@@ -56,7 +57,7 @@ namespace ADResource
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 
-			void SetAudio(AudioManager* _audioManager);
+			//void SetAudio(AudioManager* _audioManager);
 
 		private:
 			void HandleInput(float delta_time);
@@ -65,7 +66,7 @@ namespace ADResource
 			int health;
 			bool playingSound = false;
 			UINT collectionNoiseID;
-			AudioManager* audioManager;
+			//AudioManager* audioManager;
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
