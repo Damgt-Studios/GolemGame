@@ -210,9 +210,6 @@ public:
 
 		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/Golem_3.AnimMesh", "files/textures/Golem_3.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 
-		animationFiles[0] = "files/models/BattleMage.animfile";
-		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
-
 		// Add gameobjects
 		// Comment this out - will run at 1fps
 		/*int COUNT = 2500;
