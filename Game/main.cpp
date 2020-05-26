@@ -206,9 +206,9 @@ public:
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
 		std::vector<std::string> animationFiles;
-		animationFiles.push_back("files/models/Minion_4_Run.animfile");
+		animationFiles.push_back("files/models/Golem_3_GroundSlam.animfile");
 
-		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/Golem_3.AnimMesh", "files/textures/Golem_3.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 
 		animationFiles[0] = "files/models/BattleMage.animfile";
 		Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1,1,1), XMFLOAT3(0, 0, 0));
