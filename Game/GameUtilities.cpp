@@ -2,20 +2,38 @@
 #include "GameUtilities.h"
 
 
-ADResource::ADGameplay::Spyro* GameUtilities::LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+//ADResource::ADGameplay::Spyro* GameUtilities::LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+//{
+//	ADResource::ADGameplay::Spyro* temp = new ADResource::ADGameplay::Spyro;
+//
+//	ADUtils::SHADER shader = { 0 };
+//	strcpy_s(shader.vshader, "files\\shaders\\spyro_vs.hlsl");
+//	strcpy_s(shader.pshader, "files\\shaders\\spyro_ps.hlsl");
+//
+//	// Transform data
+//	temp->SetPosition(position);
+//	temp->SetRotation(rotation);
+//	temp->SetScale(scale);
+//
+//	AD_ULONG id = ResourceManager::InitializePBRModel(modelname, position, scale, rotation, shader);
+//	temp->SetMeshID(id);
+//
+//	return temp;
+//}
+
+ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation) 
 {
-	ADResource::ADGameplay::Spyro* temp = new ADResource::ADGameplay::Spyro;
+	ADResource::ADGameplay::Golem* temp = new ADResource::ADGameplay::Golem;
 
 	ADUtils::SHADER shader = { 0 };
-	strcpy_s(shader.vshader, "files\\shaders\\spyro_vs.hlsl");
-	strcpy_s(shader.pshader, "files\\shaders\\spyro_ps.hlsl");
+	strcpy_s(shader.vshader, "files\\shaders\\animated_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\animated_ps.hlsl");
 
-	// Transform data
 	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
 
-	AD_ULONG id = ResourceManager::InitializePBRModel(modelname, position, scale, rotation, shader);
+	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
 
 	return temp;

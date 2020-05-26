@@ -39,7 +39,7 @@ ref class App sealed : public IFrameworkView
 {
 private:
 	Engine* engine;
-	ADResource::ADGameplay::Spyro* golem;
+	ADResource::ADGameplay::Golem* golem;
 	AD_ULONG golem_collider = 0;
 
 	AudioManager* audio_manager;
@@ -134,7 +134,7 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
+		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
@@ -174,8 +174,12 @@ public:
 		light1.lightRadius = 100;
 		ResourceManager::AddLight(light1);
 
+		std::vector<std::string> animations;
+		animations.push_back("files/models/Golem_1_Idle.animfile");
+		animations.push_back("files/models/Golem_1_Run.animfile");
+
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		golem_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
 		golem->SetAudio(audio_manager);
 
@@ -208,8 +212,6 @@ public:
 		std::vector<std::string> animationFiles;
 		animationFiles.push_back("files/models/Golem_2_Idle.animfile");
 
-		Renderable* Golem_1 = GameUtilities::AddSimpleAnimAsset("files/models/Golem_2.AnimMesh", "files/textures/Golem_2.mat", animationFiles, XMFLOAT3(0, 0, -5), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-
 		animationFiles[0] = "files/models/BattleMage.animfile";
 		//animationFiles[0] = "files/models/Trebuchet_Attack.animfile";
 
@@ -218,7 +220,7 @@ public:
 
 		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(500, 100, 500), XMFLOAT3(0, 0, 0));
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1000, 100, 1000), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -238,7 +240,6 @@ public:
 		//GameUtilities::AddGameObject(e3);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
-		GameUtilities::AddGameObject(Golem_1);
 		GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
@@ -289,9 +290,10 @@ public:
 		//passables[0] = a3;
 
 		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(golem->GetMeshId())->position);
+		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+		engine->GetOrbitCamera()->SetPosition(XMFLOAT3(100, 200, -200));
 
 		SpyroUISetup::GameUserInterface gameUI;
 		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
@@ -340,8 +342,9 @@ public:
 			// Test
 			//spyro->Update(delta_time);
 			// Debug draw
-			ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = ResourceManager::GetModelPtrFromMeshId(golem->GetMeshId())->position;
+			ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
+			//engine->GetOrbitCamera()->SetRadius(200);
 			engine->GetOrbitCamera()->SetLookAtAndRotate(golem->GetPosition(), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
@@ -388,7 +391,7 @@ public:
 			}
 
 			XMFLOAT3 SpyrosPosition = VectorToFloat3(golem->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(SpyrosPosition.x, SpyrosPosition.z, 100, 100));
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(SpyrosPosition.x, SpyrosPosition.z, 200, 200));
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{

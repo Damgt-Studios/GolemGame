@@ -490,7 +490,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			temp.r[3].m128_f32[1] = -5;
 			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
 			//temp = XMMatrixRotationZ(3.14f) * temp;
-			temp = XMMatrixRotationY(3.14f) * temp;
+			//temp = XMMatrixRotationY(3.14f) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 			// View
 

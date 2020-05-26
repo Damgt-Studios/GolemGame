@@ -316,6 +316,7 @@
     <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameUtilities.h" />
+    <ClInclude Include="Golem.h" />
     <ClInclude Include="pchgame.h" />
     <ClInclude Include="Spyro.h" />
     <ClInclude Include="XTime.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
+    <ClCompile Include="Golem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pchgame.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
