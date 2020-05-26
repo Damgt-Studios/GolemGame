@@ -9,7 +9,8 @@
 
 #include "ADUserInterface.h"
 #include "GameUserInterface.h"
-#include "AudioManager.h"
+//#include "AudioManager.h"
+#include "ADAudio.h"
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
 #include "MeshLoader.h"
@@ -34,6 +35,7 @@ using namespace Platform::Collections;
 bool FULLSCREEN = false;
 // Settings
 
+
 // the class definition for the core "framework" of our app
 ref class App sealed : public IFrameworkView
 {
@@ -42,7 +44,8 @@ private:
 	ADResource::ADGameplay::Spyro* spyro;
 	AD_ULONG spyro_collider = 0;
 
-	AudioManager* audio_manager;
+	//AudioManager* audio_manager;
+	AD_ADUIO::ADAudio* audio;
 
 	bool shutdown = false;
 
@@ -108,24 +111,30 @@ public:
 
 	virtual void Run()
 	{
+		AD_ADUIO::ADAudio audioEngine;
+
+		audioEngine.Init();
+		audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
+		audioEngine.LoadSound("files\\audio\\main_theme.wav", false, true, true);
+
 		// Bruh
-		std::vector<std::string> sfx;
-		sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
-		sfx.push_back("files\\audio\\SFK_Destructable_Break.wav");
-		sfx.push_back("files\\audio\\SFK_Enemy_Death.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Charging.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Death.wav");
-		sfx.push_back("files\\audio\\SFK_Player_FireBreath.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Glide.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Hurt.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Jump.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Land.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Object_Hit.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Running_Jump.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Walking.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Water_Splash.wav");
-		audio_manager = new AudioManager;
-		audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
+		//std::vector<std::string> sfx;
+		//sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
+		//sfx.push_back("files\\audio\\SFK_Destructable_Break.wav");
+		//sfx.push_back("files\\audio\\SFK_Enemy_Death.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Charging.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Death.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_FireBreath.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Glide.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Hurt.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Jump.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Land.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Object_Hit.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Running_Jump.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Walking.wav");
+		//sfx.push_back("files\\audio\\SFK_Player_Water_Splash.wav");
+		//audio_manager = new AudioManager;
+		//audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
 		
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
@@ -177,7 +186,7 @@ public:
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
-		spyro->SetAudio(audio_manager);
+		//spyro->SetAudio(audio_manager);
 
 
 		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
@@ -300,6 +309,10 @@ public:
 		c2->colliderPtr = &test_colider1;
 		c2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 
+#ifdef NDEBUG
+			audioEngine.PlaySounds("files\\audio\\main_theme.wav", { 0,0,0 }, 10);
+#endif
+
 		while (!shutdown)
 		{
 			game_time.Signal();
@@ -309,14 +322,8 @@ public:
 
 			ProcessInput();
 
-			// Audio -Music doesn't play in debug mode -  annoying AF
-			if (main_music_loop_timer <= 0 && !music_triggered)
-			{
-#ifdef NDEBUG
-				music_triggered = true;
-				audio_manager->PlayBackgroundMusic();
-#endif
-			}
+
+
 
 			// Test
 			//spyro->Update(delta_time);
@@ -328,6 +335,11 @@ public:
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			spyro->GetView(view);
 		
+
+			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
+			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
+			audioEngine.Update();
+
 			// Physics test
 		
 			/*spyro->CheckCollision(c1);
@@ -404,6 +416,7 @@ public:
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
 			}
 		}
+		audioEngine.Shutdown();
 	}
 	virtual void Uninitialize() {}
 
@@ -416,18 +429,18 @@ public:
 
 	void ProcessInput()
 	{
-		if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
-		{
-			if (effect_triggered) audio_manager->ResumeEffect(7, effect_id);
-			else {
-				effect_triggered = true;
-				effect_id = audio_manager->PlayEffect(7);
-			}
-		}
-		if (Input::QueryButtonDown(GamepadButtons::DPadRight))
-		{
-			audio_manager->PauseEffect(0, effect_id);
-		}
+		//if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
+		//{
+		//	if (effect_triggered) audio_manager->ResumeEffect(7, effect_id);
+		//	else {
+		//		effect_triggered = true;
+		//		effect_id = audio_manager->PlayEffect(7);
+		//	}
+		//}
+		//if (Input::QueryButtonDown(GamepadButtons::DPadRight))
+		//{
+		//	audio_manager->PauseEffect(0, effect_id);
+		//}
 
 		static float camera_rotation_thresh = 250;
 		float dt = delta_time;

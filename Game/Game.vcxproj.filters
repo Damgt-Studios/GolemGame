@@ -34,6 +34,7 @@
     <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
     <ClCompile Include="GameObjectClasses.cpp" />
+    <ClCompile Include="ADAudio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -203,5 +204,6 @@
     <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameObjectClasses.h" />
     <ClInclude Include="GameEffects.h" />
+    <ClInclude Include="ADAudio.h" />
   </ItemGroup>
 </Project>

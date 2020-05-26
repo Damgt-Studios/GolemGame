@@ -183,18 +183,18 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 			if (obj->colliderPtr->isCollision(&chargeCollider, m))
 			{
 				OnTriggerCharge(obj);
-				if (audioManager)
-				{
-					if (playingSound)
-					{
-						audioManager->ResumeEffect(EnemyDeathSound, collectionNoiseID);
-					}
-					else
-					{
-						playingSound = true;
-						collectionNoiseID = audioManager->PlayEffect(EnemyDeathSound);
-					}
-				}
+				//if (audioManager)
+				//{
+				//	if (playingSound)
+				//	{
+				//		audioManager->ResumeEffect(EnemyDeathSound, collectionNoiseID);
+				//	}
+				//	else
+				//	{
+				//		playingSound = true;
+				//		collectionNoiseID = audioManager->PlayEffect(EnemyDeathSound);
+				//	}
+				//}
 			}
 		}
 		else if (fire == true)
@@ -223,11 +223,11 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 	}
 }
 
-
-void ADResource::ADGameplay::Spyro::SetAudio(AudioManager* _audioManager)
-{
-	audioManager = _audioManager;
-}
+//
+//void ADResource::ADGameplay::Spyro::SetAudio(AudioManager* _audioManager)
+//{
+//	audioManager = _audioManager;
+//}
 
 void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 {
