@@ -12,23 +12,23 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
-		enum SoundIds
-		{
-			GemCollectSound = 0,
-			DestructableBreakSound,
-			EnemyDeathSound,
-			PlayerChargeSound,
-			PlayerDeathSound,
-			FireBrathSound,
-			GlideSound,
-			HurtSound,
-			JumpSound,
-			LandSound,
-			ObjectHitSound,
-			RunningJumpSound,
-			WalkingSound,
-			WaterSplashSound
-		};
+		//enum SoundIds
+		//{
+		//	GemCollectSound = 0,
+		//	DestructableBreakSound,
+		//	EnemyDeathSound,
+		//	PlayerChargeSound,
+		//	PlayerDeathSound,
+		//	FireBrathSound,
+		//	GlideSound,
+		//	HurtSound,
+		//	JumpSound,
+		//	LandSound,
+		//	ObjectHitSound,
+		//	RunningJumpSound,
+		//	WalkingSound,
+		//	WaterSplashSound
+		//};
 
 		class Spyro : public Destructable
 		{

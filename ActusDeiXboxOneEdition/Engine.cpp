@@ -20,13 +20,13 @@ bool Engine::Initialize()
 	pbr.Initialize(); // Needs error checking
 
 	// Initialize unified buffers
-	ResourceManager::ConfigureUnifiedBuffers(pbr.GetPBRRendererResources()->device);
+	//ResourceManager::ConfigureUnifiedBuffers(pbr.GetRendererResources()->device);
 
 	// Start timer
 	engine_time = XTime();
 	engine_time.Restart();
 
-	userInterface->Initialize(pbr.GetPBRRendererResources()->device.Get(), pbr.GetPBRRendererResources()->context.Get());
+	userInterface->Initialize(pbr.GetRendererResources()->device.Get(), pbr.GetRendererResources()->context.Get());
 
 	return true;
 }
@@ -76,8 +76,8 @@ bool Engine::Render()
 		OBJS[i]->Render();
 	}
 
-	pbr.Render(camera, ocamera);
-	userInterface->Render(pbr.GetPBRRendererResources()->context.Get(), pbr.GetPBRRendererResources()->render_target_view.Get());
+	pbr.Render(camera, ocamera, delta_time_sf);
+	userInterface->Render(pbr.GetRendererResources()->context.Get(), pbr.GetRendererResources()->render_target_view.Get());
 	pbr.Frame();
 
 	return true;
