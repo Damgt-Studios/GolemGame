@@ -175,11 +175,10 @@ public:
 		ResourceManager::AddLight(light1);
 
 		std::vector<std::string> animations;
-		animations.push_back("files/models/Minion_4_Run.animfile");
-		//animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Golem_4_Idle.animfile");
 
-		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_4.AnimMesh", "files/textures/Golem_4.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		golem->SetAudio(audio_manager);
 
 
@@ -214,8 +213,7 @@ public:
 		animationFiles[0] = "files/models/BattleMage.animfile";
 		//animationFiles[0] = "files/models/Trebuchet_Attack.animfile";
 
-		Renderable* AnimationTester = //GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(50, 50, 50), XMFLOAT3(0, 0, 0));
-			GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
@@ -239,7 +237,7 @@ public:
 		//GameUtilities::AddGameObject(e3);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
-		GameUtilities::AddGameObject(AnimationTester);
+		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
 		//testPlane->colliderPtr = nullptr;

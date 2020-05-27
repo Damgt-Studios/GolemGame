@@ -265,7 +265,7 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 
 	renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
 	renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
-	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->vertexBufferLayout.Get());
+	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->inputLayout.Get());
 
 	renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
 	// Skybox
@@ -390,7 +390,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
 
 	// sET THE PIPELINE
-	UINT skystrices[] = { sizeof(Vertex) };
+	UINT skystrices[] = { sizeof(SimpleVertex) };
 	UINT skyoffsets[] = { 0 };
 	ID3D11Buffer* skyVertexBuffers[] = { ResourceManager::GetSkybox()->vertexBuffer.Get() };
 	renderer_resources.context->IASetVertexBuffers(0, 1, skyVertexBuffers, skystrices, skyoffsets);
@@ -400,8 +400,9 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	rot = ResourceManager::GetSkybox()->rotation;
 	scale = ResourceManager::GetSkybox()->scale;
 
-	temp = XMMatrixRotationX(XMConvertToRadians(180));
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(scale.x, scale.y, scale.z));
+	temp = XMMatrixIdentity();
+	//temp = XMMatrixRotationX(XMConvertToRadians(180));
+	temp = XMMatrixMultiply(temp, XMMatrixScaling(1,1,1));
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
@@ -436,7 +437,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
 	renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
-	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->vertexBufferLayout.Get());
+	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->inputLayout.Get());
 
 	renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
 	// Skybox
@@ -520,8 +521,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_animated_model->albedo.Get(),
+				current_animated_model->emissive.Get(),
 				current_animated_model->normal.Get(),
-				current_animated_model->emissive.Get()
 			};
 
 			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);

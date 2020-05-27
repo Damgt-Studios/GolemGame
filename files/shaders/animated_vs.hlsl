@@ -20,6 +20,7 @@ struct OutputVertex
     float3 tangent : TANGENT;
     int4 joints : JOINTS;
     float4 weights : WEIGHTS;
+    float4 localPos : LocalPos;
     float4 worldPos : WorldPos;
 };
 
@@ -54,6 +55,7 @@ OutputVertex main(Vertex v)
     }
     
         // Applymatrices
+    output.localPos = skinned_position;
     skinned_position = mul(skinned_position, World);
     output.worldPos = skinned_position;
     skinned_position = mul(skinned_position, View);
@@ -61,10 +63,13 @@ OutputVertex main(Vertex v)
     
     skinned_normal = mul(float4(skinned_normal.xyz, 0), World);
     
+    output.tangent = mul(float4(v.tangent, 0), World);
+    
     output.xyzw = skinned_position;
     output.tex = v.tex;
+    
     output.normals = skinned_normal;
-    output.tangent = v.tangent;
+    
     output.joints = v.joints;
     output.weights = v.weights;
     

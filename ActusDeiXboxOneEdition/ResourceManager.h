@@ -53,7 +53,7 @@ namespace
 #endif
 
 	// On/ Offs
-	ADResource::ADRenderer::Model skybox;
+	ADResource::ADRenderer::SimpleStaticModel skybox;
 
 	// Unified buffers
 	ComPtr<ID3D11Buffer> vertexBuffer;
@@ -75,7 +75,7 @@ public:
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
 	static AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	static void AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static void AddSkybox(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	// Utils
 	static AD_ULONG GenerateUniqueID();
@@ -105,7 +105,7 @@ public:
 	
 	static char* GetPBRDataPtr();
 	static ADResource::ADRenderer::Model* GetPBRPtr();
-	static ADResource::ADRenderer::Model* GetSkybox();
+	static ADResource::ADRenderer::SimpleStaticModel* GetSkybox();
 	static ADResource::ADRenderer::Light* GetLightPtr();
 	static int GetPBRModelCount();
 	static int GetPBRVertexCount();

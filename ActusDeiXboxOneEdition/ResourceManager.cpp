@@ -100,13 +100,15 @@ AD_ULONG ResourceManager::AddSpyro(std::string modelname, XMFLOAT3 position, XMF
 }
 
 
-void ResourceManager::AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+void ResourceManager::AddSkybox(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADUtils::SHADER shader = { 0 };
 	strcpy_s(shader.vshader, "files\\shaders\\skybox_vs.hlsl");
 	strcpy_s(shader.pshader, "files\\shaders\\skybox_ps.hlsl");
 
-	ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+	//ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+	ADUtils::LoadStaticMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+
 	skybox.position = position;
 	skybox.scale = scale;
 	skybox.rotation = rotation;
@@ -282,7 +284,7 @@ ADResource::ADRenderer::Model* ResourceManager::GetPBRPtr()
 	return pbrmodels.data();
 }
 
-ADResource::ADRenderer::Model* ResourceManager::GetSkybox()
+ADResource::ADRenderer::SimpleStaticModel* ResourceManager::GetSkybox()
 {
 	return &skybox;
 }

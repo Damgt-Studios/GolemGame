@@ -41,6 +41,8 @@ OutputVertex main( InputVertex vertex )
     output.pos = mul(float4(vertex.pos, 1), worldMatrix);
     output.pos = mul(output.pos, viewMatrix);
     output.pos = mul(output.pos, projectionMatrix);
+    
+    output.normal = mul(float4(vertex.normal.xyz, 0), worldMatrix);
     return output;
 
 }

@@ -422,6 +422,12 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 		wTextureName = std::wstring(textureName.begin(), textureName.end());
 
 		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->emissive);
+
+		//Normal
+		textureName = std::string(texture_Path).append((char*)&mats[2]);
+		wTextureName = std::wstring(textureName.begin(), textureName.end());
+
+		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->normal);
 	}
 	else
 	{
