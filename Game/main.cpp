@@ -175,11 +175,11 @@ public:
 		ResourceManager::AddLight(light1);
 
 		std::vector<std::string> animations;
-		animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Minion_4_Run.animfile");
 		//animations.push_back("files/models/Golem_1_Run.animfile");
 
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		golem->SetAudio(audio_manager);
 
 
@@ -335,7 +335,7 @@ public:
 			// Test
 			//spyro->Update(delta_time);
 			// Debug draw
-			ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
+			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
 			engine->GetOrbitCamera()->SetRadius(50);
