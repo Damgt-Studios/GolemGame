@@ -74,6 +74,8 @@ private:
 	ADPhysics::AABB test_colider1;
 	ADPhysics::Plane test_plane;
 
+	//Scene
+	ADGameplay::Scene currentScene;
 
 
 public:
@@ -97,6 +99,7 @@ public:
 
 		Gamepad::GamepadAdded += ref new EventHandler<Gamepad^>(&Input::OnGamepadAdded);
 		Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^>(&Input::OnGamepadRemoved);
+		currentScene.LoadScene("files/scenes/test.scene");
 	}
 
 	virtual void SetWindow(CoreWindow^ Window)
@@ -137,46 +140,7 @@ public:
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
 
-		//Light light;
-		//ZeroMemory(&light, sizeof(Light));
-		//light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-		//light.diffuse = 
-		//	light.ambientUp = 
-		//	light.ambientDown = 
-		//	light.specular = 
-		//	XMFLOAT4(1, 1, 1, 1);
-		//light.ambientIntensityDown = .1;
-		//light.ambientIntensityUp = .1;
-		//light.lightDirection = XMFLOAT4(0, -1, 0, 1);
-		//light.diffuseIntensity = 1;
-		//light.specularIntensity = .2;
-		//light.diffuse =
-		//	light.ambientUp =
-		//	light.ambientDown =
-		//	light.specular =
-		//	XMFLOAT4(1, 1, 1, 1);
-		//ResourceManager::AddLight(light);
-
-		//// Point light
-		//Light light1;
-		//ZeroMemory(&light1, sizeof(Light));
-		//light1.ambientIntensityDown = .1;
-		//light1.ambientIntensityUp = .1;
-		//light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
-		//light1.diffuseIntensity = .5;
-		//light1.specularIntensity = .2;
-		//light1.diffuse =
-		//	light1.ambientUp =
-		//	light1.ambientDown =
-		//	light1.specular =
-		//	XMFLOAT4(1, 1, 1, 1);
-		//light1.lightType = (int)LIGHTTYPE::POINT;
-		//light1.position = XMFLOAT4(10, 0, 0, 1);
-		//light1.lightRadius = 100;
-		//ResourceManager::AddLight(light1);
-
-		ADGameplay::Scene tempScene;
-		tempScene.LoadScene();
+		currentScene.Render();
 
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -184,17 +148,6 @@ public:
 		spyro->SetAudio(audio_manager);
 
 
-		ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
-
-		Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		Trigger** collectables = new Trigger *[10];
-		for (int i = 0; i < 10; ++i)
-		{
-			collectables[i] = GameUtilities::AddTinyEssenceFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(i * 5 + -10, 1, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-			GameUtilities::AddGameObject(collectables[i]);
-		}
-		Destructable* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		spyro->testAttack.active = false;
 		spyro->testAttack.hitboxCount = 1;
@@ -202,16 +155,12 @@ public:
 		spyro->testAttack.hitbox = myHitBox;
 		//Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		//Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Trigger* t1 = GameUtilities::AddEndGameTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 
 		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
 
 		// Colliders
-		Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
 		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
@@ -223,16 +172,8 @@ public:
 		}*/
 		// Comment this out - will run at 1fps
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
-		//GameUtilities::AddGameObject(c1);
-		//GameUtilities::AddGameObject(c2);
-		////GameUtilities::AddGameObject(a1);
-		//GameUtilities::AddGameObject(a2);
-		//GameUtilities::AddGameObject(e1);
-		////GameUtilities::AddGameObject(e2);
-		////GameUtilities::AddGameObject(e3);
-		//GameUtilities::AddGameObject(t1);
-		//GameUtilities::AddGameObject(myHitBox);
-		//GameUtilities::AddGameObject(testPlane);
+
+		GameUtilities::AddGameObject(testPlane);
 
 		//testPlane->colliderPtr = nullptr;
 
@@ -281,7 +222,6 @@ public:
 		SpyroUISetup::GameUserInterface gameUI;
 		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
 
-		tempScene.Render();
 		if (!engine->Initialize())
 		{
 			return;
@@ -292,19 +232,6 @@ public:
 
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
-
-		// Construct physics stuff
-		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
-		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
-		
-		//Needed to add this to the colliders for the collision queue
-		c1->colliderPtr = &test_colider;
-		c1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-
-		c2->colliderPtr = &test_colider1;
-		c2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-
 
 		while (!shutdown)
 		{
@@ -410,6 +337,7 @@ public:
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
 			}
 		}
+		currentScene.destroy();
 	}
 	virtual void Uninitialize() {}
 
