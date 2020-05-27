@@ -120,6 +120,8 @@ public:
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.soundName = "files\\audio\\Opening.mp3";
 		titleMusic.LoadSound(false, true, true);
+
+
 		audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
 		//audioEngine.LoadSound("", );
 
@@ -288,13 +290,14 @@ public:
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
 
-		SpyroUISetup::GameUserInterface gameUI;
-		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
+		GolemGameUISetup::GameUserInterface gameUI;
 
 		if (!engine->Initialize())
 		{
 			return;
 		}
+
+		gameUI.SetupUI(engine->GetUI(), spyro, &audioEngine);
 
 		// Timing
 		game_time.Restart();

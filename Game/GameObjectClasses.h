@@ -158,7 +158,7 @@ namespace ADResource
 			ADPhysics::AABB collider;
 
 			//Until we have an event manager this is our solution for events.
-			ADResource::AD_UI::UIMessage eventUIMessage;
+			ADUI::UIMessage eventUIMessage;
 
 
 			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };

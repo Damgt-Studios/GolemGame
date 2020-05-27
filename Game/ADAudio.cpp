@@ -12,6 +12,7 @@ namespace AD_ADUIO
 
         audioSystem = NULL;
         ADAudio::AudioErrorCheck(studioSystem->getCoreSystem(&audioSystem));
+
     }
 
     AudioImplementation::~AudioImplementation() {
@@ -134,7 +135,7 @@ namespace AD_ADUIO
         if (tFoundIt == audioImp->channelsByName.end())
             return;
 
-        ADAudio::AudioErrorCheck(tFoundIt->second->setVolume(dbToVolume(fVolumedB)));
+        ADAudio::AudioErrorCheck(tFoundIt->second->setVolume(fVolumedB));
     }
 
     bool ADAudio::IsPlaying(int nChannelId) const
@@ -167,6 +168,14 @@ namespace AD_ADUIO
         return 20.0f * log10f(volume);
     }
 
+    void ADAudio::RefreshMusicVolumes()
+    {
+        for (int i = 0; i < audioImp->musicChannels.size(); ++i)
+        {
+            audioImp->musicChannels[i]->RefreshVolume();
+        }
+    }
+
     int ADAudio::AudioErrorCheck(FMOD_RESULT result) {
         if (result != FMOD_OK) {
             std::cout << "FMOD ERROR " << result << std::endl;
@@ -182,6 +191,11 @@ namespace AD_ADUIO
     void AudioSource::LoadSound(bool is3D, bool isLooping, bool isStream)
     {
         engine->LoadSound(soundName, is3D, isLooping, isStream);
+
+        if (isStream)
+        {
+            audioImp->musicChannels.push_back(this);
+        }
     }
 
     void AudioSource::Play()
@@ -204,6 +218,15 @@ namespace AD_ADUIO
                 break;
             }
             currentChannel = engine->PlaySounds(soundName, vPos, volume);
+            
+        }
+    }
+
+    void AudioSource::RefreshVolume()
+    {
+        if (engine->IsPlaying(currentChannel) && audioSourceType == MUSIC)
+        {
+            engine->SetChannelVolume(currentChannel, personalVolume * engine->masterMusicVolume);
         }
     }
 
