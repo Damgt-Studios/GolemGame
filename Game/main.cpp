@@ -180,7 +180,6 @@ public:
 
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		golem_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
 		golem->SetAudio(audio_manager);
 
 
@@ -254,12 +253,6 @@ public:
 		tempPlane->GetWorldMatrix(groundWorld);
 		for(unsigned int i = 0; i < (*planeModel).indices.size(); i+=3)
 		{
-			//ADPhysics::Triangle* tri = 
-				//new ADPhysics::Triangle(
-				//(*planeModel).vertices[(*planeModel).indices[i]].Position,
-				//(*planeModel).vertices[(*planeModel).indices[i + 1]].Position, 
-				//(*planeModel).vertices[(*planeModel).indices[i + 2]].Position);
-
 			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
 			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
 			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
@@ -399,8 +392,7 @@ public:
 				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
-			if (GroundClamping(golem, trisInRange, delta_time))
-				golem->jumping = false;
+			GroundClamping(golem, trisInRange, delta_time);
 
 
 			//Resolve all collisions that occurred this frame
