@@ -182,6 +182,11 @@ void ADUI::Image2D::SetEffects(SpriteEffects _effects)
     effects = _effects;
 }
 
+void ADUI::Image2D::SetCurrentFrame(UINT _frameNumber)
+{
+    currentFrame = _frameNumber;
+}
+
 void ADUI::Image2D::SetDepth(float _depth)
 {
     depth = _depth;

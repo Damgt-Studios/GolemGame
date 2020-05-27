@@ -90,6 +90,12 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
+	void HUDController::SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon)
+	{
+		player = _player;
+		golemIcon = _golemIcon;
+	}
+
 	bool HUDController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
 		return false;
@@ -98,25 +104,39 @@ namespace GolemGameUISetup
 	bool HUDController::ProcessInput(float delta_time, float& quick)
 	{
 		bool buttonPressed = false;
-		//if (Input::QueryButtonDown(GamepadButtons::Y))
-		//{
-		//	UINT hudOverlayID = overlaysNameToID["HUD"];
-		//	UINT logOverlayID = overlaysNameToID["Log"];
-		//	if (overlays[hudOverlayID]->visible)
-		//	{
-		//		if (!overlays[overlaysNameToID["PauseScreen"]]->active)
-		//		{
-		//			overlays[hudOverlayID]->visible = false;
-		//		}
-		//		overlays[logOverlayID]->visible = !overlays[logOverlayID]->visible;
-		//	}
-		//	else
-		//	{
-		//		overlays[hudOverlayID]->visible = true;
-		//		overlays[logOverlayID]->visible = true;
-		//	}
-		//	buttonPressed = true;
-		//}
+		switch (player->GetCurrentElement())
+		{
+		case ADResource::ADGameplay::GAME_ELEMENTS::STONE:
+			componentTypeMap[componentsNameToID["StoneSelect"]]->Focus();
+			componentTypeMap[componentsNameToID["WaterSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["FireSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["WoodSelect"]]->Unfocus();
+			golemIcon->SetCurrentFrame(0);
+			break;
+		case ADResource::ADGameplay::GAME_ELEMENTS::WATER:
+			componentTypeMap[componentsNameToID["StoneSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["WaterSelect"]]->Focus();
+			componentTypeMap[componentsNameToID["FireSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["WoodSelect"]]->Unfocus();
+			golemIcon->SetCurrentFrame(1);
+			break;
+		case ADResource::ADGameplay::GAME_ELEMENTS::FIRE:
+			componentTypeMap[componentsNameToID["StoneSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["WaterSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["FireSelect"]]->Focus();
+			componentTypeMap[componentsNameToID["WoodSelect"]]->Unfocus();
+			golemIcon->SetCurrentFrame(2);
+			break;
+		case ADResource::ADGameplay::GAME_ELEMENTS::WOOD:
+			componentTypeMap[componentsNameToID["StoneSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["WaterSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["FireSelect"]]->Unfocus();
+			componentTypeMap[componentsNameToID["WoodSelect"]]->Focus();
+			golemIcon->SetCurrentFrame(3);
+			break;
+		}
+
+
 		return buttonPressed;
 	}
 
@@ -158,9 +178,9 @@ namespace GolemGameUISetup
 					case 0:
 					{
 						overlays[overlaysNameToID["TitleScreen"]]->Disable();
+						componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
 						Disable();
 						controllers[controllersNameToID["HudController"]]->Enable();
-
 						controllers[controllersNameToID["PauseScreenController"]]->Enable();
 						overlays[overlaysNameToID["HUD"]]->Enable();
 						uiState = ADUI::UISTATE::GAMEPLAY;
@@ -236,8 +256,6 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-
-
 	void PauseMenuController::SetAudio(AD_ADUIO::ADAudio* _audioSystem)
 	{
 		buttonClick.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
@@ -283,8 +301,9 @@ namespace GolemGameUISetup
 								{
 								case 0:
 								{
+									overlays[overlaysNameToID["HUD"]]->visible = true;
+									componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
 									overlays[pauseOverlayID]->Disable();
-									//overlays[overlaysNameToID["HUD"]]->visible = false;
 									uiState = ADUI::UISTATE::GAMEPLAY;
 									break;
 								}
@@ -329,32 +348,21 @@ namespace GolemGameUISetup
 				}
 			}
 		}
-		else if (Input::QueryButtonDown(GamepadButtons::B))
-		{
-			if (overlays[guideOverlayID]->active)
-			{
-				overlays[guideOverlayID]->Disable();
-				componentTypeMap[componentsNameToID["PauseMenu"]]->Enable();
-				overlays[overlaysNameToID["PauseScreen"]]->Enable();
-				buttonPressed = true;
-				menuBack.Play();
-			}
-		}
 		return buttonPressed;
 	}
 
 	bool PauseMenuController::ProcessInput(float delta_time, float& quick)
 	{
-
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::Menu))
 		{
+			buttonPressed = true;
 			UINT pauseOverlayID = overlaysNameToID["PauseScreen"];
 			UINT hudOverlayID = overlaysNameToID["HUD"];
 			if (overlays[pauseOverlayID]->active)
 			{
-				overlays[pauseOverlayID]->Disable();
 				overlays[hudOverlayID]->visible = false;
+				overlays[pauseOverlayID]->Disable();
 				uiState = ADUI::UISTATE::GAMEPLAY;
 				componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
 				menuBack.Play();
@@ -366,11 +374,20 @@ namespace GolemGameUISetup
 				uiState = ADUI::UISTATE::MENUSTATE;
 				componentTypeMap[componentsNameToID["PauseMenu"]]->Enable();
 			}
+		}
+		else if (Input::QueryButtonDown(GamepadButtons::B))
+		{
 			buttonPressed = true;
+			if (overlays[overlaysNameToID["GuideScreen"]]->active)
+			{
+				overlays[overlaysNameToID["GuideScreen"]]->Disable();
+				componentTypeMap[componentsNameToID["PauseMenu"]]->Enable();
+				overlays[overlaysNameToID["PauseScreen"]]->Enable();
+				menuBack.Play();
+			}
 		}
 		return buttonPressed;
 	}
-
 
 	void OptionsMenuUIController::SetAudio(AD_ADUIO::ADAudio* _audioSystem)
 	{
@@ -666,6 +683,7 @@ namespace GolemGameUISetup
 		buttonList2->components[2]->SetText("Options");
 		buttonList2->components[3]->SetText("Main Menu");
 		buttonList2->components[4]->SetText("Quit");
+		buttonList2->Disable();
 		myUI->AddUIComponent("PauseMenu", buttonList2);
 		myUI->overlays[pauseID]->AddComponent(buttonList2);
 
@@ -926,23 +944,64 @@ namespace GolemGameUISetup
 		return optionsID;
 	}
 
-	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController)
+	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Destructable* _player)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
 		emptyAnimation[0] = { 0, 1, 1 };
+		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
+		buttonAnimation[0] = { 0, 1, 1 };
+		buttonAnimation[1] = { 0, 2, 6 };
+		ADUI::AnimationData* faceAnimation = new ADUI::AnimationData();
+		faceAnimation->fps = 0;
+		faceAnimation->frameCount = 4;
+		faceAnimation->startFrame = 0;
 
 		//HUD
 		UINT hudID = myUI->AddNewOverlay("HUD", false, true);
-		ADUI::Image2D* image1 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 30, 250, 211 });
-		image1->BuildAnimation({ 2299, 4320, 3840, 4920 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("GemIcon", image1);
-		myUI->overlays[hudID]->AddComponent(image1);
 
-		ADUI::Image2D* image2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 640, 175, 1640, 375 });
-		image2->BuildAnimation({ 0, 2161, 1000, 2361 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("SpyroIcon", image2);
-		myUI->overlays[hudID]->AddComponent(image2);
+		ADUI::Image2D* fullring = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 30, 250, 211 });
+		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 2, emptyAnimation);
+		myUI->AddUIComponent("FullRing", fullring);
+		myUI->overlays[hudID]->AddComponent(fullring);
+		_hUDController->AddComponent(fullring);
 
+		ADUI::Image2D* fireSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 121, 30, 250, 211 });
+		fireSelect->BuildAnimation({ 0, 1094, 418, 1225 }, 2, 2, buttonAnimation);
+		fireSelect->controlFocusAnimation = 1;
+		myUI->AddUIComponent("FireSelect", fireSelect);
+		myUI->overlays[hudID]->AddComponent(fireSelect);
+		_hUDController->AddComponent(fireSelect);
+
+		ADUI::Image2D* waterSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 121, 162, 539 });
+		waterSelect->BuildAnimation({ 836, 963, 968, 1381 }, 2, 2, buttonAnimation);
+		waterSelect->controlFocusAnimation = 1;
+		myUI->AddUIComponent("WaterSelect", waterSelect);
+		myUI->overlays[hudID]->AddComponent(waterSelect);
+		_hUDController->AddComponent(waterSelect);
+
+		ADUI::Image2D* stoneSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 121, 498, 250, 600 });
+		stoneSelect->BuildAnimation({ 0, 961, 418, 1092 }, 2, 2, buttonAnimation);
+		stoneSelect->controlFocusAnimation = 1;
+		myUI->AddUIComponent("StoneSelect", stoneSelect);
+		myUI->overlays[hudID]->AddComponent(stoneSelect);
+		_hUDController->AddComponent(stoneSelect);
+
+		ADUI::Image2D* woodSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 498, 121, 600, 539 });
+		woodSelect->BuildAnimation({ 1100, 963, 1232, 1381 }, 2, 2, buttonAnimation);
+		woodSelect->controlFocusAnimation = 1;
+		myUI->AddUIComponent("WoodSelect", woodSelect);
+		myUI->overlays[hudID]->AddComponent(woodSelect);
+		_hUDController->AddComponent(woodSelect);
+
+		ADUI::Image2D* golemFace = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 93, 97, 502, 495 });
+		golemFace->BuildAnimation({ 600, 1391, 1072, 1856 }, 4, 1, faceAnimation);
+		myUI->AddUIComponent("GolemFace", golemFace);
+		myUI->overlays[hudID]->AddComponent(golemFace);
+		golemFace->Focus();
+		_hUDController->AddComponent(golemFace);
+
+
+		_hUDController->SetPlayer(_player, golemFace);
 
 		//ADUI::Label2D* gemLabel = new ADUI::Label2D();
 		//gemLabel->SetFont(myUI->GetFont(CreditsFont));
@@ -1025,7 +1084,7 @@ namespace GolemGameUISetup
 		HUDController* hudController = new HUDController(myUI->GetUIState());
 		myUI->AddUIController("HudController", hudController);
 		hudController->Disable();
-		UINT hudid = SetupHUD(myUI, hudController);
+		UINT hudid = SetupHUD(myUI, hudController, _player);
 
 		//// TitleScreen Controller
 		StartMenuUIController* titleScreenController = new StartMenuUIController(myUI->GetUIState());

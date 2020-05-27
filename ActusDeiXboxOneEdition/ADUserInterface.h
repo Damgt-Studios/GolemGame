@@ -285,6 +285,7 @@ namespace ADUI
         void SetTint(XMVECTOR _tint);
         void SetRotation(float _rotation, bool _continuous = false);
         void SetEffects(SpriteEffects _effects);
+        void SetCurrentFrame(UINT _frameNumber);
         void SetDepth(float _depth);
         void Enable() override;
         void Disable() override;

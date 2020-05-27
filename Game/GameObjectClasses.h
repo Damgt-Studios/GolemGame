@@ -27,7 +27,7 @@ namespace ADResource
 			MISC_DESTRUCTABLE,
 			SMALL_ESSENCE,
 			SPAWNER,
-			FIRE,
+			FIRE_OBJECT,
 			ALLY_HITBOX,
 			ENEMY_HITBOX,
 			PROJECTILE,
@@ -45,6 +45,15 @@ namespace ADResource
 			STRUCTURES_DESTROYED,		//we can get more specific when it comes time
 		};
 
+
+		enum GAME_ELEMENTS
+		{
+			STONE = 0,
+			WATER,
+			FIRE,
+			WOOD,
+			ELECTRIC
+		};
 
 		struct StatSheet : public iStatSheet
 		{
@@ -80,6 +89,10 @@ namespace ADResource
 			StatSheet* stats;
 		public:
 			ADPhysics::AABB collider;
+
+			int playerElement;
+
+			int GetCurrentElement() { return playerElement; }
 
 			virtual void Update(float _deltaTime) 
 			{

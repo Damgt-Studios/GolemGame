@@ -60,6 +60,7 @@ namespace ADResource
 			//void SetAudio(AudioManager* _audioManager);
 
 		private:
+			float responseTimer = 0;
 			void HandleInput(float delta_time);
 
 		private:

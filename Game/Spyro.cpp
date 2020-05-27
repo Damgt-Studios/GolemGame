@@ -258,7 +258,30 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	{
 		testAttack.StartAttack();
 	}
-	
+	responseTimer -= delta_time;
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			++playerElement;
+			if (playerElement == 4)
+				playerElement = 0;
+		}
+
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			--playerElement;
+			if (playerElement < 0)
+				playerElement = 3;
+		}
+	}
+
 	XMFLOAT4 forward;
 	XMStoreFloat4(&forward, Spyro::transform.r[2]);
 	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))

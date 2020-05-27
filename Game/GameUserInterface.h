@@ -18,9 +18,11 @@ namespace GolemGameUISetup
     class HUDController : public ADUI::OverlayController
     {
         ADResource::ADGameplay::Destructable* player;
+        ADUI::Image2D* golemIcon;
         UINT& uiState;
     public:
         HUDController(UINT* _uiState) : uiState(*_uiState) {};
+        void SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick) override;
     };
@@ -73,7 +75,7 @@ namespace GolemGameUISetup
         UINT SetupTitleScreen(ADUI::ADUI* myUI, StartMenuUIController* _titleScreenController);
         UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
-        UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController);
+        UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Destructable* _player);
         UINT SetupLog(ADUI::ADUI* myUI);
         void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Destructable* _player, AD_ADUIO::ADAudio* _audioSystem);
     };
