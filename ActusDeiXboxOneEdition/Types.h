@@ -7,6 +7,7 @@
 
 #include <string>
 #include "ADPhysics.h"
+#include "MeshLoader.h"
 
 #ifndef AD_MEMORY_DEFAULT
 #include "ADMemoryManager.h"
@@ -104,6 +105,115 @@ namespace ADResource
 			ComPtr<ID3D11ShaderResourceView> ambient_occlusion;
 		};
 
+		struct SimpleModel
+		{
+			bool animated = false;
+
+			XMFLOAT3 position;
+			XMFLOAT3 rotation;
+			XMFLOAT3 scale;
+
+			ComPtr<ID3D11Buffer> vertexBuffer;
+			ComPtr<ID3D11Buffer> indexBuffer;
+
+			ComPtr<ID3D11VertexShader> vertexShader;
+			ComPtr<ID3D11PixelShader> pixelShader;
+
+			ComPtr<ID3D11InputLayout> inputLayout;
+
+			// Texture stuff
+			ComPtr<ID3D11SamplerState> sampler;
+
+			ComPtr<ID3D11ShaderResourceView> albedo;
+			ComPtr<ID3D11ShaderResourceView> normal;
+			ComPtr<ID3D11ShaderResourceView> emissive;
+		};
+
+		struct SimpleStaticModel : public SimpleModel
+		{
+#ifdef AD_MEMORY_DEFAULT
+			std::vector<SimpleVertex> vertices;
+			std::vector<int> indices;
+#else
+			ADVector<SimpleVertex> vertices;
+			ADVector<int> indices;
+#endif
+		};
+
+		struct SimpleAnimModel :  public SimpleModel
+		{
+#ifdef AD_MEMORY_DEFAULT
+			std::vector<SimpleVertexAnim> vertices;
+			std::vector<int> indices;
+			std::vector<bones> skeleton;
+			std::vector<XMMATRIX> inverse_transforms;
+			std::vector<anim_clip> animations;
+
+#else
+			ADVector<SimpleVertexAnim> vertices;
+			ADVector<int> indices;
+			ADVector<bones> skeleton;
+			ADVector<XMMATRIX> inverse_transforms;
+			ADVector<anim_clip> animations;
+#endif
+			float elapsedTime = 0;
+			int counter = 0;
+
+			float modifier = 1;
+
+			ComPtr<ID3D11Buffer> animationBuffer;
+
+			std::vector<XMMATRIX> UpdateAnimation(float delta_time)
+			{
+				std::vector<XMMATRIX> positions;
+				positions.resize(animations[0].frames[0].jointsMatrix.size());
+
+				elapsedTime += delta_time;
+
+				if (animations.size() > 0)
+				{
+					modifier = animations[0].frames.size();
+
+					//Animations
+
+					if (elapsedTime >= 1.0f / modifier)
+					{
+						counter++;
+						if (counter == animations[0].frames.size())
+						{
+							counter = 1;
+						}
+
+						elapsedTime = 0;
+					}
+
+					for (int i = animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+					{
+						int nextKeyframe = 0;
+
+						if (counter + 1 < animations[0].frames.size())
+						{
+							nextKeyframe = counter + 1;
+						}
+						else if (counter + 1 == animations[0].frames.size())
+						{
+							nextKeyframe = 1;
+						}
+
+						XMMATRIX current = animations[0].frames[counter].jointsMatrix[i];
+						XMMATRIX next = animations[0].frames[nextKeyframe].jointsMatrix[i];
+
+						XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
+
+						XMMATRIX matrixToGPU = XMMatrixMultiply(inverse_transforms[i], Tween);
+						positions[i] = matrixToGPU;
+					}
+				}
+
+				return positions;
+			}
+		};
+
 		struct WVP
 		{
 			XMFLOAT4X4 WorldMatrix;
@@ -129,32 +239,6 @@ namespace ADResource
 			float cosineInnerCone, cosineOuterCone;
 			float ambientIntensityUp, ambientIntensityDown, diffuseIntensity, specularIntensity;
 			float lightLength, p1, p2, p3;
-		};
-
-		// Renderer Types
-		struct PBRRendererResources
-		{
-			ComPtr<ID3D11Device1> device;
-			ComPtr<ID3D11DeviceContext1> context;
-			ComPtr<IDXGISwapChain1> chain;
-
-			ComPtr<ID3D11RenderTargetView> render_target_view;
-			D3D11_VIEWPORT viewport;
-
-			// States
-			ComPtr<ID3D11RasterizerState> defaultRasterizerState;
-			ComPtr<ID3D11RasterizerState> wireframeRasterizerState;
-
-			// Z Buffer
-			ComPtr<ID3D11Texture2D> zBuffer;
-			ComPtr<ID3D11DepthStencilView> depthStencil;
-
-			// Cbuffers
-			ComPtr<ID3D11Buffer> constantBuffer;
-			ComPtr<ID3D11Buffer> lightBuffer;
-
-			// Samplers
-			ComPtr<ID3D11SamplerState> normal_sampler;
 		};
 	}
 
@@ -508,7 +592,7 @@ namespace ADResource
 
 		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time) 
 		{
-			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 1, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 1, 0, 0)));
+			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
 
 			for (unsigned int i = 0; i < ground.size(); i++)
 			{
@@ -516,8 +600,8 @@ namespace ADResource
 				if (LineSegmentToTriangle(line, ground[i], m))
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
-					obj->transform.r[3].m128_f32[1] += obj->colliderPtr->GetHeight() / 2;
-					obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
+					//obj->transform.r[3].m128_f32[1] -= obj->colliderPtr->GetHeight() * 2.5;
+					//obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
 					return true;
 				}
 			}

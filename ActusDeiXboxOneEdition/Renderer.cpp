@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "Utils.h"
 
+ADResource::ADRenderer::PBRRenderer::RendererResources ADResource::ADRenderer::PBRRenderer::renderer_resources = ADResource::ADRenderer::PBRRenderer::RendererResources();
 
 ADResource::ADRenderer::PBRRenderer::PBRRenderer()
 {
@@ -40,11 +41,11 @@ ADResource::ADRenderer::PBRRenderer::PBRRenderer()
 	assert(!FAILED(result));
 
 	// Convert the device and device context pointers to the 11.1 pointers
-	result = tdevice.As(&pbr_renderer_resources.device); assert(!FAILED(result));
-	result = tcontext.As(&pbr_renderer_resources.context); assert(!FAILED(result));
+	result = tdevice.As(&renderer_resources.device); assert(!FAILED(result));
+	result = tcontext.As(&renderer_resources.context); assert(!FAILED(result));
 
 	// Grab the adapter to set up the swapchain
-	result = pbr_renderer_resources.device.As(&dxgiDevice); assert(!FAILED(result));
+	result = renderer_resources.device.As(&dxgiDevice); assert(!FAILED(result));
 }
 
 bool ADResource::ADRenderer::PBRRenderer::Initialize()
@@ -68,28 +69,28 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	scd.Height = Window->Bounds.Height;
 
 	result = dxgiFactory->CreateSwapChainForCoreWindow(
-		pbr_renderer_resources.device.Get(),
+		renderer_resources.device.Get(),
 		reinterpret_cast<IUnknown*>(Window),
 		&scd,
 		nullptr,
-		&pbr_renderer_resources.chain
-	);
+		&renderer_resources.chain
+		);
 	assert(!FAILED(result));
 
 	// Setup viewport
-	pbr_renderer_resources.viewport.Width = scd.Width;
-	pbr_renderer_resources.viewport.Height = scd.Height;
-	pbr_renderer_resources.viewport.TopLeftY = pbr_renderer_resources.viewport.TopLeftX = 0;
-	pbr_renderer_resources.viewport.MinDepth = 0;
-	pbr_renderer_resources.viewport.MaxDepth = 1;
+	renderer_resources.viewport.Width = scd.Width;
+	renderer_resources.viewport.Height = scd.Height;
+	renderer_resources.viewport.TopLeftY = renderer_resources.viewport.TopLeftX = 0;
+	renderer_resources.viewport.MinDepth = 0;
+	renderer_resources.viewport.MaxDepth = 1;
 
 	// Create render target
 	ComPtr<ID3D11Texture2D> backbuffer;
-	result = pbr_renderer_resources.chain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backbuffer);
+	result = renderer_resources.chain->GetBuffer(0, __uuidof(ID3D11Texture2D), &backbuffer);
 	assert(!FAILED(result));
 
 	// Render target
-	result = pbr_renderer_resources.device->CreateRenderTargetView(backbuffer.Get(), nullptr, &pbr_renderer_resources.render_target_view);
+	result = renderer_resources.device->CreateRenderTargetView(backbuffer.Get(), nullptr, &renderer_resources.render_target_view);
 	assert(!FAILED(result));
 
 	// Rasterizer state
@@ -106,21 +107,21 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 
 	ComPtr<ID3D11RasterizerState> traster;
 	ComPtr<ID3D11RasterizerState> twireraster;
-	result = pbr_renderer_resources.device->CreateRasterizerState(&rdesc, &traster);
+	result = renderer_resources.device->CreateRasterizerState(&rdesc, &traster);
 	assert(!FAILED(result));
-	pbr_renderer_resources.defaultRasterizerState = traster;
+	renderer_resources.defaultRasterizerState = traster;
 
 	// Wireframe raster
 	rdesc.FillMode = D3D11_FILL_WIREFRAME;
-	result = pbr_renderer_resources.device->CreateRasterizerState(&rdesc, &twireraster);
+	result = renderer_resources.device->CreateRasterizerState(&rdesc, &twireraster);
 	assert(!FAILED(result));
-	pbr_renderer_resources.wireframeRasterizerState = twireraster;
+	renderer_resources.wireframeRasterizerState = twireraster;
 
-	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 	// Rasterizer state
 
 	// Set primitive topology
-	pbr_renderer_resources.context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	renderer_resources.context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create constant buffer
 	D3D11_BUFFER_DESC bDesc;
@@ -134,13 +135,13 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	bDesc.StructureByteStride = 0;
 	bDesc.Usage = D3D11_USAGE_DYNAMIC;
 
-	result = pbr_renderer_resources.device->CreateBuffer(&bDesc, nullptr, &pbr_renderer_resources.constantBuffer);
+	result = renderer_resources.device->CreateBuffer(&bDesc, nullptr, &renderer_resources.constantBuffer);
 	assert(!FAILED(result));
 
 	// Create light buffer
 	bDesc.ByteWidth = ResourceManager::GetLightCount() * sizeof(Light);
 
-	result = pbr_renderer_resources.device->CreateBuffer(&bDesc, nullptr, &pbr_renderer_resources.lightBuffer);
+	result = renderer_resources.device->CreateBuffer(&bDesc, nullptr, &renderer_resources.lightBuffer);
 	assert(!FAILED(result));
 
 	// Z buffer 
@@ -155,7 +156,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	zDesc.MipLevels = 1;
 	zDesc.SampleDesc.Count = 1;
 
-	result = pbr_renderer_resources.device->CreateTexture2D(&zDesc, nullptr, &pbr_renderer_resources.zBuffer);
+	result = renderer_resources.device->CreateTexture2D(&zDesc, nullptr, &renderer_resources.zBuffer);
 	assert(!FAILED(result));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC zViewDesc;
@@ -163,7 +164,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	zViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	zViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
 
-	result = pbr_renderer_resources.device->CreateDepthStencilView(pbr_renderer_resources.zBuffer.Get(), nullptr, &pbr_renderer_resources.depthStencil);
+	result = renderer_resources.device->CreateDepthStencilView(renderer_resources.zBuffer.Get(), nullptr, &renderer_resources.depthStencil);
 	assert(!FAILED(result));
 
 	// Create normal map sampler state
@@ -177,7 +178,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	sdesc.MinLOD = 0;
 	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 	// Create the sampler state
-	result = pbr_renderer_resources.device->CreateSamplerState(&sdesc, &pbr_renderer_resources.normal_sampler);
+	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
 	return true;
@@ -187,26 +188,26 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 {
 	float color[4] = { 0, 0, 0, 1 };
 
-	ID3D11RenderTargetView* tempRTV[] = { pbr_renderer_resources.render_target_view.Get() };
-	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, pbr_renderer_resources.depthStencil.Get());
-	pbr_renderer_resources.context->ClearDepthStencilView(pbr_renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+	ID3D11RenderTargetView* tempRTV[] = { renderer_resources.render_target_view.Get() };
+	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
+	renderer_resources.context->ClearDepthStencilView(renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
 
-	pbr_renderer_resources.context->ClearRenderTargetView(pbr_renderer_resources.render_target_view.Get(), color);
-	pbr_renderer_resources.context->RSSetViewports(1, &pbr_renderer_resources.viewport);
-	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->ClearRenderTargetView(renderer_resources.render_target_view.Get(), color);
+	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
+	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
 
 	// Send the lights to constant buffer
 	D3D11_MAPPED_SUBRESOURCE lightSub;
-	HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
+	HRESULT result = renderer_resources.context->Map(renderer_resources.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
 	assert(!FAILED(result));
 	memcpy(lightSub.pData, ResourceManager::GetLightDataPtr(), sizeof(Light) * ResourceManager::GetLightCount());
-	pbr_renderer_resources.context->Unmap(pbr_renderer_resources.lightBuffer.Get(), 0);
+	renderer_resources.context->Unmap(renderer_resources.lightBuffer.Get(), 0);
 	// Connect constant buffer to the pipeline
-	ID3D11Buffer* lightCbuffers[] = { pbr_renderer_resources.lightBuffer.Get() };
-	pbr_renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
+	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
+	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
 	//XMFLOAT3 campos = camera->GetPosition();
 	XMFLOAT3 campos = ocamera->GetPosition();
@@ -215,14 +216,14 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 
 	// Skybox
 	// disable depth buffer
-	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
+	renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
 
 	// sET THE PIPELINE
 	UINT skystrices[] = { sizeof(Vertex) };
 	UINT skyoffsets[] = { 0 };
 	ID3D11Buffer* skyVertexBuffers[] = { ResourceManager::GetSkybox()->vertexBuffer.Get() };
-	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, skyVertexBuffers, skystrices, skyoffsets);
-	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetSkybox()->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	renderer_resources.context->IASetVertexBuffers(0, 1, skyVertexBuffers, skystrices, skyoffsets);
+	renderer_resources.context->IASetIndexBuffer(ResourceManager::GetSkybox()->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	pos = ResourceManager::GetSkybox()->position;
 	rot = ResourceManager::GetSkybox()->rotation;
@@ -244,40 +245,40 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 
 	// Send the matrix to constant buffer
 	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
-	result = pbr_renderer_resources.context->Map(pbr_renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+	result = renderer_resources.context->Map(renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
 	memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
-	pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
+	renderer_resources.context->Unmap(renderer_resources.constantBuffer.Get(), 0);
 	// Connect constant buffer to the pipeline
-	ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get() };
-	pbr_renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+	ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get() };
+	renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
 	// Model stuff
 
 	// Render stuff
 	// Set sampler
-	pbr_renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
+	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	ID3D11ShaderResourceView* resource_views[] = {
 		ResourceManager::GetSkybox()->albedo.Get(),
 	};
 
-	pbr_renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
+	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
 
-	pbr_renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
-	pbr_renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
-	pbr_renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->vertexBufferLayout.Get());
+	renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
+	renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
+	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->inputLayout.Get());
 
-	pbr_renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
+	renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
 	// Skybox
 
 	// Set depth buffer
-	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, pbr_renderer_resources.depthStencil.Get());
+	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
 
 	// sET THE PIPELINE
 	UINT strides[] = { sizeof(Vertex) };
 	UINT offsets[] = { 0 };
 	ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
-	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
+	renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	unsigned int model_count = ResourceManager::GetPBRModelCount();
 
@@ -354,30 +355,30 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 	return true;
 }
 
-bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera* ocamera)
+bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera* ocamera, float delta_time)
 {
 	float color[4] = { 0, 0, 0, 1 };
 
-	ID3D11RenderTargetView* tempRTV[] = { pbr_renderer_resources.render_target_view.Get() };
-	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, pbr_renderer_resources.depthStencil.Get());
-	pbr_renderer_resources.context->ClearDepthStencilView(pbr_renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+	ID3D11RenderTargetView* tempRTV[] = { renderer_resources.render_target_view.Get() };
+	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
+	renderer_resources.context->ClearDepthStencilView(renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
 
-	pbr_renderer_resources.context->ClearRenderTargetView(pbr_renderer_resources.render_target_view.Get(), color);
-	pbr_renderer_resources.context->RSSetViewports(1, &pbr_renderer_resources.viewport);
-	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->ClearRenderTargetView(renderer_resources.render_target_view.Get(), color);
+	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
+	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
 
 	// Send the lights to constant buffer
 	D3D11_MAPPED_SUBRESOURCE lightSub;
-	HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
+	HRESULT result = renderer_resources.context->Map(renderer_resources.lightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightSub);
 	assert(!FAILED(result));
 	memcpy(lightSub.pData, ResourceManager::GetLightDataPtr(), sizeof(Light) * ResourceManager::GetLightCount());
-	pbr_renderer_resources.context->Unmap(pbr_renderer_resources.lightBuffer.Get(), 0);
+	renderer_resources.context->Unmap(renderer_resources.lightBuffer.Get(), 0);
 	// Connect constant buffer to the pipeline
-	ID3D11Buffer* lightCbuffers[] = { pbr_renderer_resources.lightBuffer.Get() };
-	pbr_renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
+	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
+	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
 	//XMFLOAT3 campos = camera->GetPosition();
 	XMFLOAT3 campos = ocamera->GetPosition();
@@ -386,21 +387,22 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	// Skybox
 	// disable depth buffer
-	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
+	renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
 
 	// sET THE PIPELINE
-	UINT skystrices[] = { sizeof(Vertex) };
+	UINT skystrices[] = { sizeof(SimpleVertex) };
 	UINT skyoffsets[] = { 0 };
 	ID3D11Buffer* skyVertexBuffers[] = { ResourceManager::GetSkybox()->vertexBuffer.Get() };
-	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, skyVertexBuffers, skystrices, skyoffsets);
-	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetSkybox()->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	renderer_resources.context->IASetVertexBuffers(0, 1, skyVertexBuffers, skystrices, skyoffsets);
+	renderer_resources.context->IASetIndexBuffer(ResourceManager::GetSkybox()->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	pos = ResourceManager::GetSkybox()->position;
 	rot = ResourceManager::GetSkybox()->rotation;
 	scale = ResourceManager::GetSkybox()->scale;
 
-	temp = XMMatrixRotationX(XMConvertToRadians(180));
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(scale.x, scale.y, scale.z));
+	temp = XMMatrixIdentity();
+	//temp = XMMatrixRotationX(XMConvertToRadians(180));
+	temp = XMMatrixMultiply(temp, XMMatrixScaling(1,1,1));
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
@@ -415,107 +417,215 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	// Send the matrix to constant buffer
 	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
-	result = pbr_renderer_resources.context->Map(pbr_renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+	result = renderer_resources.context->Map(renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
 	memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
-	pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
+	renderer_resources.context->Unmap(renderer_resources.constantBuffer.Get(), 0);
 	// Connect constant buffer to the pipeline
-	ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get() };
-	pbr_renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+	ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get() };
+	renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
 	// Model stuff
 
 	// Render stuff
 	// Set sampler
-	pbr_renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
+	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	ID3D11ShaderResourceView* resource_views[] = {
 		ResourceManager::GetSkybox()->albedo.Get(),
 	};
 
-	pbr_renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
+	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
 
-	pbr_renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
-	pbr_renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
-	pbr_renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->vertexBufferLayout.Get());
+	renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
+	renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
+	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->inputLayout.Get());
 
-	pbr_renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
+	renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
 	// Skybox
 
 	// Set depth buffer
-	pbr_renderer_resources.context->OMSetRenderTargets(1, tempRTV, pbr_renderer_resources.depthStencil.Get());
+	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
 
-	// sET THE PIPELINE
-	UINT strides[] = { sizeof(Vertex) };
-	UINT offsets[] = { 0 };
-	ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
-	pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-	pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	//// sET THE PIPELINE
+	//UINT strides[] = { sizeof(Vertex) };
+	//UINT offsets[] = { 0 };
+	//ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
+	//pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
+	//pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	ADResource::ADGameplay::GameObject* current_obj = nullptr;
-	Model* current_model = nullptr;
-
-	while(!ResourceManager::RenderQueueEmpty())
+	SimpleModel** current_model = nullptr;
+	SimpleStaticModel* current_static_model = nullptr;
+	SimpleAnimModel* current_animated_model = nullptr;
+	while (!ResourceManager::RenderQueueEmpty())
 	{
 		current_obj = ResourceManager::PopFromRenderQueue();
-		current_model = ResourceManager::GetModelPtrFromMeshId(current_obj->GetMeshId());
-		bool bruh = current_model->desc.wireframe_mode;
-		if (bruh)
+		current_model = ResourceManager::GetSimpleModelPtrFromMeshId(current_obj->GetMeshId());
+
+		if (current_model == nullptr)
+			continue;
+
+		//Animations
+		if ((*current_model)->animated)
 		{
-			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.wireframeRasterizerState.Get());
+			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);
+
+			std::vector<XMMATRIX> joints = current_animated_model->UpdateAnimation(delta_time);
+
+			//Update Buffers
+			renderer_resources.context->UpdateSubresource(current_animated_model->animationBuffer.Get(), NULL, nullptr, joints.data(), 0, 0);
+
+			renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+
+			UINT strides[] = { sizeof(SimpleVertexAnim) };
+			UINT offsets[] = { 0 };
+			ID3D11Buffer* modelVertexBuffers[] = { current_animated_model->vertexBuffer.Get() };
+			renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+			renderer_resources.context->IASetIndexBuffer(current_animated_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			// Model stuff
+			// World matrix projection
+			// TODO: Translate rotation to quaternion
+			fbxmodel_map;
+
+			current_obj->GetWorldMatrix(temp);
+			temp.r[3].m128_f32[1] -= 5;
+			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
+			//temp = XMMatrixRotationZ(3.14f) * temp;
+			//temp = XMMatrixRotationY(3.14f) * temp;
+			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+			// View
+
+			ocamera->GetViewMatrix(temp);
+			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+			// Projection
+
+			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
+
+			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+
+			// Send the matrix to constant buffer
+			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+			HRESULT result = renderer_resources.context->Map(renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+			memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
+			renderer_resources.context->Unmap(renderer_resources.constantBuffer.Get(), 0);
+			// Connect constant buffer to the pipeline
+			ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get(), current_animated_model->animationBuffer.Get() };
+			renderer_resources.context->VSSetConstantBuffers(0, 2, modelCBuffers);
+			// Model stuff
+
+			// Render stuff
+			// Set sampler
+			ID3D11SamplerState* samplers[] = { current_animated_model->sampler.Get(), renderer_resources.normal_sampler.Get() };
+			renderer_resources.context->PSSetSamplers(0, 2, samplers);
+
+			ID3D11ShaderResourceView* resource_views[] = {
+				current_animated_model->albedo.Get(),
+				current_animated_model->emissive.Get(),
+				current_animated_model->normal.Get(),
+			};
+
+			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
+			renderer_resources.context->VSSetShaderResources(0, 1, current_animated_model->normal.GetAddressOf());
+
+			renderer_resources.context->VSSetShader(current_animated_model->vertexShader.Get(), 0, 0);
+			renderer_resources.context->PSSetShader(current_animated_model->pixelShader.Get(), 0, 0);
+			renderer_resources.context->IASetInputLayout(current_animated_model->inputLayout.Get());
+
+			ID3D11SamplerState* current_samplers[] = { current_animated_model->sampler.Get() };
+
+			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
+
+			//int istart = current_model->desc.index_start;
+			//int ibase = current_model->desc.base_vertex_location;
+			//int icount = current_model->desc.index_count;
+			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+			renderer_resources.context->DrawIndexed(current_animated_model->indices.size(), 0, 0);
 		}
+
+		//Statics
 		else
 		{
-			pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
+
+			renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+
+			UINT strides[] = { sizeof(SimpleVertex) };
+			UINT offsets[] = { 0 };
+			ID3D11Buffer* modelVertexBuffers[] = { current_static_model->vertexBuffer.Get() };
+			renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+			renderer_resources.context->IASetIndexBuffer(current_static_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			// Model stuff
+			// World matrix projection
+			// TODO: Translate rotation to quaternion
+			current_obj->GetWorldMatrix(temp);
+			temp.r[3].m128_f32[1] = -5;
+			temp.r[3].m128_f32[2] = -10;
+			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
+			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+			// View
+
+			ocamera->GetViewMatrix(temp);
+			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+			// Projection
+
+			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
+
+			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+
+			// Send the matrix to constant buffer
+			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+			HRESULT result = renderer_resources.context->Map(renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+			memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
+			renderer_resources.context->Unmap(renderer_resources.constantBuffer.Get(), 0);
+			// Connect constant buffer to the pipeline
+			ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get() };
+			renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+			// Model stuff
+
+			// Render stuff
+			// Set sampler
+			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get(), renderer_resources.normal_sampler.Get() };
+			renderer_resources.context->PSSetSamplers(0, 2, samplers);
+
+			ID3D11ShaderResourceView* resource_views[] = {
+				current_static_model->albedo.Get(),
+				current_static_model->normal.Get(),
+				current_static_model->emissive.Get()
+			};
+
+			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
+
+			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
+			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
+
+
+			renderer_resources.context->VSSetShaderResources(0, 1, current_static_model->normal.GetAddressOf());
+
+			renderer_resources.context->VSSetShader(current_static_model->vertexShader.Get(), 0, 0);
+			renderer_resources.context->PSSetShader(current_static_model->pixelShader.Get(), 0, 0);
+			renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
+
+
+			//int istart = current_model->desc.index_start;
+			//int ibase = current_model->desc.base_vertex_location;
+			//int icount = current_model->desc.index_count;
+			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+			renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
 		}
 
-		// Model stuff
-		// World matrix projection
-		// TODO: Translate rotation to quaternion
-		current_obj->GetWorldMatrix(temp);
-		XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
-		// View
-		//camera->GetViewMatrix(temp);
-		ocamera->GetViewMatrix(temp);
-		XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-		// Projection
-		temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-		XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-		
-		WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
-		// Send the matrix to constant buffer
-		D3D11_MAPPED_SUBRESOURCE gpuBuffer;
-		HRESULT result = pbr_renderer_resources.context->Map(pbr_renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
-		memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
-		pbr_renderer_resources.context->Unmap(pbr_renderer_resources.constantBuffer.Get(), 0);
-		// Connect constant buffer to the pipeline
-		ID3D11Buffer* modelCBuffers[] = { pbr_renderer_resources.constantBuffer.Get() };
-		pbr_renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
-		// Model stuff
-
-		// Render stuff
-		// Set sampler
-		ID3D11SamplerState* samplers[] = { current_model->sampler.Get(), pbr_renderer_resources.normal_sampler.Get() };
-		pbr_renderer_resources.context->PSSetSamplers(0, 2, samplers);
-
-		ID3D11ShaderResourceView* resource_views[] = {
-			current_model->albedo.Get(),
-			current_model->normal.Get(),
-			current_model->metallic.Get(),
-			current_model->roughness.Get(),
-			current_model->ambient_occlusion.Get(),
-		};
-
-		pbr_renderer_resources.context->PSSetShaderResources(0, 5, resource_views);
-		pbr_renderer_resources.context->VSSetShaderResources(0, 1, current_model->normal.GetAddressOf());
-
-		pbr_renderer_resources.context->VSSetShader(current_model->vertexShader.Get(), 0, 0);
-		pbr_renderer_resources.context->PSSetShader(current_model->pixelShader.Get(), 0, 0);
-		pbr_renderer_resources.context->IASetInputLayout(current_model->vertexBufferLayout.Get());
-
-		int istart = current_model->desc.index_start;
-		int ibase = current_model->desc.base_vertex_location;
-		int icount = current_model->desc.index_count;
-		pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+		//bool bruh = current_model->desc.wireframe_mode;
+		//if (bruh)
+		//{
+		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.wireframeRasterizerState.Get());
+		//}
+		//else
+		//{
+		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
+		//}
 	}
 
 	return true;
@@ -523,7 +633,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 bool  ADResource::ADRenderer::PBRRenderer::Frame()
 {
-	pbr_renderer_resources.chain->Present(1, 0);
+	renderer_resources.chain->Present(1, 0);
 
 	return true;
 }
@@ -531,9 +641,4 @@ bool  ADResource::ADRenderer::PBRRenderer::Frame()
 bool  ADResource::ADRenderer::PBRRenderer::ShutDown()
 {
 	return true;
-}
-
-ADResource::ADRenderer::PBRRendererResources* ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()
-{
-	return &pbr_renderer_resources;
 }
