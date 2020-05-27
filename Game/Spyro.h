@@ -64,6 +64,11 @@ namespace ADResource
 			void HandleInput(float delta_time);
 
 		private:
+			std::vector<ADResource::ADGameplay::Destructable*> fireMinions;
+			std::vector<ADResource::ADGameplay::Destructable*> waterMinions;
+			std::vector<ADResource::ADGameplay::Destructable*> stoneMinions;
+			std::vector<ADResource::ADGameplay::Destructable*> woodMinions;
+
 			int health;
 			bool playingSound = false;
 			UINT collectionNoiseID;

@@ -20,10 +20,11 @@ namespace GolemGameUISetup
         ADResource::ADGameplay::Destructable* player;
         ADUI::Image2D* golemIcon;
         ADUI::Image2D* healthIcon;
+        std::vector<ADUI::Image2D*> tokenIcons;
         UINT& uiState;
     public:
         HUDController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon);
+        void SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick) override;
     };

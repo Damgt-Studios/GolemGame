@@ -58,6 +58,7 @@ namespace ADResource
 		struct StatSheet : public iStatSheet
 		{
 			Stat health = {100,99999,0, INT_MAX};
+			Stat token = {3,3,0, INT_MAX };
 
 			Stat* RequestStats(UINT _statID)
 			{
@@ -67,6 +68,7 @@ namespace ADResource
 					return &health;
 					break;
 				case ADResource::ADGameplay::TOKENS:
+					return &token;
 					break;
 				case ADResource::ADGameplay::STORED_ESSENCE:
 					break;
@@ -86,6 +88,7 @@ namespace ADResource
 
 		class Destructable : public Renderable
 		{
+		protected:
 			StatSheet* stats;
 		public:
 			ADPhysics::AABB collider;
