@@ -37,34 +37,34 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 		invulnerable_timer -= delta_time;
 		if (invulnerable_timer <= 0)
 		{
-			defenseType = OBJECT_DEFENSE::NONE;
+			//defenseType = OBJECT_DEFENSE::NONE;
 		}
 	}
 }
 
-void ADResource::ADGameplay::Golem::Damage(DAMAGE_TYPE d_type)
-{
-	--health;
-
-	ADResource::AD_UI::UIMessage message;
-	message.controllerID = 1;
-	message.messageType = 2;
-	message.number = 2;
-
-	ADUI::MessageReceiver::SendMessage(&message);
-	invulnerable_timer = invulnerable_peroid;
-	defenseType = OBJECT_DEFENSE::INVULNERABLE;
-
-	if (audioManager)
-	{
-		playingSound = true;
-		collectionNoiseID = audioManager->PlayEffect(HurtSound);
-		//if (playingSound)
-		//{
-		//	audioManager->ResumeEffect(HurtSound, collectionNoiseID);
-		//}
-	}
-}
+//void ADResource::ADGameplay::Golem::Damage(DAMAGE_TYPE d_type)
+//{
+//	--health;
+//
+//	ADResource::AD_UI::UIMessage message;
+//	message.controllerID = 1;
+//	message.messageType = 2;
+//	message.number = 2;
+//
+//	ADUI::MessageReceiver::SendMessage(&message);
+//	invulnerable_timer = invulnerable_peroid;
+//	defenseType = OBJECT_DEFENSE::INVULNERABLE;
+//
+//	if (audioManager)
+//	{
+//		playingSound = true;
+//		collectionNoiseID = audioManager->PlayEffect(HurtSound);
+//		if (playingSound)
+//		{
+//			audioManager->ResumeEffect(HurtSound, collectionNoiseID);
+//		}
+//	}
+//}
 
 void ADResource::ADGameplay::Golem::Remove()
 {
@@ -76,56 +76,56 @@ void ADResource::ADGameplay::Golem::GetView(XMMATRIX& view)
 	camera = view;
 }
 
-void ADResource::ADGameplay::Golem::OnTrigger(GameObject* other)
-{
-	if (other->type == OBJECT_TYPE::GEM)
-	{
-		GemCount += other->GemCount;
-		other->GemCount = 0;
-
-		ADResource::AD_UI::UIMessage message;
-		message.controllerID = 1;
-		message.messageType = 2;
-		message.number = 1;
-
-		ADUI::MessageReceiver::SendMessage(&message);
-
-		if (audioManager)
-		{
-			playingSound = true;
-			collectionNoiseID = audioManager->PlayEffect(0);
-			//if (playingSound)
-			//{
-			//	audioManager->ResumeEffect(0, collectionNoiseID);
-			//}
-		}
-		other->Remove();
-	}
-	if (other->type == OBJECT_TYPE::TRIGGER)
-	{
-		if (GemCount >= 10)
-		{
-			ADResource::AD_UI::UIMessage message;
-			message.controllerID = 1;
-			message.messageType = 2;
-			message.number = 3;
-
-			ADUI::MessageReceiver::SendMessage(&message);
-
-		}
-	}
-}
+//void ADResource::ADGameplay::Golem::OnTrigger(GameObject* other)
+//{
+//	if (other->type == OBJECT_TYPE::GEM)
+//	{
+//		GemCount += other->GemCount;
+//		other->GemCount = 0;
+//
+//		ADResource::AD_UI::UIMessage message;
+//		message.controllerID = 1;
+//		message.messageType = 2;
+//		message.number = 1;
+//
+//		ADUI::MessageReceiver::SendMessage(&message);
+//
+//		if (audioManager)
+//		{
+//			playingSound = true;
+//			collectionNoiseID = audioManager->PlayEffect(0);
+//			//if (playingSound)
+//			//{
+//			//	audioManager->ResumeEffect(0, collectionNoiseID);
+//			//}
+//		}
+//		other->Remove();
+//	}
+//	if (other->type == OBJECT_TYPE::TRIGGER)
+//	{
+//		if (GemCount >= 10)
+//		{
+//			ADResource::AD_UI::UIMessage message;
+//			message.controllerID = 1;
+//			message.messageType = 2;
+//			message.number = 3;
+//
+//			ADUI::MessageReceiver::SendMessage(&message);
+//
+//		}
+//	}
+//}
 
 void ADResource::ADGameplay::Golem::OnCollision(GameObject* other)
 {
 
-	if (defenseType != OBJECT_DEFENSE::INVULNERABLE)
+	/*if (defenseType != OBJECT_DEFENSE::INVULNERABLE)
 	{
 		if (other->type == OBJECT_TYPE::ENEMY && !charging)
 		{
 			Damage(DAMAGE_TYPE::RAM);
 		}
-	}
+	}*/
 
 
 	//Sample of what to do with what we have right now
@@ -151,13 +151,13 @@ void ADResource::ADGameplay::Golem::OnTriggerCharge(GameObject* other)
 void ADResource::ADGameplay::Golem::OnTriggerFire(GameObject* other)
 {
 
-	if (fire == true)
+	/*if (fire == true)
 	{
 		other->Damage(DAMAGE_TYPE::FIRE);
 
 
 
-	}
+	}*/
 
 
 }
@@ -175,8 +175,8 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 			if (obj->colliderPtr->isCollision(&chargeCollider, m))
 			{
 				OnTriggerCharge(obj);
-				obj->Damage(DAMAGE_TYPE::RAM);
-				if (audioManager)
+				//obj->Damage(DAMAGE_TYPE::RAM);
+				/*if (audioManager)
 				{
 					if (playingSound)
 					{
@@ -187,7 +187,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 						playingSound = true;
 						collectionNoiseID = audioManager->PlayEffect(EnemyDeathSound);
 					}
-				}
+				}*/
 			}
 		}
 		else if (fire == true)
@@ -204,7 +204,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 			//If collision and collision object is a trigger then go to OnTrigger Function
 			if (obj->colliderPtr->trigger)
 			{
-				OnTrigger(obj);
+				//OnTrigger(obj);
 			}
 			//If collision and collision object is a collider then go to OnCollision Function
 			else
@@ -217,10 +217,10 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 }
 
 
-void ADResource::ADGameplay::Golem::SetAudio(AudioManager* _audioManager)
-{
-	audioManager = _audioManager;
-}
+//void ADResource::ADGameplay::Golem::SetAudio(AudioManager* _audioManager)
+//{
+//	audioManager = _audioManager;
+//}
 
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {

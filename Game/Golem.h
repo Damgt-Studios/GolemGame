@@ -36,7 +36,7 @@ namespace ADResource
 
 			virtual void Update(float time_delta);
 
-			void Damage(DAMAGE_TYPE d_type);
+			//void Damage(DAMAGE_TYPE d_type);
 
 			void Remove();
 
@@ -45,14 +45,14 @@ namespace ADResource
 			virtual void OnCollision(GameObject* other);
 			void OnTriggerCharge(GameObject* other);
 			void OnTriggerFire(GameObject* other);
-			virtual void OnTrigger(GameObject* other);
+			//virtual void OnTrigger(GameObject* other);
 
 			void GetView(XMMATRIX& view);
 			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 
-			void SetAudio(AudioManager* _audioManager);
+			//void SetAudio(AudioManager* _audioManager);
 
 			int GetCurrentAnimation();
 
@@ -64,7 +64,7 @@ namespace ADResource
 
 			bool playingSound = false;
 			UINT collectionNoiseID;
-			AudioManager* audioManager;
+			//AudioManager* audioManager;
 
 			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 

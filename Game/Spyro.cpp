@@ -1,3 +1,5 @@
+#include "pchgame.h"
+#include "Spyro.h"
 
 ADResource::ADGameplay::Spyro::Spyro() {
 	collider = OBB(transform, XMFLOAT3(2, 2, 2));

@@ -189,11 +189,11 @@ public:
 		ResourceManager::AddLight(light1);
 
 		std::vector<std::string> animations;
-		animations.push_back("files/models/Golem_4_Idle.animfile");
+		animations.push_back("files/models/Golem_1_Idle.animfile");
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_4.AnimMesh", "files/textures/Golem_4.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		golem->SetAudio(audio_manager);
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		//golem->SetAudio(audio_manager);
 
 
 		//ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
