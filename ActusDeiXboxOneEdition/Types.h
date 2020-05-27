@@ -457,56 +457,116 @@ namespace ADResource
 
 	namespace ADGameplay
 	{
-		//This could be part of the player object.  You guys decide how you want the event system to determine things.
-		struct GameState
+
+		enum OBJECT_PHYSICS_TYPE
 		{
-			int Health;
-			int Gems;
+			TRIGGER, COLLIDABLE, STATIC
 		};
 
-		enum OBJECT_TYPE
+
+		struct Stat
 		{
-			PLAYER, ENEMY, DESTRUCTABLE, GEM, TRIGGER, STATIC
-			// We should replace trigger with the types of trigger to avoid an extra var for trigger type.
+			int currentValue;
+			int maxValue;
+			int minValue;
+			int failValue;
 		};
-		enum OBJECT_DEFENSE
+
+		class iStatSheet
 		{
-			NONE, IGNORE_RAM, IGNORE_FIRE, INVULNERABLE
+		public:
+			virtual Stat* RequestStats(UINT _statID) { return nullptr; };
 		};
-		enum DAMAGE_TYPE
+
+		class Effect
 		{
-			RAM = 1, FIRE = 2
+		protected:
+			float tickDuration;
+			float currentTick;
+			UINT tickCount;
+			std::vector<Stat*> targetedStats;
+
+		public:
+			float tickTimer;
+			bool isFinished;
+			UINT targetedStatValue;
+			UINT sourceID;
+			UINT instanceID;
+
+			virtual UINT OnApply(iStatSheet* _targetsStatSheet) { return 0; };
+			virtual void Update(float _deltaTime)
+			{
+				if (tickTimer > 0)
+				{
+					tickTimer -= _deltaTime;
+					if (tickTimer <= 0)
+					{
+						if (currentTick < tickCount)
+						{
+							Tick();
+							++currentTick;
+							if (currentTick == tickCount)
+							{
+								isFinished = true;
+							}
+							else
+							{
+								tickTimer = tickDuration;
+							}
+						}
+					}
+				}
+			};
+			virtual UINT Tick() { return 0; };
+			virtual UINT OnExit() { return 0; };
+			std::unique_ptr<Effect> clone() const
+			{
+				return std::unique_ptr<Effect>(this->clone_impl());
+			}
+		protected:
+			virtual Effect* clone_impl() const { return nullptr; };
 		};
 
 		class GameObject
 		{
 		public:
+			std::vector<std::unique_ptr<Effect>> effects;
+
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
 			}
+			virtual ~GameObject() = default;
 
-			//TODO: Whittington.
 			virtual void Render() {};
 
 			virtual void Update(float delta_time) {};
 
-			virtual void Damage(DAMAGE_TYPE damageType)
+			virtual void CheckCollision(GameObject* obj) {};
+
+			virtual iStatSheet* GetStatSheet() { return nullptr; };
+
+			bool HasEffectID(UINT _sourceID, UINT _instanceID)
 			{
-				if (type == DESTRUCTABLE)
+				for (int i = 0; i < effects.size(); ++i)
 				{
-					if (defenseType != INVULNERABLE && defenseType != damageType)
+					if (effects[i].get()->sourceID == _sourceID)
 					{
-						Remove();
+						if (effects[i].get()->instanceID == _instanceID)
+						{
+							return true;
+						}
 					}
 				}
+				return false;
 			};
+
+
 			virtual void Remove()
 			{
 				active = false;
 			}
 
-			virtual void CheckCollision(GameObject* obj) {};
 
 			// Nesessary utilities
 			virtual void SetPosition(XMFLOAT3 pos)
@@ -624,10 +684,12 @@ namespace ADResource
 
 		public:
 			bool active = true;
-			int type;
-			int GemCount;
+			UINT physicsType;
+			UINT gamePlayType;
+			UINT team = 0;
+			//int GemCount;
 			AD_ULONG meshID;
-			OBJECT_DEFENSE defenseType;
+			//OBJECT_DEFENSE defenseType;
 			XMFLOAT4 Velocity;
 			XMMATRIX transform;
 			XMMATRIX postTransform;
@@ -660,7 +722,7 @@ namespace ADResource
 				collisionQueue.pop();
 				//If the object is of the object type STATIC it will only apply a velocty change to the other objects.
 				//Mainly will be used for Spyro against Ground, Enemies against Ground, Chests and Gems against Spyro, etc.
-				if (current.B->type == (int)OBJECT_TYPE::STATIC)
+				if (current.B->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC)
 				{
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);

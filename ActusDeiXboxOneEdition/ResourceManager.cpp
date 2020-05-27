@@ -4,6 +4,7 @@
 
 // Static private members
 AD_ULONG ResourceManager::current_id = 0;
+AD_ULONG ResourceManager::effect_id = 0;
 
 AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe)
 {
@@ -118,6 +119,12 @@ AD_ULONG ResourceManager::GenerateUniqueID()
 {
 	return ResourceManager::current_id++;
 }
+
+AD_ULONG ResourceManager::GenerateEffectID()
+{
+	return ResourceManager::effect_id++;
+}
+
 
 AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
 {
