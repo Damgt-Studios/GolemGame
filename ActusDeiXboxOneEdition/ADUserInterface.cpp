@@ -321,6 +321,11 @@ bool ADUI::Image2D::ProcessResponse(UIMessage* _message)
     return false;
 }
 
+void ADUI::Image2D::SetTiled(UINT _tiledCount)
+{
+    tiled = _tiledCount;
+}
+
 const RECT ADUI::Image2D::GetPosRect()
 {
     return corners;

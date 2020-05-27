@@ -90,10 +90,11 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void HUDController::SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon)
+	void HUDController::SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon)
 	{
 		player = _player;
 		golemIcon = _golemIcon;
+		healthIcon = _healthIcon;
 	}
 
 	bool HUDController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
@@ -136,6 +137,8 @@ namespace GolemGameUISetup
 			break;
 		}
 
+		ADResource::ADGameplay::Stat* health = player->GetStatSheet()->RequestStats(ADResource::ADGameplay::HEALTH);
+		healthIcon->SetTiled(health->currentValue);
 
 		return buttonPressed;
 	}
@@ -178,7 +181,7 @@ namespace GolemGameUISetup
 					case 0:
 					{
 						overlays[overlaysNameToID["TitleScreen"]]->Disable();
-						componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
+						//componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
 						Disable();
 						controllers[controllersNameToID["HudController"]]->Enable();
 						controllers[controllersNameToID["PauseScreenController"]]->Enable();
@@ -305,6 +308,7 @@ namespace GolemGameUISetup
 									componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
 									overlays[pauseOverlayID]->Disable();
 									uiState = ADUI::UISTATE::GAMEPLAY;
+
 									break;
 								}
 								case 1: //guidebook/credits
@@ -328,7 +332,7 @@ namespace GolemGameUISetup
 									Disable();
 
 									overlays[overlaysNameToID["TitleScreen"]]->Enable();
-									componentTypeMap[componentsNameToID["TitleMenu"]]->Enable();
+									//componentTypeMap[componentsNameToID["TitleMenu"]]->Enable();
 									controllers[controllersNameToID["TitleScreenController"]]->Enable();
 									break;
 								case 4:
@@ -959,6 +963,21 @@ namespace GolemGameUISetup
 		//HUD
 		UINT hudID = myUI->AddNewOverlay("HUD", false, true);
 
+		ADUI::Image2D* healthBar = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 324, 30, 502, 495 });
+		healthBar->BuildAnimation({ 1491, 960, 2708, 1086 }, 1, 1, emptyAnimation);
+		myUI->AddUIComponent("HealhBarEmpty", healthBar);
+		myUI->overlays[hudID]->AddComponent(healthBar);
+		healthBar->Focus();
+		_hUDController->AddComponent(healthBar);
+
+		ADUI::Image2D* healthUnits = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 211, 30, 223, 495 });
+		healthUnits->BuildAnimation({ 1365, 1086, 1498, 1207 }, 1, 1, emptyAnimation);
+		healthUnits->tiled = 100;
+		myUI->AddUIComponent("HealhBarEmpty", healthUnits);
+		myUI->overlays[hudID]->AddComponent(healthUnits);
+		//healthUnits->Focus();
+		_hUDController->AddComponent(healthUnits);
+
 		ADUI::Image2D* fullring = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 30, 250, 211 });
 		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 2, emptyAnimation);
 		myUI->AddUIComponent("FullRing", fullring);
@@ -1001,7 +1020,7 @@ namespace GolemGameUISetup
 		_hUDController->AddComponent(golemFace);
 
 
-		_hUDController->SetPlayer(_player, golemFace);
+		_hUDController->SetPlayer(_player, golemFace, healthUnits);
 
 		//ADUI::Label2D* gemLabel = new ADUI::Label2D();
 		//gemLabel->SetFont(myUI->GetFont(CreditsFont));

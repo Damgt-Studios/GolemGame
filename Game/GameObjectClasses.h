@@ -57,7 +57,7 @@ namespace ADResource
 
 		struct StatSheet : public iStatSheet
 		{
-			Stat health = {5,99999,0, INT_MAX};
+			Stat health = {100,99999,0, INT_MAX};
 
 			Stat* RequestStats(UINT _statID)
 			{
