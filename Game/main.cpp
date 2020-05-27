@@ -175,11 +175,11 @@ public:
 		ResourceManager::AddLight(light1);
 
 		std::vector<std::string> animations;
-		animations.push_back("files/models/Golem_1_Idle.animfile");
-		animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Golem_3_Run.animfile");
+		//animations.push_back("files/models/Golem_1_Run.animfile");
 
 		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_3.AnimMesh", "files/textures/Golem_3.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		golem_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
 		golem->SetAudio(audio_manager);
 
@@ -345,7 +345,8 @@ public:
 			ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
-			engine->GetOrbitCamera()->SetLookAtAndRotate(golem->GetPosition(), yaw, pitch, delta_time);
+			engine->GetOrbitCamera()->SetRadius(50);
+			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0,15,0,1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			golem->GetView(view);
@@ -391,7 +392,7 @@ public:
 			}
 
 			XMFLOAT3 SpyrosPosition = VectorToFloat3(golem->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(SpyrosPosition.x, SpyrosPosition.z, 200, 200));
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(golem->transform.r[3].m128_f32[0], golem->transform.r[3].m128_f32[2], 100, 100));
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{

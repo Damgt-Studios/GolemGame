@@ -697,7 +697,7 @@ namespace ADResource
 				if (LineSegmentToTriangle(line, ground[i], m))
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
-					obj->transform.r[3].m128_f32[1] += obj->colliderPtr->GetHeight() / 2;
+					//obj->transform.r[3].m128_f32[1] -= obj->colliderPtr->GetHeight() * 2.5;
 					//obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
 					return true;
 				}

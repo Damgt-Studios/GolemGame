@@ -227,7 +227,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	XMFLOAT3 pos(0, 0, 0);
 	if (Input::QueryButtonDown(GamepadButtons::X))
 	{
-		spyro_move_speed = 50;
+		spyro_move_speed = 500;
 		charging = true;
 
 	}
@@ -235,7 +235,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	{
 		charging = false;
 
-		spyro_move_speed = 30;
+		spyro_move_speed = 500;
 	}
 
 	if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER) == 1) && fire == false)
@@ -256,7 +256,6 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
 			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
 
-
 		Golem::RotationYBasedOnView(camera, angle, WMATH_PI);
 
 
@@ -264,7 +263,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		Velocity.y += forward.y * delta_time * spyro_move_speed;
 		Velocity.z += forward.z * delta_time * spyro_move_speed;
 
-
+		transform = XMMatrixScaling(0.1, 0.1, 0.1) * transform;
 	}
 
 
