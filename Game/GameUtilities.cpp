@@ -84,9 +84,9 @@ Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XM
 	temp->gamePlayType = EVENT_TRIGGER;
 
 	//Using UI as a event Manager.  Temp solution.
-	temp->eventUIMessage.controllerID = 1;
-	temp->eventUIMessage.messageType = ADUI::UIMessageTypes::ExternalMsg;
-	temp->eventUIMessage.number = 3;
+	//temp->eventUIMessage.controllerID = 1;
+	//temp->eventUIMessage.messageType = ADUI::UIMessageTypes::ExternalMsg;
+	//temp->eventUIMessage.number = 3;
 
 
 	return temp;

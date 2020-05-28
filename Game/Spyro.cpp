@@ -197,13 +197,13 @@ void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj)
 				//}
 			}
 		}
-		else if (fire == true)
+		/*else if (fire == true)
 		{
 			if (obj->colliderPtr->isCollision(&fireCollider, m))
 			{
 				OnTriggerFire(obj);
 			}
-		}
+		}*/
 
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
@@ -245,20 +245,50 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 		spyro_move_speed = 30;
 	}
 
-	if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER ) == 1)&& fire == false)
-	{
-		fire = true;
-	}
-	else if (Input::QueryButtonUp(GamepadButtons::B))
-	{
-		fire = false;
+	//if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER ) == 1)&& fire == false)
+	//{
+	//	fire = true;
+	//}
+	//else if (Input::QueryButtonUp(GamepadButtons::B))
+	//{
+	//	fire = false;
 
-	}
+	//}
+	responseTimer -= delta_time;
 	if (Input::QueryButtonDown(GamepadButtons::Y))
 	{
-		testAttack.StartAttack();
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			testAttack.StartAttack();
+			stats->token.currentValue--;
+			if (stats->token.currentValue < stats->token.minValue)
+				stats->token.currentValue = 0;
+		}
 	}
-	
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			++playerElement;
+			if (playerElement == 4)
+				playerElement = 0;
+		}
+
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			--playerElement;
+			if (playerElement < 0)
+				playerElement = 3;
+		}
+	}
+
 	XMFLOAT4 forward;
 	XMStoreFloat4(&forward, Spyro::transform.r[2]);
 	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))

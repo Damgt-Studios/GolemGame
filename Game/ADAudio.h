@@ -11,6 +11,7 @@
 
 namespace AD_ADUIO
 {
+
     enum AUDIO_SOURCE_TYPE
     {
         MUSIC = 0,
@@ -18,26 +19,11 @@ namespace AD_ADUIO
         UI_SOUND_FX
     };
 
-    struct AudioImplementation {
-        AudioImplementation();
-        ~AudioImplementation();
-
-        void Update();
-
-        FMOD::Studio::System* studioSystem;
-        FMOD::System* audioSystem;
-
-        int nextChannelId = 0;
-
-        std::map<std::string, FMOD::Sound*> soundsByName;
-        std::map<int, FMOD::Channel*> channelsByName;
-    };
-
     class ADAudio {
     public:
-        float masterMusicVolume = 1;
-        float masterSoundFXVolume = 1;
-        float masterUISoundFXVolume = 1;
+        float masterMusicVolume = 0.5f;
+        float masterSoundFXVolume = 0.5f;
+        float masterUISoundFXVolume = 0.5f;
 
         static void Init();
         static void Update();
@@ -53,6 +39,7 @@ namespace AD_ADUIO
         bool IsPlaying(int nChannelId) const;
         float dbToVolume(float db);
         float VolumeTodb(float volume);
+        void RefreshMusicVolumes();
         FMOD_VECTOR VectorToFmod(const XMFLOAT3& vPosition);
     };
 
@@ -64,9 +51,27 @@ namespace AD_ADUIO
         XMFLOAT3 vPos;
         float personalVolume;
         UINT audioSourceType;
+        bool restartOnRepeat;
         int currentChannel;
         void LoadSound(bool is3D = true, bool isLooping = false, bool isStream = false);
         void Play();
+        void RefreshVolume();
         void UpdatePosition(XMFLOAT3 pos);
+    };
+
+    struct AudioImplementation {
+        AudioImplementation();
+        ~AudioImplementation();
+
+        void Update();
+
+        FMOD::Studio::System* studioSystem;
+        FMOD::System* audioSystem;
+
+        int nextChannelId = -1;
+
+        std::map<std::string, FMOD::Sound*> soundsByName;
+        std::vector<AudioSource*> musicChannels;
+        std::map<int, FMOD::Channel*> channelsByName;
     };
 }

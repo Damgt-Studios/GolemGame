@@ -440,22 +440,22 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 }
 
 
-void ADUtils::LoadUITextures(ADResource::AD_UI::UIHeader& header, ComPtr<ID3D11ShaderResourceView>& srv, ComPtr<ID3D11Device1> dev)
+void ADUtils::LoadUITextures(std::string _fileName, ID3D11ShaderResourceView** _srv, ComPtr<ID3D11Device1> _dev)
 {
 	HRESULT result;
 
 	ComPtr<ID3D11Device> device;
-	result = dev.As(&device);
+	result = _dev.As(&device);
 	assert(!FAILED(result));
 
 	std::string texture_path = std::string(READ_PATH.begin(), READ_PATH.end()).append("files\\textures\\");
 
 	// Construct wide string with filename
-	std::string spath = header.atlas;
+	std::string spath = _fileName;
 	spath = std::string(texture_path).append(spath);
 	std::wstring wpath = std::wstring(spath.begin(), spath.end());
 	// Load the atlas texture
-	result = CreateDDSTextureFromFile(device.Get(), wpath.c_str(), nullptr, &srv);
+	result = CreateDDSTextureFromFile(device.Get(), wpath.c_str(), nullptr, _srv);
 
 	assert(!FAILED(result));
 }

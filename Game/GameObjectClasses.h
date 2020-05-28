@@ -27,7 +27,7 @@ namespace ADResource
 			MISC_DESTRUCTABLE,
 			SMALL_ESSENCE,
 			SPAWNER,
-			FIRE,
+			FIRE_OBJECT,
 			ALLY_HITBOX,
 			ENEMY_HITBOX,
 			PROJECTILE,
@@ -46,9 +46,19 @@ namespace ADResource
 		};
 
 
+		enum GAME_ELEMENTS
+		{
+			STONE = 0,
+			WATER,
+			FIRE,
+			WOOD,
+			ELECTRIC
+		};
+
 		struct StatSheet : public iStatSheet
 		{
-			Stat health = {5,99999,0, INT_MAX};
+			Stat health = {100,99999,0, INT_MAX};
+			Stat token = {3,3,0, INT_MAX };
 
 			Stat* RequestStats(UINT _statID)
 			{
@@ -58,6 +68,7 @@ namespace ADResource
 					return &health;
 					break;
 				case ADResource::ADGameplay::TOKENS:
+					return &token;
 					break;
 				case ADResource::ADGameplay::STORED_ESSENCE:
 					break;
@@ -77,9 +88,14 @@ namespace ADResource
 
 		class Destructable : public Renderable
 		{
+		protected:
 			StatSheet* stats;
 		public:
 			ADPhysics::AABB collider;
+
+			int playerElement;
+
+			int GetCurrentElement() { return playerElement; }
 
 			virtual void Update(float _deltaTime) 
 			{
@@ -158,7 +174,7 @@ namespace ADResource
 			ADPhysics::AABB collider;
 
 			//Until we have an event manager this is our solution for events.
-			ADResource::AD_UI::UIMessage eventUIMessage;
+			ADUI::UIMessage eventUIMessage;
 
 
 			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
