@@ -20,10 +20,48 @@ AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, 
 		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
 		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
 	}
-	
+
 	shader.wireframe = wireframe;
-	
+
 	return InitializePBRModel(modelname, position, scale, rotation, shader);
+}
+
+AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+	ADUtils::SHADER shader = { 0 };
+
+	if (!wireframe)
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\simple_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\simple_ps.hlsl");
+	}
+	else
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
+	}
+
+	shader.wireframe = wireframe;
+
+	return InitializeSimpleModel(modelname, materials, position, scale, rotation, shader);
+}
+
+AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+	ADUtils::SHADER shader = { 0 };
+
+	if (!wireframe)
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\animated_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\animated_ps.hlsl");
+	}
+	else
+	{
+		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
+	}
+
+	shader.wireframe = wireframe;
+
+	return InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 }
 
 AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe /*= false*/)
@@ -63,13 +101,15 @@ AD_ULONG ResourceManager::AddSpyro(std::string modelname, XMFLOAT3 position, XMF
 }
 
 
-void ResourceManager::AddSkybox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+void ResourceManager::AddSkybox(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADUtils::SHADER shader = { 0 };
 	strcpy_s(shader.vshader, "files\\shaders\\skybox_vs.hlsl");
 	strcpy_s(shader.pshader, "files\\shaders\\skybox_ps.hlsl");
 
-	ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader);
+	//ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+	ADUtils::LoadStaticMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+
 	skybox.position = position;
 	skybox.scale = scale;
 	skybox.rotation = rotation;
@@ -89,7 +129,7 @@ AD_ULONG ResourceManager::GenerateEffectID()
 AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
 {
 	ADResource::ADRenderer::Model temp;
-	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetPBRRendererResources()->device, shader);
+	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
 	temp.position = position;
 	temp.scale = scale;
 	temp.rotation = rotation;
@@ -120,6 +160,44 @@ AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 pos
 	unsigned int index = pbrmodels.size();
 	pbrmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
 	pbrmodels.push_back(temp);
+
+	return id;
+}
+
+AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
+{
+	SimpleStaticModel* temp = new SimpleStaticModel();
+
+	temp->position = position;
+	temp->scale = scale;
+	temp->rotation = rotation;
+
+	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+
+	// grab id and add stuff
+	AD_ULONG id = GenerateUniqueID();
+	unsigned int index = fbxmodels.size();
+	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	fbxmodels.push_back(temp);
+
+	return id;
+}
+
+AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
+{
+	SimpleAnimModel* temp = new SimpleAnimModel();
+	
+	temp->position = position;
+	temp->scale = scale;
+	temp->rotation = rotation;
+
+	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+
+	// grab id and add stuff
+	AD_ULONG id = GenerateUniqueID();
+	unsigned int index = fbxmodels.size();
+	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	fbxmodels.push_back(temp);
 
 	return id;
 }
@@ -213,7 +291,7 @@ ADResource::ADRenderer::Model* ResourceManager::GetPBRPtr()
 	return pbrmodels.data();
 }
 
-ADResource::ADRenderer::Model* ResourceManager::GetSkybox()
+ADResource::ADRenderer::SimpleStaticModel* ResourceManager::GetSkybox()
 {
 	return &skybox;
 }
@@ -260,6 +338,34 @@ ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG m
 		// Found
 		temp = &pbrmodels[iter->second];
 	}
+
+	return temp;
+}
+
+ADResource::ADRenderer::SimpleModel** ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
+{
+	SimpleModel** temp = nullptr;
+	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = fbxmodel_map.find(mesh_id);
+
+	if (iter != fbxmodel_map.end())
+	{
+		// Found
+		temp = &fbxmodels[iter->second];
+	}
+
+	return temp;
+}
+
+ADResource::ADRenderer::SimpleAnimModel* ResourceManager::GetSimpleAnimModelPtrFromMeshId(AD_ULONG mesh_id)
+{
+	SimpleAnimModel* temp = nullptr;
+	//std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = animated_fbxmodel_map.find(mesh_id);
+
+	//if (iter != animated_fbxmodel_map.end())
+	//{
+	//	// Found
+	//	temp = &animated_fbxmodels[iter->second];
+	//}
 
 	return temp;
 }

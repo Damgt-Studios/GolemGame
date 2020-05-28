@@ -1,40 +1,40 @@
 #include "pchgame.h"
 #include "Spyro.h"
-
-ADResource::ADGameplay::Spyro::Spyro() {
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
-	colliderPtr = &collider;
-
-	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
-	chargeCollider.trigger = true;
-	chargeCPtr = &chargeCollider;
-
-	fireCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
-	fireCollider.trigger = true;
-
-	fireCPtr = &fireCollider;
-	team = 1;
-}
-
-void ADResource::ADGameplay::Spyro::Update(float delta_time)
-{
-	ProcessEffects(delta_time);
-	testAttack.Update(delta_time);
-
-	HandleInput(delta_time);
-
-	// Physics
-	collider = OBB(transform, XMFLOAT3(2,2,2));
-	colliderPtr = &collider;
-
-	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
-	chargeCollider.trigger = true;
-	chargeCPtr = &chargeCollider;
-
-	fireCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
-	fireCollider.trigger = true;
-
-	fireCPtr = &fireCollider;
+//
+//ADResource::ADGameplay::Spyro::Spyro() {
+//	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+//	colliderPtr = &collider;
+//
+//	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+//	chargeCollider.trigger = true;
+//	chargeCPtr = &chargeCollider;
+//
+//	fireCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+//	fireCollider.trigger = true;
+//
+//	fireCPtr = &fireCollider;
+//	team = 1;
+//}
+//
+//void ADResource::ADGameplay::Spyro::Update(float delta_time)
+//{
+//	ProcessEffects(delta_time);
+//	testAttack.Update(delta_time);
+//
+//	HandleInput(delta_time);
+//
+//	// Physics
+//	collider = OBB(transform, XMFLOAT3(2,2,2));
+//	//colliderPtr = &collider;
+//
+//	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+//	chargeCollider.trigger = true;
+//	chargeCPtr = &chargeCollider;
+//
+//	fireCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
+//	fireCollider.trigger = true;
+//
+//	fireCPtr = &fireCollider;
 
 	//if (invulnerable_timer > 0)
 	//{
@@ -44,7 +44,7 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 	//		defenseType = OBJECT_DEFENSE::NONE;
 	//	}
 	//}
-}
+//}
 //
 //void ADResource::ADGameplay::Spyro::Damage(DAMAGE_TYPE d_type)
 //{
@@ -69,24 +69,24 @@ void ADResource::ADGameplay::Spyro::Update(float delta_time)
 //		//}
 //	}
 //}
-
-void ADResource::ADGameplay::Spyro::Remove()
-{
-
-}
-
-void ADResource::ADGameplay::Spyro::GetView(XMMATRIX& view)
-{
-	camera = view;
-}
-
-
-void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
-{
-}
-
-void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
-{
+//
+//void ADResource::ADGameplay::Spyro::Remove()
+//{
+//
+//}
+//
+//void ADResource::ADGameplay::Spyro::GetView(XMMATRIX& view)
+//{
+//	camera = view;
+//}
+//
+//
+//void ADResource::ADGameplay::Spyro::CheckCollision(AABB& item)
+//{
+//}
+//
+//void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
+//{
 	//if (other->type == OBJECT_TYPE::GEM)
 	//{
 	//	GemCount += other->GemCount;
@@ -123,10 +123,10 @@ void ADResource::ADGameplay::Spyro::OnTrigger(GameObject* other)
 
 	//	}
 	//}
-}
-
-void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other) 
-{
+//}
+//
+//void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other) 
+//{
 
 	//if (defenseType != OBJECT_DEFENSE::INVULNERABLE)
 	//{
@@ -138,100 +138,100 @@ void ADResource::ADGameplay::Spyro::OnCollision(GameObject* other)
 	
 	
 	//Sample of what to do with what we have right now
-	if (other->colliderPtr->type == ColliderType::Plane || other->colliderPtr->type == ColliderType::Aabb)
-	{
-		float Dot = VectorDot(XMFLOAT3(
-			collider.Pos.x - other->colliderPtr->Pos.x,
-			collider.Pos.y - other->colliderPtr->Pos.y,
-			collider.Pos.z - other->colliderPtr->Pos.z), XMFLOAT3(0, 1, 0));
-
-		if (Dot > 0.5f)
-			jumping = false;
-	}
-}
-void ADResource::ADGameplay::Spyro::OnTriggerCharge(GameObject* other)
-{
-	//if (charging == true)
-	//{
+//	if (other->colliderPtr->type == ColliderType::Plane || other->colliderPtr->type == ColliderType::Aabb)
+//	{
+//		float Dot = VectorDot(XMFLOAT3(
+//			collider.Pos.x - other->colliderPtr->Pos.x,
+//			collider.Pos.y - other->colliderPtr->Pos.y,
+//			collider.Pos.z - other->colliderPtr->Pos.z), XMFLOAT3(0, 1, 0));
+//
+//		if (Dot > 0.5f)
+//			jumping = false;
+//	}
+//}
+//void ADResource::ADGameplay::Spyro::OnTriggerCharge(GameObject* other)
+//{
+//	//if (charging == true)
+//	//{
+//
+//	//}
+//}
+//void ADResource::ADGameplay::Spyro::OnTriggerFire(GameObject* other)
+//{
+//
+//	//if (fire == true)
+//	//{
+//	//	other->Damage(DAMAGE_TYPE::FIRE);
+//
+//
 
 	//}
-}
-void ADResource::ADGameplay::Spyro::OnTriggerFire(GameObject* other)
-{
-
-	//if (fire == true)
-	//{
-	//	other->Damage(DAMAGE_TYPE::FIRE);
 
 
-
-	//}
-
-
-}
+//}
 
 
 //Checks collision, If collides with a trigger, calls OnTrigger, if colliders with a collider, calls OnCollision
-void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj) 
-{
-	Manifold m;
+//void ADResource::ADGameplay::Spyro::CheckCollision(GameObject* obj) 
+//{
+//	Manifold m;
+//
+//	if (obj->active) 
+//	{
+//		if (charging == true)
+//		{
+//			if (obj->colliderPtr->isCollision(&chargeCollider, m))
+//			{
+//				OnTriggerCharge(obj);
+//				//if (audioManager)
+//				//{
+//				//	if (playingSound)
+//				//	{
+//				//		audioManager->ResumeEffect(EnemyDeathSound, collectionNoiseID);
+//				//	}
+//				//	else
+//				//	{
+//				//		playingSound = true;
+//				//		collectionNoiseID = audioManager->PlayEffect(EnemyDeathSound);
+//				//	}
+//				//}
+//			}
+//		}
+//		/*else if (fire == true)
+//		{
+//			if (obj->colliderPtr->isCollision(&fireCollider, m))
+//			{
+//				OnTriggerFire(obj);
+//			}
+//		}*/
+//
+//		if (obj->colliderPtr->isCollision(&collider, m))
+//		{
+//			
+//			//If collision and collision object is a trigger then go to OnTrigger Function
+//			if (obj->colliderPtr->trigger)
+//			{
+//				OnTrigger(obj);
+//			}
+//			//If collision and collision object is a collider then go to OnCollision Function
+//			else
+//			{
+//				//collisionQueue.push(CollisionPacket(this, obj, m));
+//				//OnCollision(obj);
+//			}
+//		}
+//	}
+//}
 
-	if (obj->active) 
-	{
-		if (charging == true)
-		{
-			if (obj->colliderPtr->isCollision(&chargeCollider, m))
-			{
-				OnTriggerCharge(obj);
-				if (audioManager)
-				{
-					if (playingSound)
-					{
-						audioManager->ResumeEffect(EnemyDeathSound, collectionNoiseID);
-					}
-					else
-					{
-						playingSound = true;
-						collectionNoiseID = audioManager->PlayEffect(EnemyDeathSound);
-					}
-				}
-			}
-		}
-		else if (fire == true)
-		{
-			if (obj->colliderPtr->isCollision(&fireCollider, m))
-			{
-				OnTriggerFire(obj);
-			}
-		}
+//
+//void ADResource::ADGameplay::Spyro::SetAudio(AudioManager* _audioManager)
+//{
+//	audioManager = _audioManager;
+//}
 
-		if (obj->colliderPtr->isCollision(&collider, m))
-		{
-			
-			//If collision and collision object is a trigger then go to OnTrigger Function
-			if (obj->colliderPtr->trigger)
-			{
-				OnTrigger(obj);
-			}
-			//If collision and collision object is a collider then go to OnCollision Function
-			else
-			{
-				collisionQueue.push(CollisionPacket(this, obj, m));
-				OnCollision(obj);
-			}
-		}
-	}
-}
-
-
-void ADResource::ADGameplay::Spyro::SetAudio(AudioManager* _audioManager)
-{
-	audioManager = _audioManager;
-}
-
-void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
-{
-	XMFLOAT3 pos(0, 0, 0);
+//void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
+//{
+	/*XMFLOAT3 pos(0, 0, 0);
 	if (Input::QueryButtonDown(GamepadButtons::X))
 	{
 		spyro_move_speed = 50;
@@ -243,85 +243,115 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 		charging = false;
 
 		spyro_move_speed = 30;
-	}
+	}*/
 
-	if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER ) == 1)&& fire == false)
-	{
-		fire = true;
-	}
-	else if (Input::QueryButtonUp(GamepadButtons::B))
-	{
-		fire = false;
+	//if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER ) == 1)&& fire == false)
+	//{
+	//	fire = true;
+	//}
+	//else if (Input::QueryButtonUp(GamepadButtons::B))
+	//{
+	//	fire = false;
 
-	}
-	if (Input::QueryButtonDown(GamepadButtons::Y))
-	{
-		testAttack.StartAttack();
-	}
-	
-	XMFLOAT4 forward;
-	XMStoreFloat4(&forward, Spyro::transform.r[2]);
-	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
-	{
+	//}
+	//responseTimer -= delta_time;
+	//if (Input::QueryButtonDown(GamepadButtons::Y))
+	//{
+	//	if (responseTimer < 0)
+	//	{
+	//		responseTimer = 0.2f;
+	//		testAttack.StartAttack();
+	//		stats->token.currentValue--;
+	//		if (stats->token.currentValue < stats->token.minValue)
+	//			stats->token.currentValue = 0;
+	//	}
+	//}
+	//if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+	//{
+	//	if (responseTimer < 0)
+	//	{
+	//		responseTimer = 0.2f;
+	//		++playerElement;
+	//		if (playerElement == 4)
+	//			playerElement = 0;
+	//	}
 
-		float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
-			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
+	//}
 
+	//if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	//{
+	//	if (responseTimer < 0)
+	//	{
+	//		responseTimer = 0.2f;
+	//		--playerElement;
+	//		if (playerElement < 0)
+	//			playerElement = 3;
+	//	}
+	//}
 
-		Spyro::RotationYBasedOnView(camera, angle, WMATH_PI);
+	//XMFLOAT4 forward;
+	//XMStoreFloat4(&forward, Spyro::transform.r[2]);
+	//if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
+	//{
 
-
-		Velocity.x += forward.x * delta_time * spyro_move_speed;
-		Velocity.y += forward.y * delta_time * spyro_move_speed;
-		Velocity.z += forward.z * delta_time * spyro_move_speed;
-
-
-	}
-
-
-	if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
-	{
-		gliding = true;
-		floatiness = 0.05f;
-		ADPhysics::maxDownwardVelocity = -0.5f;
-	}
-
-
-	if (Input::QueryButtonUp(GamepadButtons::A))
-	{
-		buttonup = true;
-		if (gliding == true)
-		{
-			gliding = false;
-			floatiness = 0.25f;
-			ADPhysics::maxDownwardVelocity = -20;
-		}
-
-	}
-
-	if (Velocity.y > maxDownwardVelocity)
-		Velocity.y += Gravity * delta_time * floatiness;
-	else
-		Velocity.y = maxDownwardVelocity;
-
-	AddToPositionVector((XMFLOAT3&)Velocity);
-
-	Velocity.x = 0;
-	Velocity.z = 0;
+	//	float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
+	//		Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
 
 
-	// Actions
-	if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)
-	{
-		buttonup = false;
-		floatiness = 0.25f;
-		jumping = true;
-		Velocity.y = (-Gravity * delta_time * floatiness) * 20;
+	//	Spyro::RotationYBasedOnView(camera, angle, WMATH_PI);
+
+
+	//	Velocity.x += forward.x * delta_time * spyro_move_speed;
+	//	Velocity.y += forward.y * delta_time * spyro_move_speed;
+	//	Velocity.z += forward.z * delta_time * spyro_move_speed;
+
+
+	//}
+
+
+	//if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
+	//{
+	//	gliding = true;
+	//	floatiness = 0.05f;
+	//	ADPhysics::maxDownwardVelocity = -0.5f;
+	//}
+
+
+	//if (Input::QueryButtonUp(GamepadButtons::A))
+	//{
+	//	buttonup = true;
+	//	if (gliding == true)
+	//	{
+	//		gliding = false;
+	//		floatiness = 0.25f;
+	//		ADPhysics::maxDownwardVelocity = -20;
+	//	}
+
+	//}
+
+	//if (Velocity.y > maxDownwardVelocity)
+	//	Velocity.y += Gravity * delta_time * floatiness;
+	//else
+	//	Velocity.y = maxDownwardVelocity;
+
+	//AddToPositionVector((XMFLOAT3&)Velocity);
+
+	//Velocity.x = 0;
+	//Velocity.z = 0;
+
+
+	//// Actions
+	//if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)
+	//{
+	//	buttonup = false;
+	//	floatiness = 0.25f;
+	//	jumping = true;
+	//	Velocity.y = (-Gravity * delta_time * floatiness) * 20;
 
 
 
 
-	}
+	//}
 
 
 
@@ -329,4 +359,4 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 
 
 
-}
+//}

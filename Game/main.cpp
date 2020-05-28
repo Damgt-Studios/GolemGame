@@ -9,11 +9,11 @@
 
 #include "ADUserInterface.h"
 #include "GameUserInterface.h"
-#include "AudioManager.h"
+//#include "AudioManager.h"
+#include "ADAudio.h"
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
 #include "MeshLoader.h"
-#include "../ActusDeiXboxOneEdition/Scene.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -35,15 +35,17 @@ using namespace Platform::Collections;
 bool FULLSCREEN = false;
 // Settings
 
+
 // the class definition for the core "framework" of our app
 ref class App sealed : public IFrameworkView
 {
 private:
 	Engine* engine;
-	ADResource::ADGameplay::Spyro* spyro;
-	AD_ULONG spyro_collider = 0;
+	ADResource::ADGameplay::Golem* golem;
+	AD_ULONG golem_collider = 0;
 
-	AudioManager* audio_manager;
+	//AudioManager* audio_manager;
+	AD_ADUIO::ADAudio* audio;
 
 	bool shutdown = false;
 
@@ -74,8 +76,6 @@ private:
 	ADPhysics::AABB test_colider1;
 	ADPhysics::Plane test_plane;
 
-	//Scene
-	ADGameplay::Scene currentScene;
 
 
 public:
@@ -99,7 +99,6 @@ public:
 
 		Gamepad::GamepadAdded += ref new EventHandler<Gamepad^>(&Input::OnGamepadAdded);
 		Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^>(&Input::OnGamepadRemoved);
-		currentScene.LoadScene("files/scenes/test.scene");
 	}
 
 	virtual void SetWindow(CoreWindow^ Window)
@@ -112,24 +111,37 @@ public:
 
 	virtual void Run()
 	{
-		// Bruh
-		std::vector<std::string> sfx;
-		sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
-		sfx.push_back("files\\audio\\SFK_Destructable_Break.wav");
-		sfx.push_back("files\\audio\\SFK_Enemy_Death.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Charging.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Death.wav");
-		sfx.push_back("files\\audio\\SFK_Player_FireBreath.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Glide.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Hurt.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Jump.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Land.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Object_Hit.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Running_Jump.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Walking.wav");
-		sfx.push_back("files\\audio\\SFK_Player_Water_Splash.wav");
-		audio_manager = new AudioManager;
-		audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
+		AD_ADUIO::ADAudio audioEngine;
+		audioEngine.Init();
+
+		AD_ADUIO::AudioSource titleMusic;
+		titleMusic.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::MUSIC;
+		titleMusic.engine = &audioEngine;
+		titleMusic.personalVolume = 0.02f;
+		titleMusic.soundName = "files\\audio\\Opening.mp3";
+		titleMusic.LoadSound(false, true, true);
+
+
+		audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
+		//audioEngine.LoadSound("", );
+
+		//std::vector<std::string> sfx;
+		//sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
+		//sfx.push_back("files\\audio\\SFX_Destructable_Break.wav");
+		//sfx.push_back("files\\audio\\SFX_Enemy_Death.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Charging.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Death.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_FireBreath.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Glide.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Hurt.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Jump.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Land.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Object_Hit.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Running_Jump.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Walking.wav");
+		//sfx.push_back("files\\audio\\SFX_Player_Water_Splash.wav");
+		//audio_manager = new AudioManager;
+		//audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
 		
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
@@ -138,30 +150,90 @@ public:
 		engine = new Engine;
 
 		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 20.0f, -100.0f), 0, 0, 45);
+		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 
-		currentScene.Render();
+		Light light;
+		ZeroMemory(&light, sizeof(Light));
+		light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
+		light.diffuse = 
+			light.ambientUp = 
+			light.ambientDown = 
+			light.specular = 
+			XMFLOAT4(1, 1, 1, 1);
+		light.ambientIntensityDown = .1;
+		light.ambientIntensityUp = .1;
+		light.lightDirection = XMFLOAT4(0, -1, 0, 1);
+		light.diffuseIntensity = 1;
+		light.specularIntensity = .2;
+		light.diffuse =
+			light.ambientUp =
+			light.ambientDown =
+			light.specular =
+			XMFLOAT4(1, 1, 1, 1);
+		ResourceManager::AddLight(light);
 
-		ResourceManager::AddSkybox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		spyro = GameUtilities::LoadSpyroFromModelFile("files/models/Test_Spyro.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		spyro_collider = ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0.00001, 0), XMFLOAT3(.6, .6, .6), XMFLOAT3(0, 0, 0), true);
-		spyro->SetAudio(audio_manager);
+		// Point light
+		Light light1;
+		ZeroMemory(&light1, sizeof(Light));
+		light1.ambientIntensityDown = .1;
+		light1.ambientIntensityUp = .1;
+		light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
+		light1.diffuseIntensity = .5;
+		light1.specularIntensity = .2;
+		light1.diffuse =
+			light1.ambientUp =
+			light1.ambientDown =
+			light1.specular =
+			XMFLOAT4(1, 1, 1, 1);
+		light1.lightType = (int)LIGHTTYPE::POINT;
+		light1.position = XMFLOAT4(10, 0, 0, 1);
+		light1.lightRadius = 100;
+		ResourceManager::AddLight(light1);
+
+		std::vector<std::string> animations;
+		animations.push_back("files/models/Golem_1_Idle.animfile");
+
+		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		//golem->SetAudio(audio_manager);
 
 
-		Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		spyro->testAttack.active = false;
-		spyro->testAttack.hitboxCount = 1;
-		spyro->testAttack.cooldownDuration = 0.5;
-		spyro->testAttack.hitbox = myHitBox;
-		//Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
+
+		//Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		//Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+		//Collectable** collectables = new Collectable*[10];
+		//for (int i = 0; i < 10; ++i)
+		//{
+		//	collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//	GameUtilities::AddGameObject(collectables[i]);
+		//}
+		//Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 
-		ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
+		//ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
 
 		// Colliders
-		Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
+		//Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		//Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		//Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
+
+		std::vector<std::string> animationFiles;
+		animationFiles.push_back("files/models/Golem_2_Idle.animfile");
+
+		animationFiles[0] = "files/models/BattleMage.animfile";
+		//animationFiles[0] = "files/models/Trebuchet_Attack.animfile";
+
+		//Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1000, 100, 1000), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -171,26 +243,39 @@ public:
 			GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
 		}*/
 		// Comment this out - will run at 1fps
-		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
-
-		GameUtilities::AddGameObject(testPlane);
+		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
+		//GameUtilities::AddGameObject(c1);
+		//GameUtilities::AddGameObject(c2);
+		////GameUtilities::AddGameObject(a1);
+		//GameUtilities::AddGameObject(a2);
+		//GameUtilities::AddGameObject(e1);
+		//GameUtilities::AddGameObject(e2);
+		//GameUtilities::AddGameObject(e3);
+		//GameUtilities::AddGameObject(t1);
+		//GameUtilities::AddGameObject(testPlane);
+		//GameUtilities::AddGameObject(AnimationTester);
+		GameUtilities::AddGameObject(tempPlane);
 
 		//testPlane->colliderPtr = nullptr;
 
 		
-		Model* models = ResourceManager::GetPBRPtr();
-		int models_count = ResourceManager::GetPBRModelCount();
-		Model planeModel = models[testPlane->GetMeshId() - 2];
+		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
 		std::vector<ADQuadTreePoint> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
-		testPlane->GetWorldMatrix(groundWorld);
-		for(unsigned int i = 0; i < planeModel.indices.size(); i+=3)
+		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
+		tempPlane->GetWorldMatrix(groundWorld);
+		for(unsigned int i = 0; i < (*planeModel).indices.size(); i+=3)
 		{
-			ADPhysics::Triangle* tri = new ADPhysics::Triangle(planeModel.vertices[planeModel.indices[i]].Pos, planeModel.vertices[planeModel.indices[i + 1]].Pos, planeModel.vertices[planeModel.indices[i + 2]].Pos);
-			tri->a = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->a), groundWorld));
-			tri->b = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->b), groundWorld));
-			tri->c = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(tri->c), groundWorld));
+			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
+			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
+			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
+
+			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
+			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
+			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
+
+			ADPhysics::Triangle* tri = new Triangle(A, B, C);
 
 			ground.push_back(*tri);
 
@@ -199,7 +284,7 @@ public:
 			treePoints.push_back(point);
 		}
 
-		ADQuad boundary = ADQuad(planeModel.position.x, planeModel.position.z, 50, 50);
+		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
 		QuadTree* tree = new QuadTree(boundary);
 
 		for (unsigned int i = 0; i < treePoints.size(); i++)
@@ -207,31 +292,42 @@ public:
 			tree->Insert(treePoints[i]);
 		}
 
-		SimpleMesh mesh;
-		Load_Mesh("files/models/ForestGolem_1.mesh", mesh);
-
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
 		//passables[0] = a3;
 
 		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt(ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position);
+		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+		engine->GetOrbitCamera()->SetPosition(XMFLOAT3(100, 200, -200));
 
-		SpyroUISetup::GameUserInterface gameUI;
-		engine->SetupUserInterface(gameUI.SpyroGameUISetup());
+		GolemGameUISetup::GameUserInterface gameUI;
 
 		if (!engine->Initialize())
 		{
 			return;
 		}
 
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine);
+
 		// Timing
 		game_time.Restart();
 
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
+
+		// Construct physics stuff
+		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
+		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
+		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
+		
+		//Needed to add this to the colliders for the collision queue
+		/*c1->colliderPtr = &test_colider;
+		c1->type = OBJECT_TYPE::STATIC;
+
+		c2->colliderPtr = &test_colider1;
+		c2->type = OBJECT_TYPE::STATIC;*/
 
 		while (!shutdown)
 		{
@@ -242,25 +338,26 @@ public:
 
 			ProcessInput();
 
-			// Audio -Music doesn't play in debug mode -  annoying AF
-			if (main_music_loop_timer <= 0 && !music_triggered)
-			{
-#ifdef NDEBUG
-				music_triggered = true;
-				audio_manager->PlayBackgroundMusic();
-#endif
-			}
+
+
 
 			// Test
 			//spyro->Update(delta_time);
 			// Debug draw
-			ResourceManager::GetModelPtrFromMeshId(spyro_collider)->position = ResourceManager::GetModelPtrFromMeshId(spyro->GetMeshId())->position;
+			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
-			engine->GetOrbitCamera()->SetLookAtAndRotate(spyro->GetPosition(), yaw, pitch, delta_time);
+			//engine->GetOrbitCamera()->SetRadius(200);
+			engine->GetOrbitCamera()->SetRadius(50);
+			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0,15,0,1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
-			spyro->GetView(view);
+			golem->GetView(view);
 		
+
+			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
+			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
+			audioEngine.Update();
+
 			// Physics test
 		
 			/*spyro->CheckCollision(c1);
@@ -301,15 +398,15 @@ public:
 				}
 			}
 
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(spyro->GetPosition().x, spyro->GetPosition().z, 10, 10));
+			XMFLOAT3 SpyrosPosition = VectorToFloat3(golem->transform.r[3]);
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(golem->transform.r[3].m128_f32[0], golem->transform.r[3].m128_f32[2], 100, 100));
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
 				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
-			if (GroundClamping(spyro, trisInRange, delta_time))
-				spyro->jumping = false;
+			GroundClamping(golem, trisInRange, delta_time);
 
 
 			//Resolve all collisions that occurred this frame
@@ -337,7 +434,7 @@ public:
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
 			}
 		}
-		currentScene.destroy();
+		audioEngine.Shutdown();
 	}
 	virtual void Uninitialize() {}
 
@@ -350,18 +447,18 @@ public:
 
 	void ProcessInput()
 	{
-		if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
-		{
-			if (effect_triggered) audio_manager->ResumeEffect(7, effect_id);
-			else {
-				effect_triggered = true;
-				effect_id = audio_manager->PlayEffect(7);
-			}
-		}
-		if (Input::QueryButtonDown(GamepadButtons::DPadRight))
-		{
-			audio_manager->PauseEffect(0, effect_id);
-		}
+		//if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
+		//{
+		//	if (effect_triggered) audio_manager->ResumeEffect(7, effect_id);
+		//	else {
+		//		effect_triggered = true;
+		//		effect_id = audio_manager->PlayEffect(7);
+		//	}
+		//}
+		//if (Input::QueryButtonDown(GamepadButtons::DPadRight))
+		//{
+		//	audio_manager->PauseEffect(0, effect_id);
+		//}
 
 		static float camera_rotation_thresh = 250;
 		float dt = delta_time;
