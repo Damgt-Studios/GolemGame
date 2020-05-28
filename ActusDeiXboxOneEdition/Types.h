@@ -573,7 +573,7 @@ namespace ADResource
 
 			}
 
-			GroundClamping(obj, trisInRange, delta_time);
+			return GroundClamping(obj, trisInRange, delta_time);
 		}
 	}
 };

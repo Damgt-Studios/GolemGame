@@ -113,6 +113,16 @@ namespace ADAI
 
 			velocity *= returnDirectionalStrength;
 			return velocity;
+
+
+			//XMFLOAT3 sigh = _object->GetPosition();
+			//XMVECTOR objectPos = XMLoadFloat3(&sigh);
+			//XMVECTOR velocity = groupTarget->r[3] - objectPos;
+
+			//velocity = XMVector4Normalize(velocity);
+
+			//velocity *= returnDirectionalStrength;
+			//return velocity;
 		}
 
 

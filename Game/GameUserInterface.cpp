@@ -661,10 +661,10 @@ namespace GolemGameUISetup
 
 		//Pause Screen
 		UINT pauseID = myUI->AddNewOverlay("PauseScreen", false, false);
-		//ADUI::Image2D* pauseImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
-		//pauseImage->BuildAnimation({ 0, 0, 3840, 2160 }, 1, 1, emptyAnimation);
-		//myUI->AddUIComponent("PauseBG", pauseImage);
-		//myUI->overlays[pauseID]->AddComponent(pauseImage);
+		////ADUI::Image2D* pauseImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
+		////pauseImage->BuildAnimation({ 0, 0, 3840, 2160 }, 1, 1, emptyAnimation);
+		////myUI->AddUIComponent("PauseBG", pauseImage);
+		////myUI->overlays[pauseID]->AddComponent(pauseImage);
 
 		//Guidebook Screen
 		UINT guideID = myUI->AddNewOverlay("GuideScreen", false, false);
@@ -725,10 +725,10 @@ namespace GolemGameUISetup
 
 		//OptionsScreen
 		UINT optionsID = myUI->AddNewOverlay("OptionsScreen", false, false);
-		/*ADUI::Image2D* optionsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 1550, 400, 3070, 1560 });
-		optionsImage->BuildAnimation({ 0, 4320, 2299, 5280 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("OptionsBox", optionsImage);
-		myUI->overlays[optionsID]->AddComponent(optionsImage);*/
+		/////*ADUI::Image2D* optionsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 1550, 400, 3070, 1560 });
+		////optionsImage->BuildAnimation({ 0, 4320, 2299, 5280 }, 1, 1, emptyAnimation);
+		////myUI->AddUIComponent("OptionsBox", optionsImage);
+		////myUI->overlays[optionsID]->AddComponent(optionsImage);*/
 
 			//Option Menu Buttons
 		ADUI::ComponentGrid* buttonList3 = new ADUI::ComponentGrid();
@@ -1140,25 +1140,25 @@ namespace GolemGameUISetup
 
 		//UI Log
 		UINT logid = myUI->AddNewOverlay("Log", false, true);
-		ADUI::UILog* uiLog = myUI->GetLog();
-		uiLog->InitializeLog(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1]);
+		//ADUI::UILog* uiLog = myUI->GetLog();
+		//uiLog->InitializeLog(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1]);
 
-		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1600, 1016, 3840, 2016 });
-		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 2, emptyAnimation);
-		consoleBox->active = true;
-		consoleBox->visible = true;
-		consoleBox->controlFocusAnimation = 1;
-		consoleBox->stretched = true;
-		ADUI::Label2D* consoleLabel = new ADUI::Label2D();
-		consoleLabel->SetFont(myUI->GetFont(2));
+		//ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1600, 1016, 3840, 2016 });
+		//consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 2, emptyAnimation);
+		//consoleBox->active = true;
+		//consoleBox->visible = true;
+		//consoleBox->controlFocusAnimation = 1;
+		//consoleBox->stretched = true;
+		//ADUI::Label2D* consoleLabel = new ADUI::Label2D();
+		//consoleLabel->SetFont(myUI->GetFont(2));
 		//consoleLabel->SetText("", { 1920, 1180 });// XMFLOAT2(1920, 1080));
-		consoleLabel->active = true;
-		consoleLabel->visible = true;
-		uiLog->Setup(consoleBox, consoleLabel);
+		//consoleLabel->active = true;
+		//consoleLabel->visible = true;
+		//uiLog->Setup(consoleBox, consoleLabel);
 
-		myUI->AddUIComponent("Log", uiLog);
-		myUI->overlays[logid]->AddComponent(uiLog);
-		ADUI::MessageReceiver::SetUI(myUI);
+		//myUI->AddUIComponent("Log", uiLog);
+		//myUI->overlays[logid]->AddComponent(uiLog);
+		//ADUI::MessageReceiver::SetUI(myUI);
 
 		return logid;
 	}

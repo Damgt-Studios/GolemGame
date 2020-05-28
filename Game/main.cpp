@@ -219,6 +219,7 @@ public:
 
 		golem->commandGroup = &idleFlock;
 		idleFlock.groupTarget = &golem->transform;
+		commandFlock.groupTarget = &golem->transform;
 
    // No more.
      /////////////////////////////////////////

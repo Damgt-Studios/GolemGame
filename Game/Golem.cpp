@@ -319,7 +319,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.5f))
 	{
-		commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3] * 3);
+		commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3]);
 	}
 
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.5f))
