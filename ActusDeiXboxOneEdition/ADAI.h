@@ -35,8 +35,8 @@ namespace ADAI
 		float cohesionStrength = 0.7f;
 		float separationStrength = 1.0f;
 		float flockRadius = 10.0;
-		float maxSpeed = 0.1f;
-		float moveSpeed = 0.01f;
+		float maxSpeed = 1.0f;
+		float moveSpeed = 0.1f;
 		XMVECTOR averagePosition;
 		XMVECTOR averageForward;
 		XMVECTOR commandDirection;

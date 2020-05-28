@@ -1053,23 +1053,23 @@ namespace GolemGameUISetup
 		minionHealthUnit->tiled = 50;
 		myUI->AddUIComponent("HealhBarEmpty", minionHealthUnit);
 		myUI->overlays[hudID]->AddComponent(minionHealthUnit);
-		//healthUnits->Focus();
+		healthUnits->Focus();
 		_hUDController->AddComponent(minionHealthUnit);
 
 		ADUI::Image2D* specialIcon = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 665, 175, 921, 396 });
-		specialIcon->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 2, multiFrameStillAnimation);
+		specialIcon->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
 		specialIcon->Focus();
 		myUI->AddUIComponent("Specials", specialIcon);
 		myUI->overlays[hudID]->AddComponent(specialIcon);
 		_hUDController->AddComponent(specialIcon);
 		ADUI::Image2D* specialIcon2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 936, 175, 1192, 396 });
-		specialIcon2->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 2, multiFrameStillAnimation);
+		specialIcon2->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
 		specialIcon2->Focus();
 		myUI->AddUIComponent("Specials2", specialIcon2);
 		myUI->overlays[hudID]->AddComponent(specialIcon2);
 		_hUDController->AddComponent(specialIcon2);
 		ADUI::Image2D* specialIcon3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1207, 175, 1463, 396 });
-		specialIcon3->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 2, multiFrameStillAnimation);
+		specialIcon3->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
 		specialIcon3->Focus();
 		myUI->AddUIComponent("Specials3", specialIcon3);
 		myUI->overlays[hudID]->AddComponent(specialIcon3);
@@ -1140,25 +1140,25 @@ namespace GolemGameUISetup
 
 		//UI Log
 		UINT logid = myUI->AddNewOverlay("Log", false, true);
-		//ADUI::UILog* uiLog = myUI->GetLog();
-		//uiLog->InitializeLog(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1]);
+		ADUI::UILog* uiLog = myUI->GetLog();
+		uiLog->InitializeLog(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1]);
 
-		//ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1600, 1016, 3840, 2016 });
-		//consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 2, emptyAnimation);
-		//consoleBox->active = true;
-		//consoleBox->visible = true;
-		//consoleBox->controlFocusAnimation = 1;
-		//consoleBox->stretched = true;
-		//ADUI::Label2D* consoleLabel = new ADUI::Label2D();
-		//consoleLabel->SetFont(myUI->GetFont(2));
-		//consoleLabel->SetText("", { 1920, 1180 });// XMFLOAT2(1920, 1080));
-		//consoleLabel->active = true;
-		//consoleLabel->visible = true;
-		//uiLog->Setup(consoleBox, consoleLabel);
+		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1600, 1016, 3840, 2016 });
+		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 1, emptyAnimation);
+		consoleBox->active = true;
+		consoleBox->visible = true;
+		consoleBox->controlFocusAnimation = 1;
+		consoleBox->stretched = true;
+		ADUI::Label2D* consoleLabel = new ADUI::Label2D();
+		consoleLabel->SetFont(myUI->GetFont(2));
+		consoleLabel->SetText("", { 1920, 1180 });// XMFLOAT2(1920, 1080));
+		consoleLabel->active = true;
+		consoleLabel->visible = true;
+		uiLog->Setup(consoleBox, consoleLabel);
 
-		//myUI->AddUIComponent("Log", uiLog);
-		//myUI->overlays[logid]->AddComponent(uiLog);
-		//ADUI::MessageReceiver::SetUI(myUI);
+		myUI->AddUIComponent("Log", uiLog);
+		myUI->overlays[logid]->AddComponent(uiLog);
+		ADUI::MessageReceiver::SetUI(myUI);
 
 		return logid;
 	}
