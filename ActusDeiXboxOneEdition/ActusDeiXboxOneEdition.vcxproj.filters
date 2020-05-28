@@ -42,6 +42,7 @@
     <ClCompile Include="ADUserInterface.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
+    <ClCompile Include="ADAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -62,6 +63,7 @@
     <ClInclude Include="ADMemoryManager.h" />
     <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="MeshLoader.h" />
+    <ClInclude Include="ADAI.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

@@ -242,60 +242,6 @@ namespace ADResource
 		};
 	}
 
-
-	namespace AD_AI
-	{
-
-		enum AITYPES
-		{
-			RUNNER, STRIKER, SHOOTER, BOSS, COUNT
-		};
-
-		enum BEHAVIORS
-		{
-			IDLE, WANDER, DIRECT, WAYPOINT, ATTACK, SHOOT, DEATH, GUARD, TAUNT
-		};
-
-		class AI
-		{
-		public:
-			void Update()
-			{
-				//Traverse Behavior Tree and Enact Behavior
-				//Updates the postTransform of a Game Object.
-				//Communicates with EventSystem to spawn projectiles and Gems.
-			}
-		};
-
-		//For constructing AI's from binary.
-		class AIData
-		{
-			int ObjectType;
-
-			AI ToAI()
-			{
-				switch (ObjectType)
-				{
-				case AITYPES::RUNNER:
-
-					break;
-				case AITYPES::STRIKER:
-
-					break;
-				case AITYPES::SHOOTER:
-
-					break;
-				case AITYPES::BOSS:
-
-					break;
-				default:
-					break;
-				}
-			}
-		};
-
-	}
-
 	namespace ADGameplay
 	{
 
@@ -525,6 +471,7 @@ namespace ADResource
 
 		public:
 			bool active = true;
+			float safeRadius = 5.0f;
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
