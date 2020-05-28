@@ -102,7 +102,7 @@ Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFL
 	return temp;
 }
 
-Destructable* GameUtilities::AddEnemyFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
 
@@ -122,7 +122,21 @@ Destructable* GameUtilities::AddEnemyFromModelFile(std::string modelname, XMFLOA
 	return temp;
 }
 
+ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _idleGroup, ADAI::FlockingGroup* _commandGroup)
+{
+	ADAI::AIUnit* temp = new ADAI::AIUnit;
+	temp->owner = _destructable;
+	ADAI::FlockingState* idling = new ADAI::FlockingState();
+	ADAI::FlockingState* charging = new ADAI::FlockingState();
+	temp->states.push_back(idling);
+	temp->states.push_back(charging);
+	temp->states.push_back(new ADAI::TestingState());
 
+	_idleGroup->AddUnitToGroup(_destructable, idling);
+	_commandGroup->AddUnitToGroup(_destructable, charging);
+
+	return nullptr;
+}
 
 ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {

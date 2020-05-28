@@ -3,6 +3,7 @@
 #include "ADUserInterface.h"
 #include "AudioManager.h"
 #include "GameObjectClasses.h"
+#include "ADAI.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -34,6 +35,7 @@ namespace ADResource
 		
 		public:
 			Attack testAttack;
+			ADAI::FlockingGroup* commandGroup;
 			Spyro();
 
 			virtual void Update(float time_delta);

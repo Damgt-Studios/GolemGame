@@ -257,6 +257,7 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 	if (Input::QueryButtonDown(GamepadButtons::Y))
 	{
 		testAttack.StartAttack();
+		//Set the Directional Flocking Groups Direct Vector and Change their states to charge.
 	}
 	
 	XMFLOAT4 forward;
@@ -278,6 +279,15 @@ void ADResource::ADGameplay::Spyro::HandleInput(float delta_time)
 
 	}
 
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+	{
+		commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3]);
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	{
+		commandGroup->ReturnCall();
+	}
 
 	if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
 	{

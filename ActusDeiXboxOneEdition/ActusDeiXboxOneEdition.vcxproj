@@ -276,6 +276,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ADAI.h" />
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADMemoryManager.h" />
     <ClInclude Include="ADPhysics.h" />
@@ -296,6 +297,7 @@
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ADAI.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="ADUserInterface.cpp" />
     <ClCompile Include="Camera.cpp" />
