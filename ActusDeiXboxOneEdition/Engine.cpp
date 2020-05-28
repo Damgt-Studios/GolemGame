@@ -2,7 +2,6 @@
 #include "Engine.h"
 
 #include "DDSTextureLoader.h"
-
 #include "Utils.h"
 
 Engine::Engine()
@@ -26,7 +25,7 @@ bool Engine::Initialize()
 	engine_time = XTime();
 	engine_time.Restart();
 
-	userInterface.Initialize(pbr.GetPBRRendererResources()->device, pbr.GetPBRRendererResources()->context, pbr.GetPBRRendererResources()->render_target_view, &pbr.GetPBRRendererResources()->viewport);
+	userInterface.Initialize(pbr.GetRendererResources()->device, pbr.GetRendererResources()->context, pbr.GetRendererResources()->render_target_view, &pbr.GetRendererResources()->viewport);
 
 
 	return true;

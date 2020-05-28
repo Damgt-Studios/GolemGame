@@ -1,5 +1,6 @@
 #include "pchgame.h"
 #include "GameUserInterface.h"
+#include "Golem.h"
 
 
 namespace GolemGameUISetup
@@ -90,7 +91,7 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void HUDController::SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3)
+	void HUDController::SetPlayer(ADResource::ADGameplay::Golem* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3)
 	{
 		player = _player;
 		golemIcon = _golemIcon;
@@ -962,7 +963,7 @@ namespace GolemGameUISetup
 		return optionsID;
 	}
 
-	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Destructable* _player)
+	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Golem* _player)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
 		emptyAnimation[0] = { 0, 1, 1 };
@@ -1164,7 +1165,7 @@ namespace GolemGameUISetup
 		return logid;
 	}
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Destructable* _player, AD_ADUIO::ADAudio* _audioSystem)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_ADUIO::ADAudio* _audioSystem)
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;

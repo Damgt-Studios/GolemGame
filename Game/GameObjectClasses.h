@@ -93,20 +93,17 @@ namespace ADResource
 		public:
 			ADPhysics::AABB collider;
 
-			int playerElement;
-
-			int GetCurrentElement() { return playerElement; }
-
-			virtual void Update(float _deltaTime) 
-			{
-				ProcessEffects(_deltaTime);
-			};
 
 			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; stats = new StatSheet(); }
 			~Destructable() override
 			{ 
 				delete stats; 
 			}
+
+			virtual void Update(float _deltaTime) 
+			{
+				ProcessEffects(_deltaTime);
+			};
 
 			virtual iStatSheet* GetStatSheet() override
 			{ 

@@ -3,6 +3,7 @@
 #include "Types.h"
 #include "GameObjectClasses.h"
 #include "ADAudio.h"
+#include "Golem.h"
 
 namespace GolemGameUISetup
 {
@@ -17,14 +18,14 @@ namespace GolemGameUISetup
 
     class HUDController : public ADUI::OverlayController
     {
-        ADResource::ADGameplay::Destructable* player;
+        ADResource::ADGameplay::Golem* player;
         ADUI::Image2D* golemIcon;
         ADUI::Image2D* healthIcon;
         std::vector<ADUI::Image2D*> tokenIcons;
         UINT& uiState;
     public:
         HUDController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetPlayer(ADResource::ADGameplay::Destructable* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3);
+        void SetPlayer(ADResource::ADGameplay::Golem* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick) override;
     };
@@ -77,9 +78,9 @@ namespace GolemGameUISetup
         UINT SetupTitleScreen(ADUI::ADUI* myUI, StartMenuUIController* _titleScreenController);
         UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
-        UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Destructable* _player);
+        UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Golem* _player);
         UINT SetupLog(ADUI::ADUI* myUI);
-        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Destructable* _player, AD_ADUIO::ADAudio* _audioSystem);
+        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_ADUIO::ADAudio* _audioSystem);
     };
 
 }

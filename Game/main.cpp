@@ -309,7 +309,7 @@ public:
 			return;
 		}
 
-		gameUI.SetupUI(engine->GetUI(), spyro, &audioEngine);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine);
 
 		// Timing
 		game_time.Restart();

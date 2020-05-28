@@ -1,5 +1,6 @@
 #pragma once
 #include "GameplayBaseClasses.h"
+#include "GameObjectClasses.h"
 #include "ADUserInterface.h"
 #include "AudioManager.h"
 
@@ -30,12 +31,15 @@ namespace ADResource
 
 		class Golem : public Renderable
 		{
+			ADResource::ADGameplay::StatSheet* stats;
+			int playerElement;
 
 		public:
 			Golem();
 
 			virtual void Update(float time_delta);
 
+			void ProcessEffects(float _deltaTime);
 			//void Damage(DAMAGE_TYPE d_type);
 
 			void Remove();
@@ -55,6 +59,9 @@ namespace ADResource
 			//void SetAudio(AudioManager* _audioManager);
 
 			int GetCurrentAnimation();
+
+			virtual iStatSheet* GetStatSheet() override;
+			int GetCurrentElement();
 
 		private:
 			void HandleInput(float delta_time);
@@ -83,6 +90,7 @@ namespace ADResource
 			float jump_height = 15;
 			float og_y_pos = 0;
 			float gravity = 50;
+			float responseTimer = 0;
 			bool gliding = false;
 			bool charging = false;
 			bool fire = false;
