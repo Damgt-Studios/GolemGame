@@ -123,7 +123,7 @@ public:
 		titleMusic.LoadSound(false, true, true);
 
 
-		audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
+		//audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
 		//audioEngine.LoadSound("", );
 
 		//std::vector<std::string> sfx;
@@ -198,30 +198,30 @@ public:
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
 
-		////////////////////////////////////
+		//////////////////////////////
     //THis is the stuff for you.
-	/*	ADAI::FlockingGroup commandFlock;
+		ADAI::FlockingGroup commandFlock;
 		ADAI::FlockingGroup idleFlock;
 
-		Destructable* e2 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(-30, 5, 30), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-		Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(-15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-		Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(-5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-		Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-		Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-		Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
+		Destructable* e2 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-30, 5, 30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
+		//Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
+		//Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 
 		ADAI::AIUnit* ai1 = GameUtilities::AttachMinionAI(e2, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai3 = GameUtilities::AttachMinionAI(e4, &commandFlock, &idleFlock);
-		ADAI::AIUnit* ai4 = GameUtilities::AttachMinionAI(e5, &commandFlock, &idleFlock);
-		ADAI::AIUnit* ai5 = GameUtilities::AttachMinionAI(e6, &commandFlock, &idleFlock);
-		ADAI::AIUnit* ai6 = GameUtilities::AttachMinionAI(e7, &commandFlock, &idleFlock);
+		//ADAI::AIUnit* ai4 = GameUtilities::AttachMinionAI(e5, &commandFlock, &idleFlock);
+		//ADAI::AIUnit* ai5 = GameUtilities::AttachMinionAI(e6, &commandFlock, &idleFlock);
+		//ADAI::AIUnit* ai6 = GameUtilities::AttachMinionAI(e7, &commandFlock, &idleFlock);
 
 		golem->commandGroup = &idleFlock;
-		idleFlock.groupTarget = &golem->transform;*/
+		idleFlock.groupTarget = &golem->transform;
 
-    //No more.
-     ///////////////////////////////////////////////
+   // No more.
+     /////////////////////////////////////////
 
 		//Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		//Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -282,9 +282,9 @@ public:
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
-		//GameUtilities::AddGameObject(e1);
-		//GameUtilities::AddGameObject(e2);
-		//GameUtilities::AddGameObject(e3);
+		GameUtilities::AddGameObject(e2);
+		GameUtilities::AddGameObject(e3);
+		GameUtilities::AddGameObject(e4);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
@@ -363,6 +363,8 @@ public:
 		c2->colliderPtr = &test_colider1;
 		c2->type = OBJECT_TYPE::STATIC;*/
 
+		titleMusic.Play();
+
 		while (!shutdown)
 		{
 			game_time.Signal();
@@ -376,8 +378,8 @@ public:
 
 
 			//Update
-			//idleFlock.Update(delta_time);
-			//commandFlock.Update(delta_time);
+			idleFlock.Update(delta_time);
+			commandFlock.Update(delta_time);
 
 			// Test
 			//spyro->Update(delta_time);
@@ -412,8 +414,8 @@ public:
 
 			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
 
-			//Works the exact same as the commented code above
-		/*	int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+		//	Works the exact same as the commented code above
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
 			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 
 			for (int i = 0; i < OBJ_COUNT; i++)
@@ -440,17 +442,20 @@ public:
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
-				std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(OBJS[i]->GetPosition().x, OBJS[i]->GetPosition().z, 10, 10));
-				std::vector<Triangle> trisInRange;
 				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 				{
 					trisInRange.push_back(*optimizedPoints[i].tri);
 				}
 
+			}
+
 			GroundClamping(golem, trisInRange, delta_time);
 
-			}*/
 
+			GroundClampingF(e2, trisInRange, delta_time, tree);
+			GroundClampingF(e3, trisInRange, delta_time, tree);
+			GroundClampingF(e4, trisInRange, delta_time, tree);
+			
 			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();
 

@@ -79,13 +79,13 @@ namespace AD_ADUIO
 
     void ADAudio::Set3dListenerAndOrientation(const FMOD_VECTOR& vPos, float fVolumedB)
     {
-        FMOD_3D_ATTRIBUTES attis;
-        attis.position = vPos;
-        attis.forward = vPos;
-        attis.up = vPos;
-        attis.velocity = vPos;
+        //FMOD_3D_ATTRIBUTES attis;
+        //attis.position = vPos;
+        //attis.forward = vPos;
+        //attis.up = vPos;
+        //attis.velocity = vPos;
 
-        ADAudio::AudioErrorCheck(audioImp->studioSystem->setListenerAttributes(0, &attis, &vPos));
+        //ADAudio::AudioErrorCheck(audioImp->studioSystem->setListenerAttributes(0, &attis, &vPos));
     }
 
     int ADAudio::PlaySounds(const std::string& strSoundName, const XMFLOAT3& vPosition, float fVolumedB)

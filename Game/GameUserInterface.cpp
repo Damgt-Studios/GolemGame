@@ -972,10 +972,8 @@ namespace GolemGameUISetup
 		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
 		buttonAnimation[0] = { 0, 1, 1 };
 		buttonAnimation[1] = { 0, 2, 6 };
-		ADUI::AnimationData* faceAnimation = new ADUI::AnimationData();
-		faceAnimation->fps = 0;
-		faceAnimation->frameCount = 4;
-		faceAnimation->startFrame = 0;
+		ADUI::AnimationData* faceAnimation = new ADUI::AnimationData[1];
+		faceAnimation[0] = { 0, 4, 0 };
 
 		//HUD
 		UINT hudID = myUI->AddNewOverlay("HUD", false, true);
@@ -996,7 +994,7 @@ namespace GolemGameUISetup
 		_hUDController->AddComponent(healthUnits);
 
 		ADUI::Image2D* fullring = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 30, 250, 211 });
-		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 2, emptyAnimation);
+		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("FullRing", fullring);
 		myUI->overlays[hudID]->AddComponent(fullring);
 		_hUDController->AddComponent(fullring);
@@ -1153,7 +1151,7 @@ namespace GolemGameUISetup
 		consoleBox->stretched = true;
 		ADUI::Label2D* consoleLabel = new ADUI::Label2D();
 		consoleLabel->SetFont(myUI->GetFont(2));
-		consoleLabel->SetText("", { 1920, 1180 });// XMFLOAT2(1920, 1080));
+		//consoleLabel->SetText("", { 1920, 1180 });// XMFLOAT2(1920, 1080));
 		consoleLabel->active = true;
 		consoleLabel->visible = true;
 		uiLog->Setup(consoleBox, consoleLabel);

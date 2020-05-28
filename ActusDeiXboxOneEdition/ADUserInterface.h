@@ -116,7 +116,7 @@ namespace ADUI
     class UIComponent
     {
     protected:
-        Reaction** reactions;
+        Reaction** reactions = nullptr;
         UINT reactionCount = 0;
         RECT corners;
         XMFLOAT2 position;
@@ -174,7 +174,7 @@ namespace ADUI
     struct UIRendererResources
     {
         UINT textureCount;
-        ID3D11ShaderResourceView** uiTextures;
+        ID3D11ShaderResourceView** uiTextures = nullptr;
         ComPtr<ID3D11DepthStencilState> depthStencilState;
     };
 
@@ -190,6 +190,15 @@ namespace ADUI
         {
             visible = _visible;
             active = _active;
+        };
+
+        ~Overlay2D()
+        {
+            for (int i = 0; i < components.size(); ++i)
+            {
+                delete components[i];
+            }
+            components.clear();
         };
 
         void AddComponent(UIComponent* _compID)
@@ -224,6 +233,24 @@ namespace ADUI
     public:
         bool active;
         std::string name;
+        ~OverlayController()
+        {
+            for (int i = 0; i < overlays.size(); ++i)
+            {
+                delete overlays[i];
+            }
+            overlays.clear();
+            for (int i = 0; i < overlays.size(); ++i)
+            {
+                delete controllers[i];
+            }
+            controllers.clear();
+            for (int i = 0; i < overlays.size(); ++i)
+            {
+                delete componentTypeMap[i];
+            }
+            componentTypeMap.clear();
+        };
         virtual bool ProcessInput(float delta_time, float& quick);
         virtual bool ProcessResponse(UIMessage* responseID, float& quick);
         virtual UINT AddOverlay(Overlay2D* _overlay);
@@ -331,6 +358,7 @@ namespace ADUI
     public:
         std::string output;
         Label2D();
+        ~Label2D();
         void SetText(std::string _message);
         void SetText(std::string _message, XMFLOAT2 _position, float _scale = 1, XMVECTOR _tint = Colors::White, float rotation = 0.f, XMFLOAT2 origin = { 0,0 }, UINT effects = 0, float depth = 0);
         void SetPosition(XMFLOAT2 _position);
@@ -413,7 +441,7 @@ namespace ADUI
 
     public:
         UIComponentSelector(UINT componentCount, UIComponent** components, bool _visible = true, bool _active = true, bool _controlFocus = false);
-        //~UIComponentSelector() = default;
+        ~UIComponentSelector();
         virtual UIMessage* ProcessInput() override;
         virtual bool ProcessResponse(UIMessage* _message) override;
         virtual void Update(float delta_time) override;
@@ -464,7 +492,7 @@ namespace ADUI
 
 
         ComponentGrid(float _x = 0.f, float _y = 0.f, float _spacing = 30.f, UINT _columns = 1, UINT _maxRows = INT_MAX, bool _active = false, bool _visible = false, bool _controlFocus = false);
-        //~ComponentGrid() = default;
+        ~ComponentGrid();
 
         void AddComponent(UIComponent* _component);
         void RecalculatePositions();
@@ -519,7 +547,7 @@ namespace ADUI
 
     public:
         SliderBar(Image2D* _slide, Slider* _slider, Image2D* _leftCap, Image2D* _rightCap, Label2D* _label, float _minValue = 0, float _maxValue = 1.f, float _currentValue = 0.5f, float _incriment = 0.01f);
-        //~SliderBar() = default;
+        ~SliderBar();
         UIMessage* ProcessInput() override;
         void Update(float delta_time) override;
         void Render() override;
@@ -545,6 +573,7 @@ namespace ADUI
         Label2D* consoleLabel;
         std::deque<std::string> messageQueue;
 
+        ~UILog();
         void InitializeLog(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture); // float textXOffset, float textYOffset, float screenWidth, float screenHeight, QuadData _quad);
         void Setup(Image2D* _background, Label2D* _label);
         void SetFont(Text2D* _fontSmall);

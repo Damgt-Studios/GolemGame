@@ -104,7 +104,10 @@ namespace ADAI
 		{
 			XMFLOAT3 sigh = _object->GetPosition();
 			XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			XMVECTOR velocity = groupTarget->r[3] - objectPos;
+			XMFLOAT4X4 f4x4;
+			XMStoreFloat4x4(&f4x4, *groupTarget);
+			XMVECTOR f4 = { f4x4.m[3][0], f4x4.m[3][1], f4x4.m[3][2],f4x4.m[3][3]};
+			XMVECTOR velocity = { 0,0,0,0 };// = f4 - objectPos;
 
 			velocity = XMVector4Normalize(velocity);
 

@@ -21,11 +21,13 @@
 //	return temp;
 //}
 
+ADUtils::SHADER GameUtilities::shader;
+
 ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation) 
 {
 	ADResource::ADGameplay::Golem* temp = new ADResource::ADGameplay::Golem;
 
-	ADUtils::SHADER shader = { 0 };
+	shader = { 0 };
 	strcpy_s(shader.vshader, "files\\shaders\\animated_vs.hlsl");
 	strcpy_s(shader.pshader, "files\\shaders\\animated_ps.hlsl");
 
@@ -120,7 +122,7 @@ Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFL
 	return temp;
 }
 
-Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
 
@@ -129,12 +131,15 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->SetRotation(rotation);
 	temp->SetScale(scale);
 
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	//temp->SetMeshID(id);
+
+	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
 
-	scale.x *= 1.8f;
-	scale.y *= 1.8f;
-	scale.z *= 1.8f;
+	scale.x *= 0.5f;
+	scale.y *= 0.5f;
+	scale.z *= 0.5f;
 	temp->collider = ADPhysics::AABB(position, scale);
 
 	return temp;
