@@ -5,10 +5,9 @@
 struct InputVertex
 {
     float3 position : POSITION;
+    float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 bitangent : BITANGENT;
-    float2 tex : TEXCOORD;
 };
 
 cbuffer SHADER_VARIABLES : register(b0)
@@ -22,14 +21,14 @@ cbuffer SHADER_VARIABLES : register(b0)
 struct OutputVertex
 {
     float4 position : SV_Position;
-    float3 worldposition : WORDLPOS;
+    float3 localPos : LocalPos;
 };
 
 OutputVertex main(InputVertex input)
 {
     OutputVertex output;
     
-    output.worldposition = input.position;
+    output.localPos = input.position;
     
     output.position = mul(float4(input.position, 1), worldMatrix);
     output.position = mul(output.position, viewMatrix);

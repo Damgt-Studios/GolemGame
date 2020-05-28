@@ -2,7 +2,6 @@
 #include "Engine.h"
 
 #include "DDSTextureLoader.h"
-
 #include "Utils.h"
 
 Engine::Engine()
@@ -20,13 +19,14 @@ bool Engine::Initialize()
 	pbr.Initialize(); // Needs error checking
 
 	// Initialize unified buffers
-	ResourceManager::ConfigureUnifiedBuffers(pbr.GetPBRRendererResources()->device);
+	//ResourceManager::ConfigureUnifiedBuffers(pbr.GetRendererResources()->device);
 
 	// Start timer
 	engine_time = XTime();
 	engine_time.Restart();
 
-	userInterface->Initialize(pbr.GetPBRRendererResources()->device.Get(), pbr.GetPBRRendererResources()->context.Get());
+	userInterface.Initialize(pbr.GetRendererResources()->device, pbr.GetRendererResources()->context, pbr.GetRendererResources()->render_target_view, &pbr.GetRendererResources()->viewport);
+
 
 	return true;
 }
@@ -38,7 +38,7 @@ bool Engine::Update()
 	delta_time_sd = engine_time.SmoothDelta();
 	delta_time_sf = static_cast<float>(delta_time_sd);
 
-	if (userInterface->GetUIState() == 0)
+	if (*userInterface.GetUIState() == 0)
 	{
 
 		// For each game object, call update
@@ -52,7 +52,7 @@ bool Engine::Update()
 
 		//pbr.Update(camera, ocamera); //  Needs error checking
 	}
-	else if (userInterface->GetUIState() == 2)
+	else if (*userInterface.GetUIState() == 2)
 	{
 		return false;
 	}
@@ -62,7 +62,7 @@ bool Engine::Update()
 	if (fabs(ResourceManager::GetLightPtr()[1].position.x) > 10)
 		lightdir *= -1;*/
 
-	userInterface->Update(delta_time_sf);
+	userInterface.Update(delta_time_sf);
 	return true;
 }
 
@@ -75,9 +75,9 @@ bool Engine::Render()
 	{
 		OBJS[i]->Render();
 	}
-
-	pbr.Render(camera, ocamera);
-	userInterface->Render(pbr.GetPBRRendererResources()->context.Get(), pbr.GetPBRRendererResources()->render_target_view.Get());
+  
+	pbr.Render(camera, ocamera, delta_time_sf);
+	userInterface.Render();
 	pbr.Frame();
 
 	return true;
@@ -86,7 +86,7 @@ bool Engine::Render()
 bool Engine::ShutDown()
 {
 	pbr.ShutDown();
-	userInterface->ShutDown();
+	userInterface.ShutDown();
 	return true;
 }
 
@@ -135,15 +135,10 @@ void Engine::RotateCamera(float yaw, float pitch)
 	camera->Rotate(yaw, pitch);
 }
 
-void Engine::SetupUserInterface(ADUI::ADUI* _uiSetup)
+ADUI::ADUI* Engine::GetUI()
 {
-	userInterface = _uiSetup;
+	return &userInterface;
 }
-//
-//AD_UI::ADUI* Engine::GetUserInterface()
-//{
-//	return nullptr;
-//}
 
 ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
 {
