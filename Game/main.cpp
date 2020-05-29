@@ -194,6 +194,9 @@ public:
 		std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
 
+		std::vector<std::string> minionAnimations;
+		minionAnimations.push_back("files/models/Minion_1_Idle.animfile");
+
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
@@ -216,6 +219,12 @@ public:
 		//ADAI::AIUnit* ai4 = GameUtilities::AttachMinionAI(e5, &commandFlock, &idleFlock);
 		//ADAI::AIUnit* ai5 = GameUtilities::AttachMinionAI(e6, &commandFlock, &idleFlock);
 		//ADAI::AIUnit* ai6 = GameUtilities::AttachMinionAI(e7, &commandFlock, &idleFlock);
+
+		Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(-50, 5, -30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+
+
+
 
 		golem->commandGroup = &idleFlock;
 		idleFlock.groupTarget = &golem->transform;
@@ -286,6 +295,8 @@ public:
 		GameUtilities::AddGameObject(e2);
 		GameUtilities::AddGameObject(e3);
 		GameUtilities::AddGameObject(e4);
+		GameUtilities::AddGameObject(m1);
+		GameUtilities::AddGameObject(m2);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
@@ -447,7 +458,6 @@ public:
 				{
 					trisInRange.push_back(*optimizedPoints[i].tri);
 				}
-
 			}
 
 			GroundClamping(golem, trisInRange, delta_time);
@@ -456,6 +466,8 @@ public:
 			GroundClampingF(e2, trisInRange, delta_time, tree);
 			GroundClampingF(e3, trisInRange, delta_time, tree);
 			GroundClampingF(e4, trisInRange, delta_time, tree);
+			GroundClampingF(m1, trisInRange, delta_time, tree);
+			GroundClampingF(m2, trisInRange, delta_time, tree);
 			
 			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();

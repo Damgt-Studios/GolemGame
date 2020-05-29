@@ -283,6 +283,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	//	fire = false;
 	//}
 	responseTimer -= delta_time;
+
 	if (Input::QueryButtonDown(GamepadButtons::Y))
 	{
 		if (responseTimer < 0)
@@ -293,6 +294,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 				stats->token.currentValue = 0;
 		}
 	}
+
 	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 	{
 		if (responseTimer < 0)
@@ -316,6 +318,27 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		}
 	}
 
+	if (Input::QueryButtonDown(GamepadButtons::DPadDown))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			++commandTargetGroup;
+			if (commandTargetGroup == 5)
+				commandTargetGroup = 4;
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::DPadUp))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			--commandTargetGroup;
+			if (commandTargetGroup < 0)
+				commandTargetGroup = 0;
+		}
+	}
 
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
 	{

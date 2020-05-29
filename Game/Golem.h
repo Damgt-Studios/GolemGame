@@ -57,6 +57,12 @@ namespace ADResource
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 			ADAI::FlockingGroup* commandGroup;
+			int commandTargetGroup = 0;
+			int totalMinionCount = 0;
+			int stoneMinionCount = 0;
+			int waterMinionCount = 0;
+			int fireMinionCount = 0;
+			int woodMinionCount = 0;
 
 			//void SetAudio(AudioManager* _audioManager);
 

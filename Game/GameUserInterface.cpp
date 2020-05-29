@@ -91,7 +91,7 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void HUDController::SetPlayer(ADResource::ADGameplay::Golem* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3)
+	void HUDController::SetPlayer(ADResource::ADGameplay::Golem* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3, ADUI::ComponentGrid* _minionTargetingGroup, ADUI::Label2D* _allCount, ADUI::Label2D* _stoneCount, ADUI::Label2D* _waterCount, ADUI::Label2D* _fireCount, ADUI::Label2D* _woodCount)
 	{
 		player = _player;
 		golemIcon = _golemIcon;
@@ -99,11 +99,25 @@ namespace GolemGameUISetup
 		tokenIcons.push_back(_tk1);
 		tokenIcons.push_back(_tk2);
 		tokenIcons.push_back(_tk3);
-
+		targetMinionGroup = _minionTargetingGroup;
+		allCount = _allCount;
+		stoneCount = _stoneCount;
+		waterCount = _waterCount;
+		fireCount = _fireCount;
+		woodCount = _woodCount;
 	}
 
 	bool HUDController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
+		if (uiState == ADUI::UISTATE::GAMEPLAY)
+		{
+			bool buttonPressed = false;
+			if (_message)
+			{
+				buttonPressed = true;
+			}
+			return buttonPressed;
+		}
 		return false;
 	}
 
@@ -149,12 +163,21 @@ namespace GolemGameUISetup
 
 		for (int i = 0; i < 3; ++i)
 		{
-			if(tokens->currentValue > i)
-				tokenIcons[i]->SetCurrentFrame(1);
+			if (tokens->currentValue > i)
+			{
+				tokenIcons[i]->visible = true;
+				tokenIcons[i]->SetCurrentFrame(player->GetCurrentElement());
+			}
 			else
-				tokenIcons[i]->SetCurrentFrame(0);
+				tokenIcons[i]->visible = false;
 		}
 
+		targetMinionGroup->SetSelected(player->commandTargetGroup);
+		allCount->SetText(to_string(player->totalMinionCount));
+		stoneCount->SetText(to_string(player->stoneMinionCount));
+		waterCount->SetText(to_string(player->waterMinionCount));
+		fireCount->SetText(to_string(player->fireMinionCount));
+		woodCount->SetText(to_string(player->woodMinionCount));
 		return buttonPressed;
 	}
 
@@ -841,7 +864,7 @@ namespace GolemGameUISetup
 
 		ADUI::ComponentGrid* sliderList = new ADUI::ComponentGrid();
 		sliderList->SetCorners({ 1614, 635, 1692, 715 });
-		sliderList->positions = new RECT[2];
+		sliderList->positions = new RECT[3];
 		sliderList->positions[0] = { 1614, 635, 1692, 715 };
 		sliderList->spacing = 20.f;
 		sliderList->columns = 1;
@@ -972,153 +995,255 @@ namespace GolemGameUISetup
 		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
 		buttonAnimation[0] = { 0, 1, 1 };
 		buttonAnimation[1] = { 0, 2, 6 };
+		ADUI::AnimationData* faceButtons = new ADUI::AnimationData[2];
+		faceButtons[0] = { 0, 1, 1 };
+		faceButtons[1] = { 1, 1, 1 };
 		ADUI::AnimationData* faceAnimation = new ADUI::AnimationData[1];
 		faceAnimation[0] = { 0, 4, 0 };
+		ADUI::AnimationData* essenceAnimation = new ADUI::AnimationData[3];
+		essenceAnimation[0] = { 0, 12, 24 };
+		essenceAnimation[1] = {19, 22, 24 };
+		essenceAnimation[2] = { 40, 48, 24 };
 
 		//HUD
 		UINT hudID = myUI->AddNewOverlay("HUD", false, true);
 
-		ADUI::Image2D* healthBar = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 324, 30, 502, 495 });
-		healthBar->BuildAnimation({ 1491, 960, 2708, 1086 }, 1, 1, emptyAnimation);
+
+		ADUI::Image2D* healthBar = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 100, 30, 322, 495 });
+		healthBar->BuildAnimation({ 579, 960, 1910, 1175 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("HealhBarEmpty", healthBar);
 		myUI->overlays[hudID]->AddComponent(healthBar);
 		healthBar->Focus();
 		_hUDController->AddComponent(healthBar);
 
-		ADUI::Image2D* healthUnits = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 211, 30, 223, 495 });
-		healthUnits->BuildAnimation({ 1365, 1086, 1498, 1207 }, 1, 1, emptyAnimation);
+		ADUI::Image2D* healthUnits = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 141, 38, 153, 111 });
+		healthUnits->BuildAnimation({ 494, 961, 580, 1034 }, 1, 1, emptyAnimation);
 		healthUnits->tiled = 100;
 		myUI->AddUIComponent("HealhBarEmpty", healthUnits);
 		myUI->overlays[hudID]->AddComponent(healthUnits);
 		//healthUnits->Focus();
 		_hUDController->AddComponent(healthUnits);
 
-		ADUI::Image2D* fullring = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 30, 250, 211 });
-		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 1, emptyAnimation);
+		ADUI::Image2D* fullring = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 99, 30, 315, 247 });
+		fullring->BuildAnimation({ 0, 1236, 217, 1453 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("FullRing", fullring);
 		myUI->overlays[hudID]->AddComponent(fullring);
 		_hUDController->AddComponent(fullring);
 
-		ADUI::Image2D* fireSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 121, 30, 250, 211 });
-		fireSelect->BuildAnimation({ 0, 1094, 418, 1225 }, 2, 2, buttonAnimation);
+		ADUI::Image2D* essenceGraphic = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 78, -60, 285, 378 });
+		essenceGraphic->BuildAnimation({ 0, 1500, 256, 1800 }, 8, 3, essenceAnimation);
+		essenceGraphic->controlFocusAnimation = 1;
+		essenceGraphic->Focus();
+		myUI->AddUIComponent("EssenceGraphic", essenceGraphic);
+		myUI->overlays[hudID]->AddComponent(essenceGraphic);
+		_hUDController->AddComponent(essenceGraphic);
+
+		ADUI::Image2D* fireSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 131, 30, 282, 78 });
+		fireSelect->BuildAnimation({ 0, 1010, 151, 1058 }, 2, 2, buttonAnimation);
 		fireSelect->controlFocusAnimation = 1;
 		myUI->AddUIComponent("FireSelect", fireSelect);
 		myUI->overlays[hudID]->AddComponent(fireSelect);
 		_hUDController->AddComponent(fireSelect);
 
-		ADUI::Image2D* waterSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 121, 162, 539 });
-		waterSelect->BuildAnimation({ 836, 963, 968, 1381 }, 2, 2, buttonAnimation);
+		ADUI::Label2D* essenceLabel = new ADUI::Label2D();
+		essenceLabel->SetFont(myUI->GetFont(2));
+		essenceLabel->SetText("1000", { 200, 140 });// XMFLOAT2(1920, 1080));
+		essenceLabel->active = true;
+		essenceLabel->visible = true;
+		myUI->AddUIComponent("EssenceLabel", essenceLabel);
+		myUI->overlays[hudID]->AddComponent(essenceLabel);
+		_hUDController->AddComponent(essenceLabel);
+
+
+		ADUI::Image2D* waterSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 99, 66, 315, 273 });
+		waterSelect->BuildAnimation({ 302, 962, 351, 1113 }, 2, 2, buttonAnimation);
 		waterSelect->controlFocusAnimation = 1;
 		myUI->AddUIComponent("WaterSelect", waterSelect);
 		myUI->overlays[hudID]->AddComponent(waterSelect);
 		_hUDController->AddComponent(waterSelect);
 
-		ADUI::Image2D* stoneSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 121, 498, 250, 600 });
-		stoneSelect->BuildAnimation({ 0, 961, 418, 1092 }, 2, 2, buttonAnimation);
+		ADUI::Image2D* stoneSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 131, 201, 282, 248 });
+		stoneSelect->BuildAnimation({ 0, 962, 151, 1010 }, 2, 2, buttonAnimation);
 		stoneSelect->controlFocusAnimation = 1;
 		myUI->AddUIComponent("StoneSelect", stoneSelect);
 		myUI->overlays[hudID]->AddComponent(stoneSelect);
 		_hUDController->AddComponent(stoneSelect);
 
-		ADUI::Image2D* woodSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 498, 121, 600, 539 });
-		woodSelect->BuildAnimation({ 1100, 963, 1232, 1381 }, 2, 2, buttonAnimation);
+		ADUI::Image2D* woodSelect = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 269, 66, 485, 273 });
+		woodSelect->BuildAnimation({ 398, 962, 446, 1113 }, 2, 2, buttonAnimation);
 		woodSelect->controlFocusAnimation = 1;
 		myUI->AddUIComponent("WoodSelect", woodSelect);
 		myUI->overlays[hudID]->AddComponent(woodSelect);
 		_hUDController->AddComponent(woodSelect);
 
-		ADUI::Image2D* golemFace = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 93, 97, 502, 495 });
-		golemFace->BuildAnimation({ 600, 1391, 1072, 1856 }, 4, 1, faceAnimation);
-		myUI->AddUIComponent("GolemFace", golemFace);
-		myUI->overlays[hudID]->AddComponent(golemFace);
-		golemFace->Focus();
-		_hUDController->AddComponent(golemFace);
-
-		ADUI::Image2D* minionPlate = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2475, 69, 2575, 169 });
-		minionPlate->BuildAnimation({ 2300, 1085, 2450, 1235 }, 4, 1, faceAnimation);
-		myUI->AddUIComponent("GolemFace", minionPlate);
-		myUI->overlays[hudID]->AddComponent(minionPlate);
-		minionPlate->Focus();
-		_hUDController->AddComponent(minionPlate);
-
-		ADUI::Image2D* minionFaces = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2500, 75, 2700, 175 });
-		minionFaces->BuildAnimation({ 2300, 1236, 2400, 1336 }, 4, 1, faceAnimation);
-		myUI->AddUIComponent("GolemFace", minionFaces);
-		myUI->overlays[hudID]->AddComponent(minionFaces);
-		minionFaces->Focus();
-		_hUDController->AddComponent(minionFaces);
-
-		ADUI::Image2D* minionHealthUnit = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2474, 176, 2477, 214 });
-		minionHealthUnit->BuildAnimation({ 2097, 1086, 2100, 1124 }, 1, 1, emptyAnimation);
-		minionHealthUnit->tiled = 50;
-		myUI->AddUIComponent("HealhBarEmpty", minionHealthUnit);
-		myUI->overlays[hudID]->AddComponent(minionHealthUnit);
-		healthUnits->Focus();
-		_hUDController->AddComponent(minionHealthUnit);
-
-		ADUI::Image2D* specialIcon = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 665, 175, 921, 396 });
-		specialIcon->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
+		ADUI::Image2D* specialIcon = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 311, 124, 451, 244 });
+		specialIcon->BuildAnimation({ 0, 1114, 140, 1235 }, 4, 1, faceAnimation);
 		specialIcon->Focus();
 		myUI->AddUIComponent("Specials", specialIcon);
 		myUI->overlays[hudID]->AddComponent(specialIcon);
 		_hUDController->AddComponent(specialIcon);
-		ADUI::Image2D* specialIcon2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 936, 175, 1192, 396 });
-		specialIcon2->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
+		ADUI::Image2D* specialIcon2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 452, 124, 591, 244 });
+		specialIcon2->BuildAnimation({ 0, 1114, 140, 1235 }, 4, 1, faceAnimation);
 		specialIcon2->Focus();
 		myUI->AddUIComponent("Specials2", specialIcon2);
 		myUI->overlays[hudID]->AddComponent(specialIcon2);
 		_hUDController->AddComponent(specialIcon2);
-		ADUI::Image2D* specialIcon3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1207, 175, 1463, 396 });
-		specialIcon3->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
+		ADUI::Image2D* specialIcon3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 592, 124, 732, 244 });
+		specialIcon3->BuildAnimation({ 0, 1114, 140, 1235 }, 4, 1, faceAnimation);
 		specialIcon3->Focus();
 		myUI->AddUIComponent("Specials3", specialIcon3);
 		myUI->overlays[hudID]->AddComponent(specialIcon3);
 		_hUDController->AddComponent(specialIcon3);
 
 
-		ADUI::Image2D* minionRightBar = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3450, 80, 3676, 1104 });
-		minionRightBar->BuildAnimation({ 3262, 958, 3488, 1982 }, 1, 1, emptyAnimation);
+		ADUI::Image2D* golemFace = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 93, 97, 502, 495 });
+		golemFace->BuildAnimation({ 0, 0, 1, 1 }, 4, 1, faceAnimation);
+		myUI->AddUIComponent("GolemFace", golemFace);
+		myUI->overlays[hudID]->AddComponent(golemFace);
+		golemFace->Focus();
+		_hUDController->AddComponent(golemFace);
+
+		//ADUI::Image2D* minionPlate = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2475, 69, 2575, 169 });
+		//minionPlate->BuildAnimation({ 2300, 1085, 2450, 1235 }, 4, 1, faceAnimation);
+		//myUI->AddUIComponent("GolemFace", minionPlate);
+		//myUI->overlays[hudID]->AddComponent(minionPlate);
+		//minionPlate->Focus();
+		//_hUDController->AddComponent(minionPlate);
+
+		//ADUI::Image2D* minionFaces = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2500, 75, 2700, 175 });
+		//minionFaces->BuildAnimation({ 2300, 1236, 2400, 1336 }, 4, 1, faceAnimation);
+		//myUI->AddUIComponent("GolemFace", minionFaces);
+		//myUI->overlays[hudID]->AddComponent(minionFaces);
+		//minionFaces->Focus();
+		//_hUDController->AddComponent(minionFaces);
+
+		//ADUI::Image2D* minionHealthUnit = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2474, 176, 2477, 214 });
+		//minionHealthUnit->BuildAnimation({ 2097, 1086, 2100, 1124 }, 1, 1, emptyAnimation);
+		//minionHealthUnit->tiled = 50;
+		//myUI->AddUIComponent("HealhBarEmpty", minionHealthUnit);
+		//myUI->overlays[hudID]->AddComponent(minionHealthUnit);
+		//healthUnits->Focus();
+		//_hUDController->AddComponent(minionHealthUnit);
+
+		ADUI::Image2D* minionRightBar = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 80, 280, 3676, 1104 });
+		minionRightBar->BuildAnimation({ 2180, 960, 2313, 1556 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("RightPlate", minionRightBar);
 		myUI->overlays[hudID]->AddComponent(minionRightBar);
 		minionRightBar->Focus();
 		_hUDController->AddComponent(minionRightBar);
 
-		//ADUI::Image2D* minionFacesRight1 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3488, 215, 3683, 365 });
-		//minionFacesRight1->BuildAnimation({ 1546, 1086, 1696, 1236 }, 4, 1, faceAnimation);
-		//myUI->AddUIComponent("GolemFaceRight1", minionFacesRight1);
-		//myUI->overlays[hudID]->AddComponent(minionFacesRight1);
-		//minionFacesRight1->Focus();
-		//_hUDController->AddComponent(minionFacesRight1);
+		ADUI::Image2D* minionFacesRightAll = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 331, 197, 431 });
+		minionFacesRightAll->BuildAnimation({ 221, 1237, 321, 1337 }, 1, 2, faceButtons);
+		myUI->AddUIComponent("GolemFaceRight1", minionFacesRightAll);
+		myUI->overlays[hudID]->AddComponent(minionFacesRightAll);
+		minionFacesRightAll->Focus();
+		minionFacesRightAll->controlFocusAnimation = 1;
+		//_hUDController->AddComponent(minionFacesRightAll);
 
-		ADUI::Image2D* minionFacesRight1 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3488, 365, 3683, 515 });
-		minionFacesRight1->BuildAnimation({ 1546, 1086, 1696, 1236 }, 4, 1, faceAnimation);
+		ADUI::Label2D* stoneCountLabel = new ADUI::Label2D();
+		stoneCountLabel->SetFont(myUI->GetFont(2));
+		stoneCountLabel->SetText("x10", { 250, 380 });// XMFLOAT2(1920, 1080));
+		stoneCountLabel->active = true;
+		stoneCountLabel->visible = true;
+		myUI->AddUIComponent("StoneCountLabel", stoneCountLabel);
+		myUI->overlays[hudID]->AddComponent(stoneCountLabel);
+		_hUDController->AddComponent(stoneCountLabel);
+
+		ADUI::Image2D* minionFacesRight1 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 433, 197, 533 });
+		minionFacesRight1->BuildAnimation({ 321, 1237, 421, 1337 }, 1, 2, faceButtons);
 		myUI->AddUIComponent("GolemFaceRight1", minionFacesRight1);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight1);
 		minionFacesRight1->Focus();
-		_hUDController->AddComponent(minionFacesRight1);
+		minionFacesRight1->controlFocusAnimation = 1;
+		//_hUDController->AddComponent(minionFacesRight1);
 
-		ADUI::Image2D* minionFacesRight2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3488, 515, 3683, 665 });
-		minionFacesRight2->BuildAnimation({ 1696, 1086, 1846, 1236 }, 4, 1, faceAnimation);
+		ADUI::Label2D* waterCountLabel = new ADUI::Label2D();
+		waterCountLabel->SetFont(myUI->GetFont(2));
+		waterCountLabel->SetText("x0", { 250, 480 });// XMFLOAT2(1920, 1080));
+		waterCountLabel->active = true;
+		waterCountLabel->visible = true;
+		myUI->AddUIComponent("WaterCountLabel", waterCountLabel);
+		myUI->overlays[hudID]->AddComponent(waterCountLabel);
+		_hUDController->AddComponent(waterCountLabel);
+
+		ADUI::Image2D* minionFacesRight2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 535, 197, 635 });
+		minionFacesRight2->BuildAnimation({ 421, 1237, 521, 1337 }, 1, 2, faceButtons);
 		myUI->AddUIComponent("GolemFaceRight2", minionFacesRight2);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight2);
 		minionFacesRight2->Focus();
-		_hUDController->AddComponent(minionFacesRight2);
+		minionFacesRight2->controlFocusAnimation = 1;
+		//_hUDController->AddComponent(minionFacesRight2);
 
-		ADUI::Image2D* minionFacesRight3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3488, 665, 3683, 815 });
-		minionFacesRight3->BuildAnimation({ 1696, 1086, 1846, 1236 }, 4, 1, faceAnimation);
+		ADUI::Label2D* fireCountLabel = new ADUI::Label2D();
+		fireCountLabel->SetFont(myUI->GetFont(2));
+		fireCountLabel->SetText("x0", { 250, 580 });// XMFLOAT2(1920, 1080));
+		fireCountLabel->active = true;
+		fireCountLabel->visible = true;
+		myUI->AddUIComponent("FireCountLabel", fireCountLabel);
+		myUI->overlays[hudID]->AddComponent(fireCountLabel);
+		_hUDController->AddComponent(fireCountLabel);
+
+		ADUI::Image2D* minionFacesRight3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 637, 197, 737 });
+		minionFacesRight3->BuildAnimation({ 521, 1237, 621, 1337 }, 1, 2, faceButtons);
 		myUI->AddUIComponent("GolemFaceRight2", minionFacesRight3);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight3);
 		minionFacesRight3->Focus();
-		_hUDController->AddComponent(minionFacesRight3);
+		minionFacesRight3->controlFocusAnimation = 1;
+		//_hUDController->AddComponent(minionFacesRight3);
 
-		ADUI::Image2D* minionFacesRight4 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3488, 815, 3683, 965 });
-		minionFacesRight4->BuildAnimation({ 1546, 1086, 1696, 1236 }, 4, 1, faceAnimation);
+		ADUI::Label2D* woodCountLabel = new ADUI::Label2D();
+		woodCountLabel->SetFont(myUI->GetFont(2));
+		woodCountLabel->SetText("x0", { 250, 680 });// XMFLOAT2(1920, 1080));
+		woodCountLabel->active = true;
+		woodCountLabel->visible = true;
+		myUI->AddUIComponent("WoodCountLabel", woodCountLabel);
+		myUI->overlays[hudID]->AddComponent(woodCountLabel);
+		_hUDController->AddComponent(woodCountLabel);
+
+		ADUI::Image2D* minionFacesRight4 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 742, 197, 842 });
+		minionFacesRight4->BuildAnimation({ 621, 1237, 721, 1337 }, 1, 2, faceButtons);
 		myUI->AddUIComponent("GolemFaceRight1", minionFacesRight4);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight4);
 		minionFacesRight4->Focus();
-		_hUDController->AddComponent(minionFacesRight4);
+		minionFacesRight4->controlFocusAnimation = 1;
+		//_hUDController->AddComponent(minionFacesRight4);
 
-		_hUDController->SetPlayer(_player, golemFace, healthUnits, specialIcon, specialIcon2, specialIcon3);
+		ADUI::Label2D* allCountLabel = new ADUI::Label2D();
+		allCountLabel->SetFont(myUI->GetFont(2));
+		allCountLabel->SetText("x0", { 250, 780 });// XMFLOAT2(1920, 1080));
+		allCountLabel->active = true;
+		allCountLabel->visible = true;
+		myUI->AddUIComponent("AllCountLabel", allCountLabel);
+		myUI->overlays[hudID]->AddComponent(allCountLabel);
+		_hUDController->AddComponent(allCountLabel);
+
+
+		ADUI::ComponentGrid* rightButtonList = new ADUI::ComponentGrid();
+		rightButtonList->SetCorners({ 97, 331, 197, 431 });
+		rightButtonList->positions = new RECT[4];
+		rightButtonList->positions[0] = { 97, 331, 197, 431 };
+		rightButtonList->spacing = {2};
+		rightButtonList->columns = 1;
+
+		rightButtonList->AddComponent(minionFacesRightAll);
+		rightButtonList->AddComponent(minionFacesRight1);
+		rightButtonList->AddComponent(minionFacesRight2);
+		rightButtonList->AddComponent(minionFacesRight3);
+		rightButtonList->AddComponent(minionFacesRight4);
+
+		rightButtonList->Initialize();
+		rightButtonList->active = false;
+		rightButtonList->visible = true;
+		rightButtonList->Focus();
+
+		myUI->AddUIComponent("rightButtonsSelect", rightButtonList);
+		myUI->overlays[hudID]->AddComponent(rightButtonList);
+		_hUDController->AddComponent(rightButtonList);
+
+
+
+
+		_hUDController->SetPlayer(_player, golemFace, healthUnits, specialIcon, specialIcon2, specialIcon3, rightButtonList, allCountLabel, stoneCountLabel, waterCountLabel, fireCountLabel, woodCountLabel);
 		//ADUI::Label2D* gemLabel = new ADUI::Label2D();
 		//gemLabel->SetFont(myUI->GetFont(CreditsFont));
 		//gemLabel->SetText("0", XMFLOAT2(350, 88));
@@ -1177,7 +1302,7 @@ namespace GolemGameUISetup
 
 		char** textures = new char* [2];
 		textures[0] = "spyroatlas.dds";
-		textures[1] = "spyroatlas2.dds";
+		textures[1] = "GGAtlas2.dds";
 		myUI->AddTextureArray(textures, 2);
 
 		char** fonts = new char* [5];
