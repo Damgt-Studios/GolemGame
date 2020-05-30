@@ -253,6 +253,18 @@
 	//{
 	//	fire = false;
 
+//	}
+	//if (Input::QueryButtonDown(GamepadButtons::Y))
+//	{
+//		testAttack.StartAttack();
+		//Set the Directional Flocking Groups Direct Vector and Change their states to charge.
+	//}
+	
+	//XMFLOAT4 forward;
+	//XMStoreFloat4(&forward, Spyro::transform.r[2]);
+	//if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
+	//{
+//=======
 	//}
 	//responseTimer -= delta_time;
 	//if (Input::QueryButtonDown(GamepadButtons::Y))
@@ -305,6 +317,15 @@
 	//	Velocity.y += forward.y * delta_time * spyro_move_speed;
 	//	Velocity.z += forward.z * delta_time * spyro_move_speed;
 
+	//if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+	//{
+	//	commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3]);
+	//}
+
+	//if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	//{
+	//	commandGroup->ReturnCall();
+	//}
 
 	//}
 

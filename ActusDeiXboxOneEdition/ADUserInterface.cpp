@@ -134,6 +134,7 @@ ADUI::Image2D::~Image2D()
     {
         delete[] animations;
     }
+    
 }
 
 void ADUI::Image2D::BuildAnimation(RECT _uvRect, UINT _uvColumnCount, UINT _animationCount, AnimationData* _animations)
@@ -141,7 +142,7 @@ void ADUI::Image2D::BuildAnimation(RECT _uvRect, UINT _uvColumnCount, UINT _anim
     uvCount = 0;
     for (int i = 0; i < _animationCount; ++i)
     {
-        uvCount += _animations[i].frameCount;
+         uvCount += _animations[i].frameCount;
         _animations[i].updateThreshold = (1.0f / _animations[i].fps);
     }
 
@@ -444,6 +445,10 @@ ADUI::UIComponent* ADUI::OverlayController::GetComponent(int id)
 ADUI::Label2D::Label2D()
 {
 }
+ADUI::Label2D::~Label2D()
+{
+
+}
 //
 //ADUI::TextLabel* ADUI::Label2D::GetLabel()
 //{
@@ -590,6 +595,12 @@ ADUI::UILog::UILog()
 }
 
 
+ADUI::UILog::~UILog()
+{
+    delete blackBox;
+    delete consoleLabel;
+}
+
 void ADUI::UILog::InitializeLog(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture) //float textXOffset, float textYOffset, float screenWidth, float screenHeight, QuadData _quad)
 {
     blackBox = new Image2D(_spriteBatch, _texture, { 0,0,0,0 }); //0.35f * screenWidth, -0.3f * screenHeight, 400, 250, 0.1046f, 0.2083f, 0.8645f, 0.9876f};
@@ -655,6 +666,22 @@ ADUI::ADUI::ADUI()
 
 ADUI::ADUI::~ADUI()
 {
+    delete spriteFonts;
+    for (int i = 0; i < uiComponents.size(); ++i)
+    {
+        delete uiComponents[i];
+    }
+    uiComponents.clear();
+    for (int i = 0; i < overlays.size(); ++i)
+    {
+        delete overlays[i];
+    }
+    overlays.clear();
+    for (int i = 0; i < uiControllers.size(); ++i)
+    {
+        delete uiControllers[i];
+    }
+    uiControllers.clear();
 }
 
 void ADUI::ADUI::Initialize(ComPtr<ID3D11Device1> _device, ComPtr<ID3D11DeviceContext1> _context, ComPtr<ID3D11RenderTargetView> _rtv, D3D11_VIEWPORT* _vp)
@@ -869,6 +896,15 @@ ADUI::UIComponentSelector::UIComponentSelector(UINT _componentCount, UIComponent
     controlFocus = _controlFocus;
 }
 
+ADUI::UIComponentSelector::~UIComponentSelector()
+{
+    for (int i = 0; i < componentCount; ++i)
+    {
+        delete components[i];
+    }
+    delete components;
+}
+
 
 ADUI::UIMessage* ADUI::UIComponentSelector::ProcessInput()
 {
@@ -1019,6 +1055,12 @@ ADUI::ComponentGrid::ComponentGrid(float _x, float _y, float _spacing, UINT _col
     visible = _visible;
     controlFocus = _controlFocus;
     selectedButtonIndex = 0;
+}
+
+ADUI::ComponentGrid::~ComponentGrid()
+{
+    if (positions)
+        delete positions;
 }
 
 void ADUI::ComponentGrid::AddComponent(UIComponent* _component)
@@ -1252,6 +1294,15 @@ ADUI::SliderBar::SliderBar(Image2D* _slide, Slider* _slider, Image2D* _leftCap, 
 
 }
 
+ADUI::SliderBar::~SliderBar()
+{
+    delete slide;
+    delete slider;
+    delete leftCap;
+    delete rightCap;
+    delete label;
+}
+
 
 ADUI::UIMessage* ADUI::SliderBar::ProcessInput()
 {
@@ -1323,6 +1374,7 @@ ADUI::Slider::Slider(Image2D* _sliderImage, XMFLOAT2 _position, XMFLOAT2 _maxPos
 
 ADUI::Slider::~Slider()
 {
+    delete slider;
 }
 
 void ADUI::Slider::SetValue(float _ratio)
@@ -1345,7 +1397,15 @@ void ADUI::Slider::Render()
     slider->Render();
 }
 
-ADUI::UIComponent::~UIComponent() = default;
+ADUI::UIComponent::~UIComponent()
+{
+    for (int i = 0; i < reactionCount; ++i)
+    {
+        if(reactions[i])
+            delete reactions[i];
+    }
+    delete[] reactions;
+};
 
 ADUI::UIMessage* ADUI::UIComponent::ProcessInput()
 {
@@ -1386,6 +1446,7 @@ ADUI::Button2D::Button2D(XMFLOAT4 _position, Image2D * _image, Label2D * _button
 ADUI::Button2D::~Button2D()
 {
     delete image;
+    delete buttonLabel;
 }
 
 ADUI::Button2D::Button2D(const Button2D & p2)

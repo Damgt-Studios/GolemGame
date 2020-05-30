@@ -315,6 +315,18 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 				playerElement = 3;
 		}
 	}
+
+
+	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
+	{
+		commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3]);
+	}
+
+	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
+	{
+		commandGroup->ReturnCall();
+	}
+
 	XMFLOAT4 forward;
 	XMStoreFloat4(&forward, Golem::transform.r[2]);
 	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))

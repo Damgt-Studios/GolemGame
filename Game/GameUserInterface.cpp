@@ -661,10 +661,10 @@ namespace GolemGameUISetup
 
 		//Pause Screen
 		UINT pauseID = myUI->AddNewOverlay("PauseScreen", false, false);
-		//ADUI::Image2D* pauseImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
-		//pauseImage->BuildAnimation({ 0, 0, 3840, 2160 }, 1, 1, emptyAnimation);
-		//myUI->AddUIComponent("PauseBG", pauseImage);
-		//myUI->overlays[pauseID]->AddComponent(pauseImage);
+		////ADUI::Image2D* pauseImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
+		////pauseImage->BuildAnimation({ 0, 0, 3840, 2160 }, 1, 1, emptyAnimation);
+		////myUI->AddUIComponent("PauseBG", pauseImage);
+		////myUI->overlays[pauseID]->AddComponent(pauseImage);
 
 		//Guidebook Screen
 		UINT guideID = myUI->AddNewOverlay("GuideScreen", false, false);
@@ -725,10 +725,10 @@ namespace GolemGameUISetup
 
 		//OptionsScreen
 		UINT optionsID = myUI->AddNewOverlay("OptionsScreen", false, false);
-		/*ADUI::Image2D* optionsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 1550, 400, 3070, 1560 });
-		optionsImage->BuildAnimation({ 0, 4320, 2299, 5280 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("OptionsBox", optionsImage);
-		myUI->overlays[optionsID]->AddComponent(optionsImage);*/
+		/////*ADUI::Image2D* optionsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 1550, 400, 3070, 1560 });
+		////optionsImage->BuildAnimation({ 0, 4320, 2299, 5280 }, 1, 1, emptyAnimation);
+		////myUI->AddUIComponent("OptionsBox", optionsImage);
+		////myUI->overlays[optionsID]->AddComponent(optionsImage);*/
 
 			//Option Menu Buttons
 		ADUI::ComponentGrid* buttonList3 = new ADUI::ComponentGrid();
@@ -972,10 +972,8 @@ namespace GolemGameUISetup
 		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
 		buttonAnimation[0] = { 0, 1, 1 };
 		buttonAnimation[1] = { 0, 2, 6 };
-		ADUI::AnimationData* faceAnimation = new ADUI::AnimationData();
-		faceAnimation->fps = 0;
-		faceAnimation->frameCount = 4;
-		faceAnimation->startFrame = 0;
+		ADUI::AnimationData* faceAnimation = new ADUI::AnimationData[1];
+		faceAnimation[0] = { 0, 4, 0 };
 
 		//HUD
 		UINT hudID = myUI->AddNewOverlay("HUD", false, true);
@@ -996,7 +994,7 @@ namespace GolemGameUISetup
 		_hUDController->AddComponent(healthUnits);
 
 		ADUI::Image2D* fullring = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 30, 30, 250, 211 });
-		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 2, emptyAnimation);
+		fullring->BuildAnimation({ 0, 1226, 600, 1826 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("FullRing", fullring);
 		myUI->overlays[hudID]->AddComponent(fullring);
 		_hUDController->AddComponent(fullring);
@@ -1055,23 +1053,23 @@ namespace GolemGameUISetup
 		minionHealthUnit->tiled = 50;
 		myUI->AddUIComponent("HealhBarEmpty", minionHealthUnit);
 		myUI->overlays[hudID]->AddComponent(minionHealthUnit);
-		//healthUnits->Focus();
+		healthUnits->Focus();
 		_hUDController->AddComponent(minionHealthUnit);
 
 		ADUI::Image2D* specialIcon = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 665, 175, 921, 396 });
-		specialIcon->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 2, multiFrameStillAnimation);
+		specialIcon->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
 		specialIcon->Focus();
 		myUI->AddUIComponent("Specials", specialIcon);
 		myUI->overlays[hudID]->AddComponent(specialIcon);
 		_hUDController->AddComponent(specialIcon);
 		ADUI::Image2D* specialIcon2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 936, 175, 1192, 396 });
-		specialIcon2->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 2, multiFrameStillAnimation);
+		specialIcon2->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
 		specialIcon2->Focus();
 		myUI->AddUIComponent("Specials2", specialIcon2);
 		myUI->overlays[hudID]->AddComponent(specialIcon2);
 		_hUDController->AddComponent(specialIcon2);
 		ADUI::Image2D* specialIcon3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1207, 175, 1463, 396 });
-		specialIcon3->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 2, multiFrameStillAnimation);
+		specialIcon3->BuildAnimation({ 2751, 1086, 3006, 1307 }, 2, 1, multiFrameStillAnimation);
 		specialIcon3->Focus();
 		myUI->AddUIComponent("Specials3", specialIcon3);
 		myUI->overlays[hudID]->AddComponent(specialIcon3);
@@ -1146,7 +1144,7 @@ namespace GolemGameUISetup
 		uiLog->InitializeLog(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1]);
 
 		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1600, 1016, 3840, 2016 });
-		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 2, emptyAnimation);
+		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 1, emptyAnimation);
 		consoleBox->active = true;
 		consoleBox->visible = true;
 		consoleBox->controlFocusAnimation = 1;

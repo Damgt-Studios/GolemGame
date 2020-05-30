@@ -21,11 +21,13 @@
 //	return temp;
 //}
 
+ADUtils::SHADER GameUtilities::shader;
+
 ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation) 
 {
 	ADResource::ADGameplay::Golem* temp = new ADResource::ADGameplay::Golem;
 
-	ADUtils::SHADER shader = { 0 };
+	shader = { 0 };
 	strcpy_s(shader.vshader, "files\\shaders\\animated_vs.hlsl");
 	strcpy_s(shader.pshader, "files\\shaders\\animated_ps.hlsl");
 
@@ -120,7 +122,7 @@ Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFL
 	return temp;
 }
 
-Destructable* GameUtilities::AddEnemyFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
 
@@ -129,18 +131,35 @@ Destructable* GameUtilities::AddEnemyFromModelFile(std::string modelname, XMFLOA
 	temp->SetRotation(rotation);
 	temp->SetScale(scale);
 
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	//temp->SetMeshID(id);
+
+	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
 
-	scale.x *= 1.8f;
-	scale.y *= 1.8f;
-	scale.z *= 1.8f;
+	scale.x *= 0.5f;
+	scale.y *= 0.5f;
+	scale.z *= 0.5f;
 	temp->collider = ADPhysics::AABB(position, scale);
 
 	return temp;
 }
 
+ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _idleGroup, ADAI::FlockingGroup* _commandGroup)
+{
+	ADAI::AIUnit* temp = new ADAI::AIUnit;
+	temp->owner = _destructable;
+	ADAI::FlockingState* idling = new ADAI::FlockingState();
+	ADAI::FlockingState* charging = new ADAI::FlockingState();
+	temp->states.push_back(idling);
+	temp->states.push_back(charging);
+	temp->states.push_back(new ADAI::TestingState());
 
+	_idleGroup->AddUnitToGroup(_destructable, idling);
+	_commandGroup->AddUnitToGroup(_destructable, charging);
+
+	return nullptr;
+}
 
 ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {

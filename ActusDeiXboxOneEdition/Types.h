@@ -7,6 +7,8 @@
 
 #include <string>
 #include "ADPhysics.h"
+#include "ADQuadTree.h"
+#include "ADQuadTree.h"
 #include "MeshLoader.h"
 
 #ifndef AD_MEMORY_DEFAULT
@@ -242,60 +244,6 @@ namespace ADResource
 		};
 	}
 
-
-	namespace AD_AI
-	{
-
-		enum AITYPES
-		{
-			RUNNER, STRIKER, SHOOTER, BOSS, COUNT
-		};
-
-		enum BEHAVIORS
-		{
-			IDLE, WANDER, DIRECT, WAYPOINT, ATTACK, SHOOT, DEATH, GUARD, TAUNT
-		};
-
-		class AI
-		{
-		public:
-			void Update()
-			{
-				//Traverse Behavior Tree and Enact Behavior
-				//Updates the postTransform of a Game Object.
-				//Communicates with EventSystem to spawn projectiles and Gems.
-			}
-		};
-
-		//For constructing AI's from binary.
-		class AIData
-		{
-			int ObjectType;
-
-			AI ToAI()
-			{
-				switch (ObjectType)
-				{
-				case AITYPES::RUNNER:
-
-					break;
-				case AITYPES::STRIKER:
-
-					break;
-				case AITYPES::SHOOTER:
-
-					break;
-				case AITYPES::BOSS:
-
-					break;
-				default:
-					break;
-				}
-			}
-		};
-
-	}
-
 	namespace ADGameplay
 	{
 
@@ -525,6 +473,7 @@ namespace ADResource
 
 		public:
 			bool active = true;
+			float safeRadius = 5.0f;
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
@@ -590,6 +539,7 @@ namespace ADResource
 			}
 		}
 
+
 		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time) 
 		{
 			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
@@ -607,6 +557,23 @@ namespace ADResource
 			}
 
 			return false;
+		}
+
+		static bool GroundClampingF(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time, QuadTree* tree)
+		{
+			XMFLOAT3 SpyrosPosition = VectorToFloat3(obj->transform.r[3]);
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 100, 100));
+			std::vector<ADPhysics::Triangle> trisInRange;
+			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
+			{
+				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
+				{
+					trisInRange.push_back(*optimizedPoints[i].tri);
+				}
+
+			}
+
+			return GroundClamping(obj, trisInRange, delta_time);
 		}
 	}
 };
