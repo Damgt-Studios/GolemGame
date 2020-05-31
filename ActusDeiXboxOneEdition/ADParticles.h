@@ -1,0 +1,740 @@
+#pragma once
+#include "pch.h"
+#include "Types.h"
+#include "DDSTextureLoader.h"
+using namespace DirectX;
+using namespace std;
+
+#include "ParticleVertexShader.csh"
+#include "ParticleGeometryShader.csh"
+#include "ParticlePixelShader.csh"
+#include "ParticleAnimation_GS.csh"
+
+namespace
+{
+	float RandFloat(float min, float max)
+	{
+		float ratio = rand() / (float)RAND_MAX;
+		return (max - min) * ratio + min;
+	}
+	const float GRAVITY = -10.0f;
+	const int numParticles = 4096;
+}
+
+struct ParticleConstantBuffer
+{
+	XMFLOAT4X4 WorldMatrix;
+	XMFLOAT4X4 ViewMatrix;
+	XMFLOAT4X4 ProjectionMatrix;
+	XMFLOAT4 camPos;
+	XMFLOAT4 Time;
+	XMFLOAT4 Dimensions;
+};
+
+struct ParticlePositionConstantBuffer
+{
+	XMFLOAT4 positions[numParticles];
+};
+
+struct ParticleAttributes
+{
+	XMFLOAT4 position;
+	XMFLOAT4 color;
+};
+
+class Particle
+{
+public:
+	Particle()
+	{
+		attributes.position = { 0, 0, 0, 1 };
+		attributes.color = { 1, 0, 0, 1 };
+		velocity = { 0, 0, 0, 1 };
+		gravityEffect = 0;
+		lifeSpan = RandFloat(0, 3);
+		width = 0.1f;
+		height = 0.1f;
+	}
+	void Update(double time, XMFLOAT4 newVelocity, XMFLOAT4 newPosition = { 0, 0, 0, 1 })
+	{
+		elaspedTime += time;
+		if (elaspedTime > lifeSpan)
+		{
+			attributes.position = newPosition;
+			velocity = { 0, 0, 0, 1 };
+			elaspedTime = 0.0f;
+			lifeSpan = RandFloat(0, 3);
+			velocity = newVelocity;
+		}
+		else
+		{
+			velocity.y += GRAVITY * gravityEffect * (float)time;
+			attributes.position.x += velocity.x * time;
+			attributes.position.y += velocity.y * time;
+			attributes.position.z += velocity.z * time;
+		}
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return attributes.position;
+	}
+	ParticleAttributes* GetAttributes()
+	{
+		return &attributes;
+	}
+	float GetWidth()
+	{
+		return width;
+	}
+	float GetHeight()
+	{
+		return height;
+	}
+	float GetElaspedTime()
+	{
+		return elaspedTime;
+	}
+	float GetLifeSpan()
+	{
+		return lifeSpan;
+	}
+	void SetPosition(XMFLOAT4 position)
+	{
+		attributes.position = position;
+	}
+	void SetColor(XMFLOAT4 color)
+	{
+		attributes.color = color;
+	}
+	void SetGravityEffect(float gEffect)
+	{
+		gravityEffect = gEffect;
+	}
+	void SetWidth(float newWidth)
+	{
+		width = newWidth;
+	}
+	void SetHeight(float newHeight)
+	{
+		height = newHeight;
+	}
+	void SetLifeSpan(float _life)
+	{
+		lifeSpan = _life;
+	}
+	void Reset()
+	{
+		attributes.position = { 0, 0, 0, 1 };
+		attributes.color = { 1, 0, 0, 1 };
+		velocity = { 0, 0, 0, 0 };
+		gravityEffect = 0;
+		lifeSpan = RandFloat(0, 3);
+		width = 0.1f;
+		height = 0.1f;
+	}
+private:
+	ParticleAttributes attributes;
+	XMFLOAT4 velocity;
+	float width;
+	float height;
+	float gravityEffect;
+	float lifeSpan;
+	float elaspedTime = 0.0f;
+};
+
+class ParticleRenderer
+{
+public:
+	ID3D11InputLayout* inputLayout;
+	ID3D11Buffer* vertexBuffer;
+	ID3D11ShaderResourceView* textureResourceView;
+	ID3D11VertexShader* vertexShader;
+	ID3D11GeometryShader* geometryShader;
+	ID3D11PixelShader* pixelShader;
+	XMMATRIX worldMatrix;
+	Particle* particleToRender;
+	ID3D11Buffer* particleCBuff;
+	ID3D11Buffer* particlePosCBuff;
+	ParticleConstantBuffer particleConstants;
+	ParticlePositionConstantBuffer particlePositions;
+
+	ParticleRenderer()
+	{
+		inputLayout = nullptr;
+		vertexBuffer = nullptr;
+		textureResourceView = nullptr;
+		vertexShader = nullptr;
+		geometryShader = nullptr;
+		pixelShader = nullptr;
+		worldMatrix = XMMatrixIdentity();
+		particleToRender = nullptr;
+		particleCBuff = nullptr;
+		particlePosCBuff = nullptr;
+		particleConstants = {};
+		particlePositions = {};
+	}
+	void CreateConstantBuffer(ID3D11Buffer*& ConstantBuffer, ID3D11Device* Device, int SizeOfConstantBuffer)
+	{
+		D3D11_BUFFER_DESC bDesc;
+		ZeroMemory(&bDesc, sizeof(bDesc));
+
+		bDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bDesc.ByteWidth = SizeOfConstantBuffer;
+		bDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bDesc.MiscFlags = 0;
+		bDesc.StructureByteStride = 0;
+		bDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+		HRESULT hr = Device->CreateBuffer(&bDesc, nullptr, &ConstantBuffer);
+	}
+	void CreateVertexBuffer(ID3D11Device* Device)
+	{
+		D3D11_BUFFER_DESC bDesc;
+		D3D11_SUBRESOURCE_DATA subData;
+		ZeroMemory(&bDesc, sizeof(bDesc));
+		ZeroMemory(&subData, sizeof(subData));
+
+		bDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bDesc.ByteWidth = sizeof(ParticleAttributes);
+		bDesc.CPUAccessFlags = 0;
+		bDesc.MiscFlags = 0;
+		bDesc.StructureByteStride = 0;
+		bDesc.Usage = D3D11_USAGE_DEFAULT;
+
+		subData.pSysMem = particleToRender->GetAttributes();
+		subData.SysMemPitch = 0;
+		subData.SysMemSlicePitch = 0;
+
+		HRESULT hr = Device->CreateBuffer(&bDesc, &subData, &vertexBuffer);
+	}
+	void CreateVertexGeometryPixelShadersAndInputLayout(ID3D11Device* Device, const void* VertexShader, SIZE_T SizeOfVertexShader, const void* GeometryShader, SIZE_T SizeOfGeometryShader, const void* PixelShader, SIZE_T SizeOfPixelShader)
+	{
+		HRESULT hr = Device->CreateVertexShader(VertexShader, SizeOfVertexShader, nullptr, &vertexShader);
+		hr = Device->CreateGeometryShader(GeometryShader, SizeOfGeometryShader, nullptr, &geometryShader);
+		hr = Device->CreatePixelShader(PixelShader, SizeOfPixelShader, nullptr, &pixelShader);
+
+		D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		};
+
+		hr = Device->CreateInputLayout(inputDesc, 2, VertexShader, SizeOfVertexShader, &inputLayout);
+	}
+	void CreateTexture(ID3D11Device* Device, const wchar_t* Filename)
+	{
+		HRESULT hr = CreateDDSTextureFromFile(Device, Filename, nullptr, &textureResourceView);
+	}
+	void RenderParticle(ID3D11DeviceContext* DeviceContext, int InstanceAmount, float u = 0, float v = 0)
+	{
+		ID3D11ShaderResourceView* ShaderResourceViews[] = { textureResourceView };
+		DeviceContext->PSSetShaderResources(0, 1, ShaderResourceViews);
+
+		DeviceContext->IASetInputLayout(inputLayout);
+		UINT Strides[] = { sizeof(ParticleAttributes) };
+		UINT Offsets[] = { 0 };
+		ID3D11Buffer* VertexBuffers[] = { vertexBuffer };
+		DeviceContext->IASetVertexBuffers(0, 1, VertexBuffers, Strides, Offsets);
+		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+		DeviceContext->VSSetShader(vertexShader, 0, 0);
+		DeviceContext->GSSetShader(geometryShader, 0, 0);
+		DeviceContext->PSSetShader(pixelShader, 0, 0);
+
+		XMStoreFloat4x4(&particleConstants.WorldMatrix, worldMatrix);
+		particleConstants.Dimensions = XMFLOAT4(particleToRender->GetWidth(), particleToRender->GetHeight(), u, v);
+
+		D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+		HRESULT hr = DeviceContext->Map(particleCBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+		*((ParticleConstantBuffer*)(gpuBuffer.pData)) = particleConstants;
+		DeviceContext->Unmap(particleCBuff, 0);
+
+		D3D11_MAPPED_SUBRESOURCE gpuBuffer2;
+		hr = DeviceContext->Map(particlePosCBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer2);
+		*((ParticlePositionConstantBuffer*)(gpuBuffer2.pData)) = particlePositions;
+		DeviceContext->Unmap(particlePosCBuff, 0);
+
+		ID3D11Buffer* constantBuffers[] = { particleCBuff };
+		DeviceContext->VSSetConstantBuffers(0, 1, constantBuffers);
+		DeviceContext->GSSetConstantBuffers(0, 1, constantBuffers);
+		DeviceContext->PSSetConstantBuffers(0, 1, constantBuffers);
+
+		ID3D11Buffer* constantBuffers2[] = { particlePosCBuff };
+		DeviceContext->VSSetConstantBuffers(1, 1, constantBuffers2);
+
+		DeviceContext->UpdateSubresource(vertexBuffer, 0, NULL, particleToRender->GetAttributes(), 0, 0);
+		DeviceContext->DrawInstanced(1, InstanceAmount, 0, 0);
+
+		DeviceContext->GSSetShader(nullptr, 0, 0);
+		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+	void Release()
+	{
+		inputLayout->Release();
+		vertexBuffer->Release();
+		textureResourceView->Release();
+		vertexShader->Release();
+		geometryShader->Release();
+		pixelShader->Release();
+		particleCBuff->Release();
+		particlePosCBuff->Release();
+	}
+};
+
+
+
+class FountainEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(-0.25f);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	{
+		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
+		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
+		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
+		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
+		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-1, 1);
+				velocity.y = RandFloat(-1, 1);
+				velocity.z = RandFloat(-1, 1);
+				particles[i].Update(time, velocity);
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Release()
+	{
+		renderer.Release();
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetGravityEffect(-1);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+};
+
+class SpreadEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	{
+		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
+		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
+		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
+		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
+		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-2, 2);
+				velocity.y = RandFloat(-2, 2);
+				velocity.z = RandFloat(-2, 2);
+				particles[i].Update(time, velocity);
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Release()
+	{
+		renderer.Release();
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetGravityEffect(0);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+};
+
+class CylinderEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, float radius, const wchar_t* textureName)
+	{
+		isActive = false;
+		lifeSpan = 0.0f;
+		emitterRadius = radius;
+		emitterSlices = radius * 16;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		float theta = 2.0f * 3.14159f / (float)emitterSlices;
+		cylinderPoints.resize(emitterSlices);
+		particles.resize(size);
+		for (int i = 0; i < emitterSlices; ++i)
+		{
+			float x = radius * cos(i * theta);
+			float z = radius * sin(i * theta);
+			cylinderPoints[i] = XMFLOAT4(emitterPos.x + x, emitterPos.y, emitterPos.z + z, 1.0f);
+		}
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetPosition(cylinderPoints[rand() % emitterSlices]);
+			particle.SetHeight(radius);
+			particle.SetWidth(radius);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	{
+		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
+		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
+		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
+		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
+		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = 0;
+				velocity.y = 50;
+				velocity.z = 0;
+				particles[i].Update(time, velocity, cylinderPoints[rand() % emitterSlices]);
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		else
+			isActive = false;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Release()
+	{
+		renderer.Release();
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition, float newRadius)
+	{
+		isActive = true;
+		emitterPos = newPosition;
+		emitterRadius = newRadius;
+		float theta = 2.0f * 3.14159f / (float)emitterSlices;
+		for (int i = 0; i < emitterSlices; ++i)
+		{
+			float x = emitterRadius * cos(i * theta);
+			float z = emitterRadius * sin(i * theta);
+			cylinderPoints[i] = XMFLOAT4(emitterPos.x + x, emitterPos.y, emitterPos.z + z, 1.0f);
+		}
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetHeight(emitterRadius);
+			particles[i].SetWidth(emitterRadius);
+			particles[i].SetGravityEffect(0);
+			particles[i].SetLifeSpan(newLife);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+	float GetRadius()
+	{
+		return emitterRadius;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float emitterRadius;
+	vector<XMFLOAT4> cylinderPoints;
+	int emitterSlices;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	bool isActive;
+};
+
+class BigCloudEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetLifeSpan(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	{
+		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
+		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
+		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
+		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
+		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-20, 20);
+				velocity.y = RandFloat(-20, 20);
+				velocity.z = RandFloat(-20, 20);
+				particles[i].Update(time, velocity);
+				if (particles[i].GetElaspedTime() <= 0.0f)
+				{
+					particles[i].SetLifeSpan(3);
+				}
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		else
+			isActive = false;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Release()
+	{
+		renderer.Release();
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		isActive = true;
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetLifeSpan(0);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	bool isActive;
+};
+
+
+class AnimSpreadEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		uCoord = 0.0f;
+		vCoord = 0.0f;
+		coordTime = 0.0f;
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetHeight(10);
+			particle.SetWidth(10);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleAnimation_GS, sizeof(ParticleAnimation_GS), ParticlePixelShader, sizeof(ParticlePixelShader));
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
+	{
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-2, 2);
+				velocity.y = RandFloat(-2, 2);
+				velocity.z = RandFloat(-2, 2);
+				particles[i].Update(time, velocity);
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		if (coordTime > 0.04f)
+		{
+			uCoord += 1.0f;
+			if (uCoord >= 8)
+			{
+				uCoord = 0;
+				vCoord += 1.0f;
+				if (vCoord >= 4)
+				{
+					uCoord = 0;
+					vCoord = 0;
+				}
+			}
+			coordTime = 0.0f;
+		}
+		coordTime += time;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			renderer.RenderParticle(deviceContext, size, uCoord, vCoord);
+	}
+	void Release()
+	{
+		renderer.Release();
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetGravityEffect(0);
+			particles[i].SetHeight(1);
+			particles[i].SetWidth(1);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	float coordTime;
+	float uCoord;
+	float vCoord;
+};

@@ -64,6 +64,7 @@
     <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="ADAI.h" />
+    <ClInclude Include="ADParticles.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

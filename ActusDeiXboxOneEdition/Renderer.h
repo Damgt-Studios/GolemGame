@@ -6,6 +6,7 @@
 #include "Types.h"
 #include "Camera.h"
 #include "ResourceManager.h"
+#include "ADParticles.h"
 
 using namespace ADResource::ADRenderer;
 
@@ -57,7 +58,7 @@ namespace ADResource
 			};
 			
 			static RendererResources renderer_resources;
-
+			AnimSpreadEmitter emitter;
 		public:
 			PBRRenderer();
 			~PBRRenderer() = default;
