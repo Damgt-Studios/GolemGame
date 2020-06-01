@@ -13,11 +13,15 @@ ADResource::ADGameplay::Golem::Golem() {
 	fireCollider.trigger = true;
 
 	fireCPtr = &fireCollider;
+
+	stats = new StatSheet();
 }
 
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
+
+	ProcessEffects(delta_time);
 
 	// Physics
 	collider = OBB(transform, XMFLOAT3(2, 2, 2));
@@ -39,6 +43,28 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 		{
 			//defenseType = OBJECT_DEFENSE::NONE;
 		}
+	}
+}
+
+void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
+{
+	for (int i = 0; i < effects.size(); ++i)
+	{
+		effects[i].get()->Update(_deltaTime);
+
+		std::string msg = std::to_string(effects[i].get()->tickTimer);
+		ADUI::MessageReceiver::Log(msg);
+
+		if (effects[i].get()->isFinished)
+		{
+			effects[i].get()->OnExit();
+			effects.erase(effects.begin() + i);
+			i--;
+		}
+	}
+	if (stats->health.currentValue <= 0)
+	{
+		//Death();
 	}
 }
 
@@ -222,6 +248,16 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 //	audioManager = _audioManager;
 //}
 
+iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
+{
+	return stats;
+}
+
+int ADResource::ADGameplay::Golem::GetCurrentElement()
+{
+	return playerElement;
+}
+
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
 	XMFLOAT3 pos(0, 0, 0);
@@ -238,14 +274,57 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		spyro_move_speed = 500;
 	}
 
-	if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER) == 1) && fire == false)
+	//if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER) == 1) && fire == false)
+	//{
+	//	fire = true;
+	//}
+	//else if (Input::QueryButtonUp(GamepadButtons::B))
+	//{
+	//	fire = false;
+	//}
+	responseTimer -= delta_time;
+	if (Input::QueryButtonDown(GamepadButtons::Y))
 	{
-		fire = true;
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			stats->token.currentValue--;
+			if (stats->token.currentValue < stats->token.minValue)
+				stats->token.currentValue = 0;
+		}
 	}
-	else if (Input::QueryButtonUp(GamepadButtons::B))
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 	{
-		fire = false;
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			++playerElement;
+			if (playerElement == 4)
+				playerElement = 0;
+		}
 
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			--playerElement;
+			if (playerElement < 0)
+				playerElement = 3;
+		}
+	}
+
+
+	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
+	{
+		commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3]);
+	}
+
+	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
+	{
+		commandGroup->ReturnCall();
 	}
 
 	XMFLOAT4 forward;
@@ -267,25 +346,25 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	}
 
 
-	if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
-	{
-		gliding = true;
-		floatiness = 0.05f;
-		ADPhysics::maxDownwardVelocity = -0.5f;
-	}
+	//if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
+	//{
+	//	gliding = true;
+	//	floatiness = 0.05f;
+	//	ADPhysics::maxDownwardVelocity = -0.5f;
+	//}
 
 
-	if (Input::QueryButtonUp(GamepadButtons::A))
-	{
-		buttonup = true;
-		if (gliding == true)
-		{
-			gliding = false;
-			floatiness = 0.25f;
-			ADPhysics::maxDownwardVelocity = -20;
-		}
+	//if (Input::QueryButtonUp(GamepadButtons::A))
+	//{
+	//	buttonup = true;
+	//	if (gliding == true)
+	//	{
+	//		gliding = false;
+	//		floatiness = 0.25f;
+	//		ADPhysics::maxDownwardVelocity = -20;
+	//	}
 
-	}
+	//}
 
 	//if (Velocity.y > maxDownwardVelocity)
 	//	Velocity.y += Gravity * delta_time * floatiness;
@@ -299,17 +378,17 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 
 
 	// Actions
-	if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)
-	{
-		//buttonup = false;
-		//floatiness = 0.25f;
-		//jumping = true;
-		//Velocity.y = (-Gravity * delta_time * floatiness) * 20;
+	//if (Input::QueryButtonDown(GamepadButtons::A) && !jumping)
+	//{
+	//	//buttonup = false;
+	//	//floatiness = 0.25f;
+	//	//jumping = true;
+	//	//Velocity.y = (-Gravity * delta_time * floatiness) * 20;
 
 
 
 
-	}
+	//}
 
 
 

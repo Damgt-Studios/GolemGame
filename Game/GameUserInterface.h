@@ -1,53 +1,86 @@
 #pragma once
 #include "ADUserInterface.h"
 #include "Types.h"
+#include "GameObjectClasses.h"
+#include "ADAudio.h"
+#include "Golem.h"
 
-namespace SpyroUISetup
+namespace GolemGameUISetup
 {
-    enum SpyroGameUIComponentTypes
+    class GameplayUIPrimaryController : public ADUI::OverlayController
     {
-        Image,
-        Label,
-        Button,
-        ButtonList,
+        UINT& uiState;
+    public:
+        GameplayUIPrimaryController(UINT* _uiState) : uiState(*_uiState) {};
+        virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick) override;
     };
 
-
-    inline XMFLOAT2 GetPosition(float _percentageX, float _percentageY, float _screenWidth, float _screeHeight)
+    class HUDController : public ADUI::OverlayController
     {
-        return { (_percentageX * _screenWidth), (_percentageY * _screeHeight) };
-    }
-
-    class GameplayUIControllerSPYROGAME : public ADUI::OverlayController
-    {
-        int timesPressed = 0;
-        int health = 3;
+        ADResource::ADGameplay::Golem* player;
+        ADUI::Image2D* golemIcon;
+        ADUI::Image2D* healthIcon;
+        std::vector<ADUI::Image2D*> tokenIcons;
+        UINT& uiState;
     public:
-        GameplayUIControllerSPYROGAME(UINT& _uiState, ADUI::UISetup& _setup) : ADUI::OverlayController(_uiState, _setup) {};
-        virtual bool ProcessResponse(ADResource::AD_UI::UIMessage* _message);
-        virtual bool ProcessInput(float delta_time);
+        HUDController(UINT* _uiState) : uiState(*_uiState) {};
+        void SetPlayer(ADResource::ADGameplay::Golem* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3);
+        virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick) override;
     };
 
-    class StartMenuUIControllerSPYROGAME : public ADUI::OverlayController
+    class StartMenuUIController : public ADUI::OverlayController
     {
+        UINT& uiState;
+        AD_ADUIO::AudioSource buttonClick;
+        AD_ADUIO::AudioSource buttonMove;
+        AD_ADUIO::AudioSource menuBack;
     public:
-        StartMenuUIControllerSPYROGAME(UINT& _uiState, ADUI::UISetup& _setup) : ADUI::OverlayController(_uiState, _setup) {};
-        virtual bool ProcessInput(float delta_time);
-        virtual bool ProcessResponse(ADResource::AD_UI::UIMessage* _message);
+        StartMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
+        void SetAudio(AD_ADUIO::ADAudio* _audioSystem);
+        virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick) override;
     };
 
-    class EndMenuUIControllerSPYROGAME : public ADUI::OverlayController
+    class PauseMenuController : public ADUI::OverlayController
     {
+        UINT& uiState;
+        AD_ADUIO::AudioSource buttonClick;
+        AD_ADUIO::AudioSource buttonMove;
+        AD_ADUIO::AudioSource menuBack;
     public:
-        EndMenuUIControllerSPYROGAME(UINT& _uiState, ADUI::UISetup& _setup) : ADUI::OverlayController(_uiState, _setup) {};
-        virtual bool ProcessInput(float delta_time);
+        PauseMenuController(UINT* _uiState) : uiState(*_uiState) {};
+        void SetAudio(AD_ADUIO::ADAudio* _audioSystem);
+        virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick);
+    };
+
+    class OptionsMenuUIController : public ADUI::OverlayController
+    {
+        UINT& uiState;
+        UINT audioIndex;
+        AD_ADUIO::ADAudio* audioSystem;
+        AD_ADUIO::AudioSource sliderClick;
+        AD_ADUIO::AudioSource buttonClick;
+        AD_ADUIO::AudioSource buttonMove;
+        AD_ADUIO::AudioSource menuBack;
+    public:
+        OptionsMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
+        void SetAudio(AD_ADUIO::ADAudio* _audioSystem);
+        virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick);
     };
 
     class GameUserInterface
     {
     public:
-        ADUI::ADUI* SpyroGameUISetup();
+        UINT SetupTitleScreen(ADUI::ADUI* myUI, StartMenuUIController* _titleScreenController);
+        UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
+        UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
+        UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Golem* _player);
+        UINT SetupLog(ADUI::ADUI* myUI);
+        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_ADUIO::ADAudio* _audioSystem);
     };
 
-};
-
+}
