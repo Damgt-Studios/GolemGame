@@ -181,22 +181,23 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void StartMenuUIController::SetAudio(AD_ADUIO::ADAudio* _audioSystem)
+	void StartMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
 	{
-		buttonClick.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonClick.engine = _audioSystem;
 		buttonClick.personalVolume = 1.00f;
 		buttonClick.soundName = "files\\audio\\UI_SFX_GridConfirm.wav";
 		buttonClick.LoadSound(false, false, false);
+		
 
-
-		buttonMove.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonMove.engine = _audioSystem;
 		buttonMove.personalVolume = 1.00f;
 		buttonMove.soundName = "files\\audio\\UI_SFX_GridMovement.wav";
 		buttonMove.LoadSound(false, false, false);
+		buttonMove.restartOnRepeat = true;
 
-		menuBack.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		menuBack.engine = _audioSystem;
 		menuBack.personalVolume = 0.30f;
 		menuBack.soundName = "files\\audio\\UI_SFX_MenuReturn.wav";
@@ -297,22 +298,22 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void PauseMenuController::SetAudio(AD_ADUIO::ADAudio* _audioSystem)
+	void PauseMenuController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
 	{
-		buttonClick.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonClick.engine = _audioSystem;
 		buttonClick.personalVolume = 1.00f;
 		buttonClick.soundName = "files\\audio\\UI_SFX_GridConfirm.wav";
 		buttonClick.LoadSound(false, false, false);
 
 
-		buttonMove.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonMove.engine = _audioSystem;
 		buttonMove.personalVolume = 1.00f;
 		buttonMove.soundName = "files\\audio\\UI_SFX_GridMovement.wav";
 		buttonMove.LoadSound(false, false, false);
 
-		menuBack.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		menuBack.engine = _audioSystem;
 		menuBack.personalVolume = 0.30f;
 		menuBack.soundName = "files\\audio\\UI_SFX_MenuReturn.wav";
@@ -431,30 +432,30 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void OptionsMenuUIController::SetAudio(AD_ADUIO::ADAudio* _audioSystem)
+	void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
 	{
 		audioSystem = _audioSystem;
 
-		sliderClick.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		sliderClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		sliderClick.engine = audioSystem;
 		sliderClick.personalVolume = 1.00f;
 		sliderClick.soundName = "files\\audio\\UI_SFX_Sliderclick.wav";
 		sliderClick.LoadSound(false, false, false);
 
-		buttonClick.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonClick.engine = audioSystem;
 		buttonClick.personalVolume = 1.00f;
 		buttonClick.soundName = "files\\audio\\UI_SFX_GridConfirm.wav";
 		buttonClick.LoadSound(false, false, false);
 
 
-		buttonMove.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonMove.engine = audioSystem;
 		buttonMove.personalVolume = 1.00f;
 		buttonMove.soundName = "files\\audio\\UI_SFX_GridMovement.wav";
 		buttonMove.LoadSound(false, false, false);
 
-		menuBack.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		menuBack.engine = audioSystem;
 		menuBack.personalVolume = 0.30f;
 		menuBack.soundName = "files\\audio\\UI_SFX_MenuReturn.wav";
@@ -478,16 +479,16 @@ namespace GolemGameUISetup
 							sliderClick.Play();
 							switch (_message->componentIndex)
 							{
-							case AD_ADUIO::MUSIC:
+							case AD_AUDIO::MUSIC:
 								audioSystem->masterMusicVolume = _message->fvalue.x; 
 								quick = 0.1f;
 								audioSystem->RefreshMusicVolumes();
 								break;
-							case AD_ADUIO::SOUND_FX:
+							case AD_AUDIO::SOUND_FX:
 								audioSystem->masterSoundFXVolume = _message->fvalue.x;
 								quick = 0.1f;
 								break;
-							case AD_ADUIO::UI_SOUND_FX:
+							case AD_AUDIO::UI_SOUND_FX:
 								audioSystem->masterUISoundFXVolume = _message->fvalue.x;
 								quick = 0.1f;
 								break;
@@ -1288,7 +1289,7 @@ namespace GolemGameUISetup
 		return logid;
 	}
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_ADUIO::ADAudio* _audioSystem)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem)
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;

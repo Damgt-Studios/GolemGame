@@ -37,7 +37,10 @@ namespace ADResource
 
 		public:
 			Golem();
+			~Golem();
 
+			GameObject* targetMarker;
+			ADAI::FlockingGroup** flockingGroups;
 			virtual void Update(float time_delta);
 
 			void ProcessEffects(float _deltaTime);
@@ -56,7 +59,6 @@ namespace ADResource
 			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
-			ADAI::FlockingGroup* commandGroup;
 			int commandTargetGroup = 0;
 			int totalMinionCount = 0;
 			int stoneMinionCount = 0;

@@ -46,7 +46,7 @@ private:
 	AD_ULONG golem_collider = 0;
 
 	//AudioManager* audio_manager;
-	AD_ADUIO::ADAudio* audio;
+	AD_AUDIO::ADAudio* audio;
 
 	bool shutdown = false;
 
@@ -58,6 +58,9 @@ private:
 	XTime game_time;
 	float timer = 0;
 	float delta_time = 0;
+
+	const float physics_rate = 0.2f;
+	float physics_timer = 0;
 
 	// Audio
 	float main_music_loop_timer = 3;
@@ -112,16 +115,22 @@ public:
 
 	virtual void Run()
 	{
-		AD_ADUIO::ADAudio audioEngine;
+		AD_AUDIO::ADAudio audioEngine;
 		audioEngine.Init();
 
-		AD_ADUIO::AudioSource titleMusic;
-		titleMusic.audioSourceType = AD_ADUIO::AUDIO_SOURCE_TYPE::MUSIC;
+		audioEngine.LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
+		audioEngine.LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
+
+		audioEngine.LoadEvent("event:/Fire");
+		audioEngine.LoadEvent("event:/AllFire");
+		audioEngine.LoadEvent("event:/RandFire");
+
+		AD_AUDIO::AudioSource titleMusic;
+		titleMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
 		titleMusic.engine = &audioEngine;
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.soundName = "files\\audio\\Opening.mp3";
 		titleMusic.LoadSound(false, true, true);
-
 
 		//audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
 		//audioEngine.LoadSound("", );
@@ -194,41 +203,58 @@ public:
 		std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
 
-		std::vector<std::string> minionAnimations;
-		minionAnimations.push_back("files/models/Minion_1_Idle.animfile");
+		std::vector<std::string> stoneMinionAnimations;
+		stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
+		std::vector<std::string> waterMinionAnimations;
+		waterMinionAnimations.push_back("files/models/Minion_4_Idle.animfile");
+		std::vector<std::string> fireMinionAnimations;
+		fireMinionAnimations.push_back("files/models/Minion_2_Idle.animfile");
+		std::vector<std::string> woodMinionAnimations;
+		woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
 
-		//////////////////////////////
-    //THis is the stuff for you.
-		ADAI::FlockingGroup commandFlock;
-		ADAI::FlockingGroup idleFlock;
 
-		Destructable* e2 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-30, 5, 30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
-		Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
-		Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		std::vector<Destructable*> stoneMinions;
+		std::vector<ADAI::AIUnit*> stoneMinionsAI;
+		std::vector<Destructable*> waterMinions;
+		std::vector<ADAI::AIUnit*> waterMinionsAI;
+		std::vector<Destructable*> fireMinions;
+		std::vector<ADAI::AIUnit*> fireMinionsAI;
+		std::vector<Destructable*> woodMinions;
+		std::vector<ADAI::AIUnit*> woodMinionsAI;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+			stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE]));
+			waterMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", waterMinionAnimations, XMFLOAT3(-130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+			waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER]));
+			fireMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, XMFLOAT3(130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+			fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE]));
+			woodMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+			woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD]));
+		}	
+		//Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		//Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 
-		ADAI::AIUnit* ai1 = GameUtilities::AttachMinionAI(e2, &commandFlock, &idleFlock);
-		ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
-		ADAI::AIUnit* ai3 = GameUtilities::AttachMinionAI(e4, &commandFlock, &idleFlock);
+		//ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
+		//ADAI::AIUnit* ai3 = GameUtilities::AttachMinionAI(e4, &commandFlock, &idleFlock);
 		//ADAI::AIUnit* ai4 = GameUtilities::AttachMinionAI(e5, &commandFlock, &idleFlock);
 		//ADAI::AIUnit* ai5 = GameUtilities::AttachMinionAI(e6, &commandFlock, &idleFlock);
 		//ADAI::AIUnit* ai6 = GameUtilities::AttachMinionAI(e7, &commandFlock, &idleFlock);
 
-		Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(-50, 5, -30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
-		Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(-50, 5, -30), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
+		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
+
+		golem->targetMarker = m1;
 
 
-
-
-		golem->commandGroup = &idleFlock;
-		idleFlock.groupTarget = &golem->transform;
-		commandFlock.groupTarget = &golem->transform;
 
    // No more.
      /////////////////////////////////////////
@@ -292,11 +318,16 @@ public:
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
-		GameUtilities::AddGameObject(e2);
-		GameUtilities::AddGameObject(e3);
-		GameUtilities::AddGameObject(e4);
+
+		for (int i = 0; i < 10; ++i)
+		{
+			GameUtilities::AddGameObject(stoneMinions[i]);
+			GameUtilities::AddGameObject(waterMinions[i]);
+			GameUtilities::AddGameObject(fireMinions[i]);
+			GameUtilities::AddGameObject(woodMinions[i]);
+		}
 		GameUtilities::AddGameObject(m1);
-		GameUtilities::AddGameObject(m2);
+		//GameUtilities::AddGameObject(m2);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
@@ -389,9 +420,7 @@ public:
 
 
 
-			//Update
-			idleFlock.Update(delta_time);
-			commandFlock.Update(delta_time);
+			
 
 			// Test
 			//spyro->Update(delta_time);
@@ -400,18 +429,18 @@ public:
 
 			//engine->GetOrbitCamera()->SetRadius(200);
 			engine->GetOrbitCamera()->SetRadius(50);
-			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0,15,0,1)), yaw, pitch, delta_time);
+			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			golem->GetView(view);
-		
+
 
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
 
 			// Physics test
-		
+
 			/*spyro->CheckCollision(c1);
 			spyro->CheckCollision(c2);
 			spyro->CheckCollision(p1);
@@ -434,7 +463,7 @@ public:
 			{
 				for (unsigned int j = 0; j < OBJ_COUNT; j++)
 				{
-					if (i != j) 
+					if (i != j)
 					{
 						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
 						{
@@ -462,13 +491,20 @@ public:
 
 			GroundClamping(golem, trisInRange, delta_time);
 
+			physics_timer += delta_time;
+			if (physics_timer > physics_rate)
+			{
+				physics_timer = 0;
+				for (int i = 0; i < 10; ++i)
+				{
+					GroundClampingF(stoneMinions[i], trisInRange, delta_time, tree);
+					GroundClampingF(waterMinions[i], trisInRange, delta_time, tree);
+					GroundClampingF(fireMinions[i], trisInRange, delta_time, tree);
+					GroundClampingF(woodMinions[i], trisInRange, delta_time, tree);
+				}
+			}
 
-			GroundClampingF(e2, trisInRange, delta_time, tree);
-			GroundClampingF(e3, trisInRange, delta_time, tree);
-			GroundClampingF(e4, trisInRange, delta_time, tree);
-			GroundClampingF(m1, trisInRange, delta_time, tree);
-			GroundClampingF(m2, trisInRange, delta_time, tree);
-			
+
 			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();
 

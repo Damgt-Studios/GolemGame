@@ -39,12 +39,12 @@ namespace GolemGameUISetup
     class StartMenuUIController : public ADUI::OverlayController
     {
         UINT& uiState;
-        AD_ADUIO::AudioSource buttonClick;
-        AD_ADUIO::AudioSource buttonMove;
-        AD_ADUIO::AudioSource menuBack;
+        AD_AUDIO::AudioSource buttonClick;
+        AD_AUDIO::AudioSource buttonMove;
+        AD_AUDIO::AudioSource menuBack;
     public:
         StartMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetAudio(AD_ADUIO::ADAudio* _audioSystem);
+        void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick) override;
     };
@@ -52,12 +52,12 @@ namespace GolemGameUISetup
     class PauseMenuController : public ADUI::OverlayController
     {
         UINT& uiState;
-        AD_ADUIO::AudioSource buttonClick;
-        AD_ADUIO::AudioSource buttonMove;
-        AD_ADUIO::AudioSource menuBack;
+        AD_AUDIO::AudioSource buttonClick;
+        AD_AUDIO::AudioSource buttonMove;
+        AD_AUDIO::AudioSource menuBack;
     public:
         PauseMenuController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetAudio(AD_ADUIO::ADAudio* _audioSystem);
+        void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick);
     };
@@ -66,14 +66,14 @@ namespace GolemGameUISetup
     {
         UINT& uiState;
         UINT audioIndex;
-        AD_ADUIO::ADAudio* audioSystem;
-        AD_ADUIO::AudioSource sliderClick;
-        AD_ADUIO::AudioSource buttonClick;
-        AD_ADUIO::AudioSource buttonMove;
-        AD_ADUIO::AudioSource menuBack;
+        AD_AUDIO::ADAudio* audioSystem;
+        AD_AUDIO::AudioSource sliderClick;
+        AD_AUDIO::AudioSource buttonClick;
+        AD_AUDIO::AudioSource buttonMove;
+        AD_AUDIO::AudioSource menuBack;
     public:
         OptionsMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetAudio(AD_ADUIO::ADAudio* _audioSystem);
+        void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick);
     };
@@ -86,7 +86,7 @@ namespace GolemGameUISetup
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
         UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Golem* _player);
         UINT SetupLog(ADUI::ADUI* myUI);
-        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_ADUIO::ADAudio* _audioSystem);
+        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem);
     };
 
 }

@@ -145,17 +145,15 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	return temp;
 }
 
-ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _idleGroup, ADAI::FlockingGroup* _commandGroup)
+ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup)
 {
 	ADAI::AIUnit* temp = new ADAI::AIUnit;
 	temp->owner = _destructable;
-	ADAI::FlockingState* idling = new ADAI::FlockingState();
+	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();
 	temp->states.push_back(idling);
 	temp->states.push_back(charging);
-	temp->states.push_back(new ADAI::TestingState());
 
-	_idleGroup->AddUnitToGroup(_destructable, idling);
 	_commandGroup->AddUnitToGroup(_destructable, charging);
 
 	return nullptr;

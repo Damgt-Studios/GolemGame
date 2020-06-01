@@ -1,7 +1,7 @@
 #include "pchgame.h"
 #include "ADAudio.h"
 
-namespace AD_ADUIO
+namespace AD_AUDIO
 {
 
     AudioImplementation::AudioImplementation() {
@@ -22,7 +22,7 @@ namespace AD_ADUIO
 
     void AudioImplementation::Update() {
         std::vector<std::map<int, FMOD::Channel*>::iterator> pStoppedChannels;
-        for (auto it = channelsByName.begin(), itEnd = channelsByName.end(); it != itEnd; ++it)
+        for (auto it = channelsID_map.begin(), itEnd = channelsID_map.end(); it != itEnd; ++it)
         {
             bool bIsPlaying = false;
             it->second->isPlaying(&bIsPlaying);
@@ -33,7 +33,7 @@ namespace AD_ADUIO
         }
         for (auto& it : pStoppedChannels)
         {
-            channelsByName.erase(it);
+            channelsID_map.erase(it);
         }
         ADAudio::AudioErrorCheck(studioSystem->update());
     }
@@ -50,8 +50,8 @@ namespace AD_ADUIO
 
     void ADAudio::LoadSound(const std::string& strSoundName, bool b3d, bool bLooping, bool bStream)
     {
-        auto tFoundIt = audioImp->soundsByName.find(strSoundName);
-        if (tFoundIt != audioImp->soundsByName.end())
+        auto tFoundIt = audioImp->soundsName_map.find(strSoundName);
+        if (tFoundIt != audioImp->soundsName_map.end())
             return;
 
         FMOD_MODE eMode = FMOD_DEFAULT;
@@ -62,19 +62,19 @@ namespace AD_ADUIO
         FMOD::Sound* pSound = nullptr;
         ADAudio::AudioErrorCheck(audioImp->audioSystem->createSound(strSoundName.c_str(), eMode, nullptr, &pSound));
         if (pSound) {
-            audioImp->soundsByName[strSoundName] = pSound;
+            audioImp->soundsName_map[strSoundName] = pSound;
         }
 
     }
 
     void ADAudio::UnLoadSound(const std::string& strSoundName)
     {
-        auto tFoundIt = audioImp->soundsByName.find(strSoundName);
-        if (tFoundIt == audioImp->soundsByName.end())
+        auto tFoundIt = audioImp->soundsName_map.find(strSoundName);
+        if (tFoundIt == audioImp->soundsName_map.end())
             return;
 
         ADAudio::AudioErrorCheck(tFoundIt->second->release());
-        audioImp->soundsByName.erase(tFoundIt);
+        audioImp->soundsName_map.erase(tFoundIt);
     }
 
     void ADAudio::Set3dListenerAndOrientation(const FMOD_VECTOR& vPos, float fVolumedB)
@@ -91,12 +91,12 @@ namespace AD_ADUIO
     int ADAudio::PlaySounds(const std::string& strSoundName, const XMFLOAT3& vPosition, float fVolumedB)
     {
         int nChannelId = audioImp->nextChannelId++;
-        auto tFoundIt = audioImp->soundsByName.find(strSoundName);
-        if (tFoundIt == audioImp->soundsByName.end())
+        auto tFoundIt = audioImp->soundsName_map.find(strSoundName);
+        if (tFoundIt == audioImp->soundsName_map.end())
         {
             LoadSound(strSoundName);
-            tFoundIt = audioImp->soundsByName.find(strSoundName);
-            if (tFoundIt == audioImp->soundsByName.end())
+            tFoundIt = audioImp->soundsName_map.find(strSoundName);
+            if (tFoundIt == audioImp->soundsName_map.end())
             {
                 return nChannelId;
             }
@@ -113,16 +113,30 @@ namespace AD_ADUIO
             }
             //ADAudio::AudioErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
             ADAudio::AudioErrorCheck(pChannel->setPaused(false));
-            audioImp->channelsByName[nChannelId] = pChannel;
-            ADAudio::AudioErrorCheck(audioImp->channelsByName[nChannelId]->setVolume(fVolumedB));
+            audioImp->channelsID_map[nChannelId] = pChannel;
+            ADAudio::AudioErrorCheck(audioImp->channelsID_map[nChannelId]->setVolume(fVolumedB));
         }
         return nChannelId;
     }
 
+    void ADAudio::StopChannel(int nChannelId)
+    {
+        auto tFoundIt = audioImp->channelsID_map.find(nChannelId);
+        if (tFoundIt == audioImp->channelsID_map.end())
+            return;
+
+        audioImp->channelsID_map.erase(tFoundIt);
+    }
+
+    void ADAudio::StopAllChannels()
+    {
+        audioImp->channelsID_map.clear();
+    }
+
     void ADAudio::SetChannel3dPosition(int nChannelId, const XMFLOAT3& vPosition)
     {
-        auto tFoundIt = audioImp->channelsByName.find(nChannelId);
-        if (tFoundIt == audioImp->channelsByName.end())
+        auto tFoundIt = audioImp->channelsID_map.find(nChannelId);
+        if (tFoundIt == audioImp->channelsID_map.end())
             return;
 
         FMOD_VECTOR position = VectorToFmod(vPosition);
@@ -131,8 +145,8 @@ namespace AD_ADUIO
 
     void ADAudio::SetChannelVolume(int nChannelId, float fVolumedB)
     {
-        auto tFoundIt = audioImp->channelsByName.find(nChannelId);
-        if (tFoundIt == audioImp->channelsByName.end())
+        auto tFoundIt = audioImp->channelsID_map.find(nChannelId);
+        if (tFoundIt == audioImp->channelsID_map.end())
             return;
 
         ADAudio::AudioErrorCheck(tFoundIt->second->setVolume(fVolumedB));
@@ -142,12 +156,79 @@ namespace AD_ADUIO
     {
 
         bool isPlaying = false;
-        auto tFoundIt = audioImp->channelsByName.find(nChannelId);
-        if (tFoundIt != audioImp->channelsByName.end())
+        auto tFoundIt = audioImp->channelsID_map.find(nChannelId);
+        if (tFoundIt != audioImp->channelsID_map.end())
         {
-            ADAudio::AudioErrorCheck(audioImp->channelsByName[nChannelId]->isPlaying(&isPlaying));
+            ADAudio::AudioErrorCheck(audioImp->channelsID_map[nChannelId]->isPlaying(&isPlaying));
         }
         return isPlaying;
+    }
+
+    void ADAudio::LoadEvent(const std::string& strEventName)
+    {
+        auto tFoundit = audioImp->eventsName_map.find(strEventName);
+        if (tFoundit != audioImp->eventsName_map.end())
+            return;
+        FMOD::Studio::EventDescription* pEventDescription = NULL;
+        ADAudio::AudioErrorCheck(audioImp->studioSystem->getEvent(strEventName.c_str(), &pEventDescription));
+        if (pEventDescription) {
+            FMOD::Studio::EventInstance* pEventInstance = NULL;
+            ADAudio::AudioErrorCheck(pEventDescription->createInstance(&pEventInstance));
+            if (pEventInstance) {
+                audioImp->eventsName_map[strEventName] = pEventInstance;
+            }
+        }
+    }
+
+    void ADAudio::PlayEvent(const string& strEventName) {
+        auto tFoundit = audioImp->eventsName_map.find(strEventName);
+        if (tFoundit == audioImp->eventsName_map.end()) {
+            LoadEvent(strEventName);
+            tFoundit = audioImp->eventsName_map.find(strEventName);
+            if (tFoundit == audioImp->eventsName_map.end())
+                return;
+        }
+        tFoundit->second->start();
+    }
+
+    void ADAudio::StopEvent(const string& strEventName, bool bImmediate) {
+        auto tFoundIt = audioImp->eventsName_map.find(strEventName);
+        if (tFoundIt == audioImp->eventsName_map.end())
+            return;
+        FMOD_STUDIO_STOP_MODE eMode;
+        eMode = bImmediate ? FMOD_STUDIO_STOP_IMMEDIATE : FMOD_STUDIO_STOP_ALLOWFADEOUT;
+        ADAudio::AudioErrorCheck(tFoundIt->second->stop(eMode));
+    }
+
+    void ADAudio::GetEventParameter(const string& strEventName, const string& strParameterName, float* parameter) {
+        //auto tFoundIt = audioImp->eventsName_map.find(strEventName);
+        //if (tFoundIt == audioImp->eventsName_map.end())
+        //    return;
+        //FMOD::Studio::ParameterInstance* pParameter = NULL;
+        //ADAudio::AudioErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
+        //ADAudio::AudioErrorCheck(pParameter->getValue(parameter));
+    }
+
+
+    void ADAudio::SetEventParameter(const string& strEventName, const string& strParameterName, float fValue) {
+        //auto tFoundIt = audioImp->eventsName_map.find(strEventName);
+        //if (tFoundIt == audioImp->eventsName_map.end())
+        //    return;
+        //FMOD::Studio::ParameterInstance* pParameter = NULL;
+        //ADAudio::AudioErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
+        //ADAudio::AudioErrorCheck(pParameter->setValue(fValue));
+    }
+
+    bool ADAudio::IsEventPlaying(const string& strEventName) const {
+        auto tFoundIt = audioImp->eventsName_map.find(strEventName);
+        if (tFoundIt == audioImp->eventsName_map.end())
+            return false;
+
+        FMOD_STUDIO_PLAYBACK_STATE* state = NULL;
+        if (tFoundIt->second->getPlaybackState(state) == FMOD_STUDIO_PLAYBACK_PLAYING) {
+            return true;
+        }
+        return false;
     }
 
     FMOD_VECTOR ADAudio::VectorToFmod(const XMFLOAT3& vPosition) {
@@ -179,9 +260,24 @@ namespace AD_ADUIO
     int ADAudio::AudioErrorCheck(FMOD_RESULT result) {
         if (result != FMOD_OK) {
             std::cout << "FMOD ERROR " << result << std::endl;
+            std::string error;
+            error.append("FMOD ERROR ");
+            error.append(to_string(result));
+            ADUI::MessageReceiver::Log(error.c_str());
             return 1;
         }
         return 0;
+    }
+
+    void ADAudio::LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags) {
+        auto tFoundIt = audioImp->bankName_map.find(strBankName);
+        if (tFoundIt != audioImp->bankName_map.end())
+            return;
+        FMOD::Studio::Bank* pBank;
+        ADAudio::AudioErrorCheck(audioImp->studioSystem->loadBankFile(strBankName.c_str(), flags, &pBank));
+        if (pBank) {
+            audioImp->bankName_map[strBankName] = pBank;
+        }
     }
 
     void ADAudio::Shutdown() {
@@ -200,6 +296,10 @@ namespace AD_ADUIO
 
     void AudioSource::Play()
     {
+        if (restartOnRepeat)
+        {
+            engine->StopChannel(currentChannel);
+        }
         if (!engine->IsPlaying(currentChannel))
         {
             float volume = personalVolume;
@@ -218,7 +318,6 @@ namespace AD_ADUIO
                 break;
             }
             currentChannel = engine->PlaySounds(soundName, vPos, volume);
-            
         }
     }
 
