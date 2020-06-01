@@ -33,7 +33,7 @@ namespace ADResource
 		class Golem : public Renderable
 		{
 			ADResource::ADGameplay::StatSheet* stats;
-			int playerElement;
+			int playerElement = 0;
 
 		public:
 			Golem();

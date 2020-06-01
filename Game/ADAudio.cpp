@@ -13,6 +13,7 @@ namespace AD_AUDIO
         audioSystem = NULL;
         ADAudio::AudioErrorCheck(studioSystem->getCoreSystem(&audioSystem));
 
+
     }
 
     AudioImplementation::~AudioImplementation() {
@@ -111,7 +112,6 @@ namespace AD_AUDIO
                 FMOD_VECTOR position = VectorToFmod(vPosition);
                 ADAudio::AudioErrorCheck(pChannel->set3DAttributes(&position, nullptr));
             }
-            //ADAudio::AudioErrorCheck(pChannel->setVolume(dbToVolume(fVolumedB)));
             ADAudio::AudioErrorCheck(pChannel->setPaused(false));
             audioImp->channelsID_map[nChannelId] = pChannel;
             ADAudio::AudioErrorCheck(audioImp->channelsID_map[nChannelId]->setVolume(fVolumedB));
@@ -200,25 +200,6 @@ namespace AD_AUDIO
         ADAudio::AudioErrorCheck(tFoundIt->second->stop(eMode));
     }
 
-    void ADAudio::GetEventParameter(const string& strEventName, const string& strParameterName, float* parameter) {
-        //auto tFoundIt = audioImp->eventsName_map.find(strEventName);
-        //if (tFoundIt == audioImp->eventsName_map.end())
-        //    return;
-        //FMOD::Studio::ParameterInstance* pParameter = NULL;
-        //ADAudio::AudioErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
-        //ADAudio::AudioErrorCheck(pParameter->getValue(parameter));
-    }
-
-
-    void ADAudio::SetEventParameter(const string& strEventName, const string& strParameterName, float fValue) {
-        //auto tFoundIt = audioImp->eventsName_map.find(strEventName);
-        //if (tFoundIt == audioImp->eventsName_map.end())
-        //    return;
-        //FMOD::Studio::ParameterInstance* pParameter = NULL;
-        //ADAudio::AudioErrorCheck(tFoundIt->second->getParameter(strParameterName.c_str(), &pParameter));
-        //ADAudio::AudioErrorCheck(pParameter->setValue(fValue));
-    }
-
     bool ADAudio::IsEventPlaying(const string& strEventName) const {
         auto tFoundIt = audioImp->eventsName_map.find(strEventName);
         if (tFoundIt == audioImp->eventsName_map.end())
@@ -237,16 +218,6 @@ namespace AD_AUDIO
         fVec.y = vPosition.y;
         fVec.z = vPosition.z;
         return fVec;
-    }
-
-    float  ADAudio::dbToVolume(float dB)
-    {
-        return powf(10.0f, 0.05f * dB);
-    }
-
-    float  ADAudio::VolumeTodb(float volume)
-    {
-        return 20.0f * log10f(volume);
     }
 
     void ADAudio::RefreshMusicVolumes()

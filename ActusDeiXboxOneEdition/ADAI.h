@@ -236,7 +236,7 @@ namespace ADAI
 				velocity += XMLoadFloat4(&flockers[i]->Velocity);
 
 				XMFLOAT4 yCancel;
-				XMStoreFloat4(&yCancel, XMVector4Normalize(velocity));
+				XMStoreFloat4(&yCancel, velocity);
 				yCancel.y = 0;
 				velocity = XMLoadFloat4(&yCancel);
 

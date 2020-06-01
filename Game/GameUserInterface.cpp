@@ -172,6 +172,11 @@ namespace GolemGameUISetup
 				tokenIcons[i]->visible = false;
 		}
 
+		targetMinionGroup->components[0]->Unfocus();
+		targetMinionGroup->components[1]->Unfocus();
+		targetMinionGroup->components[2]->Unfocus();
+		targetMinionGroup->components[3]->Unfocus();
+		targetMinionGroup->components[4]->Unfocus();
 		targetMinionGroup->SetSelected(player->commandTargetGroup);
 		allCount->SetText(to_string(player->totalMinionCount));
 		stoneCount->SetText(to_string(player->stoneMinionCount));

@@ -48,8 +48,6 @@ namespace AD_AUDIO
 	    void LoadEvent(const std::string& strEventName);
         void PlayEvent(const string& strEventName);
         void StopEvent(const string& strEventName, bool bImmediate = false);
-        void GetEventParameter(const string& strEventName, const string& strEventParameter, float* parameter);
-        void SetEventParameter(const string& strEventName, const string& strParameterName, float fValue);
          bool IsEventPlaying(const string& strEventName) const;
 
         //Spatial Positioning Functions
@@ -57,11 +55,6 @@ namespace AD_AUDIO
         void SetChannel3dPosition(int nChannelId, const XMFLOAT3& vPosition);
         FMOD_VECTOR VectorToFmod(const XMFLOAT3& vPosition);
         
-        //Volume to Decibals
-        float dbToVolume(float db);
-        float VolumeTodb(float volume);
-
-
     };
 
     class AudioSource
