@@ -306,13 +306,12 @@ public:
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
-	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
 	{
-		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
-		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
-		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
-		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
-		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
 		elaspedTime += time;
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			for (int i = 0; i < size; ++i)
@@ -383,13 +382,12 @@ public:
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
-	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
 	{
-		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
-		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
-		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
-		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
-		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
 		elaspedTime += time;
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			for (int i = 0; i < size; ++i)
@@ -474,13 +472,12 @@ public:
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
-	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
 	{
-		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
-		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
-		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
-		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
-		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
 		elaspedTime += time;
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			for (int i = 0; i < size; ++i)
@@ -574,13 +571,12 @@ public:
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
-	void UpdateParticles(double time, XMMATRIX& view, XMMATRIX& projection)
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
 	{
-		XMStoreFloat4x4(&renderer.particleConstants.ViewMatrix, view);
-		XMStoreFloat4(&renderer.particleConstants.camPos, XMMatrixInverse(nullptr, view).r[3]);
-		XMStoreFloat4x4(&renderer.particleConstants.ProjectionMatrix, projection);
-		XMVECTOR cTime = XMVectorSet(time, 0.0f, 0.0f, 0.0f);
-		XMStoreFloat4(&renderer.particleConstants.Time, cTime);
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
 		elaspedTime += time;
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			for (int i = 0; i < size; ++i)

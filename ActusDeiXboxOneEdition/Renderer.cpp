@@ -181,7 +181,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
-	emitter.Initialize(renderer_resources.device.Get(), 10, { 0,25,0,1 }, L"C:\\Users\\tmanv\\source\\repos\\GolemGame\\x64\\Debug\\Game\\Appx\\files\\textures\\ExplosionSheet.dds");
+	emitter.Initialize(renderer_resources.device.Get(), 10, { 0,25,0,1 }, L"C:\\Users\\tmanv\\source\\repos\\GolemGame\\x64\\Release\\Game\\Appx\\files\\textures\\ExplosionSheet.dds");
 
 	return true;
 }
