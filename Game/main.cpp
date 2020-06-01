@@ -438,7 +438,8 @@ public:
 					}
 				}
 			}
-			XMFLOAT3 SpyrosPosition = VectorToFloat3(golem->transform.r[3]);
+	
+
 			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(golem->transform.r[3].m128_f32[0], golem->transform.r[3].m128_f32[2], 100, 100));
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
