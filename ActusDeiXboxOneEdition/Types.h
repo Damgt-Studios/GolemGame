@@ -540,40 +540,23 @@ namespace ADResource
 		}
 
 
-		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time) 
+		static bool GroundClamping(GameObject* obj, QuadTree* tree, float delta_time) 
 		{
+			std::vector<ADQuadTreePoint> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 100, 100));
+
 			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
 
 			for (unsigned int i = 0; i < ground.size(); i++)
 			{
 				ADPhysics::Manifold m;
-				if (LineSegmentToTriangle(line, ground[i], m))
+				if (LineSegmentToTriangle(line, *ground[i].tri, m))
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
-					//obj->transform.r[3].m128_f32[1] -= obj->colliderPtr->GetHeight() * 2.5;
-					//obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
 					return true;
 				}
 			}
 
 			return false;
-		}
-
-		static bool GroundClampingF(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time, QuadTree* tree)
-		{
-			XMFLOAT3 SpyrosPosition = VectorToFloat3(obj->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 100, 100));
-			std::vector<ADPhysics::Triangle> trisInRange;
-			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-			{
-				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-				{
-					trisInRange.push_back(*optimizedPoints[i].tri);
-				}
-
-			}
-
-			return GroundClamping(obj, trisInRange, delta_time);
 		}
 	}
 };

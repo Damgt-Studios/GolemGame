@@ -440,23 +440,11 @@ public:
 			}
 	
 
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(golem->transform.r[3].m128_f32[0], golem->transform.r[3].m128_f32[2], 100, 100));
-			std::vector<Triangle> trisInRange;
-			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-			{
-				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-				{
-					trisInRange.push_back(*optimizedPoints[i].tri);
-				}
+			GroundClamping(golem, tree, delta_time);
 
-			}
-
-			GroundClamping(golem, trisInRange, delta_time);
-
-
-			GroundClampingF(e2, trisInRange, delta_time, tree);
-			GroundClampingF(e3, trisInRange, delta_time, tree);
-			GroundClampingF(e4, trisInRange, delta_time, tree);
+			GroundClamping(e2, tree, delta_time);
+			GroundClamping(e3, tree, delta_time);
+			GroundClamping(e4, tree, delta_time);
 			
 			//Resolve all collisions that occurred this frame
 			ADResource::ADGameplay::ResolveCollisions();
