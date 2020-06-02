@@ -667,6 +667,7 @@ public:
 		renderer.particleConstants.camPos = camPos;
 		renderer.particleConstants.ProjectionMatrix = projection;
 		renderer.particleConstants.Time = { time, 0,0,0 };
+		//renderer.worldMatrix = XMMatrixMultiply(XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z),XMMatrixTranslation(camPos.x, camPos.y, camPos.z));
 		elaspedTime += time;
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			for (int i = 0; i < size; ++i)

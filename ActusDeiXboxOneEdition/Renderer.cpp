@@ -181,7 +181,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
-	emitter.Initialize(renderer_resources.device.Get(), 10, { 0,25,0,1 }, L"C:\\Users\\tmanv\\source\\repos\\GolemGame\\x64\\Release\\Game\\Appx\\files\\textures\\ExplosionSheet.dds");
+	emitter.Initialize(renderer_resources.device.Get(), 10, { 0, 25, 25, 1 }, L"files\\textures\\ExplosionSheet.dds");
 
 	return true;
 }
@@ -404,7 +404,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	temp = XMMatrixIdentity();
 	//temp = XMMatrixRotationX(XMConvertToRadians(180));
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(1,1,1));
+	temp = XMMatrixMultiply(temp, XMMatrixScaling(1, 1, 1));
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
@@ -417,7 +417,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
-	emitter.UpdateParticles(delta_time, WORLD.ViewMatrix, WORLD.ProjectionMatrix, WORLD.CameraPosition);
+	//emitter.UpdateParticles(delta_time, WORLD.ViewMatrix, WORLD.ProjectionMatrix, WORLD.CameraPosition);
 
 	// Send the matrix to constant buffer
 	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -631,6 +631,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 	}
+	emitter.UpdateParticles(delta_time, WORLD.ViewMatrix, WORLD.ProjectionMatrix, WORLD.CameraPosition);
 	emitter.RenderParticles(renderer_resources.context.Get());
 	return true;
 }
