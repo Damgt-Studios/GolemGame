@@ -197,7 +197,10 @@ public:
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
-
+#ifdef _DEBUG
+		Renderable* golemCollider = GameUtilities::AddRenderableCollider(golem->colliderPtr);
+#endif
+		
 		//////////////////////////////
     //THis is the stuff for you.
 		ADAI::FlockingGroup commandFlock;
@@ -269,7 +272,6 @@ public:
 		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1000, 100, 1000), XMFLOAT3(0, 0, 0));
-
 		// Add gameobjects
 		// Comment this out - will run at 1fps
 		/*int COUNT = 2500;
@@ -290,6 +292,8 @@ public:
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
+
+		GameUtilities::AddGameObject(golemCollider);
 
 		//testPlane->colliderPtr = nullptr;
 
@@ -451,14 +455,21 @@ public:
 
 			// Test
 
+
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+
+
+			XMMATRIX colliderLocation;
+			golem->GetWorldMatrix(colliderLocation);
+			colliderLocation.r[3].m128_f32[1] += 15;
+			//golemCollider->SetPosition(VectorToFloat3(colliderLocation.r[3]));
+			colliderLocation = XMMatrixScaling(200, 250, 200) * colliderLocation;
+			golemCollider->transform = colliderLocation;
 
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
-
-
 
 			// Update framerate
 			if (timer > 1)

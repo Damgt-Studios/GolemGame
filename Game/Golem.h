@@ -53,7 +53,7 @@ namespace ADResource
 			//virtual void OnTrigger(GameObject* other);
 
 			void GetView(XMMATRIX& view);
-			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
+			OBB collider = OBB(transform, XMFLOAT3(20, 20, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 			ADAI::FlockingGroup* commandGroup;

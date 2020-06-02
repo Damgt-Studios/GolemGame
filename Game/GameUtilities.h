@@ -30,6 +30,7 @@ public:
 
 	static Renderable* AddSimpleAsset(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static Renderable* AddSimpleAnimAsset(std::string modelname, std::string materials, std::vector<std::string> AnimationFiles, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static Renderable* AddRenderableCollider(ADPhysics::Collider*);
 
 public:
 	// Game object shit

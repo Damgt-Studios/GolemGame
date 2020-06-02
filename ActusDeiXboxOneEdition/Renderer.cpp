@@ -485,10 +485,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// Model stuff
 			// World matrix projection
 			// TODO: Translate rotation to quaternion
-			fbxmodel_map;
 
 			current_obj->GetWorldMatrix(temp);
-			temp.r[3].m128_f32[1] -= 5;
 			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
 			//temp = XMMatrixRotationZ(3.14f) * temp;
 			//temp = XMMatrixRotationY(3.14f) * temp;
@@ -560,8 +558,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// World matrix projection
 			// TODO: Translate rotation to quaternion
 			current_obj->GetWorldMatrix(temp);
-			temp.r[3].m128_f32[1] = -5;
-			temp.r[3].m128_f32[2] = -10;
 			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 			// View
@@ -615,7 +611,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
 			renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
 		}
-
 
 		//bool bruh = current_model->desc.wireframe_mode;
 		//if (bruh)

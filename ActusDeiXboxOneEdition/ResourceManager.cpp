@@ -76,6 +76,28 @@ AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 positio
 	return InitializePBRModel(modelname, position, scale, rotation, shader);
 }
 
+AD_ULONG ResourceManager::AddRenderableCollider(ADPhysics::Collider* collider)
+{
+	ADUtils::SHADER shader = { 0 };
+	strcpy_s(shader.vshader, "files\\shaders\\collider_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\collider_ps.hlsl");
+
+	shader.wireframe = false;
+
+	std::string modelname = "";
+
+	if (collider->type == ADPhysics::ColliderType::Aabb || collider->type == ADPhysics::ColliderType::Obb)
+	{
+		modelname = "files\\models\\Cube.mesh";
+	}
+	else if (collider->type == ADPhysics::ColliderType::Sphere)
+	{
+		modelname = "files\\models\\Sphere.mesh";
+	}
+
+	return InitializeSimpleModel(modelname, std::string(), collider->Pos, XMFLOAT3(100,100,100), XMFLOAT3(0,0,0), shader);
+}
+
 AD_ULONG ResourceManager::AddLight(ADResource::ADRenderer::Light& light)
 {
 	ADResource::ADRenderer::Light temp;
@@ -202,6 +224,45 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 	return id;
 }
 
+AD_ULONG ResourceManager::InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader)
+{
+	if (modelname == "")
+		return -1;
+
+	SimpleStaticModel* temp = new SimpleStaticModel();
+
+	temp->position = collider->Pos;
+
+	if (collider->type == ADPhysics::ColliderType::Sphere)
+	{
+		ADPhysics::Sphere* sphere = static_cast<ADPhysics::Sphere*>(collider);
+		temp->scale = XMFLOAT3(sphere->Radius, sphere->Radius, sphere->Radius);
+		temp->rotation = XMFLOAT3(0, 0, 0);
+	}
+	else if (collider->type == ADPhysics::ColliderType::Aabb) 
+	{
+		ADPhysics::AABB* aabb = static_cast<ADPhysics::AABB*>(collider);
+		temp->scale = aabb->HalfSize;
+		temp->rotation = XMFLOAT3(0, 0, 0);
+	}
+	else if (collider->type == ADPhysics::ColliderType::Obb) 
+	{
+		ADPhysics::OBB* obb = static_cast<ADPhysics::OBB*>(collider);
+		temp->scale = obb->HalfSize;
+		temp->rotation = XMFLOAT3(0, 0, 0);
+	}
+
+	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+
+	// grab id and add stuff
+	AD_ULONG id = GenerateUniqueID();
+	unsigned int index = collider_map.size();
+	collider_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	colliders.push_back(temp);
+
+	return id;
+}
+
 void ResourceManager::ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device)
 {
 	// Setup Vertex Buffer
@@ -231,7 +292,6 @@ void ResourceManager::ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device)
 	assert(!FAILED(result));
 }
 
-
 Microsoft::WRL::ComPtr<ID3D11Buffer> ResourceManager::GetVertexBuffer()
 {
 	return vertexBuffer;
@@ -253,10 +313,28 @@ bool ResourceManager::RenderQueueEmpty()
 	return render_queue.empty();
 }
 
+void ResourceManager::AddModelToColliderQueue(AD_ULONG key)
+{
+	collider_queue.push(key);
+}
+
+bool ResourceManager::ColliderQueueEmpty()
+{
+	return collider_queue.empty();
+}
+
 ADResource::ADGameplay::GameObject* ResourceManager::PopFromRenderQueue()
 {
 	ADResource::ADGameplay::GameObject* temp = render_queue.front();
 	render_queue.pop();
+
+	return temp;
+}
+
+AD_ULONG ResourceManager::PopFromColliderQueue() 
+{
+	AD_ULONG temp = collider_queue.front();
+	collider_queue.pop();
 
 	return temp;
 }
@@ -356,16 +434,15 @@ ADResource::ADRenderer::SimpleModel** ResourceManager::GetSimpleModelPtrFromMesh
 	return temp;
 }
 
-ADResource::ADRenderer::SimpleAnimModel* ResourceManager::GetSimpleAnimModelPtrFromMeshId(AD_ULONG mesh_id)
+ADResource::ADRenderer::SimpleModel** ResourceManager::GetColliderPtrFromMeshId(AD_ULONG mesh_id) 
 {
-	SimpleAnimModel* temp = nullptr;
-	//std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = animated_fbxmodel_map.find(mesh_id);
+	SimpleModel** temp = nullptr;
+	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = collider_map.find(mesh_id);
 
-	//if (iter != animated_fbxmodel_map.end())
-	//{
-	//	// Found
-	//	temp = &animated_fbxmodels[iter->second];
-	//}
+	if (iter != collider_map.end()) 
+	{
+		temp = &colliders[iter->second];
+	}
 
 	return temp;
 }

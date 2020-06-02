@@ -19,7 +19,7 @@ namespace
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
 	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
-	//std::unordered_map<AD_ULONG, unsigned int> animated_fbxmodel_map;
+	std::unordered_map<AD_ULONG, unsigned int> collider_map;
 
 #ifdef AD_MEMORY_DEFAULT
 	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
@@ -29,7 +29,7 @@ namespace
 	std::vector<ADResource::ADRenderer::Model> pbrmodels;
 
 	std::vector<ADResource::ADRenderer::SimpleModel*> fbxmodels;
-	//std::vector<ADResource::ADRenderer::SimpleAnimModel> animated_fbxmodels;
+	std::vector<ADResource::ADRenderer::SimpleModel*> colliders;
 
 	std::vector<ADResource::ADGameplay::GameObject> passables;
 	std::vector<ADResource::ADGameplay::GameObject> collidables;
@@ -37,6 +37,7 @@ namespace
 	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
 
 	std::queue<ADResource::ADGameplay::GameObject*> render_queue;
+	std::queue<AD_ULONG> collider_queue;
 #else
 	ADVector<ADResource::ADRenderer::Vertex> pbrVertexData;
 	ADVector<unsigned int> pbrIndxData;
@@ -74,6 +75,8 @@ public:
 	static AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
+	static AD_ULONG AddRenderableCollider(ADPhysics::Collider* collider);
+
 	static AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static void AddSkybox(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
@@ -85,6 +88,7 @@ public:
 
 	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 	static AD_ULONG InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader);
 
 public:
 	// Rendering init shit
@@ -93,7 +97,10 @@ public:
 	static ComPtr<ID3D11Buffer> GetIndexBuffer();
 	static void AddModelToRenderQueue(ADResource::ADGameplay::GameObject*);
 	static bool RenderQueueEmpty();
+	static void AddModelToColliderQueue(AD_ULONG);
+	static bool ColliderQueueEmpty();
 	static ADResource::ADGameplay::GameObject* PopFromRenderQueue();
+	static AD_ULONG PopFromColliderQueue();
 
 public:
 	// Game object shit
@@ -116,7 +123,7 @@ public:
 
 	static ADResource::ADRenderer::Model* GetModelPtrFromMeshId(AD_ULONG mesh_id);
 	static ADResource::ADRenderer::SimpleModel** GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
-	static ADResource::ADRenderer::SimpleAnimModel* GetSimpleAnimModelPtrFromMeshId(AD_ULONG mesh_id);
+	static ADResource::ADRenderer::SimpleModel** GetColliderPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
 	static AD_ULONG current_id;

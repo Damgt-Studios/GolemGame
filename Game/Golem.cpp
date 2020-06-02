@@ -2,7 +2,7 @@
 #include "Golem.h"
 
 ADResource::ADGameplay::Golem::Golem() {
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	collider = OBB(transform, XMFLOAT3(20, 25, 20));
 	colliderPtr = &collider;
 
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
@@ -24,7 +24,9 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 	ProcessEffects(delta_time);
 
 	// Physics
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	XMMATRIX colliderLocation = transform;
+	colliderLocation.r[3].m128_f32[1] += 15;
+	collider = OBB(colliderLocation, XMFLOAT3(20, 20, 20));
 	colliderPtr = &collider;
 
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
