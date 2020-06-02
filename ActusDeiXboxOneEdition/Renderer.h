@@ -58,7 +58,6 @@ namespace ADResource
 			};
 			
 			static RendererResources renderer_resources;
-			AnimSpreadEmitter emitter;
 		public:
 			PBRRenderer();
 			~PBRRenderer() = default;

@@ -145,16 +145,16 @@ private:
 class ParticleRenderer
 {
 public:
-	ID3D11InputLayout* inputLayout;
-	ID3D11Buffer* vertexBuffer;
-	ID3D11ShaderResourceView* textureResourceView;
-	ID3D11VertexShader* vertexShader;
-	ID3D11GeometryShader* geometryShader;
-	ID3D11PixelShader* pixelShader;
+	ComPtr<ID3D11InputLayout> inputLayout;
+	ComPtr<ID3D11Buffer> vertexBuffer;
+	ComPtr<ID3D11ShaderResourceView> textureResourceView;
+	ComPtr<ID3D11VertexShader> vertexShader;
+	ComPtr<ID3D11GeometryShader> geometryShader;
+	ComPtr<ID3D11PixelShader> pixelShader;
 	XMMATRIX worldMatrix;
 	Particle* particleToRender;
-	ID3D11Buffer* particleCBuff;
-	ID3D11Buffer* particlePosCBuff;
+	ComPtr<ID3D11Buffer> particleCBuff;
+	ComPtr<ID3D11Buffer> particlePosCBuff;
 	ParticleConstantBuffer particleConstants;
 	ParticlePositionConstantBuffer particlePositions;
 
@@ -173,7 +173,7 @@ public:
 		particleConstants = {};
 		particlePositions = {};
 	}
-	void CreateConstantBuffer(ID3D11Buffer*& ConstantBuffer, ID3D11Device* Device, int SizeOfConstantBuffer)
+	void CreateConstantBuffer(ComPtr<ID3D11Buffer>& ConstantBuffer, ID3D11Device* Device, int SizeOfConstantBuffer)
 	{
 		D3D11_BUFFER_DESC bDesc;
 		ZeroMemory(&bDesc, sizeof(bDesc));
@@ -227,57 +227,46 @@ public:
 	}
 	void RenderParticle(ID3D11DeviceContext* DeviceContext, int InstanceAmount, float u = 0, float v = 0)
 	{
-		ID3D11ShaderResourceView* ShaderResourceViews[] = { textureResourceView };
+		ID3D11ShaderResourceView* ShaderResourceViews[] = { textureResourceView.Get() };
 		DeviceContext->PSSetShaderResources(0, 1, ShaderResourceViews);
 
-		DeviceContext->IASetInputLayout(inputLayout);
+		DeviceContext->IASetInputLayout(inputLayout.Get());
 		UINT Strides[] = { sizeof(ParticleAttributes) };
 		UINT Offsets[] = { 0 };
-		ID3D11Buffer* VertexBuffers[] = { vertexBuffer };
+		ID3D11Buffer* VertexBuffers[] = { vertexBuffer.Get() };
 		DeviceContext->IASetVertexBuffers(0, 1, VertexBuffers, Strides, Offsets);
 		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-		DeviceContext->VSSetShader(vertexShader, 0, 0);
-		DeviceContext->GSSetShader(geometryShader, 0, 0);
-		DeviceContext->PSSetShader(pixelShader, 0, 0);
+		DeviceContext->VSSetShader(vertexShader.Get(), 0, 0);
+		DeviceContext->GSSetShader(geometryShader.Get(), 0, 0);
+		DeviceContext->PSSetShader(pixelShader.Get(), 0, 0);
 
 		XMStoreFloat4x4(&particleConstants.WorldMatrix, worldMatrix);
 		particleConstants.Dimensions = XMFLOAT4(particleToRender->GetWidth(), particleToRender->GetHeight(), u, v);
 
 		D3D11_MAPPED_SUBRESOURCE gpuBuffer;
-		HRESULT hr = DeviceContext->Map(particleCBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+		HRESULT hr = DeviceContext->Map(particleCBuff.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
 		*((ParticleConstantBuffer*)(gpuBuffer.pData)) = particleConstants;
-		DeviceContext->Unmap(particleCBuff, 0);
+		DeviceContext->Unmap(particleCBuff.Get(), 0);
 
 		D3D11_MAPPED_SUBRESOURCE gpuBuffer2;
-		hr = DeviceContext->Map(particlePosCBuff, 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer2);
+		hr = DeviceContext->Map(particlePosCBuff.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer2);
 		*((ParticlePositionConstantBuffer*)(gpuBuffer2.pData)) = particlePositions;
-		DeviceContext->Unmap(particlePosCBuff, 0);
+		DeviceContext->Unmap(particlePosCBuff.Get(), 0);
 
-		ID3D11Buffer* constantBuffers[] = { particleCBuff };
+		ID3D11Buffer* constantBuffers[] = { particleCBuff.Get() };
 		DeviceContext->VSSetConstantBuffers(0, 1, constantBuffers);
 		DeviceContext->GSSetConstantBuffers(0, 1, constantBuffers);
 		DeviceContext->PSSetConstantBuffers(0, 1, constantBuffers);
 
-		ID3D11Buffer* constantBuffers2[] = { particlePosCBuff };
+		ID3D11Buffer* constantBuffers2[] = { particlePosCBuff.Get() };
 		DeviceContext->VSSetConstantBuffers(1, 1, constantBuffers2);
 
-		DeviceContext->UpdateSubresource(vertexBuffer, 0, NULL, particleToRender->GetAttributes(), 0, 0);
+		DeviceContext->UpdateSubresource(vertexBuffer.Get(), 0, NULL, particleToRender->GetAttributes(), 0, 0);
 		DeviceContext->DrawInstanced(1, InstanceAmount, 0, 0);
 
 		DeviceContext->GSSetShader(nullptr, 0, 0);
 		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	}
-	void Release()
-	{
-		inputLayout->Release();
-		vertexBuffer->Release();
-		textureResourceView->Release();
-		vertexShader->Release();
-		geometryShader->Release();
-		pixelShader->Release();
-		particleCBuff->Release();
-		particlePosCBuff->Release();
 	}
 };
 
@@ -328,10 +317,6 @@ public:
 	{
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			renderer.RenderParticle(deviceContext, size);
-	}
-	void Release()
-	{
-		renderer.Release();
 	}
 	void Activate(float newLife, XMFLOAT4 newPosition)
 	{
@@ -405,10 +390,6 @@ public:
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			renderer.RenderParticle(deviceContext, size);
 	}
-	void Release()
-	{
-		renderer.Release();
-	}
 	void Activate(float newLife, XMFLOAT4 newPosition)
 	{
 		for (int i = 0; i < size; ++i)
@@ -453,7 +434,7 @@ public:
 		{
 			float x = radius * cos(i * theta);
 			float z = radius * sin(i * theta);
-			cylinderPoints[i] = XMFLOAT4(emitterPos.x + x, emitterPos.y, emitterPos.z + z, 1.0f);
+			cylinderPoints[i] = XMFLOAT4(x, emitterPos.y, z, 1.0f);
 		}
 		for (int i = 0; i < size; ++i)
 		{
@@ -497,10 +478,6 @@ public:
 		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
 			renderer.RenderParticle(deviceContext, size);
 	}
-	void Release()
-	{
-		renderer.Release();
-	}
 	void Activate(float newLife, XMFLOAT4 newPosition, float newRadius)
 	{
 		isActive = true;
@@ -511,7 +488,7 @@ public:
 		{
 			float x = emitterRadius * cos(i * theta);
 			float z = emitterRadius * sin(i * theta);
-			cylinderPoints[i] = XMFLOAT4(emitterPos.x + x, emitterPos.y, emitterPos.z + z, 1.0f);
+			cylinderPoints[i] = XMFLOAT4(x, emitterPos.y, z, 1.0f);
 		}
 		for (int i = 0; i < size; ++i)
 		{
@@ -600,10 +577,6 @@ public:
 		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
 			renderer.RenderParticle(deviceContext, size);
 	}
-	void Release()
-	{
-		renderer.Release();
-	}
 	void Activate(float newLife, XMFLOAT4 newPosition)
 	{
 		isActive = true;
@@ -667,7 +640,6 @@ public:
 		renderer.particleConstants.camPos = camPos;
 		renderer.particleConstants.ProjectionMatrix = projection;
 		renderer.particleConstants.Time = { time, 0,0,0 };
-		//renderer.worldMatrix = XMMatrixMultiply(XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z),XMMatrixTranslation(camPos.x, camPos.y, camPos.z));
 		elaspedTime += time;
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			for (int i = 0; i < size; ++i)
@@ -701,18 +673,14 @@ public:
 		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
 			renderer.RenderParticle(deviceContext, size, uCoord, vCoord);
 	}
-	void Release()
-	{
-		renderer.Release();
-	}
 	void Activate(float newLife, XMFLOAT4 newPosition)
 	{
 		for (int i = 0; i < size; ++i)
 		{
 			particles[i].Reset();
 			particles[i].SetGravityEffect(0);
-			particles[i].SetHeight(1);
-			particles[i].SetWidth(1);
+			particles[i].SetHeight(10);
+			particles[i].SetWidth(10);
 			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
 		}
 		elaspedTime = 0.0f;
@@ -734,4 +702,13 @@ private:
 	float coordTime;
 	float uCoord;
 	float vCoord;
+};
+
+struct Emitters
+{
+	FountainEmitter fountain;
+	SpreadEmitter spread;
+	CylinderEmitter cylinder;
+	BigCloudEmitter cloud;
+	AnimSpreadEmitter animSpread;
 };

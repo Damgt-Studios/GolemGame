@@ -181,7 +181,6 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
-	emitter.Initialize(renderer_resources.device.Get(), 10, { 0, 25, 25, 1 }, L"files\\textures\\ExplosionSheet.dds");
 
 	return true;
 }
@@ -631,8 +630,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 	}
-	emitter.UpdateParticles(delta_time, WORLD.ViewMatrix, WORLD.ProjectionMatrix, WORLD.CameraPosition);
-	emitter.RenderParticles(renderer_resources.context.Get());
 	return true;
 }
 
