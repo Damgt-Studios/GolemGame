@@ -213,6 +213,14 @@ public:
 		//Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 
+		Renderable* house_01_Upper = GameUtilities::AddSimpleAsset("files/models/House_01_UpperLevel.mesh", "files/textures/House_01_UpperLevel.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* house_01_Lower = GameUtilities::AddSimpleAsset("files/models/House_01_LowerLevel.mesh", "files/textures/House_01_LowerLevel.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* house_01_Bottom = GameUtilities::AddSimpleAsset("files/models/House_01_Bottom.mesh", "files/textures/House_01_Bottom.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* house_01_WoodenFrame = GameUtilities::AddSimpleAsset("files/models/House_01_WoodenFrame.mesh", "files/textures/House_01_Wooden.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* house_01_WoodenStairs = GameUtilities::AddSimpleAsset("files/models/House_01_WoodenStairs.mesh", "files/textures/House_01_Wooden.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* house_01_Roof = GameUtilities::AddSimpleAsset("files/models/House_01_Roof.mesh", "files/textures/House_01_Roof.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* house_01_Details = GameUtilities::AddSimpleAsset("files/models/House_01_Details.mesh", "files/textures/House_01_Details.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+
 		ADAI::AIUnit* ai1 = GameUtilities::AttachMinionAI(e2, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai3 = GameUtilities::AttachMinionAI(e4, &commandFlock, &idleFlock);
@@ -292,9 +300,16 @@ public:
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
+		GameUtilities::AddGameObject(house_01_Upper);
+		GameUtilities::AddGameObject(house_01_Lower);
+		GameUtilities::AddGameObject(house_01_Bottom);
+		GameUtilities::AddGameObject(house_01_WoodenFrame);
+		GameUtilities::AddGameObject(house_01_WoodenStairs);
+		GameUtilities::AddGameObject(house_01_Roof);
+		GameUtilities::AddGameObject(house_01_Details);
 
 #ifdef _DEBUG
-		GameUtilities::AddGameObject(golemCollider);
+		//GameUtilities::AddGameObject(golemCollider);
 #endif
 	
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
@@ -458,7 +473,9 @@ public:
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
+#ifdef _DEBUG
 			golemCollider->transform = golem->GetColliderInfo();
+#endif
 
 			// D3d11 shit
 			if (!engine->Update()) break;
