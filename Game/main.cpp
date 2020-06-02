@@ -293,11 +293,10 @@ public:
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
+#ifdef _DEBUG
 		GameUtilities::AddGameObject(golemCollider);
-
-		//testPlane->colliderPtr = nullptr;
-
-		
+#endif
+	
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
 		std::vector<ADQuadTreePoint> treePoints;
@@ -459,13 +458,7 @@ public:
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
-
-			XMMATRIX colliderLocation;
-			golem->GetWorldMatrix(colliderLocation);
-			colliderLocation.r[3].m128_f32[1] += 15;
-			//golemCollider->SetPosition(VectorToFloat3(colliderLocation.r[3]));
-			colliderLocation = XMMatrixScaling(200, 250, 200) * colliderLocation;
-			golemCollider->transform = colliderLocation;
+			golemCollider->transform = golem->GetColliderInfo();
 
 			// D3d11 shit
 			if (!engine->Update()) break;
