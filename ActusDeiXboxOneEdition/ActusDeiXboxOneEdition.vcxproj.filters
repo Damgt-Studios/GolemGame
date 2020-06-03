@@ -43,6 +43,7 @@
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="ADAI.cpp" />
+    <ClCompile Include="AnimationStateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="ADAI.h" />
+    <ClInclude Include="AnimationStateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

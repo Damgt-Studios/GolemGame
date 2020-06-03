@@ -15,6 +15,7 @@
 #include "GameObjectClasses.h"
 #include "MeshLoader.h"
 #include "ADAI.h"
+#include "AnimationStateMachine.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -43,6 +44,7 @@ ref class App sealed : public IFrameworkView
 private:
 	Engine* engine;
 	ADResource::ADGameplay::Golem* golem;
+	AnimationStateMachine GolemAnimController;
 	AD_ULONG golem_collider = 0;
 
 	//AudioManager* audio_manager;
@@ -193,9 +195,17 @@ public:
 
 		std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
+		animations.push_back("files/models/Golem_1_Born.animfile");
+		animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Golem_1_Death.animfile");
+		animations.push_back("files/models/Golem_1_Kick.animfile");
+
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		
+		GolemAnimController.Initialize(golem);
+		golem->GetAnimationController(GolemAnimController);
 		//golem->SetAudio(audio_manager);
 
 		//////////////////////////////
@@ -393,8 +403,6 @@ public:
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			golem->GetView(view);
-		
-
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
@@ -464,6 +472,7 @@ public:
 
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+			GolemAnimController.SetModel_To_CurrentAnimation();
 
 			// D3d11 shit
 			if (!engine->Update()) break;

@@ -37,7 +37,7 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 
 	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
-
+	
 	return temp;
 };
 
