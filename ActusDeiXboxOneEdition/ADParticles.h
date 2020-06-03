@@ -6,11 +6,6 @@
 using namespace DirectX;
 using namespace std;
 
-//#include "ParticleVertexShader.csh"
-//#include "ParticleGeometryShader.csh"
-//#include "ParticlePixelShader.csh"
-//#include "ParticleAnimation_GS.csh"
-
 namespace
 {
 	float RandFloat(float min, float max)
@@ -758,7 +753,7 @@ struct Emitters
 {
 	FountainEmitter fountain;
 	SpreadEmitter spread;
-	CylinderEmitter cylinder;
+	CylinderEmitter cylinders[4];
 	BigCloudEmitter cloud;
 	AnimSpreadEmitter animSpread;
 };
