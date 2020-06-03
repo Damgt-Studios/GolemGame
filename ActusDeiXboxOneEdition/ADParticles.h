@@ -646,6 +646,430 @@ private:
 	bool isActive;
 };
 
+class SmallCloudEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetLifeSpan(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
+	{
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-5, 5);
+				velocity.y = RandFloat(-5, 5);
+				velocity.z = RandFloat(-5, 5);
+				particles[i].Update(time, velocity);
+				if (particles[i].GetElaspedTime() <= 0.0f)
+				{
+					particles[i].SetLifeSpan(3);
+				}
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		else
+			isActive = false;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		isActive = true;
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetLifeSpan(0);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	bool isActive;
+};
+
+class UpwardCloudEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetLifeSpan(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
+	{
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-10, 10);
+				velocity.y = RandFloat(0, 50);
+				velocity.z = RandFloat(-10, 10);
+				particles[i].Update(time, velocity);
+				if (particles[i].GetElaspedTime() <= 0.0f)
+				{
+					particles[i].SetLifeSpan(3);
+				}
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		else
+			isActive = false;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		isActive = true;
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetLifeSpan(0);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	bool isActive;
+};
+
+class OutwardCloudEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetLifeSpan(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
+	{
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-10, 10);
+				velocity.y = RandFloat(0, 10);
+				velocity.z = RandFloat(-10, 10);
+				particles[i].Update(time, velocity);
+				if (particles[i].GetElaspedTime() <= 0.0f)
+				{
+					particles[i].SetLifeSpan(3);
+				}
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		else
+			isActive = false;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		isActive = true;
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetLifeSpan(0);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	bool isActive;
+};
+
+class LongForwardCloudEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particle.SetLifeSpan(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+		renderer.worldMatrix = XMMatrixMultiply(XMMatrixRotationX(0.785398f), renderer.worldMatrix);
+	}
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
+	{
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
+		elaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-5, 5);
+				velocity.y = RandFloat(0, 30);
+				velocity.z = RandFloat(-5, 5);
+				particles[i].Update(time, velocity);
+				if (particles[i].GetElaspedTime() <= 0.0f)
+				{
+					particles[i].SetLifeSpan(1);
+				}
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+		else
+			isActive = false;
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		isActive = true;
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			particles[i].SetLifeSpan(0);
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+		renderer.worldMatrix = XMMatrixMultiply(XMMatrixRotationX(0.785398f), renderer.worldMatrix);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	bool isActive;
+};
+
+class WaveEmitter
+{
+public:
+	void Initialize(ID3D11Device* Device, int amountOfParticles, XMFLOAT4 Pos, const wchar_t* textureName, float life = 0.0f)
+	{
+		lifeSpan = life;
+		emitterPos = Pos;
+		size = amountOfParticles;
+		particles.resize(size);
+		for (int i = 0; i < size; ++i)
+		{
+			Particle particle;
+			particle.SetGravityEffect(0);
+			particles[i] = particle;
+		}
+		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
+		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
+		renderer.particleToRender = particles.data();
+		renderer.CreateVertexBuffer(Device);
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
+		renderer.CreateTexture(Device, textureName);
+		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
+	}
+	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
+	{
+		renderer.particleConstants.ViewMatrix = view;
+		renderer.particleConstants.camPos = camPos;
+		renderer.particleConstants.ProjectionMatrix = projection;
+		renderer.particleConstants.Time = { time, 0,0,0 };
+		elaspedTime += time;
+		totalElaspedTime += time;
+		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+			for (int i = 0; i < size; ++i)
+			{
+				XMFLOAT4 velocity;
+				velocity.x = RandFloat(-5, 5);
+				velocity.y = sinf(totalElaspedTime * 5) * 2;
+				velocity.z = RandFloat(-5, 5);
+				particles[i].Update(time, velocity);
+				if (particles[i].GetElaspedTime() <= 0.0f)
+				{
+					particles[i].SetLifeSpan(1);
+				}
+				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			}
+	}
+	void RenderParticles(ID3D11DeviceContext* deviceContext)
+	{
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f))
+			renderer.RenderParticle(deviceContext, size);
+	}
+	void Activate(float newLife, XMFLOAT4 newPosition)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			particles[i].Reset();
+			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+		}
+		totalElaspedTime = 0.0f;
+		elaspedTime = 0.0f;
+		lifeSpan = newLife;
+		emitterPos = newPosition;
+		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+	}
+	XMFLOAT4 GetPosition()
+	{
+		return emitterPos;
+	}
+private:
+	ParticleRenderer renderer;
+	vector<Particle> particles;
+	int size;
+	XMFLOAT4 emitterPos;
+	float elaspedTime = 0.0f;
+	float lifeSpan;
+	float totalElaspedTime = 0.0f;
+	//bool isActive;
+};
 
 class AnimSpreadEmitter
 {
@@ -754,6 +1178,11 @@ struct Emitters
 	FountainEmitter fountain;
 	SpreadEmitter spread;
 	CylinderEmitter cylinders[4];
-	BigCloudEmitter cloud;
+	BigCloudEmitter bigCloud;
+	SmallCloudEmitter smallCloud;
+	UpwardCloudEmitter upwardCloud;
+	OutwardCloudEmitter outwardCloud;
+	LongForwardCloudEmitter longCloud;
+	WaveEmitter wave;
 	AnimSpreadEmitter animSpread;
 };
