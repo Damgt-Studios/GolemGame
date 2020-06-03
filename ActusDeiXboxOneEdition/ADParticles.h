@@ -1,14 +1,15 @@
 #pragma once
 #include "pch.h"
 #include "Types.h"
+#include "Utils.h"
 #include "DDSTextureLoader.h"
 using namespace DirectX;
 using namespace std;
 
-#include "ParticleVertexShader.csh"
-#include "ParticleGeometryShader.csh"
-#include "ParticlePixelShader.csh"
-#include "ParticleAnimation_GS.csh"
+//#include "ParticleVertexShader.csh"
+//#include "ParticleGeometryShader.csh"
+//#include "ParticlePixelShader.csh"
+//#include "ParticleAnimation_GS.csh"
 
 namespace
 {
@@ -207,11 +208,40 @@ public:
 
 		HRESULT hr = Device->CreateBuffer(&bDesc, &subData, &vertexBuffer);
 	}
-	void CreateVertexGeometryPixelShadersAndInputLayout(ID3D11Device* Device, const void* VertexShader, SIZE_T SizeOfVertexShader, const void* GeometryShader, SIZE_T SizeOfGeometryShader, const void* PixelShader, SIZE_T SizeOfPixelShader)
+	void CreateShadersAndInputLayout(ID3D11Device* Device, ADUtils::SHADER& shader)
 	{
-		HRESULT hr = Device->CreateVertexShader(VertexShader, SizeOfVertexShader, nullptr, &vertexShader);
-		hr = Device->CreateGeometryShader(GeometryShader, SizeOfGeometryShader, nullptr, &geometryShader);
-		hr = Device->CreatePixelShader(PixelShader, SizeOfPixelShader, nullptr, &pixelShader);
+		ComPtr<ID3D10Blob> vertexblob;
+		ComPtr<ID3D10Blob> pixelblob;
+		ComPtr<ID3D10Blob> geometryblob;
+
+		Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+		std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+		std::string vname(shader.vshader);
+		std::string pname(shader.pshader);
+		std::string gname(shader.gshader);
+
+		std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+		std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
+		std::string g = std::string(READ_PATH.begin(), READ_PATH.end()).append(gname);
+
+		//The Whittington Bruh aka The Wruh
+		std::string bruh = std::string(READ_PATH.begin(), READ_PATH.end());
+
+		std::wstring vshadername(v.begin(), v.end());
+		std::wstring pshadername(p.begin(), p.end());
+		std::wstring gshadername(g.begin(), g.end());
+
+		HRESULT result;
+
+		result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+		result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+		result = D3DCompileFromFile(gshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_GS, D3DCOMPILE_DEBUG, 0, &geometryblob, nullptr);
+		assert(!FAILED(result));
+
+		result = Device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &vertexShader);
+		result = Device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, &pixelShader);
+		result = Device->CreateGeometryShader(geometryblob->GetBufferPointer(), geometryblob->GetBufferSize(), nullptr, &geometryShader);
 
 		D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 		{
@@ -219,7 +249,7 @@ public:
 			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 
-		hr = Device->CreateInputLayout(inputDesc, 2, VertexShader, SizeOfVertexShader, &inputLayout);
+		result = Device->CreateInputLayout(inputDesc, 2, vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), &inputLayout);
 	}
 	void CreateTexture(ID3D11Device* Device, const wchar_t* Filename)
 	{
@@ -291,7 +321,11 @@ public:
 		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
 		renderer.particleToRender = particles.data();
 		renderer.CreateVertexBuffer(Device);
-		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
@@ -363,7 +397,11 @@ public:
 		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
 		renderer.particleToRender = particles.data();
 		renderer.CreateVertexBuffer(Device);
-		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
@@ -449,7 +487,11 @@ public:
 		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
 		renderer.particleToRender = particles.data();
 		renderer.CreateVertexBuffer(Device);
-		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
@@ -544,7 +586,11 @@ public:
 		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
 		renderer.particleToRender = particles.data();
 		renderer.CreateVertexBuffer(Device);
-		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleGeometryShader, sizeof(ParticleGeometryShader), ParticlePixelShader, sizeof(ParticlePixelShader));
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particle_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
@@ -630,7 +676,11 @@ public:
 		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
 		renderer.particleToRender = particles.data();
 		renderer.CreateVertexBuffer(Device);
-		renderer.CreateVertexGeometryPixelShadersAndInputLayout(Device, ParticleVertexShader, sizeof(ParticleVertexShader), ParticleAnimation_GS, sizeof(ParticleAnimation_GS), ParticlePixelShader, sizeof(ParticlePixelShader));
+		ADUtils::SHADER shader = { 0 };
+		strcpy_s(shader.vshader, "files\\shaders\\particle_vs.hlsl");
+		strcpy_s(shader.pshader, "files\\shaders\\particle_ps.hlsl");
+		strcpy_s(shader.gshader, "files\\shaders\\particleanimation_gs.hlsl");
+		renderer.CreateShadersAndInputLayout(Device, shader);
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
 	}
