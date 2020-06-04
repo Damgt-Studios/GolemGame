@@ -20,7 +20,7 @@ float4 main(OutputVertex v) : SV_TARGET
     
     float3 dirLight = normalize(float3(1, -1, 1));
     float lightMagnitude = saturate(dot(-dirLight, v.normal));
-    float4 dirFinal = lightMagnitude * float4(0, 0, 0, 1) + 0.2f;
+    float4 dirFinal = lightMagnitude * float4(0, 0, 0, 1) + 0.3f;
     
     return float4(texelColor.rgb * dirFinal.rgb, 1);
 }

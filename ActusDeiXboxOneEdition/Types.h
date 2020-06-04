@@ -36,6 +36,11 @@ enum class ADResourceType {
 	Enemy
 };
 
+enum class RotationType
+{
+	xyz, xzy, yxz, yzx, zxy, zyx
+};
+
 namespace ADResource
 {
 	namespace ADRenderer
@@ -386,8 +391,33 @@ namespace ADResource
 			void SetMeshID(AD_ULONG id) { meshID = id; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
-			void SetRotation(XMFLOAT3 rotation)
+			void SetRotation(XMFLOAT3 rotation, RotationType type = RotationType::xyz)
 			{
+				XMMATRIX X = XMMatrixRotationX(XMConvertToRadians(rotation.x)),
+					Y = XMMatrixRotationY(XMConvertToRadians(rotation.y)),
+					Z = XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+
+				switch (type)
+				{
+				case RotationType::xyz:
+					transform = Z * Y * X * transform;
+					break;
+				case RotationType::xzy:
+					transform = Y * Z * X * transform;
+					break;
+				case RotationType::yxz:
+					transform = Z * X * Y * transform;
+					break;
+				case RotationType::yzx:
+					transform = X * Z * Y * transform;
+					break;
+				case RotationType::zxy:
+					transform = Y * X * Z * transform;
+					break;
+				case RotationType::zyx:
+					transform = X * Y * Z * transform;
+					break;
+				}
 			}
 
 			void SetRotationMatrix(XMMATRIX newRot)
@@ -542,7 +572,7 @@ namespace ADResource
 
 		static bool GroundClamping(GameObject* obj, QuadTree* tree, float delta_time) 
 		{
-			std::vector<ADQuadTreePoint> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 100, 100));
+			std::vector<ADQuadTreePoint> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 50, 50));
 
 			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
 

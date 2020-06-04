@@ -191,12 +191,12 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddPBRStaticAsset(std::string
 	return temp;
 }
 
-ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, RotationType type)
 {
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
 	temp->SetPosition(position);
-	temp->SetRotation(rotation);
+	temp->SetRotation(rotation, type);
 	temp->SetScale(scale);
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation);

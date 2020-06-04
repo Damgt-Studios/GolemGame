@@ -206,9 +206,12 @@ public:
 		ADAI::FlockingGroup commandFlock;
 		ADAI::FlockingGroup idleFlock;
 
-		Destructable* e2 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-30, 5, 30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
-		Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
-		Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		std::vector<std::string> minionAnimations;
+		minionAnimations.push_back("files/models/Minion_1_Idle.animfile");
+
+		Destructable* e2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(-30, 5, 30), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+		Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
@@ -220,6 +223,20 @@ public:
 		Renderable* house_01_WoodenStairs = GameUtilities::AddSimpleAsset("files/models/House_01_WoodenStairs.mesh", "files/textures/House_01_Wooden.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
 		Renderable* house_01_Roof = GameUtilities::AddSimpleAsset("files/models/House_01_Roof.mesh", "files/textures/House_01_Roof.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
 		Renderable* house_01_Details = GameUtilities::AddSimpleAsset("files/models/House_01_Details.mesh", "files/textures/House_01_Details.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* gateway_openning = GameUtilities::AddSimpleAsset("files/models/GateWayOpenning.mesh", "files/textures/GateWayOpenning.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* gateway_towers = GameUtilities::AddSimpleAsset("files/models/GateWayTowers.mesh", "files/textures/GateWayOpenning.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* gateway_details = GameUtilities::AddSimpleAsset("files/models/GateWayStoneDetails.mesh", "files/textures/GateWayStoneDetails.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* gateway_windows = GameUtilities::AddSimpleAsset("files/models/GateWayStoneWindows.mesh", "files/textures/GateWayStoneWindows.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* gateway_wooden = GameUtilities::AddSimpleAsset("files/models/GateWayWooden.mesh", "files/textures/GateWayWooden.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* gateway_structure = GameUtilities::AddSimpleAsset("files/models/GateWayWoodenStructure.mesh", "files/textures/GateWayWoodenStructure.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* gateway_lattice = GameUtilities::AddSimpleAsset("files/models/GateWayLattice.mesh", "files/textures/GateWayLattice.mat", XMFLOAT3(10, .366f, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* scaffolding1 = GameUtilities::AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(10, 0, 1), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* scaffolding2 = GameUtilities::AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(10, 0, 1.5f), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* scaffolding3 = GameUtilities::AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(10, 0, 2), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
+		Renderable* wall = GameUtilities::AddSimpleAsset("files/models/WallBase.mesh", "files/textures/WallBase.mat", XMFLOAT3(10, 0, 3), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+		Renderable* wall_roof = GameUtilities::AddSimpleAsset("files/models/WallRoof.mesh", "files/textures/WallRoof.mat", XMFLOAT3(10, 0, 3), XMFLOAT3(25, 25, 25), XMFLOAT3(90, 0, 90));
+		Renderable* wall_details = GameUtilities::AddSimpleAsset("files/models/WallDetails.mesh", "files/textures/WallDetails.mat", XMFLOAT3(10, 0, 3), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
+
 
 		ADAI::AIUnit* ai1 = GameUtilities::AttachMinionAI(e2, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
@@ -231,53 +248,6 @@ public:
 		golem->commandGroup = &idleFlock;
 		idleFlock.groupTarget = &golem->transform;
 		commandFlock.groupTarget = &golem->transform;
-
-   // No more.
-     /////////////////////////////////////////
-
-		//Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Trigger* t1 = GameUtilities::AddEndGameTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-//=======
-		//ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
-
-		//Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		//Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		//Collectable** collectables = new Collectable*[10];
-		//for (int i = 0; i < 10; ++i)
-		//{
-		//	collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//	GameUtilities::AddGameObject(collectables[i]);
-		//}
-		//Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-
-		//ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
-
-		//Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//spyro->testAttack.active = false;
-		//spyro->testAttack.hitboxCount = 1;
-		//spyro->testAttack.cooldownDuration = 0.5;
-		//spyro->testAttack.hitbox = myHitBox;
-
-		// Colliders
-		//Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-		//Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
-
-		std::vector<std::string> animationFiles;
-		animationFiles.push_back("files/models/Golem_2_Idle.animfile");
-
-		animationFiles[0] = "files/models/BattleMage.animfile";
-		//animationFiles[0] = "files/models/Trebuchet_Attack.animfile";
-
-		//Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1000, 100, 1000), XMFLOAT3(0, 0, 0));
 		// Add gameobjects
@@ -307,6 +277,19 @@ public:
 		GameUtilities::AddGameObject(house_01_WoodenStairs);
 		GameUtilities::AddGameObject(house_01_Roof);
 		GameUtilities::AddGameObject(house_01_Details);
+		GameUtilities::AddGameObject(gateway_openning);
+		GameUtilities::AddGameObject(gateway_towers);
+		GameUtilities::AddGameObject(gateway_details);
+		GameUtilities::AddGameObject(gateway_windows);
+		GameUtilities::AddGameObject(gateway_wooden);
+		GameUtilities::AddGameObject(gateway_structure);
+		GameUtilities::AddGameObject(gateway_lattice);
+		GameUtilities::AddGameObject(scaffolding1);
+		GameUtilities::AddGameObject(scaffolding2);
+		GameUtilities::AddGameObject(scaffolding3);
+		GameUtilities::AddGameObject(wall);
+		GameUtilities::AddGameObject(wall_roof);
+		GameUtilities::AddGameObject(wall_details);
 
 #ifdef _DEBUG
 		//GameUtilities::AddGameObject(golemCollider);
@@ -353,7 +336,6 @@ public:
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		engine->GetOrbitCamera()->SetPosition(XMFLOAT3(100, 200, -200));
 
 		GolemGameUISetup::GameUserInterface gameUI;
 

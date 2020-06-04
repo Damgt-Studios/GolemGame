@@ -560,16 +560,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			current_obj->GetWorldMatrix(temp);
 			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
-			// View
-
-			ocamera->GetViewMatrix(temp);
-			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-			// Projection
-
-			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-
-			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
 			// Send the matrix to constant buffer
 			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -604,11 +594,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			renderer_resources.context->PSSetShader(current_static_model->pixelShader.Get(), 0, 0);
 			renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
 
-
-			//int istart = current_model->desc.index_start;
-			//int ibase = current_model->desc.base_vertex_location;
-			//int icount = current_model->desc.index_count;
-			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
 			renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
 		}
 
