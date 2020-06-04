@@ -26,7 +26,7 @@ bool Engine::Initialize()
 	engine_time.Restart();
 
 	userInterface.Initialize(pbr.GetRendererResources()->device, pbr.GetRendererResources()->context, pbr.GetRendererResources()->render_target_view, &pbr.GetRendererResources()->viewport);
-	emitters.animSpread.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, L"files\\textures\\ExplosionSheet.dds");
+	emitters.animSpread.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, L"files\\textures\\Particle_Blood_Sheet.dds");
 
 	return true;
 }

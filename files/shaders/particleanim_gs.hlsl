@@ -26,10 +26,10 @@ void main(point OutputVertex input[1], inout TriangleStream<OutputGeometry> outp
 {
     OutputGeometry verts[4] =
     {
-        float4(0, 0, 0, 1), input[0].color, float2(dimensions.z / 8.0f, (dimensions.w + 1) / 4.0f),
-        float4(0, 0, 0, 1), input[0].color, float2(dimensions.z / 8.0f, dimensions.w / 4.0f),
-        float4(0, 0, 0, 1), input[0].color, float2((dimensions.z + 1) / 8.0f, (dimensions.w + 1) / 4.0f),
-        float4(0, 0, 0, 1), input[0].color, float2((dimensions.z + 1) / 8.0f, dimensions.w / 4.0f)
+        float4(0, 0, 0, 1), input[0].color, float2(dimensions.z / 4.0f, (dimensions.w + 1) / 4.0f),
+        float4(0, 0, 0, 1), input[0].color, float2(dimensions.z / 4.0f, dimensions.w / 4.0f),
+        float4(0, 0, 0, 1), input[0].color, float2((dimensions.z + 1) / 4.0f, (dimensions.w + 1) / 4.0f),
+        float4(0, 0, 0, 1), input[0].color, float2((dimensions.z + 1) / 4.0f, dimensions.w / 4.0f)
     };
     float halfwidth = dimensions.x / 2.0f;
     float halfheight = dimensions.y / 2.0f;
