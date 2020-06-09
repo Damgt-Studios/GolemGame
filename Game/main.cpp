@@ -124,28 +124,9 @@ public:
 		titleMusic.soundName = "files\\audio\\Opening.mp3";
 		titleMusic.LoadSound(false, true, true);
 
+		AD_ADUIO::AudioSourceEvent playTitleEvent(titleMusic);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
-		//audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
-		//audioEngine.LoadSound("", );
-
-		//std::vector<std::string> sfx;
-		//sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
-		//sfx.push_back("files\\audio\\SFX_Destructable_Break.wav");
-		//sfx.push_back("files\\audio\\SFX_Enemy_Death.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Charging.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Death.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_FireBreath.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Glide.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Hurt.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Jump.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Land.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Object_Hit.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Running_Jump.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Walking.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Water_Splash.wav");
-		//audio_manager = new AudioManager;
-		//audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
-		
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -374,7 +355,7 @@ public:
 		c2->colliderPtr = &test_colider1;
 		c2->type = OBJECT_TYPE::STATIC;*/
 
-		titleMusic.Play();
+		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
 		while (!shutdown)
 		{
@@ -384,6 +365,8 @@ public:
 			main_music_loop_timer -= delta_time;
 
 			ProcessInput();
+
+			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
 
 

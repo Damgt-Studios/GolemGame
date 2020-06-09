@@ -218,7 +218,7 @@ namespace AD_ADUIO
                 break;
             }
             currentChannel = engine->PlaySounds(soundName, vPos, volume);
-            
+
         }
     }
 
@@ -233,5 +233,9 @@ namespace AD_ADUIO
     void AudioSource::UpdatePosition(XMFLOAT3 pos)
     {
         vPos = pos;
+    }
+    void AudioSourceEvent::HandleEvent(ADEvents::ADEvent* _event)
+    {
+        audioSource.Play();
     }
 }
