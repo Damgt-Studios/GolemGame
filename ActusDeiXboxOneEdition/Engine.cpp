@@ -27,7 +27,6 @@ bool Engine::Initialize()
 
 	userInterface.Initialize(pbr.GetRendererResources()->device, pbr.GetRendererResources()->context, pbr.GetRendererResources()->render_target_view, &pbr.GetRendererResources()->viewport);
 
-
 	return true;
 }
 
@@ -63,6 +62,7 @@ bool Engine::Update()
 		lightdir *= -1;*/
 
 	userInterface.Update(delta_time_sf);
+
 	return true;
 }
 
