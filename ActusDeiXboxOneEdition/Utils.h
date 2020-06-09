@@ -24,6 +24,7 @@ namespace ADUtils
 	static const char SHADER_ENTRY_POINT[] = "main";
 	static const char SHADER_MODEL_PS[] = "ps_4_0";
 	static const char SHADER_MODEL_VS[] = "vs_4_0";
+	static const char SHADER_MODEL_GS[] = "gs_4_0";
 
 	void InitializeFileSystem();
 

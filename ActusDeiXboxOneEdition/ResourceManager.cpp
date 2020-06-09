@@ -356,6 +356,7 @@ ADResource::ADRenderer::SimpleModel** ResourceManager::GetSimpleModelPtrFromMesh
 	return temp;
 }
 
+
 ADResource::ADRenderer::SimpleAnimModel* ResourceManager::GetSimpleAnimModelPtrFromMeshId(AD_ULONG mesh_id)
 {
 	SimpleAnimModel* temp = nullptr;

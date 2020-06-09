@@ -9,6 +9,7 @@
 #include <iostream>
 #include <Types.h>
 #include "ADUserInterface.h"
+#include <ADEventSystem.h>
 
 namespace AD_AUDIO
 {
@@ -57,6 +58,7 @@ namespace AD_AUDIO
         
     };
 
+    //A class can contain an audio source and use it to play sounds.  Couples classes but works fine if that's easily managed.
     class AudioSource
     {
     public:
@@ -74,6 +76,15 @@ namespace AD_AUDIO
         void UpdatePosition(XMFLOAT3 pos);
     };
 
+    //Decouples AudioSource form owner if you want by using an event.
+    class AudioSourceEvent : public ADEvents::Listener
+    {
+    private:
+        AudioSource& audioSource;
+    public:
+        AudioSourceEvent(AudioSource& _audioSource) : audioSource(_audioSource) {};
+        void HandleEvent(ADEvents::ADEvent* _event) override;
+    };
 
     struct AudioImplementation {
         AudioImplementation();

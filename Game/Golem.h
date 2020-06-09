@@ -4,6 +4,7 @@
 #include "ADUserInterface.h"
 #include "AudioManager.h"
 #include "ADAI.h"
+#include "AnimationStateMachine.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -40,7 +41,7 @@ namespace ADResource
 		{
 			ADResource::ADGameplay::StatSheet* stats;
 			int playerElement = 0;
-
+			AnimationStateMachine* anim_controller;
 		public:
 			Golem();
 			~Golem();
@@ -74,7 +75,7 @@ namespace ADResource
 
 			//void SetAudio(AudioManager* _audioManager);
 
-			int GetCurrentAnimation();
+			void GetAnimationController(AnimationStateMachine& controller);
 
 			virtual iStatSheet* GetStatSheet() override;
 			int GetCurrentElement();

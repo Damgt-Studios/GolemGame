@@ -16,6 +16,7 @@
 #include "MeshLoader.h"
 #include "ADAI.h"
 #include "ADPathfinding.h"
+#include "AnimationStateMachine.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -44,6 +45,7 @@ ref class App sealed : public IFrameworkView
 private:
 	Engine* engine;
 	ADResource::ADGameplay::Golem* golem;
+	AnimationStateMachine GolemAnimController;
 	AD_ULONG golem_collider = 0;
 
 	//AudioManager* audio_manager;
@@ -135,28 +137,10 @@ public:
 		titleMusic.engine = &audioEngine;
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
+    
+		AD_ADUIO::AudioSourceEvent playTitleEvent(titleMusic);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
-		//audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
-		//audioEngine.LoadSound("", );
-
-		//std::vector<std::string> sfx;
-		//sfx.push_back("files\\audio\\SFX_Gem_Collect.wav");
-		//sfx.push_back("files\\audio\\SFX_Destructable_Break.wav");
-		//sfx.push_back("files\\audio\\SFX_Enemy_Death.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Charging.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Death.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_FireBreath.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Glide.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Hurt.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Jump.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Land.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Object_Hit.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Running_Jump.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Walking.wav");
-		//sfx.push_back("files\\audio\\SFX_Player_Water_Splash.wav");
-		//audio_manager = new AudioManager;
-		//audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
-		
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -206,6 +190,11 @@ public:
 
 		std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
+		animations.push_back("files/models/Golem_1_Born.animfile");
+		animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Golem_1_Death.animfile");
+		animations.push_back("files/models/Golem_1_Kick.animfile");
+
 
 		std::vector<std::string> stoneMinionAnimations;
 		stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
@@ -218,6 +207,10 @@ public:
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		
+		GolemAnimController.Initialize(golem);
+		golem->GetAnimationController(GolemAnimController);
+    
 		//golem->SetAudio(audio_manager);
 
 
@@ -440,7 +433,8 @@ public:
 		ADAI::ADPathfinding pathfinder;
 		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapHeight), minionWidth, 20.f);
 		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapHeight);
-		titleMusic.Play();
+    
+		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
 		while (!shutdown)
 		{
@@ -466,8 +460,9 @@ public:
 				pathfinder.update(0.00001f);
 			}
 			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
-			//pathfinder.UpdatePlayerNode(1,0, mapWidth, mapHeight);
-			//pathfinder.UpdatePlayerNode(0,1, mapWidth, mapHeight);
+		
+    
+			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
 
 			
@@ -483,8 +478,8 @@ public:
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			golem->GetView(view);
-
-
+      
+      
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
@@ -559,6 +554,7 @@ public:
 
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+			GolemAnimController.SetModel_To_CurrentAnimation();
 
 			// D3d11 shit
 			if (!engine->Update()) break;

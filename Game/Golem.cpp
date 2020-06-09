@@ -271,6 +271,11 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 //	audioManager = _audioManager;
 //}
 
+void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
+{
+	anim_controller = &controller;
+}
+
 iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
 {
 	return stats;
@@ -283,6 +288,8 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
+	anim_controller->PlayAnimationByName("Golem_1_Idle");
+
 	XMFLOAT3 pos(0, 0, 0);
 	if (Input::QueryButtonDown(GamepadButtons::X))
 	{
@@ -388,8 +395,9 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
 
 		Golem::RotationYBasedOnView(camera, angle, WMATH_PI);
+		anim_controller->PlayAnimationByName("Golem_1_Run");
 
-
+	
 		Velocity.x += forward.x * delta_time * spyro_move_speed;
 		Velocity.y += forward.y * delta_time * spyro_move_speed;
 		Velocity.z += forward.z * delta_time * spyro_move_speed;
