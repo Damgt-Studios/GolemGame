@@ -43,7 +43,6 @@ public:
 	void MoveCamera(XMFLOAT3 move_direction);
 	void RotateCamera(float yaw, float pitch);
 	ADUI::ADUI* GetUI();
-	Emitters emitters;
 
 private:
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();

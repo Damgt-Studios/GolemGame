@@ -1799,24 +1799,3 @@ private:
 	float elaspedTime = 0.0f;
 	float lifeSpan;
 };
-
-struct Emitters
-{
-	FountainEmitter fountain;
-	SpreadEmitter spread;
-	CylinderEmitter cylinders[4];
-	BigCloudEmitter bigCloud;
-	SmallCloudEmitter smallCloud;
-	UpwardCloudEmitter upwardCloud;
-	OutwardCloudEmitter outwardCloud;
-	LongForwardCloudEmitter longCloud;
-	WaveEmitter wave;
-	AnimSpreadEmitter animSpread;
-	HealthEmitter healthEmitter;
-	EssenceEmitter essenceEmitter;
-	BloodEmitter bloodEmitter;
-	BigElementalPuffEmitter bigPuff;
-	SmallElementalPuffEmitter smallPuff;
-	FireballEmitter fireballEmitter;
-	IronSkinEmitter ironSkinEmitter;
-};
