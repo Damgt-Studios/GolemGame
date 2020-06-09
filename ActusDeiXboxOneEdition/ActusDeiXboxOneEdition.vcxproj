@@ -283,6 +283,7 @@
     <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="ADUserInterface.h" />
+    <ClInclude Include="AnimationStateMachine.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Input.h" />
@@ -301,6 +302,7 @@
     <ClCompile Include="ADAI.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="ADUserInterface.cpp" />
+    <ClCompile Include="AnimationStateMachine.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Input.cpp" />

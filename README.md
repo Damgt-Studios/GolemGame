@@ -1,4 +1,4 @@
-# SpyroGame
+# The Great Golem
 # Build steps
 1. Install required nuget packages on all projects
 2. Set game project to startup project
