@@ -44,6 +44,7 @@
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="ADAI.cpp" />
     <ClCompile Include="AnimationStateMachine.cpp" />
+    <ClCompile Include="ADEventSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="ADAI.h" />
     <ClInclude Include="ADParticles.h" />
     <ClInclude Include="AnimationStateMachine.h" />
+    <ClInclude Include="ADEventSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
