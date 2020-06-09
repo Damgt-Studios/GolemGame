@@ -138,7 +138,7 @@ public:
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
     
-		AD_ADUIO::AudioSourceEvent playTitleEvent(titleMusic);
+		AD_AUDIO::AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
 
@@ -318,8 +318,8 @@ public:
 		//Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		float mapWidth = 1500;
-		float mapHeight = 1500;
+		float mapWidth = 1000;
+		float mapHeight = 1000;
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects

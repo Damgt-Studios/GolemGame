@@ -386,6 +386,22 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		}
 	}
 
+	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
+	{
+		if (commandTargetGroup == 4)
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				flockingGroups[i]->SetCommandDirection(camera);
+			}
+			targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
+		}
+		else
+		{
+			targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
+		}
+	}
+
 	XMFLOAT4 forward;
 	XMStoreFloat4(&forward, Golem::transform.r[2]);
 	if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK))
@@ -405,21 +421,6 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		transform = XMMatrixScaling(0.1, 0.1, 0.1) * transform;
 	}
 
-	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
-	{
-		if (commandTargetGroup == 4)
-		{
-			for (int i = 0; i < 3; ++i)
-			{
-				flockingGroups[i]->SetCommandDirection(camera);
-			}
-			targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
-		}
-		else
-		{
-			targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
-		}
-	}
 
 	//if (Input::QueryButtonDown(GamepadButtons::A) && jumping == true && gliding == false && buttonup == true)
 	//{
