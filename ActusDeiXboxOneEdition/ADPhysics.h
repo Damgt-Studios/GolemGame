@@ -166,6 +166,7 @@ namespace ADPhysics
 		virtual float GetLength() {
 			return HalfSize.z;
 		}
+
 	};
 
 	struct Sphere : Collider

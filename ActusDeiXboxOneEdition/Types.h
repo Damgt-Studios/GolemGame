@@ -364,7 +364,7 @@ namespace ADResource
 
 			bool HasEffectID(UINT _sourceID, UINT _instanceID)
 			{
-				for (int i = 0; i < effects.size(); ++i)
+				for (int i = 0; i < effects.size(); i++)
 				{
 					if (effects[i].get()->sourceID == _sourceID)
 					{
@@ -589,15 +589,11 @@ namespace ADResource
 		static bool GroundClampingF(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time, QuadTree* tree)
 		{
 			XMFLOAT3 SpyrosPosition = VectorToFloat3(obj->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 100, 100));
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 25, 25));
 			std::vector<ADPhysics::Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
-				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-				{
-					trisInRange.push_back(*optimizedPoints[i].tri);
-				}
-
+				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
 			return GroundClamping(obj, trisInRange, delta_time);

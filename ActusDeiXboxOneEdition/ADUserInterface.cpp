@@ -149,6 +149,8 @@ void ADUI::Image2D::BuildAnimation(RECT _uvRect, UINT _uvColumnCount, UINT _anim
     uvRect = new RECT[uvCount];
     uvRect[0] = _uvRect;
 
+    animationCount = _animationCount;
+    uvColumnCount = _uvColumnCount;
     animations = _animations;
 
     updateTimer = 0.f;
@@ -250,11 +252,11 @@ void ADUI::Image2D::Update(float delta_time)
         {
             updateTimer += delta_time;
         }
-        else if (animations[currentAnimation].frameCount >= 1)
+        else if (animations[currentAnimation].frameCount > 0)
         {
             updateTimer = 0.f;
             ++currentFrame;
-            if (currentFrame >= animations[currentAnimation].frameCount + animations[currentAnimation].startFrame)
+            if (currentFrame >= (animations[currentAnimation].frameCount + animations[currentAnimation].startFrame))
             {
                 currentFrame = animations[currentAnimation].startFrame;
             }
@@ -264,21 +266,25 @@ void ADUI::Image2D::Update(float delta_time)
 
 void ADUI::Image2D::Render()
 {
-    if (stretched)
+    if (visible)
     {
-        RECT scaledRect = { corners.left * (scale.x), // * Settings::posScalingWidth),
-            corners.top * (scale.y),// Settings::posScalingHeight * ,
-            corners.right * (scale.x),//Settings::resScalingWidth *),
-            corners.bottom * (scale.y) };//Settings::resScalingHeight *) };
-        //spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, anchor, effects, depth);
-        spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, center, effects, depth);
-    }
-    else
-        for (int i = 0; i < tiled; ++i)
+        if (stretched)
         {
-            float x = position.x + (i * GetWidth());
-            spriteBatch->Draw(texture, { x, position.y }, &uvRect[currentFrame], tint, rotation, center, { Settings::resScalingWidth * scale.x, Settings::resScalingHeight * scale.y }, effects, depth);
+            RECT scaledRect = { corners.left * (scale.x), // * Settings::posScalingWidth),
+                corners.top * (scale.y),// Settings::posScalingHeight * ,
+                corners.right * (scale.x),//Settings::resScalingWidth *),
+                corners.bottom * (scale.y) };//Settings::resScalingHeight *) };
+            //spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, anchor, effects, depth);
+            spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, center, effects, depth);
         }
+        else
+            for (int i = 0; i < tiled; ++i)
+            {
+                float x = position.x + (i * GetWidth());
+                spriteBatch->Draw(texture, { x, position.y }, &uvRect[currentFrame], tint, rotation, center, { Settings::resScalingWidth * scale.x, Settings::resScalingHeight * scale.y }, effects, depth);
+            }
+    }
+
 }
 
 
@@ -1157,7 +1163,7 @@ ADUI::UIMessage* ADUI::ComponentGrid::ProcessInput()
     if (active)
     {
         UIMessage* resp = nullptr;
-        if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) > 0)
+        if (Input::QueryThumbStickUpDownY(thumbstickBinding) > 0 || Input::QueryButtonDown(upButton1))
         {
             if ((selectedButtonIndex - columns) >= 0)
             {
@@ -1170,7 +1176,7 @@ ADUI::UIMessage* ADUI::ComponentGrid::ProcessInput()
                 resp->componentIndex = selectedButtonIndex;
             }
         }
-        else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) < 0)
+        else if (Input::QueryThumbStickUpDownY(thumbstickBinding) < 0 || Input::QueryButtonDown(downButton1))
         {
             if ((selectedButtonIndex + columns) < components.size())
             {
@@ -1183,7 +1189,7 @@ ADUI::UIMessage* ADUI::ComponentGrid::ProcessInput()
                 resp->componentIndex = selectedButtonIndex;
             }
         }
-        if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) > 0)
+        if (Input::QueryThumbStickLeftRightX(thumbstickBinding) > 0 || Input::QueryButtonDown(leftButton1))
         {
             if (selectedButtonIndex < components.size() - 1 && (selectedButtonIndex + 1) % columns != 0)
             {
@@ -1196,7 +1202,7 @@ ADUI::UIMessage* ADUI::ComponentGrid::ProcessInput()
                 resp->componentIndex = selectedButtonIndex;
             }
         }
-        else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) < 0)
+        else if (Input::QueryThumbStickLeftRightX(thumbstickBinding) < 0 || Input::QueryButtonDown(rightButton1))
         {
             if (selectedButtonIndex > 0 && (selectedButtonIndex % columns) != 0)
             {
@@ -1259,6 +1265,13 @@ void ADUI::ComponentGrid::Disable()
     components[selectedButtonIndex]->Unfocus();
 }
 
+void ADUI::ComponentGrid::SetSelected(int _selection)
+{
+    components[selectedButtonIndex]->Unfocus();
+    selectedButtonIndex = _selection;
+    components[selectedButtonIndex]->Focus();
+}
+
 UINT ADUI::ComponentGrid::GetIndex()
 {
     return selectedButtonIndex;
@@ -1309,7 +1322,7 @@ ADUI::UIMessage* ADUI::SliderBar::ProcessInput()
     if (active)
     {
         UIMessage* resp = nullptr;
-        if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) > 0)
+        if (Input::QueryThumbStickLeftRightX(thumbstickBinding) > 0 || Input::QueryButtonDown(rightButton1))
         {
             if (currentRatio < maxValue)
             {
@@ -1324,7 +1337,7 @@ ADUI::UIMessage* ADUI::SliderBar::ProcessInput()
             resp->fvalue.x = currentRatio;
             return resp;
         }
-        else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK) < 0)
+        else if (Input::QueryThumbStickLeftRightX(thumbstickBinding) < 0 || Input::QueryButtonDown(leftButton1))
         {
             if (currentRatio > 0)
             {

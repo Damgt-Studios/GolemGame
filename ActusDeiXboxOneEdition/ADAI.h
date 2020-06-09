@@ -10,7 +10,7 @@ namespace ADAI
 
 	};
 
-	class TestingState : public State
+	class IdleState : public State
 	{
 
 	};
@@ -43,12 +43,31 @@ namespace ADAI
 		XMMATRIX* groupTarget; //Player
 		XMVECTOR commandDestination;
 
-		void SetCommandDirection(XMVECTOR _direction)
+		XMFLOAT3 SetCommandDirection(XMMATRIX _camera)
 		{
-			commandDirection = _direction;
 			commandDirectionalStrength = 1.2f;
 			returnDirectionalStrength = 0.f;
-			commandDestination = groupTarget->r[3] - (commandDirection - groupTarget->r[3]);
+
+			//commandDestination = ((groupTarget->r[3] - _camera.r[3]));
+			//XMFLOAT3 temp;
+			//XMStoreFloat3(&temp, commandDestination);
+			//commandDestination = _camera.r[3] + XMLoadFloat3(&temp);
+
+			XMVECTOR camHeadingNormal = XMMatrixInverse(nullptr, _camera).r[2];
+			XMFLOAT4 camFN;
+			XMStoreFloat4(&camFN, camHeadingNormal);
+
+			XMVECTOR targetPosition = XMMatrixInverse(nullptr, _camera).r[3];
+			XMFLOAT3 targetP;
+			XMStoreFloat3(&targetP, targetPosition);
+
+			targetP.x += camFN.x*1000;
+			targetP.y += camFN.y*1000;
+			targetP.z += camFN.z*1000;
+
+			commandDestination = XMLoadFloat3(&targetP);
+
+			return targetP;
 		};
 
 		void ReturnCall()
@@ -102,27 +121,27 @@ namespace ADAI
 
 		XMVECTOR CalculateReturnAcceleration(ADResource::ADGameplay::GameObject* _object)
 		{
-			XMFLOAT3 sigh = _object->GetPosition();
-			XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			XMFLOAT4X4 f4x4;
-			XMStoreFloat4x4(&f4x4, *groupTarget);
-			XMVECTOR f4 = { f4x4.m[3][0], f4x4.m[3][1], f4x4.m[3][2],f4x4.m[3][3]};
-			XMVECTOR velocity = { 0,0,0,0 };// = f4 - objectPos;
-
-			velocity = XMVector4Normalize(velocity);
-
-			velocity *= returnDirectionalStrength;
-			return velocity;
-
-
 			//XMFLOAT3 sigh = _object->GetPosition();
 			//XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			//XMVECTOR velocity = groupTarget->r[3] - objectPos;
+			//XMFLOAT4X4 f4x4;
+			//XMStoreFloat4x4(&f4x4, *groupTarget);
+			//XMVECTOR f4 = { f4x4.m[3][0], f4x4.m[3][1], f4x4.m[3][2],f4x4.m[3][3]};
+			//XMVECTOR velocity = { 0,0,0,0 };// = f4 - objectPos;
 
 			//velocity = XMVector4Normalize(velocity);
 
 			//velocity *= returnDirectionalStrength;
 			//return velocity;
+
+
+			XMFLOAT3 sigh = _object->GetPosition();
+			XMVECTOR objectPos = XMLoadFloat3(&sigh);
+			XMVECTOR velocity = groupTarget->r[3] - objectPos;
+
+			velocity = XMVector4Normalize(velocity);
+
+			velocity *= returnDirectionalStrength;
+			return velocity;
 		}
 
 
@@ -215,6 +234,12 @@ namespace ADAI
 				velocity = CalculateAlignmentAcceleration(flockers[i]) + CalculateCohesionAcceleration(flockers[i]) + CalculateSeparationAcceleration(flockers[i]) +CalculateDirectionalAcceleration(flockers[i]) + CalculateReturnAcceleration(flockers[i]);
 				velocity *= (maxSpeed * _deltaTime);
 				velocity += XMLoadFloat4(&flockers[i]->Velocity);
+
+				XMFLOAT4 yCancel;
+				XMStoreFloat4(&yCancel, velocity);
+				yCancel.y = 0;
+				velocity = XMLoadFloat4(&yCancel);
+
 				XMFLOAT4 length;
 				XMStoreFloat4(&length, XMVector4Length(velocity));
 

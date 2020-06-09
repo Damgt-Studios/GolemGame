@@ -35,7 +35,6 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="Logger.cpp" />
@@ -43,6 +42,7 @@
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
     <ClCompile Include="ADAI.cpp" />
+    <ClCompile Include="ADPathfinding.cpp" />
     <ClCompile Include="AnimationStateMachine.cpp" />
     <ClCompile Include="ADEventSystem.cpp" />
   </ItemGroup>
@@ -55,7 +55,6 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="Input.h" />
@@ -66,6 +65,7 @@
     <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="ADAI.h" />
+    <ClInclude Include="ADPathfinding.h" />
     <ClInclude Include="ADParticles.h" />
     <ClInclude Include="AnimationStateMachine.h" />
     <ClInclude Include="ADEventSystem.h" />
