@@ -62,16 +62,18 @@ namespace AD_AUDIO
     public:
         ADAudio* engine;
         std::string soundName;
+        bool isEvent;
         XMFLOAT3 vPos;
         float personalVolume;
         UINT audioSourceType;
         bool restartOnRepeat = false;
         int currentChannel;
-        void LoadSound(bool is3D = true, bool isLooping = false, bool isStream = false);
+        void LoadSound(std::string _soundName, bool _isEvent = true, bool is3D = true, bool isLooping = false, bool isStream = false);
         void Play();
         void RefreshVolume();
         void UpdatePosition(XMFLOAT3 pos);
     };
+
 
     struct AudioImplementation {
         AudioImplementation();

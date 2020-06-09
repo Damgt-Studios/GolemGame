@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Player.h"
 #include "ResourceManager.h"
 
 namespace ADGameplay
@@ -8,7 +7,6 @@ namespace ADGameplay
 	class Scene
 	{
 	private:
-		Player player;
 		//std::vector<ADResource::ADGameplay::Enemy> Enemies;
 
 		void InitializeScene()
@@ -42,14 +40,11 @@ namespace ADGameplay
 
 		void Update()
 		{
-			player.Update();			//Happens once we have input, processes input to action and moves hero.
 			UpdateEnemies();			//Happens after player input and uses the player's matrix to react.
 		}
 
 		void Render()
 		{
-			//Render the Level Here
-			player.Render();
 			RenderEnemies();
 		}
 	};

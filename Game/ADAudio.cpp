@@ -164,6 +164,7 @@ namespace AD_AUDIO
         return isPlaying;
     }
 
+
     void ADAudio::LoadEvent(const std::string& strEventName)
     {
         auto tFoundit = audioImp->eventsName_map.find(strEventName);
@@ -255,40 +256,69 @@ namespace AD_AUDIO
         delete audioImp;
     }
 
-    void AudioSource::LoadSound(bool is3D, bool isLooping, bool isStream)
+    void AudioSource::LoadSound(std::string _soundName, bool _isEvent, bool is3D, bool isLooping, bool isStream)
     {
-        engine->LoadSound(soundName, is3D, isLooping, isStream);
-
-        if (isStream)
+        soundName = _soundName;
+        isEvent = _isEvent;
+        if (isEvent)
         {
-            audioImp->musicChannels.push_back(this);
+            engine->LoadEvent(_soundName);
         }
+        else
+        {
+            engine->LoadSound(soundName, is3D, isLooping, isStream);
+
+            if (isStream)
+            {
+                audioImp->musicChannels.push_back(this);
+            }
+        }
+
     }
+
 
     void AudioSource::Play()
     {
-        if (restartOnRepeat)
+        float volume = personalVolume;
+        switch (audioSourceType)
         {
-            engine->StopChannel(currentChannel);
+        case 0:
+            volume *= engine->masterMusicVolume;
+            break;
+        case 1:
+            volume *= engine->masterSoundFXVolume;
+            break;
+        case 2:
+            volume *= engine->masterUISoundFXVolume;
+            break;
+        default:
+            break;
         }
-        if (!engine->IsPlaying(currentChannel))
+        if (isEvent)
         {
-            float volume = personalVolume;
-            switch (audioSourceType)
+            if (restartOnRepeat)
             {
-            case 0:
-                volume *= engine->masterMusicVolume;
-                break;
-            case 1:
-                volume *= engine->masterSoundFXVolume;
-                break;
-            case 2:
-                volume *= engine->masterUISoundFXVolume;
-                break;
-            default:
-                break;
+                engine->StopEvent(soundName);
             }
-            currentChannel = engine->PlaySounds(soundName, vPos, volume);
+            if (!engine->IsEventPlaying(soundName))
+            {
+                auto tFoundIt = audioImp->eventsName_map.find(soundName);
+                if (tFoundIt == audioImp->eventsName_map.end())
+                    return;
+                ADAudio::AudioErrorCheck(tFoundIt->second->setVolume(volume));
+                engine->PlayEvent(soundName);
+            }
+        }
+        else
+        {
+            if (restartOnRepeat)
+            {
+                engine->StopChannel(currentChannel);
+            }
+            if (!engine->IsPlaying(currentChannel))
+            {
+                currentChannel = engine->PlaySounds(soundName, vPos, volume);
+            }
         }
     }
 

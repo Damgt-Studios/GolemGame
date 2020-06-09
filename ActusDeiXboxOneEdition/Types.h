@@ -337,7 +337,7 @@ namespace ADResource
 
 			bool HasEffectID(UINT _sourceID, UINT _instanceID)
 			{
-				for (int i = 0; i < effects.size(); ++i)
+				for (int i = 0; i < effects.size(); i++)
 				{
 					if (effects[i].get()->sourceID == _sourceID)
 					{
@@ -566,11 +566,7 @@ namespace ADResource
 			std::vector<ADPhysics::Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
-				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-				{
-					trisInRange.push_back(*optimizedPoints[i].tri);
-				}
-
+				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
 			return GroundClamping(obj, trisInRange, delta_time);

@@ -85,7 +85,8 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
 		return buttonPressed;
@@ -161,7 +162,7 @@ namespace GolemGameUISetup
 
 		ADResource::ADGameplay::Stat* tokens = player->GetStatSheet()->RequestStats(ADResource::ADGameplay::TOKENS);
 
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; i++)
 		{
 			if (tokens->currentValue > i)
 			{
@@ -191,22 +192,19 @@ namespace GolemGameUISetup
 		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonClick.engine = _audioSystem;
 		buttonClick.personalVolume = 1.00f;
-		buttonClick.soundName = "files\\audio\\UI_SFX_GridConfirm.wav";
-		buttonClick.LoadSound(false, false, false);
+		buttonClick.LoadSound("files\\audio\\UI_SFX_GridConfirm.wav", false, false, false, false);
 		
 
 		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonMove.engine = _audioSystem;
 		buttonMove.personalVolume = 1.00f;
-		buttonMove.soundName = "files\\audio\\UI_SFX_GridMovement.wav";
-		buttonMove.LoadSound(false, false, false);
+		buttonMove.LoadSound("files\\audio\\UI_SFX_GridMovement.wav", false, false, false, false);
 		buttonMove.restartOnRepeat = true;
 
 		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		menuBack.engine = _audioSystem;
 		menuBack.personalVolume = 0.30f;
-		menuBack.soundName = "files\\audio\\UI_SFX_MenuReturn.wav";
-		menuBack.LoadSound(false, false, false);
+		menuBack.LoadSound("files\\audio\\UI_SFX_MenuReturn.wav", false, false, false, false);
 	}
 
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
@@ -308,21 +306,18 @@ namespace GolemGameUISetup
 		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonClick.engine = _audioSystem;
 		buttonClick.personalVolume = 1.00f;
-		buttonClick.soundName = "files\\audio\\UI_SFX_GridConfirm.wav";
-		buttonClick.LoadSound(false, false, false);
+		buttonClick.LoadSound("files\\audio\\UI_SFX_GridConfirm.wav", false, false, false);
 
 
 		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonMove.engine = _audioSystem;
 		buttonMove.personalVolume = 1.00f;
-		buttonMove.soundName = "files\\audio\\UI_SFX_GridMovement.wav";
-		buttonMove.LoadSound(false, false, false);
+		buttonMove.LoadSound("files\\audio\\UI_SFX_GridMovement.wav", false, false, false);
 
 		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		menuBack.engine = _audioSystem;
 		menuBack.personalVolume = 0.30f;
-		menuBack.soundName = "files\\audio\\UI_SFX_MenuReturn.wav";
-		menuBack.LoadSound(false, false, false);
+		menuBack.LoadSound("files\\audio\\UI_SFX_MenuReturn.wav", false, false, false);
 	}
 
 	bool PauseMenuController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
@@ -444,27 +439,23 @@ namespace GolemGameUISetup
 		sliderClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		sliderClick.engine = audioSystem;
 		sliderClick.personalVolume = 1.00f;
-		sliderClick.soundName = "files\\audio\\UI_SFX_Sliderclick.wav";
-		sliderClick.LoadSound(false, false, false);
+		sliderClick.LoadSound("files\\audio\\UI_SFX_Sliderclick.wav", false, false, false, false);
 
 		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonClick.engine = audioSystem;
 		buttonClick.personalVolume = 1.00f;
-		buttonClick.soundName = "files\\audio\\UI_SFX_GridConfirm.wav";
-		buttonClick.LoadSound(false, false, false);
+		buttonClick.LoadSound("files\\audio\\UI_SFX_GridConfirm.wav", false, false, false, false);
 
 
 		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		buttonMove.engine = audioSystem;
 		buttonMove.personalVolume = 1.00f;
-		buttonMove.soundName = "files\\audio\\UI_SFX_GridMovement.wav";
-		buttonMove.LoadSound(false, false, false);
+		buttonMove.LoadSound("files\\audio\\UI_SFX_GridMovement.wav", false, false, false, false);
 
 		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
 		menuBack.engine = audioSystem;
 		menuBack.personalVolume = 0.30f;
-		menuBack.soundName = "files\\audio\\UI_SFX_MenuReturn.wav";
-		menuBack.LoadSound(false, false, false);
+		menuBack.LoadSound("files\\audio\\UI_SFX_MenuReturn.wav", false, false, false, false);
 	}
 
 	bool OptionsMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
@@ -1264,6 +1255,64 @@ namespace GolemGameUISetup
 		return hudID;
 	}
 
+	UINT GameUserInterface::SetupDebugMenu(ADUI::ADUI* myUI)
+	{
+		return 0;
+	}
+
+	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight)
+	{
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 3, 0 };
+
+		//UI Log
+		UINT pathingID = myUI->AddNewOverlay("PathingMap", false, true);
+		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 300, 300, 3540, 1816 });
+		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 1, emptyAnimation);
+		consoleBox->active = true;
+		consoleBox->visible = true;
+		consoleBox->stretched = true;
+		myUI->AddUIComponent("mapbg", consoleBox);
+		myUI->overlays[pathingID]->AddComponent(consoleBox);
+
+
+
+		//for (int i = 0; i < planeNodes->size(); ++i)
+		//{
+			//int column = round(int((*planeNodes)[i].x * 100.f));
+			//int row = round(int((*planeNodes)[i].z * 100.f));
+			//int index = column + (row * columnCount);
+
+			_debugController->planeNodes = planeNodes;
+			for (int i = 0; i < planeNodes->size(); i++)
+			{
+
+				ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { ((*planeNodes)[i]->position.x)+1600.f , ((*planeNodes)[i]->position.z)+ 500.f, ((*planeNodes)[i]->position.x) +1616.f,  ((*planeNodes)[i]->position.z)  +516.f });
+				long heightValue = int((*planeNodes)[i]->position.y * 100.f);
+				if (heightValue < -4)
+				{
+					heightValue = -4;
+				}
+				if (heightValue > 4)
+				{
+					heightValue = 4;
+				}
+
+				tempImage->BuildAnimation({ 2299, 184 + (heightValue*16), 2315, 200 + (heightValue * 16) }, 3, 1, emptyAnimation);
+				tempImage->active = true;
+				tempImage->visible = true;
+				tempImage->Focus();
+				myUI->AddUIComponent("genericImage", tempImage);
+				myUI->overlays[pathingID]->AddComponent(tempImage);
+				_debugController->node_image_map[(*planeNodes)[i]] = tempImage;
+			}
+		//}
+
+		return pathingID;
+	}
+
+
+
 	UINT GameUserInterface::SetupLog(ADUI::ADUI* myUI)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
@@ -1294,7 +1343,7 @@ namespace GolemGameUISetup
 		return logid;
 	}
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem, std::vector<ADAI::PathingNode*>* _planeNodes, int columnCount, float mapWidth, float mapHeight)
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
@@ -1354,6 +1403,14 @@ namespace GolemGameUISetup
 
 		UINT logID = SetupLog(myUI);
 
+
+		// DebugScreen Controller
+		DebugController* debugController = new DebugController(myUI->GetUIState());
+		myUI->AddUIController("DebugController", debugController);
+		debugController->Enable();
+		UINT pathingID = SetupPathingMap(myUI, debugController, _planeNodes, columnCount, mapWidth, mapHeight);
+		
+
 		titleScreenController->AddOverlay(myUI->overlays[hudid]);
 		titleScreenController->AddController(hudController);
 		titleScreenController->AddController(PauseScreenController);
@@ -1374,6 +1431,7 @@ namespace GolemGameUISetup
 		gameplayMessageController->AddController(PauseScreenController);
 		gameplayMessageController->AddOverlay(myUI->overlays[pauseID]);
 		gameplayMessageController->AddController(optionScreenController);
+		gameplayMessageController->AddOverlay(myUI->overlays[pathingID]);
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);
@@ -1414,6 +1472,21 @@ namespace GolemGameUISetup
 		//uiLog->WriteToLog("6.");
 	}
 
+
+
+	bool DebugController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
+	{
+		return false;
+	}
+
+	bool DebugController::ProcessInput(float delta_time, float& quick)
+	{
+		for (auto it = node_image_map.begin(), itEnd = node_image_map.end(); it != itEnd; ++it)
+		{
+			it->second->SetCurrentFrame(it->first->displayState);
+		}
+		return false;
+	}
 
 }
 

@@ -15,6 +15,7 @@
 #include "GameObjectClasses.h"
 #include "MeshLoader.h"
 #include "ADAI.h"
+#include "ADPathfinding.h"
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -121,16 +122,19 @@ public:
 		audioEngine.LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 		audioEngine.LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 
-		audioEngine.LoadEvent("event:/Fire");
-		audioEngine.LoadEvent("event:/AllFire");
-		audioEngine.LoadEvent("event:/RandFire");
+
+		AD_AUDIO::AudioSource golemSteps;
+		golemSteps.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemSteps.engine = &audioEngine;
+		golemSteps.personalVolume = 0.5f;
+		golemSteps.restartOnRepeat = true;
+		golemSteps.LoadSound("event:/Sfx_GolemStep", true, false, true, true);
 
 		AD_AUDIO::AudioSource titleMusic;
 		titleMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
 		titleMusic.engine = &audioEngine;
 		titleMusic.personalVolume = 0.02f;
-		titleMusic.soundName = "files\\audio\\Opening.mp3";
-		titleMusic.LoadSound(false, true, true);
+		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
 
 		//audioEngine.LoadSound("files\\audio\\SFX_Gem_Collect.wav", true);
 		//audioEngine.LoadSound("", );
@@ -213,7 +217,7 @@ public:
 		woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
 
 
@@ -226,7 +230,7 @@ public:
 		std::vector<Destructable*> woodMinions;
 		std::vector<ADAI::AIUnit*> woodMinionsAI;
 
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i < 10; i++)
 		{
 			stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
 			stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE]));
@@ -249,7 +253,7 @@ public:
 		//ADAI::AIUnit* ai5 = GameUtilities::AttachMinionAI(e6, &commandFlock, &idleFlock);
 		//ADAI::AIUnit* ai6 = GameUtilities::AttachMinionAI(e7, &commandFlock, &idleFlock);
 
-		Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(-50, 5, -30), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
+		Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
 
 		golem->targetMarker = m1;
@@ -288,7 +292,26 @@ public:
 		//spyro->testAttack.hitbox = myHitBox;
 
 		// Colliders
-		//Renderable* c1 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c8 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(250, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c9 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(450, 0, 250), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-200, 0, 300), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c5 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-300, 0, 400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c6 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-400, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		
+		c1->physicsType = ADResource::ADGameplay::STATIC;
+		c2->physicsType = ADResource::ADGameplay::STATIC;
+		c3->physicsType = ADResource::ADGameplay::STATIC;
+		c4->physicsType = ADResource::ADGameplay::STATIC;
+		c5->physicsType = ADResource::ADGameplay::STATIC;
+		c6->physicsType = ADResource::ADGameplay::STATIC;
+		c7->physicsType = ADResource::ADGameplay::STATIC;
+		c8->physicsType = ADResource::ADGameplay::STATIC;
+		c9->physicsType = ADResource::ADGameplay::STATIC;
+		
 		//Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		//Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
@@ -302,8 +325,9 @@ public:
 		//Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1000, 100, 1000), XMFLOAT3(0, 0, 0));
+		float mapWidth = 1500;
+		float mapHeight = 1500;
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0));
 
 		// Add gameobjects
 		// Comment this out - will run at 1fps
@@ -314,12 +338,20 @@ public:
 		}*/
 		// Comment this out - will run at 1fps
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
-		//GameUtilities::AddGameObject(c1);
+		GameUtilities::AddGameObject(c1);
+		GameUtilities::AddGameObject(c2);
+		GameUtilities::AddGameObject(c3);
+		GameUtilities::AddGameObject(c4);
+		GameUtilities::AddGameObject(c5);
+		GameUtilities::AddGameObject(c6);
+		GameUtilities::AddGameObject(c7);
+		GameUtilities::AddGameObject(c8);
+		GameUtilities::AddGameObject(c9);
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
 
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i < 10; i++)
 		{
 			GameUtilities::AddGameObject(stoneMinions[i]);
 			GameUtilities::AddGameObject(waterMinions[i]);
@@ -369,6 +401,9 @@ public:
 			tree->Insert(treePoints[i]);
 		}
 
+
+		float minionWidth = 10;
+
 		//Add Game Objects to their collision groupings
 		//GameObject* passables[1];
 		//passables[0] = a3;
@@ -386,7 +421,6 @@ public:
 			return;
 		}
 
-		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine);
 
 		// Timing
 		game_time.Restart();
@@ -395,21 +429,31 @@ public:
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 
 		// Construct physics stuff
-		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
-		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
+		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
 		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
 		
 		//Needed to add this to the colliders for the collision queue
-		/*c1->colliderPtr = &test_colider;
-		c1->type = OBJECT_TYPE::STATIC;
 
-		c2->colliderPtr = &test_colider1;
+		/*c2->colliderPtr = &test_colider1;
 		c2->type = OBJECT_TYPE::STATIC;*/
 
+		ADAI::ADPathfinding pathfinder;
+		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapHeight), minionWidth, 20.f);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapHeight);
 		titleMusic.Play();
 
 		while (!shutdown)
 		{
+			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+			{
+				//pathfinder.clearDebug();
+				UINT row;
+				UINT column;
+				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
+				pathfinder.enter(0, 0, column, row);
+			}
+
+
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
@@ -417,7 +461,13 @@ public:
 
 			ProcessInput();
 
-
+			if (!pathfinder.isDone())
+			{
+				pathfinder.update(0.00001f);
+			}
+			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
+			//pathfinder.UpdatePlayerNode(1,0, mapWidth, mapHeight);
+			//pathfinder.UpdatePlayerNode(0,1, mapWidth, mapHeight);
 
 
 			
@@ -483,10 +533,7 @@ public:
 			std::vector<Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
-				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-				{
-					trisInRange.push_back(*optimizedPoints[i].tri);
-				}
+				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
 			GroundClamping(golem, trisInRange, delta_time);
@@ -495,7 +542,7 @@ public:
 			if (physics_timer > physics_rate)
 			{
 				physics_timer = 0;
-				for (int i = 0; i < 10; ++i)
+				for (int i = 0; i < 10; i++)
 				{
 					GroundClampingF(stoneMinions[i], trisInRange, delta_time, tree);
 					GroundClampingF(waterMinions[i], trisInRange, delta_time, tree);

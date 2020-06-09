@@ -8,6 +8,12 @@
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
 
+//This isn't trash
+//  This sound should be played on each step when in motion.  Guess there are few ways to do that.
+//audioEngine.PlayEvent("event:/Sfx_GolemStep");
+//
+///End not trash
+
 namespace ADResource
 {
 	namespace ADGameplay

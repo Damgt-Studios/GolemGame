@@ -31,9 +31,11 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 	strcpy_s(shader.vshader, "files\\shaders\\animated_vs.hlsl");
 	strcpy_s(shader.pshader, "files\\shaders\\animated_ps.hlsl");
 
-	temp->SetPosition(position);
 	temp->SetScale(scale);
 	temp->SetRotation(rotation);
+	temp->SetPosition(position);
+
+	temp->transform;
 
 	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
@@ -46,9 +48,9 @@ Trigger* GameUtilities::AddTinyEssenceFromModelFile(std::string modelname, XMFLO
 	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
 	// Transform data
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
@@ -71,9 +73,9 @@ Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XM
 	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
 	// Transform data
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
@@ -99,9 +101,9 @@ Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFL
 	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
 	// Transform data
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
@@ -127,9 +129,9 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
 
 	// Transform data
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	//temp->SetMeshID(id);
@@ -137,9 +139,12 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
 
-	scale.x *= 0.5f;
-	scale.y *= 0.5f;
-	scale.z *= 0.5f;
+	scale.x *= 5.f;
+	scale.y *= 5.f;
+	scale.z *= 5.f;
+	//scale.x *= 0.5f;
+	//scale.y *= 0.5f;
+	//scale.z *= 0.5f;
 	temp->collider = ADPhysics::AABB(position, scale);
 
 	return temp;
@@ -164,9 +169,9 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string mo
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
 	// Transform data
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddColliderBox(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
@@ -179,9 +184,9 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddPBRStaticAsset(std::string
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
 	// Transform data
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	temp->SetMeshID(id);
@@ -193,9 +198,9 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 {
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation);
 	temp->SetMeshID(id);
@@ -207,9 +212,9 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAnimAsset(std::strin
 {
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
 
-	temp->SetPosition(position);
-	temp->SetRotation(rotation);
 	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
 
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, AnimationFiles, position, scale, rotation);
 	temp->SetMeshID(id);

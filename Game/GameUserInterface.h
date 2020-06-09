@@ -3,7 +3,9 @@
 #include "Types.h"
 #include "GameObjectClasses.h"
 #include "ADAudio.h"
+#include "ADPathfinding.h"
 #include "Golem.h"
+#include <unordered_map>
 
 namespace GolemGameUISetup
 {
@@ -12,6 +14,18 @@ namespace GolemGameUISetup
         UINT& uiState;
     public:
         GameplayUIPrimaryController(UINT* _uiState) : uiState(*_uiState) {};
+        virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick) override;
+    };
+
+    class DebugController : public ADUI::OverlayController
+    {
+        UINT& uiState; 
+    public:
+        std::vector<ADAI::PathingNode*>* planeNodes;
+        std::unordered_map<ADAI::PathingNode*, ADUI::Image2D*> node_image_map;
+
+        DebugController(UINT* _uiState) : uiState(*_uiState) {};
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick) override;
     };
@@ -85,8 +99,10 @@ namespace GolemGameUISetup
         UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
         UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController, ADResource::ADGameplay::Golem* _player);
+        UINT SetupDebugMenu(ADUI::ADUI* myUI);
+        UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
         UINT SetupLog(ADUI::ADUI* myUI);
-        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem);
+        void SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem, std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
     };
 
 }
