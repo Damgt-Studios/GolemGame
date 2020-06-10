@@ -405,7 +405,7 @@ public:
 
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
-		std::vector<ADQuadTreePoint> treePoints;
+		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
 		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
 		tempPlane->GetWorldMatrix(groundWorld);
@@ -424,18 +424,17 @@ public:
 			ground.push_back(*tri);
 
 			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
-			ADQuadTreePoint point = ADQuadTreePoint(centroid.x, centroid.z, *tri);
+			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
 			treePoints.push_back(point);
 		}
 
 		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
-		QuadTree* tree = new QuadTree(boundary);
+		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
 
 		for (unsigned int i = 0; i < treePoints.size(); i++)
 		{
 			tree->Insert(treePoints[i]);
 		}
-
 
 		float minionWidth = 10;
 
