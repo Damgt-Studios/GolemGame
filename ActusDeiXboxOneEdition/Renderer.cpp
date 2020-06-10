@@ -181,6 +181,7 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
+
 	return true;
 }
 
@@ -402,7 +403,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	temp = XMMatrixIdentity();
 	//temp = XMMatrixRotationX(XMConvertToRadians(180));
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(1,1,1));
+	temp = XMMatrixMultiply(temp, XMMatrixScaling(1, 1, 1));
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
@@ -414,6 +415,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
 
 	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+
+	//emitter.UpdateParticles(delta_time, WORLD.ViewMatrix, WORLD.ProjectionMatrix, WORLD.CameraPosition);
 
 	// Send the matrix to constant buffer
 	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -627,7 +630,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 	}
-
 	return true;
 }
 

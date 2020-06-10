@@ -52,6 +52,7 @@ struct keyframe
 
 struct anim_clip
 {
+	string animfilename;
 	double duration;
 	vector<keyframe> frames;
 };

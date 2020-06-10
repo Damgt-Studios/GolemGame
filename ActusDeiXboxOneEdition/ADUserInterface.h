@@ -439,6 +439,7 @@ namespace ADUI
         float height;
         float width;
 
+
     public:
         UIComponentSelector(UINT componentCount, UIComponent** components, bool _visible = true, bool _active = true, bool _controlFocus = false);
         ~UIComponentSelector();
@@ -504,6 +505,7 @@ namespace ADUI
         virtual void Render() override;
         virtual void Enable() override;
         virtual void Disable() override;
+        void SetSelected(int _selection);
         UINT GetIndex() override;
 
         //    std::unique_ptr<ComponentGrid> clone() const
@@ -515,6 +517,14 @@ namespace ADUI
         //    {
         //        return new ComponentGrid(*this);
         //    }
+    public:
+
+        Input::THUMBSTICKS thumbstickBinding = Input::THUMBSTICKS::LEFT_THUMBSTICK;
+
+        GamepadButtons leftButton1 = GamepadButtons::DPadLeft;
+        GamepadButtons rightButton1 = GamepadButtons::DPadRight;
+        GamepadButtons upButton1 = GamepadButtons::DPadUp;
+        GamepadButtons downButton1 = GamepadButtons::DPadDown;
     };
 
     class Slider
@@ -552,6 +562,10 @@ namespace ADUI
         void Update(float delta_time) override;
         void Render() override;
 
+        Input::THUMBSTICKS thumbstickBinding = Input::THUMBSTICKS::LEFT_THUMBSTICK;
+
+        GamepadButtons leftButton1 = GamepadButtons::DPadLeft;
+        GamepadButtons rightButton1 = GamepadButtons::DPadRight;
 
         std::unique_ptr<SliderBar> clone() const
         {
