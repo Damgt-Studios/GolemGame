@@ -15,13 +15,36 @@ ADResource::ADGameplay::Golem::Golem() {
 	fireCPtr = &fireCollider;
 
 	stats = new StatSheet();
+
+	flockingGroups = new ADAI::FlockingGroup*[5];
+	for (int i = 0; i < 5; ++i)
+	{
+		flockingGroups[i] = new ADAI::FlockingGroup();
+		flockingGroups[i]->groupTarget = &transform;
+	}
+}
+
+ADResource::ADGameplay::Golem::~Golem()
+{
+	for (int i = 0; i < 5; ++i)
+	{
+		delete flockingGroups[i];
+	}
+	delete[] flockingGroups;
 }
 
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
-
 	ProcessEffects(delta_time);
+
+	for (int i = 0; i < 5; ++i)
+	{
+		//if (!flockingGroups[i].isEmpty())
+		//{
+			flockingGroups[i]->Update(delta_time);
+		//}
+	}
 
 	// Physics
 	XMMATRIX colliderLocation = transform;
@@ -269,6 +292,11 @@ XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
 	return temp;
 }
 
+void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
+{
+	anim_controller = &controller;
+}
+
 iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
 {
 	return stats;
@@ -281,6 +309,8 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
+	anim_controller->PlayAnimationByName("Golem_1_Idle");
+
 	XMFLOAT3 pos(0, 0, 0);
 	if (Input::QueryButtonDown(GamepadButtons::X))
 	{
@@ -304,6 +334,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	//	fire = false;
 	//}
 	responseTimer -= delta_time;
+
 	if (Input::QueryButtonDown(GamepadButtons::Y))
 	{
 		if (responseTimer < 0)
@@ -314,6 +345,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 				stats->token.currentValue = 0;
 		}
 	}
+
 	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 	{
 		if (responseTimer < 0)
@@ -337,15 +369,58 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		}
 	}
 
-
-	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
+	if (Input::QueryButtonDown(GamepadButtons::DPadDown))
 	{
-		commandGroup->SetCommandDirection(XMMatrixInverse(nullptr, camera).r[3]);
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			++commandTargetGroup;
+			if (commandTargetGroup == 5)
+				commandTargetGroup = 4;
+		}
 	}
+
+	if (Input::QueryButtonDown(GamepadButtons::DPadUp))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			--commandTargetGroup;
+			if (commandTargetGroup < 0)
+				commandTargetGroup = 0;
+		}
+	}
+
 
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
 	{
-		commandGroup->ReturnCall();
+		if (commandTargetGroup == 4)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				flockingGroups[i]->ReturnCall();
+			}
+		}
+		else
+		{
+			flockingGroups[commandTargetGroup]->ReturnCall();
+		}
+	}
+
+	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f))
+	{
+		if (commandTargetGroup == 4)
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				flockingGroups[i]->SetCommandDirection(camera);
+			}
+			targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
+		}
+		else
+		{
+			targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
+		}
 	}
 
 	XMFLOAT4 forward;
@@ -357,8 +432,9 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
 
 		Golem::RotationYBasedOnView(camera, angle, WMATH_PI);
+		anim_controller->PlayAnimationByName("Golem_1_Run");
 
-
+	
 		Velocity.x += forward.x * delta_time * spyro_move_speed;
 		Velocity.y += forward.y * delta_time * spyro_move_speed;
 		Velocity.z += forward.z * delta_time * spyro_move_speed;

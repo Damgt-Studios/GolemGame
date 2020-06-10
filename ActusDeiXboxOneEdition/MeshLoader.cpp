@@ -89,7 +89,21 @@ void Load_AnimMesh(const char* meshFileName, SimpleMeshAnim& mesh)
 };
 void Load_AnimFile(const char* animFileName, vector<bones>& skeleton, vector<XMMATRIX>& inverse, anim_clip& clip)
 {
+	clip.animfilename = animFileName;
+	for (unsigned int i = 0; i < 9; i++)
+	{
+		clip.animfilename.pop_back();
+	}
 
+		clip.animfilename.erase(0,13);
+
+	
+	
+	
+
+
+
+	
 	std::fstream file{ animFileName, std::ios_base::in | std::ios_base::binary };
 
 	assert(file.is_open());

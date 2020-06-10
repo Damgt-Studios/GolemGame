@@ -4,9 +4,16 @@
 #include "ADUserInterface.h"
 #include "AudioManager.h"
 #include "ADAI.h"
+#include "AnimationStateMachine.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
+
+//This isn't trash
+//  This sound should be played on each step when in motion.  Guess there are few ways to do that.
+//audioEngine.PlayEvent("event:/Sfx_GolemStep");
+//
+///End not trash
 
 namespace ADResource
 {
@@ -33,11 +40,14 @@ namespace ADResource
 		class Golem : public Renderable
 		{
 			ADResource::ADGameplay::StatSheet* stats;
-			int playerElement;
-
+			int playerElement = 0;
+			AnimationStateMachine* anim_controller;
 		public:
 			Golem();
+			~Golem();
 
+			GameObject* targetMarker;
+			ADAI::FlockingGroup** flockingGroups;
 			virtual void Update(float time_delta);
 
 			void ProcessEffects(float _deltaTime);
@@ -56,11 +66,16 @@ namespace ADResource
 			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
-			ADAI::FlockingGroup* commandGroup;
+			int commandTargetGroup = 0;
+			int totalMinionCount = 0;
+			int stoneMinionCount = 0;
+			int waterMinionCount = 0;
+			int fireMinionCount = 0;
+			int woodMinionCount = 0;
 
 			//void SetAudio(AudioManager* _audioManager);
 
-			int GetCurrentAnimation();
+			void GetAnimationController(AnimationStateMachine& controller);
 
 			XMMATRIX GetColliderInfo();
 
