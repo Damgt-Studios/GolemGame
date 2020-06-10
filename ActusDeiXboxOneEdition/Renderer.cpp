@@ -181,7 +181,6 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
-
 	return true;
 }
 
@@ -401,9 +400,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	rot = ResourceManager::GetSkybox()->rotation;
 	scale = ResourceManager::GetSkybox()->scale;
 
-	temp = XMMatrixIdentity();
-	//temp = XMMatrixRotationX(XMConvertToRadians(180));
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(1, 1, 1));
+	temp = XMMatrixScaling(10, 10, 10);
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
@@ -415,8 +412,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
 
 	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
-
-	//emitter.UpdateParticles(delta_time, WORLD.ViewMatrix, WORLD.ProjectionMatrix, WORLD.CameraPosition);
 
 	// Send the matrix to constant buffer
 	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -472,12 +467,12 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		{
 			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);
 
+			//continue;
+
 			std::vector<XMMATRIX> joints = current_animated_model->UpdateAnimation(delta_time);
 
 			//Update Buffers
 			renderer_resources.context->UpdateSubresource(current_animated_model->animationBuffer.Get(), NULL, nullptr, joints.data(), 0, 0);
-
-			renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 
 			UINT strides[] = { sizeof(SimpleVertexAnim) };
 			UINT offsets[] = { 0 };
@@ -488,24 +483,10 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// Model stuff
 			// World matrix projection
 			// TODO: Translate rotation to quaternion
-			fbxmodel_map;
 
 			current_obj->GetWorldMatrix(temp);
-			temp.r[3].m128_f32[1] -= 5;
-			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
-			//temp = XMMatrixRotationZ(3.14f) * temp;
-			//temp = XMMatrixRotationY(3.14f) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 			// View
-
-			ocamera->GetViewMatrix(temp);
-			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-			// Projection
-
-			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-
-			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
 			// Send the matrix to constant buffer
 			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -519,8 +500,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			// Render stuff
 			// Set sampler
-			ID3D11SamplerState* samplers[] = { current_animated_model->sampler.Get(), renderer_resources.normal_sampler.Get() };
-			renderer_resources.context->PSSetSamplers(0, 2, samplers);
 
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_animated_model->albedo.Get(),
@@ -551,8 +530,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		{
 			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
 
-			renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
-
 			UINT strides[] = { sizeof(SimpleVertex) };
 			UINT offsets[] = { 0 };
 			ID3D11Buffer* modelVertexBuffers[] = { current_static_model->vertexBuffer.Get() };
@@ -563,20 +540,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// World matrix projection
 			// TODO: Translate rotation to quaternion
 			current_obj->GetWorldMatrix(temp);
-			temp.r[3].m128_f32[1] = -5;
-			temp.r[3].m128_f32[2] = -10;
 			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
-			// View
-
-			ocamera->GetViewMatrix(temp);
-			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-			// Projection
-
-			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-
-			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
 			// Send the matrix to constant buffer
 			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -590,18 +555,16 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			// Render stuff
 			// Set sampler
-			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get(), renderer_resources.normal_sampler.Get() };
-			renderer_resources.context->PSSetSamplers(0, 2, samplers);
+			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get() };
+			renderer_resources.context->PSSetSamplers(0, 1, samplers);
 
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_static_model->albedo.Get(),
-				current_static_model->normal.Get(),
-				current_static_model->emissive.Get()
 			};
 
 			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
 
-			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
+			renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
 			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
 
 
@@ -611,14 +574,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			renderer_resources.context->PSSetShader(current_static_model->pixelShader.Get(), 0, 0);
 			renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
 
-
-			//int istart = current_model->desc.index_start;
-			//int ibase = current_model->desc.base_vertex_location;
-			//int icount = current_model->desc.index_count;
-			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
 			renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
 		}
-
 
 		//bool bruh = current_model->desc.wireframe_mode;
 		//if (bruh)
@@ -630,6 +587,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 	}
+
 	return true;
 }
 

@@ -36,6 +36,11 @@ enum class ADResourceType {
 	Enemy
 };
 
+enum class RotationType
+{
+	xyz, xzy, yxz, yzx, zxy, zyx
+};
+
 namespace ADResource
 {
 	namespace ADRenderer
@@ -413,8 +418,33 @@ namespace ADResource
 			void SetMeshID(AD_ULONG id) { meshID = id; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
-			void SetRotation(XMFLOAT3 rotation)
+			void SetRotation(XMFLOAT3 rotation, RotationType type = RotationType::xyz)
 			{
+				XMMATRIX X = XMMatrixRotationX(XMConvertToRadians(rotation.x)),
+					Y = XMMatrixRotationY(XMConvertToRadians(rotation.y)),
+					Z = XMMatrixRotationZ(XMConvertToRadians(rotation.z));
+
+				switch (type)
+				{
+				case RotationType::xyz:
+					transform = Z * Y * X * transform;
+					break;
+				case RotationType::xzy:
+					transform = Y * Z * X * transform;
+					break;
+				case RotationType::yxz:
+					transform = Z * X * Y * transform;
+					break;
+				case RotationType::yzx:
+					transform = X * Z * Y * transform;
+					break;
+				case RotationType::zxy:
+					transform = Y * X * Z * transform;
+					break;
+				case RotationType::zyx:
+					transform = X * Y * Z * transform;
+					break;
+				}
 			}
 
 			void SetRotationMatrix(XMMATRIX newRot)
@@ -553,50 +583,51 @@ namespace ADResource
 
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.A->transform.r[3]), current.A->pmat, current.m);
 				}
+				else if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC) 
+				{
+					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+					XMFLOAT4 bVelocity = current.B->Velocity;
+					const ADPhysics::PhysicsMaterial bMat = current.B->pmat;
+
+					VelocityImpulse(tempV, temp, bVelocity, bMat, current.m);
+
+					(*current.B).Velocity = bVelocity;
+					(*current.B).pmat = bMat;
+
+					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.B->transform.r[3]), current.B->pmat, current.m);
+				}
 				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
 				else
 				{
-					XMFLOAT4 aTemp = current.A->Velocity, bTemp = current.B->Velocity;
-					const ADPhysics::PhysicsMaterial aMat = current.A->pmat, bMat = current.B->pmat;
-					VelocityImpulse(aTemp, aMat, bTemp, bMat, current.m);
-					(*current.A).Velocity = aTemp; (*current.B).Velocity = bTemp;
-					(*current.A).pmat = aMat; (*current.B).pmat = bMat;
+					//XMFLOAT4 aTemp = current.A->Velocity, bTemp = current.B->Velocity;
+					//const ADPhysics::PhysicsMaterial aMat = current.A->pmat, bMat = current.B->pmat;
+					//VelocityImpulse(aTemp, aMat, bTemp, bMat, current.m);
+					//(*current.A).Velocity = aTemp; (*current.B).Velocity = bTemp;
+					//(*current.A).pmat = aMat; (*current.B).pmat = bMat;
 					PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, (XMFLOAT4&)current.B->transform.r[3], current.B->pmat, current.m);
 				}
 			}
 		}
 
 
-		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time)
+		static bool GroundClamping(GameObject* obj, QuadTree* tree, float delta_time) 
 		{
-			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
+			std::vector<ADQuadTreePoint> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 50, 50));
+
+			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 100, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 100, 0, 0)));
 
 			for (unsigned int i = 0; i < ground.size(); i++)
 			{
 				ADPhysics::Manifold m;
-				if (LineSegmentToTriangle(line, ground[i], m))
+				if (LineSegmentToTriangle(line, *ground[i].tri, m))
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
-					//obj->transform.r[3].m128_f32[1] -= obj->colliderPtr->GetHeight() * 2.5;
-					//obj->Velocity = (XMFLOAT4&)(Float4ToVector(obj->Velocity) + (-Float4ToVector(obj->Velocity) * delta_time * 20));
 					return true;
 				}
 			}
 
 			return false;
-		}
-
-		static bool GroundClampingF(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time, QuadTree* tree)
-		{
-			XMFLOAT3 SpyrosPosition = VectorToFloat3(obj->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 25, 25));
-			std::vector<ADPhysics::Triangle> trisInRange;
-			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-			{
-				trisInRange.push_back(*optimizedPoints[i].tri);
-			}
-
-			return GroundClamping(obj, trisInRange, delta_time);
 		}
 	}
 };

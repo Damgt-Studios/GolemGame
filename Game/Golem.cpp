@@ -2,7 +2,7 @@
 #include "Golem.h"
 
 ADResource::ADGameplay::Golem::Golem() {
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	collider = OBB(transform * translatetomiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
@@ -47,7 +47,14 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 	}
 
 	// Physics
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	XMMATRIX colliderLocation = transform;
+	colliderLocation.r[3].m128_f32[1] += 15;
+
+	colliderLocation.r[0] = XMVector3Normalize(transform.r[0]);
+	colliderLocation.r[1] = XMVector3Normalize(transform.r[1]);
+	colliderLocation.r[2] = XMVector3Normalize(transform.r[2]);
+
+	collider = OBB(colliderLocation, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
@@ -258,7 +265,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 			//If collision and collision object is a collider then go to OnCollision Function
 			else
 			{
-				collisionQueue.push(CollisionPacket(this, obj, m));
+				collisionQueue.push(CollisionPacket(obj, this, m));
 				OnCollision(obj);
 			}
 		}
@@ -270,6 +277,20 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 //{
 //	audioManager = _audioManager;
 //}
+
+XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
+{
+	XMMATRIX temp;
+	temp.r[0] = XMVector3Normalize(Float3ToVector(collider.AxisX));
+	temp.r[1] = XMVector3Normalize(Float3ToVector(collider.AxisY));
+	temp.r[2] = XMVector3Normalize(Float3ToVector(collider.AxisZ));
+	temp.r[3] = Float3ToVector(collider.Pos);
+	temp.r[3].m128_f32[3] = 1;
+
+	temp = XMMatrixScaling(collider.GetWidth() / 2, collider.GetHeight() / 2, collider.GetWidth() / 2) * temp;
+
+	return temp;
+}
 
 void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
 {

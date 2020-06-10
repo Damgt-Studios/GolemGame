@@ -56,7 +56,7 @@ float4 main(OutputVertex v) : SV_TARGET
     normalMap.xyz = mul(normalMap.xyz, TBN);
     
     float3 lightDirection = normalize(float3(0, -0.5f, 1));
-    float lightMagnitude = saturate(dot(-lightDirection, normalMap.xyz)) + (float4(0.156f, 0.003f, 0.215f, 1) * 0.25f);
+    float lightMagnitude = saturate(dot(-lightDirection, normalMap.xyz)) + (float4(0.156f, 0.003f, 0.215f, 1) * 0.3f);
     float4 dirFinal = lightMagnitude * float4(4, 4, 4, 4);
     
     clip(texelColor.a < 0.1f ? -1 : 1);

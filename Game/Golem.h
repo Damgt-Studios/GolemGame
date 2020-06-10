@@ -63,7 +63,7 @@ namespace ADResource
 			//virtual void OnTrigger(GameObject* other);
 
 			void GetView(XMMATRIX& view);
-			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
+			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 			int commandTargetGroup = 0;
@@ -76,6 +76,8 @@ namespace ADResource
 			//void SetAudio(AudioManager* _audioManager);
 
 			void GetAnimationController(AnimationStateMachine& controller);
+
+			XMMATRIX GetColliderInfo();
 
 			virtual iStatSheet* GetStatSheet() override;
 			int GetCurrentElement();
@@ -115,7 +117,7 @@ namespace ADResource
 
 			float floatiness = 0.25f;
 			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
-
+			XMMATRIX translatetomiddle = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1] + 15, transform.r[3].m128_f32[2]);
 
 			bool buttonup = false;
 			XMMATRIX camera;
