@@ -14,7 +14,7 @@ void AnimationStateMachine::Initialize(ADResource::ADGameplay::GameObject* obj)
 
 void AnimationStateMachine::CreateAnimationState( string name, double duration, int index, bool truefalseCondition, float valueCondition)
 {
-	AnimationState n_AnimState{ name, duration, truefalseCondition,valueCondition, index };
+	AnimationState n_AnimState{ name, duration/ 46186158.0, truefalseCondition,valueCondition, index };
 
 	A_States.push_back(n_AnimState);
 
