@@ -611,16 +611,16 @@ namespace ADResource
 		}
 
 
-		static bool GroundClamping(GameObject* obj, QuadTree* tree, float delta_time) 
+		static bool GroundClamping(GameObject* obj, QuadTree<ADPhysics::Triangle>* tree, float delta_time) 
 		{
-			std::vector<ADQuadTreePoint> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 50, 50));
+			std::vector<ADQuadTreePoint<ADPhysics::Triangle>> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 50, 50));
 
 			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 100, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 100, 0, 0)));
 
 			for (unsigned int i = 0; i < ground.size(); i++)
 			{
 				ADPhysics::Manifold m;
-				if (LineSegmentToTriangle(line, *ground[i].tri, m))
+				if (LineSegmentToTriangle(line, *ground[i].data, m))
 				{
 					obj->transform.r[3] = (XMVECTOR&)m.ContactPoint;
 					return true;

@@ -1,20 +1,18 @@
 #pragma once
 #include <vector>
-
-#include "ADPhysics.h"
-
-//The point variable we will be using 
+//The point variable we will be using
+template <typename T>
 struct ADQuadTreePoint 
 {
 	int x, y;
-	ADPhysics::Triangle* tri = nullptr;
+	T* data = nullptr;
 
 
 	//Current Idea for the making of a point is to find the centroid of the triangle \
 	and set the objects X to this point's x, and the objects Z to this point's Y \
 	We will be thinking of this as a top down view so the objects Y will be irrelevant \
 	unless this was an Octree.
-	ADQuadTreePoint(int x, int y, ADPhysics::Triangle& tri) : x(x), y(y), tri(&tri) {};
+	ADQuadTreePoint(int x, int y, T& t) : x(x), y(y), data(&t) {};
 };
 
 //Creates a Quad variable that will be the bounding box of the Quad tree
@@ -26,7 +24,8 @@ struct ADQuad
 	ADQuad(int x, int y, float w, float h) :
 		x(x), y(y), width(w), height(h) {};
 
-	bool ContainsPoint(ADQuadTreePoint point) 
+	template <typename T>
+	bool ContainsPoint(ADQuadTreePoint<T> point) 
 	{
 		return (x - width < point.x &&
 			x + width > point.x &&
@@ -43,7 +42,7 @@ struct ADQuad
 	};
 };
 
-
+template <typename T>
 class QuadTree 
 {
 public:
@@ -55,7 +54,7 @@ private:
 	const int capacity = 3;
 	bool divided = false;
 	ADQuad boundary;
-	std::vector<ADQuadTreePoint> points;
+	std::vector<ADQuadTreePoint<T>> points;
 
 	//Children
 	QuadTree* NorthEast = nullptr;
@@ -65,7 +64,7 @@ private:
 
 public:
 	//Uses recursion to determine which QuadTree to insert the point into
-	bool Insert(ADQuadTreePoint point) 
+	bool Insert(ADQuadTreePoint<T> point) 
 	{
 		//See if the point would be inside this box
 		//If not leave the function because it doesn't belong here
@@ -97,9 +96,9 @@ public:
 	};
 	
 	//Uses recusion to determine all the points within the range given
-	std::vector<ADQuadTreePoint> Query(ADQuad range) 
+	std::vector<ADQuadTreePoint<T>> Query(ADQuad range) 
 	{
-		std::vector<ADQuadTreePoint> pointsInRange;
+		std::vector<ADQuadTreePoint<T>> pointsInRange;
 
 		//If it does not intersect then return an empty point list;
 		if (!boundary.Intersects(range))
@@ -117,7 +116,7 @@ public:
 		if (divided == false)
 			return pointsInRange;
 
-		std::vector<ADQuadTreePoint> temp = NorthEast->Query(range);
+		std::vector<ADQuadTreePoint<T>> temp = NorthEast->Query(range);
 		pointsInRange.insert(pointsInRange.end(), temp.begin(), temp.end());
 		temp.clear();
 		temp = NorthWest->Query(range);
