@@ -18,6 +18,8 @@
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
 
+//#define ShowColliders
+
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Core;
@@ -211,10 +213,6 @@ public:
 		
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
-    
-		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		//golem->SetAudio(audio_manager);
 
 		Renderable* cube = GameUtilities::AddSimpleAsset("files/models/Cube.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 
@@ -320,32 +318,9 @@ public:
 		c8->physicsType = ADResource::ADGameplay::STATIC;
 		c9->physicsType = ADResource::ADGameplay::STATIC;
 		
-		//Renderable* c2 = GameUtilities::AddColliderBox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-		//Renderable* testPlane = GameUtilities::AddPBRStaticAsset("files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0));
-
-		std::vector<std::string> animationFiles;
-		animationFiles.push_back("files/models/Golem_2_Idle.animfile");
-
-		animationFiles[0] = "files/models/BattleMage.animfile";
-		//animationFiles[0] = "files/models/Trebuchet_Attack.animfile";
-
-		//Renderable* AnimationTester = GameUtilities::AddSimpleAnimAsset("files/models/BattleMage.AnimMesh", "files/textures/BattleMage.mat", animationFiles, XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-		//Renderable* House = GameUtilities::AddSimpleAsset("files/models/House_01.mesh", "", XMFLOAT3(5, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 		float mapWidth = 1000;
-		float mapHeight = 1000;
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0));
-
-		// Add gameobjects
-		// Comment this out - will run at 1fps
-		/*int COUNT = 2500;
-		for (int i = 0; i < COUNT; i++)
-		{
-			GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
-		}*/
-		// Comment this out - will run at 1fps
-
+		float mapLength = 1000;
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
 
 		GameUtilities::AddGameObject(cube);
 
@@ -422,8 +397,10 @@ public:
 		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));*/
 
 #ifdef _DEBUG
+#ifdef ShowColliders
 		GameUtilities::AddGameObject(golemCollider);
 		GameUtilities::AddGameObject(cubeCollider);
+#endif
 #endif
 
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
@@ -495,8 +472,8 @@ public:
 		c2->type = OBJECT_TYPE::STATIC;*/
 
 		ADAI::ADPathfinding pathfinder;
-		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapHeight), minionWidth, 20.f);
-		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapHeight);
+		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapLength);
     
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
@@ -523,7 +500,7 @@ public:
 			{
 				pathfinder.update(0.00001f);
 			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
+			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
 		
     
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
@@ -608,22 +585,18 @@ public:
 				physics_timer = 0;
 				for (int i = 0; i < 10; i++)
 				{
-					GroundClampingF(stoneMinions[i], trisInRange, delta_time, tree);
-					GroundClampingF(waterMinions[i], trisInRange, delta_time, tree);
-					GroundClampingF(fireMinions[i], trisInRange, delta_time, tree);
-					GroundClampingF(woodMinions[i], trisInRange, delta_time, tree);
+					GroundClamping(stoneMinions[i], tree, delta_time);
+					GroundClamping(waterMinions[i], tree, delta_time);
+					GroundClamping(fireMinions[i], tree, delta_time);
+					GroundClamping(woodMinions[i], tree, delta_time);
 				}
+
+
 			}
 
-			GroundClamping(e2, tree, delta_time);
-			GroundClamping(e3, tree, delta_time);
-			GroundClamping(e4, tree, delta_time);
-
-			GroundClamping(cube, tree, delta_time);
-			cube->transform.r[3].m128_f32[1] += 5;
-
-			// Test
-
+			GroundClamping(golem, tree, delta_time);
+			//GroundClamping(cube, tree, delta_time);
+			//cube->transform.r[3].m128_f32[1] += 5;
 
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);

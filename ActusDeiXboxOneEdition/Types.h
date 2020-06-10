@@ -583,6 +583,20 @@ namespace ADResource
 
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.A->transform.r[3]), current.A->pmat, current.m);
 				}
+				else if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC) 
+				{
+					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
+					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
+					XMFLOAT4 bVelocity = current.B->Velocity;
+					const ADPhysics::PhysicsMaterial bMat = current.B->pmat;
+
+					VelocityImpulse(tempV, temp, bVelocity, bMat, current.m);
+
+					(*current.B).Velocity = bVelocity;
+					(*current.B).pmat = bMat;
+
+					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.B->transform.r[3]), current.B->pmat, current.m);
+				}
 				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
 				else
 				{
