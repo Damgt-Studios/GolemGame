@@ -435,7 +435,10 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
 		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
+		ComPtr<ID3D11Texture2D> texture = nullptr;
+
+		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, (ID3D11Resource**)texture.Get(), &model->albedo);
 	}
 }
 

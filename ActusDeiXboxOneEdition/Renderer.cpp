@@ -469,12 +469,12 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		{
 			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);
 
+			//continue;
+
 			std::vector<XMMATRIX> joints = current_animated_model->UpdateAnimation(delta_time);
 
 			//Update Buffers
 			renderer_resources.context->UpdateSubresource(current_animated_model->animationBuffer.Get(), NULL, nullptr, joints.data(), 0, 0);
-
-			renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 
 			UINT strides[] = { sizeof(SimpleVertexAnim) };
 			UINT offsets[] = { 0 };
@@ -487,20 +487,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// TODO: Translate rotation to quaternion
 
 			current_obj->GetWorldMatrix(temp);
-			//temp = XMMatrixRotationX(-3.14f / 2) * temp;
-			//temp = XMMatrixRotationZ(3.14f) * temp;
-			//temp = XMMatrixRotationY(3.14f) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 			// View
-
-			ocamera->GetViewMatrix(temp);
-			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
-			// Projection
-
-			temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
-
-			WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
 
 			// Send the matrix to constant buffer
 			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
@@ -514,8 +502,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			// Render stuff
 			// Set sampler
-			ID3D11SamplerState* samplers[] = { current_animated_model->sampler.Get(), renderer_resources.normal_sampler.Get() };
-			renderer_resources.context->PSSetSamplers(0, 2, samplers);
 
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_animated_model->albedo.Get(),
@@ -546,8 +532,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		{
 			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
 
-			renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
-
 			UINT strides[] = { sizeof(SimpleVertex) };
 			UINT offsets[] = { 0 };
 			ID3D11Buffer* modelVertexBuffers[] = { current_static_model->vertexBuffer.Get() };
@@ -573,18 +557,16 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			// Render stuff
 			// Set sampler
-			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get(), renderer_resources.normal_sampler.Get() };
-			renderer_resources.context->PSSetSamplers(0, 2, samplers);
+			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get() };
+			renderer_resources.context->PSSetSamplers(0, 1, samplers);
 
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_static_model->albedo.Get(),
-				current_static_model->normal.Get(),
-				current_static_model->emissive.Get()
 			};
 
 			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
 
-			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
+			renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
 			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
 
 

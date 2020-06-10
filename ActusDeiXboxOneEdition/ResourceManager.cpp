@@ -196,6 +196,10 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 
 	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
 
+	if (temp->albedo) {
+		ADResource::ADRenderer::PBRRenderer::GetRendererResources()->context->GenerateMips(temp->albedo.Get());
+	}
+
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();
 	unsigned int index = fbxmodels.size();

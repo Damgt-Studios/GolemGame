@@ -192,10 +192,10 @@ public:
 		ResourceManager::AddLight(light1);
 
 		std::vector<std::string> animations;
-		animations.push_back("files/models/Golem_4_Special.animfile");
+		animations.push_back("files/models/Golem_1_Idle.animfile");
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_4.AnimMesh", "files/textures/Golem_4.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
 #ifdef _DEBUG
 		Renderable* golemCollider = GameUtilities::AddRenderableCollider(golem->colliderPtr);
@@ -215,28 +215,9 @@ public:
 		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-
-		Renderable* house_01_Upper = GameUtilities::AddSimpleAsset("files/models/House_01_UpperLevel.mesh", "files/textures/House_01_UpperLevel.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* house_01_Lower = GameUtilities::AddSimpleAsset("files/models/House_01_LowerLevel.mesh", "files/textures/House_01_LowerLevel.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* house_01_Bottom = GameUtilities::AddSimpleAsset("files/models/House_01_Bottom.mesh", "files/textures/House_01_Bottom.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* house_01_WoodenFrame = GameUtilities::AddSimpleAsset("files/models/House_01_WoodenFrame.mesh", "files/textures/House_01_Wooden.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* house_01_WoodenStairs = GameUtilities::AddSimpleAsset("files/models/House_01_WoodenStairs.mesh", "files/textures/House_01_Wooden.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* house_01_Roof = GameUtilities::AddSimpleAsset("files/models/House_01_Roof.mesh", "files/textures/House_01_Roof.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* house_01_Details = GameUtilities::AddSimpleAsset("files/models/House_01_Details.mesh", "files/textures/House_01_Details.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* gateway_openning = GameUtilities::AddSimpleAsset("files/models/GateWayOpenning.mesh", "files/textures/GateWayOpenning.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* gateway_towers = GameUtilities::AddSimpleAsset("files/models/GateWayTowers.mesh", "files/textures/GateWayOpenning.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* gateway_details = GameUtilities::AddSimpleAsset("files/models/GateWayStoneDetails.mesh", "files/textures/GateWayStoneDetails.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* gateway_windows = GameUtilities::AddSimpleAsset("files/models/GateWayStoneWindows.mesh", "files/textures/GateWayStoneWindows.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* gateway_wooden = GameUtilities::AddSimpleAsset("files/models/GateWayWooden.mesh", "files/textures/GateWayWooden.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* gateway_structure = GameUtilities::AddSimpleAsset("files/models/GateWayWoodenStructure.mesh", "files/textures/GateWayWoodenStructure.mat", XMFLOAT3(10, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* gateway_lattice = GameUtilities::AddSimpleAsset("files/models/GateWayLattice.mesh", "files/textures/GateWayLattice.mat", XMFLOAT3(10, .366f, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* scaffolding1 = GameUtilities::AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(10, 0, 1), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* scaffolding2 = GameUtilities::AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(10, 0, 1.5f), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* scaffolding3 = GameUtilities::AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(10, 0, 2), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0));
-		Renderable* wall = GameUtilities::AddSimpleAsset("files/models/WallBase.mesh", "files/textures/WallBase.mat", XMFLOAT3(10, 0, 3), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-		Renderable* wall_roof = GameUtilities::AddSimpleAsset("files/models/WallRoof.mesh", "files/textures/WallRoof.mat", XMFLOAT3(10, 0, 3), XMFLOAT3(25, 25, 25), XMFLOAT3(90, 0, 90));
-		Renderable* wall_details = GameUtilities::AddSimpleAsset("files/models/WallDetails.mesh", "files/textures/WallDetails.mat", XMFLOAT3(10, 0, 3), XMFLOAT3(25, 25, 25), XMFLOAT3(0, -90, 0));
-
+		
+		
+		
 
 		ADAI::AIUnit* ai1 = GameUtilities::AttachMinionAI(e2, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
@@ -270,26 +251,50 @@ public:
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
-		GameUtilities::AddGameObject(house_01_Upper);
-		GameUtilities::AddGameObject(house_01_Lower);
-		GameUtilities::AddGameObject(house_01_Bottom);
-		GameUtilities::AddGameObject(house_01_WoodenFrame);
-		GameUtilities::AddGameObject(house_01_WoodenStairs);
-		GameUtilities::AddGameObject(house_01_Roof);
-		GameUtilities::AddGameObject(house_01_Details);
-		GameUtilities::AddGameObject(gateway_openning);
-		GameUtilities::AddGameObject(gateway_towers);
-		GameUtilities::AddGameObject(gateway_details);
-		GameUtilities::AddGameObject(gateway_windows);
-		GameUtilities::AddGameObject(gateway_wooden);
-		GameUtilities::AddGameObject(gateway_structure);
-		GameUtilities::AddGameObject(gateway_lattice);
-		GameUtilities::AddGameObject(scaffolding1);
-		GameUtilities::AddGameObject(scaffolding2);
-		GameUtilities::AddGameObject(scaffolding3);
-		GameUtilities::AddGameObject(wall);
-		GameUtilities::AddGameObject(wall_roof);
-		GameUtilities::AddGameObject(wall_details);
+
+		GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0,45,0));
+
+		GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateHouse3(XMFLOAT3(0, 0, -5), XMFLOAT3(0, -45, 0));
+
+		GameUtilities::GenerateHouse4(XMFLOAT3(0, 0, -7.5), XMFLOAT3(0, 45, 0));
+
+		GameUtilities::GenerateBarn1(XMFLOAT3(-10, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateBarn2(XMFLOAT3(-10, 0, 2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateGateway(XMFLOAT3(10, 0, 0), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateScaffolding(XMFLOAT3(10, 0, 1), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateWall(XMFLOAT3(10, 0, 5), XMFLOAT3(0, 45, 0));
+
+		GameUtilities::GenerateWell(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateTavern(XMFLOAT3(-5, 0, 5), XMFLOAT3(0, 45, 0));
+
+		GameUtilities::GenerateTree(XMFLOAT3(-2.5, 0, 2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateLadder(XMFLOAT3(-2.5, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRock1(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateLamp(XMFLOAT3(2.5, 0, 2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateMeetingHall(XMFLOAT3(5, 0, 5), XMFLOAT3(0, 225, 0));
+
+		GameUtilities::GenerateTower(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateCart(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0,0,0));
+
+		GameUtilities::GenerateStraw(XMFLOAT3(-2.5, 0, 2), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateDebris1(XMFLOAT3(-2.5, 0, 5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRubble1(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRubble2(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));
 
 #ifdef _DEBUG
 		//GameUtilities::AddGameObject(golemCollider);
