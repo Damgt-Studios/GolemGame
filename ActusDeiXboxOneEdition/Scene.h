@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "Player.h"
 #include "ResourceManager.h"
 #include "../Game/GameUtilities.h"
 #include "../Game/GameObjectClasses.h"
@@ -29,14 +28,28 @@ namespace ADGameplay
 		};
 
 		std::vector<Light>			sceneLights;
-		std::vector<PBRArguments>	PBRModels;
-		std::vector<PBRArguments>	PBRStaticAssets;
-		std::vector<PBRArguments>	tinyEssence;
-		std::vector<PBRArguments>	triggers;
-		std::vector<PBRArguments>	Minions;
-		std::vector<PBRArguments>	colliderBoxes;
-		std::vector<PhysicsArgs>	PhysicsArguments;
-		std::vector<ADPhysics::AABB>PhysicsColliders;
+		ADResource::ADGameplay::Golem* golem;
+		Renderable* tempPlane;
+
+		//Minions
+		std::vector<Destructable*> stoneMinions;
+		std::vector<Destructable*> waterMinions;
+		std::vector<Destructable*> fireMinions;
+		std::vector<Destructable*> woodMinions;
+
+		//Minion AI
+		std::vector<ADAI::AIUnit*> stoneMinionsAI;
+		std::vector<ADAI::AIUnit*> waterMinionsAI;
+		std::vector<ADAI::AIUnit*> fireMinionsAI;
+		std::vector<ADAI::AIUnit*> woodMinionsAI;
+
+		//Animation vecters
+		std::vector<std::string> animations;
+		std::vector<std::string> stoneMinionAnimations;
+		std::vector<std::string> waterMinionAnimations;
+		std::vector<std::string> fireMinionAnimations;
+		std::vector<std::string> woodMinionAnimations;
+
 		
 
 		void InitializeScene()
@@ -79,32 +92,59 @@ namespace ADGameplay
 			light1.lightRadius = 100;
 			ResourceManager::AddLight(light1);
 
-			//PBR models
-			PBRModels.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0) });
+			sceneLights.push_back(light);
+			sceneLights.push_back(light1);
 
-			//Static Assets
-			PBRStaticAssets.push_back({ "files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0) });
-			PBRStaticAssets.push_back({ "files/models/plane.wobj", XMFLOAT3(0, -0.25f, 0), XMFLOAT3(20, 10, 20), XMFLOAT3(0, 0, 0) });
+			float mapWidth = 1000;
+			float mapHeight = 1000;
+			tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0));
 
-			//Collectables
-			for (int i = 0; i < 10; ++i)
+			
+			animations.push_back("files/models/Golem_1_Idle.animfile");
+			animations.push_back("files/models/Golem_1_Born.animfile");
+			animations.push_back("files/models/Golem_1_Run.animfile");
+			animations.push_back("files/models/Golem_1_Death.animfile");
+			animations.push_back("files/models/Golem_1_Kick.animfile");
+			
+			stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Idle.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Idle.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
+
+			ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
+			golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+
+			for (int i = 0; i < 10; i++)
 			{
-				tinyEssence.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(i * 5 + -10, 1, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0) });
+				stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE]));
+				waterMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", waterMinionAnimations, XMFLOAT3(-130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+				waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER]));
+				fireMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, XMFLOAT3(130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+				fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE]));
+				woodMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
+				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD]));
 			}
 
-			//Triggers
-			triggers.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0) });
+			Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c8 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(250, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c9 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(450, 0, 250), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-200, 0, 300), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c5 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-300, 0, 400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			Renderable* c6 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-400, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 
-			//Enemies
-			enemyModels.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0) });
-
-			//Colliders
-			colliderBoxes.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0) });
-			colliderBoxes.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(0, 5, 15), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0) });
-
-			//physics colliders
-			PhysicsColliders.push_back(ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2)));
-			PhysicsColliders.push_back(ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2)));
+			c1->physicsType = ADResource::ADGameplay::STATIC;
+			c2->physicsType = ADResource::ADGameplay::STATIC;
+			c3->physicsType = ADResource::ADGameplay::STATIC;
+			c4->physicsType = ADResource::ADGameplay::STATIC;
+			c5->physicsType = ADResource::ADGameplay::STATIC;
+			c6->physicsType = ADResource::ADGameplay::STATIC;
+			c7->physicsType = ADResource::ADGameplay::STATIC;
+			c8->physicsType = ADResource::ADGameplay::STATIC;
+			c9->physicsType = ADResource::ADGameplay::STATIC;
 		}
 
 		void UpdateEnemies()
@@ -122,105 +162,13 @@ namespace ADGameplay
 		void LoadScene(const char* filename)
 		{
 			//InitializeScene();
-			
-			std::fstream file{ filename, std::ios_base::in | std::ios_base::binary };
-
-			assert(file.is_open());
-
-			uint32_t NumLights;
-			file.read((char*)&NumLights, sizeof(uint32_t));
-			sceneLights.resize(NumLights);
-			file.read((char*)sceneLights.data(), sizeof(Light) * NumLights);
-
-			uint32_t NumPBRMode;
-			file.read((char*)&NumPBRMode, sizeof(uint32_t));
-			PBRModels.resize(NumPBRMode);
-			file.read((char*)PBRModels.data(), sizeof(PBRArguments) * NumPBRMode);
-
-			uint32_t NumPBRStaticAssets;
-			file.read((char*)&NumPBRStaticAssets, sizeof(uint32_t));
-			PBRStaticAssets.resize(NumPBRStaticAssets);
-			file.read((char*)PBRStaticAssets.data(), sizeof(PBRArguments) * NumPBRStaticAssets);
-
-			uint32_t NumTinyEssence;
-			file.read((char*)&NumTinyEssence, sizeof(uint32_t));
-			tinyEssence.resize(NumTinyEssence);
-			file.read((char*)tinyEssence.data(), sizeof(PBRArguments) * NumTinyEssence);
-
-			uint32_t NumTriggers;
-			file.read((char*)&NumTriggers, sizeof(uint32_t));
-			triggers.resize(NumTriggers);
-			file.read((char*)triggers.data(), sizeof(PBRArguments) * NumTriggers);
-
-			uint32_t NumEnemies;
-			file.read((char*)&NumEnemies, sizeof(uint32_t));
-			enemyModels.resize(NumEnemies);
-			file.read((char*)enemyModels.data(), sizeof(PBRArguments) * NumEnemies);
-
-			uint32_t NumColliders;
-			file.read((char*)&NumColliders, sizeof(uint32_t));
-			colliderBoxes.resize(NumColliders);
-			file.read((char*)colliderBoxes.data(), sizeof(PBRArguments) * NumColliders);
-
-			uint32_t NumPhysics;
-			file.read((char*)&NumPhysics, sizeof(uint32_t));
-			PhysicsArguments.resize(NumPhysics);
-			file.read((char*)PhysicsArguments.data(), sizeof(PhysicsArgs) * NumPhysics);
-
-			for (int i = 0; i < NumPhysics; i++)
-			{
-				PhysicsColliders.push_back((ADPhysics::AABB(PhysicsArguments[i].A, PhysicsArguments[i].B)));
-			}
-
-			file.close();
 		}
 
-		void SaveSceneState(const char* fileName)
-		{
-			std::ofstream file(fileName, std::ios::trunc | std::ios::binary | std::ios::out);
-
-			assert(file.is_open());
-
-			uint32_t NumLights = static_cast<uint32_t>(sceneLights.size());
-			uint32_t NumPBRModels = static_cast<uint32_t>(PBRModels.size());
-			uint32_t NumPBRStaticAssets = static_cast<uint32_t>(PBRStaticAssets.size());
-			uint32_t NumTinyEssence = static_cast<uint32_t>(tinyEssence.size());
-			uint32_t NumTriggers = static_cast<uint32_t>(triggers.size());
-			uint32_t NumEnemies = static_cast<uint32_t>(enemyModels.size());
-			uint32_t NumColliders = static_cast<uint32_t>(colliderBoxes.size());
-			uint32_t NumPhysics = static_cast<uint32_t>(PhysicsColliders.size());
-
-			file.write((const char*)&NumLights, sizeof(uint32_t));
-			file.write((const char*)sceneLights.data(), sizeof(Light) * sceneLights.size());
-			file.write((const char*)&NumPBRModels, sizeof(uint32_t));
-			file.write((const char*)PBRModels.data(), sizeof(PBRArguments) * PBRModels.size());
-			file.write((const char*)&NumPBRStaticAssets, sizeof(uint32_t));
-			file.write((const char*)PBRStaticAssets.data(), sizeof(PBRArguments) * PBRStaticAssets.size());
-			file.write((const char*)&NumTinyEssence, sizeof(uint32_t));
-			file.write((const char*)tinyEssence.data(), sizeof(PBRArguments) * tinyEssence.size());
-			file.write((const char*)&NumTriggers, sizeof(uint32_t));
-			file.write((const char*)triggers.data(), sizeof(PBRArguments) * triggers.size());
-			file.write((const char*)&NumEnemies, sizeof(uint32_t));
-			file.write((const char*)enemyModels.data(), sizeof(PBRArguments) * enemyModels.size());
-			file.write((const char*)&NumColliders, sizeof(uint32_t));
-			file.write((const char*)colliderBoxes.data(), sizeof(PBRArguments) * colliderBoxes.size());
-			file.write((const char*)&NumPhysics, sizeof(uint32_t));
-			file.write((const char*)PhysicsColliders.data(), sizeof(ADPhysics::AABB) * PhysicsColliders.size());
-
-
-			file.close();
-		}
+		
 
 		void destroy()
 		{
 			sceneLights.clear();
-			PBRModels.clear();
-			PBRStaticAssets.clear();
-			tinyEssence.clear();
-			triggers.clear();
-			enemyModels.clear();
-			colliderBoxes.clear();
-			PhysicsColliders.clear();
 		}
 
 		void Update()
@@ -230,48 +178,7 @@ namespace ADGameplay
 
 		void Render()
 		{
-			//Render the Level Here
-			RenderEnemies();
-			for (int i = 0; i < sceneLights.size(); i++)
-			{
-				ResourceManager::AddLight(sceneLights[i]);
-			}
-
-			for (int i = 0; i < PBRModels.size(); i++)
-			{
-				ResourceManager::AddPBRModel((string)PBRModels[i].filePath.data(), PBRModels[i].position, PBRModels[i].scale, PBRModels[i].rotation);
-			}
-
-			for (int i = 0; i < PBRStaticAssets.size(); i++)
-			{
-				GameUtilities::AddGameObject(GameUtilities::AddPBRStaticAsset((string)PBRStaticAssets[i].filePath.data(), PBRStaticAssets[i].position, PBRStaticAssets[i].scale, PBRStaticAssets[i].rotation));
-			}
-
-			for (int i = 0; i < tinyEssence.size(); i++)
-			{
-				GameUtilities::AddGameObject(GameUtilities::AddTinyEssenceFromModelFile((string)tinyEssence[i].filePath.data(), tinyEssence[i].position, tinyEssence[i].scale, tinyEssence[i].rotation));
-			}
-
-			for (int i = 0; i < triggers.size(); i++)
-			{
-				GameUtilities::AddGameObject(GameUtilities::AddEndGameTriggerFromModelFile((string)triggers[i].filePath.data(), triggers[i].position, triggers[i].scale, triggers[i].rotation));
-			}
-
-			for (int i = 0; i < enemyModels.size(); i++)
-			{
-				//GameUtilities::AddGameObject(GameUtilities::AddEnemyFromModelFile((string)enemyModels[i].filePath.data(), enemyModels[i].position, enemyModels[i].scale, enemyModels[i].rotation));
-			}
-
-			for (int i = 0; i < colliderBoxes.size(); i++)
-			{
-				Renderable* tempC = GameUtilities::AddColliderBox((string)colliderBoxes[i].filePath.data(), colliderBoxes[i].position, colliderBoxes[i].scale, colliderBoxes[i].rotation);
-				if (i < PhysicsColliders.size())
-				{
-					tempC->colliderPtr = &PhysicsColliders[i];
-					tempC->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-				}
-				GameUtilities::AddGameObject(tempC);
-			}
+		
 		}
 	};
 }
