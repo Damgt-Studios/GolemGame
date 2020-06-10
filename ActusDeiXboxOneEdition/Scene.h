@@ -19,7 +19,8 @@ namespace ADGameplay
 
 		struct PBRArguments
 		{
-			std::array<char, 260> filePath;
+			std::array<char, 260> Model;
+			std::array<char, 260> Texture;
 			XMFLOAT3 position, scale, rotation;
 		};
 		struct PhysicsArgs 
@@ -32,7 +33,7 @@ namespace ADGameplay
 		std::vector<PBRArguments>	PBRStaticAssets;
 		std::vector<PBRArguments>	tinyEssence;
 		std::vector<PBRArguments>	triggers;
-		std::vector<PBRArguments>	enemyModels;
+		std::vector<PBRArguments>	Minions;
 		std::vector<PBRArguments>	colliderBoxes;
 		std::vector<PhysicsArgs>	PhysicsArguments;
 		std::vector<ADPhysics::AABB>PhysicsColliders;
@@ -58,8 +59,8 @@ namespace ADGameplay
 				light.ambientDown =
 				light.specular =
 				XMFLOAT4(1, 1, 1, 1);
+			ResourceManager::AddLight(light);
 
-			sceneLights.push_back(light);
 			// Point light
 			Light light1;
 			ZeroMemory(&light1, sizeof(Light));
@@ -76,8 +77,7 @@ namespace ADGameplay
 			light1.lightType = (int)LIGHTTYPE::POINT;
 			light1.position = XMFLOAT4(10, 0, 0, 1);
 			light1.lightRadius = 100;
-			
-			sceneLights.push_back(light1);
+			ResourceManager::AddLight(light1);
 
 			//PBR models
 			PBRModels.push_back({ "files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0) });
@@ -259,7 +259,7 @@ namespace ADGameplay
 
 			for (int i = 0; i < enemyModels.size(); i++)
 			{
-				GameUtilities::AddGameObject(GameUtilities::AddEnemyFromModelFile((string)enemyModels[i].filePath.data(), enemyModels[i].position, enemyModels[i].scale, enemyModels[i].rotation));
+				//GameUtilities::AddGameObject(GameUtilities::AddEnemyFromModelFile((string)enemyModels[i].filePath.data(), enemyModels[i].position, enemyModels[i].scale, enemyModels[i].rotation));
 			}
 
 			for (int i = 0; i < colliderBoxes.size(); i++)
