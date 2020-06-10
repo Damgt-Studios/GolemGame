@@ -277,18 +277,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADAI.h" />
+    <ClInclude Include="ADEventSystem.h" />
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADMemoryManager.h" />
+    <ClInclude Include="ADPathfinding.h" />
+    <ClInclude Include="ADParticles.h" />
     <ClInclude Include="ADPhysics.h" />
     <ClInclude Include="ADQuadTree.h" />
     <ClInclude Include="ADUserInterface.h" />
+    <ClInclude Include="AnimationStateMachine.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
@@ -298,8 +301,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ADAI.cpp" />
+    <ClCompile Include="ADEventSystem.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
+    <ClCompile Include="ADPathfinding.cpp" />
     <ClCompile Include="ADUserInterface.cpp" />
+    <ClCompile Include="AnimationStateMachine.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -315,7 +321,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />

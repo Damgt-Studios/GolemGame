@@ -15,6 +15,7 @@
 #include <fstream>
 
 #include "Types.h"
+#include "ADParticles.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;

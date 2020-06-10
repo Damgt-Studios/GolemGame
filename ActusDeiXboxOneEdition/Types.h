@@ -142,7 +142,7 @@ namespace ADResource
 #endif
 		};
 
-		struct SimpleAnimModel :  public SimpleModel
+		struct SimpleAnimModel : public SimpleModel
 		{
 #ifdef AD_MEMORY_DEFAULT
 			std::vector<SimpleVertexAnim> vertices;
@@ -150,6 +150,10 @@ namespace ADResource
 			std::vector<bones> skeleton;
 			std::vector<XMMATRIX> inverse_transforms;
 			std::vector<anim_clip> animations;
+			int animationNewIndex = 0;
+			int animationCurrentIndex = 0;
+
+			bool animationChange = false;
 
 #else
 			ADVector<SimpleVertexAnim> vertices;
@@ -158,30 +162,41 @@ namespace ADResource
 			ADVector<XMMATRIX> inverse_transforms;
 			ADVector<anim_clip> animations;
 #endif
+
 			float elapsedTime = 0;
 			int counter = 0;
 
 			float modifier = 1;
 
 			ComPtr<ID3D11Buffer> animationBuffer;
+			void SetAnimCurrentState(int index)
+			{
+				if (animationNewIndex != index)
+				{
+					animationNewIndex = index;
+					animationChange = true;
+				}
 
+			}
 			std::vector<XMMATRIX> UpdateAnimation(float delta_time)
 			{
 				std::vector<XMMATRIX> positions;
-				positions.resize(animations[0].frames[0].jointsMatrix.size());
+
+
+				positions.resize(animations[animationCurrentIndex].frames[0].jointsMatrix.size());
 
 				elapsedTime += delta_time;
 
 				if (animations.size() > 0)
 				{
-					modifier = animations[0].frames.size();
+					modifier = animations[animationCurrentIndex].frames.size();
 
 					//Animations
 
 					if (elapsedTime >= 1.0f / modifier)
 					{
 						counter++;
-						if (counter == animations[0].frames.size())
+						if (counter == animations[animationCurrentIndex].frames.size())
 						{
 							counter = 1;
 						}
@@ -189,29 +204,41 @@ namespace ADResource
 						elapsedTime = 0;
 					}
 
-					for (int i = animations[0].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+					for (int i = animations[animationCurrentIndex].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
 					{
 						int nextKeyframe = 0;
 
-						if (counter + 1 < animations[0].frames.size())
+						if (counter + 1 < animations[animationCurrentIndex].frames.size())
 						{
 							nextKeyframe = counter + 1;
 						}
-						else if (counter + 1 == animations[0].frames.size())
+						else if (counter + 1 == animations[animationCurrentIndex].frames.size())
 						{
 							nextKeyframe = 1;
 						}
+						XMMATRIX current = animations[animationCurrentIndex].frames[counter].jointsMatrix[i];
+						XMMATRIX next = animations[animationCurrentIndex].frames[nextKeyframe].jointsMatrix[i];
 
-						XMMATRIX current = animations[0].frames[counter].jointsMatrix[i];
-						XMMATRIX next = animations[0].frames[nextKeyframe].jointsMatrix[i];
+						if (animationChange == true)
+						{
+							current = animations[animationCurrentIndex].frames[counter].jointsMatrix[i];
+							next = animations[animationNewIndex].frames[0].jointsMatrix[i];
+
+							animationCurrentIndex = animationNewIndex;
+							counter = 0;
+							animationChange = false;
+							i = animations[animationCurrentIndex].frames[counter].jointsMatrix.size() - 1;
+
+						}
 
 						XMMATRIX Tween = ADMath::MatrixLerp(current, next, elapsedTime * modifier);
 
 						XMMATRIX matrixToGPU = XMMatrixMultiply(inverse_transforms[i], Tween);
 						positions[i] = matrixToGPU;
 					}
-				}
 
+				}
+				animationChange = false;
 				return positions;
 			}
 		};
@@ -337,7 +364,7 @@ namespace ADResource
 
 			bool HasEffectID(UINT _sourceID, UINT _instanceID)
 			{
-				for (int i = 0; i < effects.size(); ++i)
+				for (int i = 0; i < effects.size(); i++)
 				{
 					if (effects[i].get()->sourceID == _sourceID)
 					{
@@ -396,7 +423,7 @@ namespace ADResource
 				transform.r[1] = newRot.r[1];
 				transform.r[2] = newRot.r[2];
 			}
-			void RotationYBasedOnView( XMMATRIX& cam,float angle, float PI)
+			void RotationYBasedOnView(XMMATRIX& cam, float angle, float PI)
 			{
 				angle *= (180.0f / PI);
 
@@ -407,7 +434,7 @@ namespace ADResource
 
 				angle += -cameulerAngles.m128_f32[1];
 				angle *= (PI / 180.0f);
- 
+
 				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
 
 				SetRotationMatrix(RotationY);
@@ -431,7 +458,7 @@ namespace ADResource
 				}
 				else
 				{
-					Yaw = atan2(-transform.r[2].m128_f32[0], transform.r[0].m128_f32[0] );
+					Yaw = atan2(-transform.r[2].m128_f32[0], transform.r[0].m128_f32[0]);
 					Pitch = asin(transform.r[1].m128_f32[0]);
 					Roll = atan2(-transform.r[1].m128_f32[2], transform.r[1].m128_f32[1]);
 				}
@@ -527,7 +554,7 @@ namespace ADResource
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.A->transform.r[3]), current.A->pmat, current.m);
 				}
 				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
-				else 
+				else
 				{
 					XMFLOAT4 aTemp = current.A->Velocity, bTemp = current.B->Velocity;
 					const ADPhysics::PhysicsMaterial aMat = current.A->pmat, bMat = current.B->pmat;
@@ -540,7 +567,7 @@ namespace ADResource
 		}
 
 
-		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time) 
+		static bool GroundClamping(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time)
 		{
 			ADPhysics::Segment line = ADPhysics::Segment((XMFLOAT3&)(obj->transform.r[3] + XMVectorSet(0, 5, 0, 0)), (XMFLOAT3&)(obj->transform.r[3] - XMVectorSet(0, 5, 0, 0)));
 
@@ -562,15 +589,11 @@ namespace ADResource
 		static bool GroundClampingF(GameObject* obj, std::vector<ADPhysics::Triangle>& ground, float delta_time, QuadTree* tree)
 		{
 			XMFLOAT3 SpyrosPosition = VectorToFloat3(obj->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 100, 100));
+			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 25, 25));
 			std::vector<ADPhysics::Triangle> trisInRange;
 			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
 			{
-				for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-				{
-					trisInRange.push_back(*optimizedPoints[i].tri);
-				}
-
+				trisInRange.push_back(*optimizedPoints[i].tri);
 			}
 
 			return GroundClamping(obj, trisInRange, delta_time);

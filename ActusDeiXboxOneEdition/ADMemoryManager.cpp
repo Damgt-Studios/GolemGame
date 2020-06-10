@@ -7,14 +7,22 @@ MemoryManager memoryManager;
 MemoryManager::MemoryManager()
 {
 	// Allocate 5 GB of RAM for application
-	memoryBuffer = (char*)calloc(FIVE_GB, sizeof(char));
+	memoryBuffer = new char[FIVE_GB];
+	memset(memoryBuffer, NULL, FIVE_GB);
 	allocatedSize = 0;
-	memset(handles, NULL, ADMEMORY_ARRAY_SIZE);
+	memPointerIndex = 0;
+	sizesIndex = 0;
+	handleIndex = 0;
+	availableHandle = 0;
+	memset(memPointers, NULL, ADMEMORY_ARRAY_SIZE * sizeof(char*));
+	memset(sizes, NULL, ADMEMORY_ARRAY_SIZE * sizeof(size_t));
+	memset(handles, NULL, ADMEMORY_ARRAY_SIZE * sizeof(char*));
+	assert(memoryBuffer);
 }
 
 MemoryManager::~MemoryManager()
 {
-	free(memoryBuffer);
+	delete[] memoryBuffer;
 }
 
 void* MemoryManager::Allocate(size_t size)
@@ -27,6 +35,7 @@ void* MemoryManager::Allocate(size_t size)
 		{
 			memPointers[memPointerIndex++] = memoryBuffer;
 			handles[handleIndex] = memoryBuffer;
+			availableHandle = handleIndex;
 			handleIndex = GetNextHandle();
 			return memPointers[memPointerIndex - 1];
 		}
@@ -34,12 +43,12 @@ void* MemoryManager::Allocate(size_t size)
 		{
 			memPointers[memPointerIndex++] = memPointers[memPointerIndex - 1] + sizes[sizesIndex - 2];
 			handles[handleIndex] = memPointers[memPointerIndex - 1];
+			availableHandle = handleIndex;
 			handleIndex = GetNextHandle();
 			return memPointers[memPointerIndex - 1];
 		}
 	}
-	assert(NULL);
-	return nullptr;
+	throw std::bad_alloc();
 }
 
 void MemoryManager::Deallocate(void* object, size_t hIndex)
@@ -69,13 +78,16 @@ void MemoryManager::Deallocate(void* object, size_t hIndex)
 				--memPointerIndex;
 				--sizesIndex;
 				handleIndex = GetNextHandle();
-				availableHandle = GetNextHandle();
+				availableHandle = handleIndex;
 			}
 			else
 			{
+				size_t sizeBeforeIndex = 0;
+				for (int i = 0; i < index; ++i)
+					sizeBeforeIndex += sizes[i];
 				memset(memPointers[index], 0, size);
 				allocatedSize -= size;
-				memcpy(memPointers[index], memPointers[index] + size, allocatedSize);
+				memcpy(memPointers[index], memPointers[index] + size, allocatedSize - sizeBeforeIndex);
 				for (int i = 0; i <= ADMEMORY_ARRAY_SIZE; ++i)
 				{
 					if (handles[i])
@@ -93,7 +105,7 @@ void MemoryManager::Deallocate(void* object, size_t hIndex)
 				memPointers[--memPointerIndex] = nullptr;
 				sizes[--sizesIndex] = 0;
 				handleIndex = GetNextHandle();
-				availableHandle = GetNextHandle();
+				availableHandle = handleIndex;
 			}
 		}
 	}
@@ -118,7 +130,6 @@ size_t MemoryManager::GetNextHandle()
 		if (handles[i] == NULL)
 			return i;
 	}
-	assert(NULL);
-	return 0;
+	throw std::bad_alloc();
 }
 #endif
