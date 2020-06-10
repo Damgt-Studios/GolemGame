@@ -81,7 +81,7 @@ namespace ADPhysics
 		AABB(XMFLOAT3 Position, XMFLOAT3 Size)
 		{
 			Pos = Position;
-			HalfSize = Size;
+			HalfSize = VectorToFloat3(Float3ToVector(Size) / 2);
 			Max = XMFLOAT3(Pos.x + HalfSize.x, Pos.y + HalfSize.y, Pos.z + HalfSize.z);
 			Min = XMFLOAT3(Pos.x - HalfSize.x, Pos.y - HalfSize.y, Pos.z - HalfSize.z);
 			Extents = XMFLOAT3(Max.x - Pos.x, Max.y - Pos.y, Max.z - Pos.z);
@@ -105,15 +105,15 @@ namespace ADPhysics
 		}
 
 		virtual float GetWidth() {
-			return HalfSize.x;
+			return HalfSize.x * 2;
 		}
 
 		virtual float GetHeight() {
-			return HalfSize.y;
+			return HalfSize.y * 2;
 		}
 
 		virtual float GetLength() {
-			return HalfSize.z;
+			return HalfSize.z * 2;
 		}
 	};
 
@@ -135,7 +135,7 @@ namespace ADPhysics
 			AxisX = (XMFLOAT3&)Transform.r[0];
 			AxisY = (XMFLOAT3&)Transform.r[1];
 			AxisZ = (XMFLOAT3&)Transform.r[2];
-			HalfSize = Size;
+			HalfSize = VectorToFloat3(Float3ToVector(Size) / 2);
 			type = ColliderType::Obb;
 		}
 
@@ -156,15 +156,15 @@ namespace ADPhysics
 		}
 
 		virtual float GetWidth() {
-			return HalfSize.x;
+			return HalfSize.x * 2;
 		}
 
 		virtual float GetHeight() {
-			return HalfSize.y;
+			return HalfSize.y * 2;
 		}
 
 		virtual float GetLength() {
-			return HalfSize.z;
+			return HalfSize.z * 2;
 		}
 	};
 
@@ -214,7 +214,7 @@ namespace ADPhysics
 			AxisY = (XMFLOAT3&)Transform.r[1];
 			AxisZ = (XMFLOAT3&)Transform.r[2];
 			Normal = AxisY;
-			HalfSize = Size;
+			HalfSize = VectorToFloat3(Float3ToVector(Size) / 2);
 			type = ColliderType::Plane;
 		}
 
@@ -231,15 +231,15 @@ namespace ADPhysics
 		}
 
 		virtual float GetWidth() {
-			return HalfSize.x;
+			return HalfSize.x * 2;
 		}
 
 		virtual float GetHeight() {
-			return HalfSize.y;
+			return HalfSize.y * 2;
 		}
 
 		virtual float GetLength() {
-			return HalfSize.z;
+			return HalfSize.z * 2;
 		}
 		
 	};

@@ -76,7 +76,7 @@ AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 positio
 	return InitializePBRModel(modelname, position, scale, rotation, shader);
 }
 
-AD_ULONG ResourceManager::AddRenderableCollider(ADPhysics::Collider* collider)
+AD_ULONG ResourceManager::AddRenderableCollider(XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADUtils::SHADER shader = { 0 };
 	strcpy_s(shader.vshader, "files\\shaders\\collider_vs.hlsl");
@@ -84,18 +84,10 @@ AD_ULONG ResourceManager::AddRenderableCollider(ADPhysics::Collider* collider)
 
 	shader.wireframe = false;
 
-	std::string modelname = "";
+	std::string modelname = "files\\models\\Cube.mesh";
 
-	if (collider->type == ADPhysics::ColliderType::Aabb || collider->type == ADPhysics::ColliderType::Obb)
-	{
-		modelname = "files\\models\\Cube.mesh";
-	}
-	else if (collider->type == ADPhysics::ColliderType::Sphere)
-	{
-		modelname = "files\\models\\Sphere.mesh";
-	}
 
-	return InitializeSimpleModel(modelname, std::string(), collider->Pos, XMFLOAT3(100,100,100), XMFLOAT3(0,0,0), shader);
+	return InitializeSimpleModel(modelname, std::string(), pos, scale, rotation, shader);
 }
 
 AD_ULONG ResourceManager::AddLight(ADResource::ADRenderer::Light& light)

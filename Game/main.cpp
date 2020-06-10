@@ -68,7 +68,7 @@ private:
 
 	float yaw = 180.0f;
 	float pitch = 30.0f;
-	
+
 	float default_yaw = 180.0f;
 	float default_pitch = 30.0f;
 
@@ -88,7 +88,8 @@ public:
 		{
 			Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode =
 				Windows::UI::ViewManagement::ApplicationViewWindowingMode::FullScreen;
-		} else
+		}
+		else
 		{
 			Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode =
 				Windows::UI::ViewManagement::ApplicationViewWindowingMode::CompactOverlay;
@@ -143,7 +144,7 @@ public:
 		//sfx.push_back("files\\audio\\SFX_Player_Water_Splash.wav");
 		//audio_manager = new AudioManager;
 		//audio_manager->Initialize("files\\audio\\main_theme.wav", sfx);
-		
+
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -156,10 +157,10 @@ public:
 		Light light;
 		ZeroMemory(&light, sizeof(Light));
 		light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-		light.diffuse = 
-			light.ambientUp = 
-			light.ambientDown = 
-			light.specular = 
+		light.diffuse =
+			light.ambientUp =
+			light.ambientDown =
+			light.specular =
 			XMFLOAT4(1, 1, 1, 1);
 		light.ambientIntensityDown = .1;
 		light.ambientIntensityUp = .1;
@@ -194,15 +195,20 @@ public:
 		std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
 
-		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0.00001, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//golem->SetAudio(audio_manager);
+
+		Renderable* cube = GameUtilities::AddSimpleAsset("files/models/Cube.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+
 #ifdef _DEBUG
-		Renderable* golemCollider = GameUtilities::AddRenderableCollider(golem->colliderPtr);
+		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 #endif
-		
+
+		cubeCollider->colliderPtr = nullptr;
 		//////////////////////////////
-    //THis is the stuff for you.
+	//THis is the stuff for you.
 		ADAI::FlockingGroup commandFlock;
 		ADAI::FlockingGroup idleFlock;
 
@@ -215,9 +221,9 @@ public:
 		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e6 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(15, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
 		//Destructable* e7 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(30, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
-		
-		
-		
+
+
+
 
 		ADAI::AIUnit* ai1 = GameUtilities::AttachMinionAI(e2, &commandFlock, &idleFlock);
 		ADAI::AIUnit* ai2 = GameUtilities::AttachMinionAI(e3, &commandFlock, &idleFlock);
@@ -239,20 +245,24 @@ public:
 			GameUtilities::AddGameObject(dynamic_cast<GameObject*>(spyro));
 		}*/
 		// Comment this out - will run at 1fps
+
+
+		GameUtilities::AddGameObject(cube);
+
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
 		//GameUtilities::AddGameObject(c1);
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
-		GameUtilities::AddGameObject(e2);
-		GameUtilities::AddGameObject(e3);
-		GameUtilities::AddGameObject(e4);
+		//GameUtilities::AddGameObject(e2);
+		//GameUtilities::AddGameObject(e3);
+		//GameUtilities::AddGameObject(e4);
 		//GameUtilities::AddGameObject(t1);
 		//GameUtilities::AddGameObject(testPlane);
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
-		GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0,45,0));
+		/*GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0,45,0));
 
 		GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
 
@@ -294,19 +304,20 @@ public:
 
 		GameUtilities::GenerateRubble1(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRubble2(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));*/
 
 #ifdef _DEBUG
-		//GameUtilities::AddGameObject(golemCollider);
+		GameUtilities::AddGameObject(golemCollider);
+		GameUtilities::AddGameObject(cubeCollider);
 #endif
-	
+
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
 		std::vector<ADQuadTreePoint> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
 		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
 		tempPlane->GetWorldMatrix(groundWorld);
-		for(unsigned int i = 0; i < (*planeModel).indices.size(); i+=3)
+		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
 		{
 			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
 			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
@@ -357,18 +368,6 @@ public:
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 
-		// Construct physics stuff
-		test_colider = ADPhysics::AABB(XMFLOAT3(0, 0, 10), XMFLOAT3(2, 2, 2));
-		test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
-		
-		//Needed to add this to the colliders for the collision queue
-		/*c1->colliderPtr = &test_colider;
-		c1->type = OBJECT_TYPE::STATIC;
-
-		c2->colliderPtr = &test_colider1;
-		c2->type = OBJECT_TYPE::STATIC;*/
-
 		titleMusic.Play();
 
 		while (!shutdown)
@@ -394,18 +393,18 @@ public:
 
 			//engine->GetOrbitCamera()->SetRadius(200);
 			engine->GetOrbitCamera()->SetRadius(50);
-			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0,15,0,1)), yaw, pitch, delta_time);
+			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			golem->GetView(view);
-		
+
 
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
 
 			// Physics test
-		
+
 			/*spyro->CheckCollision(c1);
 			spyro->CheckCollision(c2);
 			spyro->CheckCollision(p1);
@@ -415,6 +414,14 @@ public:
 			e3->CheckCollision(spyro);
 			t1->CheckCollision(spyro);*/
 
+#ifdef _DEBUG
+			golemCollider->transform = golem->GetColliderInfo();
+			XMMATRIX colliderLocation = cube->transform;
+
+			cube->colliderPtr = &AABB(VectorToFloat3(colliderLocation.r[3]), XMFLOAT3(1, 1, 1));
+			cube->physicsType = COLLIDABLE;
+			cubeCollider->transform = colliderLocation;
+#endif
 
 			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
 
@@ -428,41 +435,42 @@ public:
 			{
 				for (unsigned int j = 0; j < OBJ_COUNT; j++)
 				{
-					if (i != j) 
+					if (i != j)
 					{
 						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
 						{
 							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
 							{
-								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
+								if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
 								{
-									OBJS[i]->CheckCollision(OBJS[j]);
+									if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+									{
+										OBJS[i]->CheckCollision(OBJS[j]);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-	
+
+			//Resolve all collisions that occurred this frame
+			ADResource::ADGameplay::ResolveCollisions();
 
 			GroundClamping(golem, tree, delta_time);
 
 			GroundClamping(e2, tree, delta_time);
 			GroundClamping(e3, tree, delta_time);
 			GroundClamping(e4, tree, delta_time);
-			
-			//Resolve all collisions that occurred this frame
-			ADResource::ADGameplay::ResolveCollisions();
+
+			GroundClamping(cube, tree, delta_time);
+			cube->transform.r[3].m128_f32[1] += 5;
 
 			// Test
 
 
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
-
-#ifdef _DEBUG
-			golemCollider->transform = golem->GetColliderInfo();
-#endif
 
 			// D3d11 shit
 			if (!engine->Update()) break;
@@ -473,7 +481,7 @@ public:
 			{
 				timer = 0;
 
-				fr = std::to_string(1.0 /delta_time) + " FPS";
+				fr = std::to_string(1.0 / delta_time) + " FPS";
 				tfw = std::wstring(fr.begin(), fr.end());
 				wchar = tfw.c_str();
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
@@ -514,14 +522,16 @@ public:
 			if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
 			{
 				yaw += camera_rotation_thresh * dt;
-			} else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
+			}
+			else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
 			{
 				yaw += -camera_rotation_thresh * dt;
 			}
 			if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::UP)
 			{
 				pitch += -camera_rotation_thresh * dt;
-			} else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
+			}
+			else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
 			{
 				pitch += camera_rotation_thresh * dt;
 			}

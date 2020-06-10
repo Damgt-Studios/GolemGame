@@ -400,9 +400,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	rot = ResourceManager::GetSkybox()->rotation;
 	scale = ResourceManager::GetSkybox()->scale;
 
-	temp = XMMatrixIdentity();
-	//temp = XMMatrixRotationX(XMConvertToRadians(180));
-	temp = XMMatrixMultiply(temp, XMMatrixScaling(1,1,1));
+	temp = XMMatrixScaling(10, 10, 10);
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View

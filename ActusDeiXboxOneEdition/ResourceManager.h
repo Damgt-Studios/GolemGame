@@ -75,7 +75,7 @@ public:
 	static AD_ULONG AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
 
-	static AD_ULONG AddRenderableCollider(ADPhysics::Collider* collider);
+	static AD_ULONG AddRenderableCollider(XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	static AD_ULONG AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static void AddSkybox(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
