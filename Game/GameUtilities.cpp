@@ -253,7 +253,7 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider(XMFLOAT
 	return temp;
 */
 
-std::vector<Renderable*>& GameUtilities::GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -271,7 +271,7 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -290,7 +290,7 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateHouse3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse3(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -309,7 +309,7 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse3(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateHouse4(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse4(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -328,7 +328,7 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse4(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateBarn1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateBarn1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -346,7 +346,7 @@ std::vector<Renderable*>& GameUtilities::GenerateBarn1(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -365,7 +365,7 @@ std::vector<Renderable*>& GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -387,7 +387,7 @@ std::vector<Renderable*>& GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLOAT3 rotation) {
 
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
@@ -404,7 +404,7 @@ std::vector<Renderable*>& GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLO
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -422,7 +422,7 @@ std::vector<Renderable*>& GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -439,7 +439,7 @@ std::vector<Renderable*>& GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateTavern(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateTavern(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -457,7 +457,7 @@ std::vector<Renderable*>& GameUtilities::GenerateTavern(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateTree(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateTree(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -474,7 +474,7 @@ std::vector<Renderable*>& GameUtilities::GenerateTree(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateLadder(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateLadder(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -490,7 +490,7 @@ std::vector<Renderable*>& GameUtilities::GenerateLadder(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRock1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRock1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -506,7 +506,7 @@ std::vector<Renderable*>& GameUtilities::GenerateRock1(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateLamp(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateLamp(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -522,7 +522,7 @@ std::vector<Renderable*>& GameUtilities::GenerateLamp(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateMeetingHall(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateMeetingHall(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -542,7 +542,7 @@ std::vector<Renderable*>& GameUtilities::GenerateMeetingHall(XMFLOAT3 pos, XMFLO
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -562,7 +562,7 @@ std::vector<Renderable*>& GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 ro
 	return temp;
 }
 
-std::vector<Renderable*>& GameUtilities::GenerateCart(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateCart(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -578,7 +578,7 @@ std::vector<Renderable*>& GameUtilities::GenerateCart(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -594,7 +594,7 @@ std::vector<Renderable*>& GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateDebris1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateDebris1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -610,7 +610,7 @@ std::vector<Renderable*>& GameUtilities::GenerateDebris1(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -627,7 +627,7 @@ std::vector<Renderable*>& GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -644,7 +644,7 @@ std::vector<Renderable*>& GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else

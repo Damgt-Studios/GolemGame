@@ -352,9 +352,9 @@ public:
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
-		/*GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0,45,0));
+		Building* house1 = new Building(5, 5, XMFLOAT3(0, 0, -5), XMFLOAT3(0, 45, 0), GameUtilities::GenerateHouse1);
 
-		GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
+		/*GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
 
 		GameUtilities::GenerateHouse3(XMFLOAT3(0, 0, -5), XMFLOAT3(0, -45, 0));
 
@@ -617,6 +617,7 @@ public:
 			}
 		}
 		audioEngine.Shutdown();
+		tree->Shutdown();
 	}
 	virtual void Uninitialize() {}
 

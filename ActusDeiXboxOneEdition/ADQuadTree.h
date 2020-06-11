@@ -148,4 +148,17 @@ public:
 		SouthEast = new QuadTree(se);
 		this->divided = true;
 	};
+
+	void Shutdown()
+	{
+		if (divided)
+		{
+			NorthEast->Shutdown();
+			NorthWest->Shutdown();
+			SouthWest->Shutdown();
+			SouthEast->Shutdown();
+		}
+
+		delete this;
+	}
 };
