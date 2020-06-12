@@ -354,7 +354,9 @@ public:
 
 		Building* house1 = new Building(5, 5, XMFLOAT3(0, 0, -5), XMFLOAT3(0, 45, 0), GameUtilities::GenerateHouse1);
 
-		/*GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
 
 		GameUtilities::GenerateHouse3(XMFLOAT3(0, 0, -5), XMFLOAT3(0, -45, 0));
 
@@ -394,7 +396,7 @@ public:
 
 		GameUtilities::GenerateRubble1(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRubble2(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));*/
+		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));
 
 #ifdef _DEBUG
 #ifdef ShowColliders

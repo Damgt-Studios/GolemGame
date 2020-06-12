@@ -208,8 +208,9 @@ void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, Co
 	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	sdesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+	sdesc.MipLODBias = 0.0f;
 	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 	sdesc.MinLOD = 0;
 
