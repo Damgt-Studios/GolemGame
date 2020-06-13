@@ -231,6 +231,18 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		ChangeMinionGroup(false);
 	}
 
+	// Summon Minions
+	if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing)
+	{
+		SummonMinions();
+	}
+
+	// Eat Minions
+	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing)
+	{
+		EatMinion();
+	}
+
 	// Recall Minions
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
 	{
@@ -466,6 +478,22 @@ void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
 				commandTargetGroup = 0;
 		}
 	}
+}
+
+void ADResource::ADGameplay::Golem::EatMinion()
+{
+	anim_controller->PlayAnimationByName(anims[playerElement].eat.c_str());
+	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].eat.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::SummonMinions()
+{
+	anim_controller->PlayAnimationByName(anims[playerElement].summonMinions.c_str());
+	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].summonMinions.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
 }
 
 //void ADResource::ADGameplay::Golem::OnTrigger(GameObject* other)

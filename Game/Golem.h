@@ -121,6 +121,8 @@ namespace ADResource
 			void RecallMinions();
 			void ChangeElement(bool nextElement);
 			void ChangeMinionGroup(bool nextElement);
+			void EatMinion();
+			void SummonMinions();
 
 
 
