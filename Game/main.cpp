@@ -121,6 +121,7 @@ public:
 
 	virtual void Run()
 	{
+
 		AD_AUDIO::ADAudio audioEngine;
 		audioEngine.Init();
 
@@ -149,6 +150,9 @@ public:
 
 		// Create the engine
 		engine = new Engine;
+
+		DefinitionReader df;
+		df.ReadMasterFile();
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -219,11 +223,10 @@ public:
 #ifdef _DEBUG
 		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		cubeCollider->colliderPtr = nullptr;
 #endif
 
-		cubeCollider->colliderPtr = nullptr;
-		//////////////////////////////
-	//THis is the stuff for you.
+
 		ADAI::FlockingGroup commandFlock;
 		ADAI::FlockingGroup idleFlock;
 
@@ -292,12 +295,11 @@ public:
 		//ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
 		//Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//spyro->testAttack.active = false;
-		//spyro->testAttack.hitboxCount = 1;
-		//spyro->testAttack.cooldownDuration = 0.5;
-		//spyro->testAttack.hitbox = myHitBox;
 
 		// Colliders
+		//Trigger* ess1 = GameUtilities::AddTinyEssenceFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		
+		/*
 		Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 		Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
@@ -316,24 +318,32 @@ public:
 		c6->physicsType = ADResource::ADGameplay::STATIC;
 		c7->physicsType = ADResource::ADGameplay::STATIC;
 		c8->physicsType = ADResource::ADGameplay::STATIC;
-		c9->physicsType = ADResource::ADGameplay::STATIC;
+		c9->physicsType = ADResource::ADGameplay::STATIC;*/
 		
 		float mapWidth = 1000;
 		float mapLength = 1000;
+		//golem->testAttack->hitbox = ess1;  
+
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
 
-		GameUtilities::AddGameObject(cube);
+		//GameUtilities::AddGameObject(cube);
 
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
-		GameUtilities::AddGameObject(c1);
-		GameUtilities::AddGameObject(c2);
-		GameUtilities::AddGameObject(c3);
-		GameUtilities::AddGameObject(c4);
-		GameUtilities::AddGameObject(c5);
-		GameUtilities::AddGameObject(c6);
-		GameUtilities::AddGameObject(c7);
-		GameUtilities::AddGameObject(c8);
-		GameUtilities::AddGameObject(c9);
+
+		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
+		{
+			GameUtilities::AddGameObject(it->second);
+		}
+		//GameUtilities::AddGameObject(ess1);
+		//GameUtilities::AddGameObject(c1);
+		//GameUtilities::AddGameObject(c2);
+		//GameUtilities::AddGameObject(c3);
+		//GameUtilities::AddGameObject(c4);
+		//GameUtilities::AddGameObject(c5);
+		//GameUtilities::AddGameObject(c6);
+		//GameUtilities::AddGameObject(c7);
+		//GameUtilities::AddGameObject(c8);
+		//GameUtilities::AddGameObject(c9);
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
@@ -438,9 +448,6 @@ public:
 
 		float minionWidth = 10;
 
-		//Add Game Objects to their collision groupings
-		//GameObject* passables[1];
-		//passables[0] = a3;
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
@@ -504,11 +511,6 @@ public:
     
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
-
-			
-
-			// Test
-			//spyro->Update(delta_time);
 			// Debug draw
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 

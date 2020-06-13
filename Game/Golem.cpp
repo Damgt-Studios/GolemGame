@@ -14,7 +14,14 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	fireCPtr = &fireCollider;
 
-	stats = new StatSheet();
+	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolemSheet"];
+	testAttack = DefinitionDatabase::Instance()->actionDatabase["GolemPunch"];
+	//testAttack = new Action();		
+	testAttack->active = false;
+	//testAttack->hitboxCount = 1;
+	//testAttack->cooldownDuration = 0.5;
+	//testAttack->attackDuration = 0.5;
+
 
 	flockingGroups = new ADAI::FlockingGroup*[5];
 	for (int i = 0; i < 5; ++i)
@@ -36,6 +43,7 @@ ADResource::ADGameplay::Golem::~Golem()
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
+	testAttack->Update(delta_time);
 	ProcessEffects(delta_time);
 
 	for (int i = 0; i < 5; ++i)
@@ -92,7 +100,7 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 			i--;
 		}
 	}
-	if (stats->health.currentValue <= 0)
+	if (stats->RequestStats("Health")->currentValue <= 0)
 	{
 		//Death();
 	}
@@ -297,7 +305,7 @@ void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine
 	anim_controller = &controller;
 }
 
-iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
+StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
 {
 	return stats;
 }
@@ -340,11 +348,12 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (responseTimer < 0)
 		{
 			responseTimer = 0.2f;
-			stats->token.currentValue--;
-			if (stats->token.currentValue < stats->token.minValue)
-				stats->token.currentValue = 0;
+			stats->RequestStats("Token")->currentValue--;
+			if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+				stats->RequestStats("Token")->currentValue = 0;
 		}
 	}
+
 
 	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 	{
@@ -356,6 +365,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 				playerElement = 0;
 		}
 
+		testAttack->StartAction(&transform);
 	}
 
 	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))

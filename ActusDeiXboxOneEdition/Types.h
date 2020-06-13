@@ -6,6 +6,7 @@
 #include <queue>
 
 #include <string>
+#include <unordered_map>
 #include "ADPhysics.h"
 #include "ADQuadTree.h"
 #include "ADQuadTree.h"
@@ -293,28 +294,62 @@ namespace ADResource
 			int failValue;
 		};
 
-		class iStatSheet
+		class StatSheet
 		{
+			std::unordered_map<std::string, Stat> stats;
 		public:
-			virtual Stat* RequestStats(UINT _statID) { return nullptr; };
+			StatSheet() {};
+			~StatSheet() {};
+			void AddStat(std::string _name)
+			{
+				Stat stat = { 0,0,0,0 };
+				stats[_name] = stat;
+			};
+			void SetMin(std::string _name, int _val)
+			{
+				stats[_name].minValue = _val;
+			};
+			void SetMax(std::string _name, int _val)
+			{
+				stats[_name].maxValue = _val;
+			};
+			void SetCurrent(std::string _name, int _val)
+			{
+				stats[_name].currentValue = _val;
+			};
+			void SetEvent(std::string _name, int _val)
+			{
+				stats[_name].failValue = _val;
+			};
+			Stat* RequestStats(std::string _name)
+			{
+				auto tFoundIt = stats.find(_name);
+				if (tFoundIt == stats.end())
+					return nullptr;
+				return &stats[_name];
+			};
+
 		};
+
 
 		class Effect
 		{
 		protected:
-			float tickDuration;
-			float currentTick;
-			UINT tickCount;
-			std::vector<Stat*> targetedStats;
 
 		public:
+			std::vector<Stat*> targetedStats;
+			float tickDuration;
+			float currentTick;
 			float tickTimer;
 			bool isFinished;
-			UINT targetedStatValue;
+			bool tickOnEnter;
+			bool tickOnExit;
+			UINT tickCount;
 			UINT sourceID;
 			UINT instanceID;
 
-			virtual UINT OnApply(iStatSheet* _targetsStatSheet) { return 0; };
+
+			virtual UINT OnApply(StatSheet* _targetsStatSheet) { return 0; };
 			virtual void Update(float _deltaTime)
 			{
 				if (tickTimer > 0)
@@ -365,7 +400,7 @@ namespace ADResource
 
 			virtual void CheckCollision(GameObject* obj) {};
 
-			virtual iStatSheet* GetStatSheet() { return nullptr; };
+			virtual StatSheet* GetStatSheet() { return nullptr; };
 
 			bool HasEffectID(UINT _sourceID, UINT _instanceID)
 			{
