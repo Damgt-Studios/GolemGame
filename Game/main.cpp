@@ -192,12 +192,22 @@ public:
 		ResourceManager::AddLight(light1);
 
 		std::vector<std::string> animations;
-		animations.push_back("files/models/Golem_1_Idle.animfile");
 		animations.push_back("files/models/Golem_1_Born.animfile");
-		animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Golem_1_Command.animfile");
 		animations.push_back("files/models/Golem_1_Death.animfile");
+		animations.push_back("files/models/Golem_1_Eat.animfile");
+		animations.push_back("files/models/Golem_1_GroundSlam.animfile");
+		animations.push_back("files/models/Golem_1_Heavy_Hit_Back.animfile");
+		animations.push_back("files/models/Golem_1_Heavy_Hit_Front.animfile");
+		animations.push_back("files/models/Golem_1_Heavy_Hit_Left.animfile");
+		animations.push_back("files/models/Golem_1_Heavy_Hit_Right.animfile");
+		animations.push_back("files/models/Golem_1_Idle.animfile");
+		animations.push_back("files/models/Golem_1_IdleLook.animfile");
 		animations.push_back("files/models/Golem_1_Kick.animfile");
-
+		animations.push_back("files/models/Golem_1_Run.animfile");
+		animations.push_back("files/models/Golem_1_Special.animfile");
+		animations.push_back("files/models/Golem_1_SummonMinions.animfile");
+		animations.push_back("files/models/Golem_1_TowerPunch.animfile");
 
 		std::vector<std::string> stoneMinionAnimations;
 		stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
@@ -219,9 +229,9 @@ public:
 #ifdef _DEBUG
 		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		cubeCollider->colliderPtr = nullptr;
 #endif
 
-		cubeCollider->colliderPtr = nullptr;
 		//////////////////////////////
 	//THis is the stuff for you.
 		ADAI::FlockingGroup commandFlock;
