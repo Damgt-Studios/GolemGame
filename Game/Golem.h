@@ -19,6 +19,7 @@ namespace
 {
 	struct GolemAnimations
 	{
+		std::string born;
 		std::string command;
 		std::string death;
 		std::string eat;

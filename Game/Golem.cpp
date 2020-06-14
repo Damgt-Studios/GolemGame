@@ -271,6 +271,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 
 void ADResource::ADGameplay::Golem::InitAnims()
 {
+	anims[0].born = "Golem_3_Born";
 	anims[0].command = "Golem_3_Command";
 	anims[0].death = "Golem_3_Death";
 	anims[0].eat = "Golem_3_Eat";
@@ -287,6 +288,7 @@ void ADResource::ADGameplay::Golem::InitAnims()
 	anims[0].summonMinions = "Golem_3_SummonMinions";
 	anims[0].towerPunch = "Golem_3_TowerPunch";
 
+	anims[1].born = "Golem_4_Born";
 	anims[1].command = "Golem_4_Command";
 	anims[1].death = "Golem_4_Death";
 	anims[1].eat = "Golem_4_Eat";
@@ -303,6 +305,7 @@ void ADResource::ADGameplay::Golem::InitAnims()
 	anims[1].summonMinions = "Golem_4_SummonMinions";
 	anims[1].towerPunch = "Golem_4_TowerPunch";
 
+	anims[2].born = "Golem_2_Born";
 	anims[2].command = "Golem_2_Command";
 	anims[2].death = "Golem_2_Death";
 	anims[2].eat = "Golem_2_Eat";
@@ -319,6 +322,7 @@ void ADResource::ADGameplay::Golem::InitAnims()
 	anims[2].summonMinions = "Golem_2_SummonMinions";
 	anims[2].towerPunch = "Golem_2_TowerPunch";
 
+	anims[3].born = "Golem_1_Born";
 	anims[3].command = "Golem_1_Command";
 	anims[3].death = "Golem_1_Death";
 	anims[3].eat = "Golem_1_Eat";
