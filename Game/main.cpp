@@ -146,16 +146,41 @@ public:
 		AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
+		AD_AUDIO::AudioSource golemPunchSound;
+		golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemPunchSound.engine = &audioEngine;
+		golemPunchSound.personalVolume = 0.5f;
+		golemPunchSound.restartOnRepeat = false;
+		golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
+		AudioSourceEvent golemPunchEvent(golemPunchSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
 
-		AD_AUDIO::AudioSource golemPunch;
-		golemPunch.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemPunch.engine = &audioEngine;
-		golemPunch.personalVolume = 0.5f;
-		golemPunch.restartOnRepeat = false;
-		golemPunch.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
-		AudioSourceEvent playPunch(golemPunch);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &playPunch);
+		AD_AUDIO::AudioSource golemKickSound;
+		golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemKickSound.engine = &audioEngine;
+		golemKickSound.personalVolume = 0.5f;
+		golemKickSound.restartOnRepeat = false;
+		golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
+		AudioSourceEvent golemKickEvent(golemKickSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
 
+		AD_AUDIO::AudioSource golemSlamSound;
+		golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemSlamSound.engine = &audioEngine;
+		golemSlamSound.personalVolume = 0.5f;
+		golemSlamSound.restartOnRepeat = false;
+		golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
+		AudioSourceEvent golemSlamEvent(golemSlamSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
+
+		AD_AUDIO::AudioSource golemEatMinion;
+		golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemEatMinion.engine = &audioEngine;
+		golemEatMinion.personalVolume = 0.5f;
+		golemEatMinion.restartOnRepeat = false;
+		golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
+		AudioSourceEvent golemEatMinionEvent(golemEatMinion);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
@@ -341,10 +366,6 @@ public:
 
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
 
-		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
-		{
-			GameUtilities::AddGameObject(it->second);
-		}
 		//GameUtilities::AddGameObject(ess1);
 		//GameUtilities::AddGameObject(c1);
 		//GameUtilities::AddGameObject(c2);
@@ -421,6 +442,11 @@ public:
 #ifdef ShowColliders
 		GameUtilities::AddGameObject(golemCollider);
 		GameUtilities::AddGameObject(cubeCollider);
+
+		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
+		{
+			GameUtilities::AddGameObject(it->second);
+		}
 #endif
 #endif
 
@@ -474,11 +500,11 @@ public:
 
 
 
-		FountainEmitter femitter;
-		femitter.Initialize(engine->GetPBRRenderer()->GetRendererResources()->device.Get(), 10, XMFLOAT4(1, 1, 1, 1), L"files\\textures\\Particle_Dust.dds", 100);
-		ParticleEmitterEvent golemPunchParticles(femitter);
-		golemPunchParticles.lifespan = 100.f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+		//FountainEmitter femitter;
+		//femitter.Initialize(engine->GetPBRRenderer()->GetRendererResources()->device.Get(), 100, XMFLOAT4(1, 1, 1, 0), L"files\\textures\\Particle_Dust.dds", 1000);
+		//ParticleEmitterEvent golemPunchParticles(femitter);
+		//golemPunchParticles.lifespan = 1000.f;
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
 
 
 
@@ -553,7 +579,7 @@ public:
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
 			XMFLOAT4X4 persPass;
 			XMStoreFloat4x4(&persPass, pers);
-			femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
+			//femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
 
 #ifdef _DEBUG
 			golemCollider->transform = golem->GetColliderInfo();
@@ -624,7 +650,7 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
-			femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
+			//femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 
 			// Update framerate
 			if (timer > 1)

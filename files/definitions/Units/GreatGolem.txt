@@ -49,10 +49,10 @@ MaxValue=-999999
 Hitbox=GolemConsumeHB:
 AddEffect=GolemConsume
 OffsetX=0
-OffsetZ=1
-Collider_Width=20
-Collider_Height=20
-Collider_Length=20
+OffsetZ=10
+Collider_Width=10
+Collider_Height=10
+Collider_Length=5
 SingleHit=false
 ;
 
@@ -60,6 +60,8 @@ Action=GolemConsume:
 Cooldown=0.5
 Duration=0.5
 AddHitBox=GolemConsumeHB
+AddEvent=Sfx_GolemEat
+SetEventsDelay=0
 ;
 
 Effect=GolemEat:StatChange
