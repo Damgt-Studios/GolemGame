@@ -1,9 +1,15 @@
-StatSheet=FireCatapultTower:
+StatSheet=FireMinion:
 AddStat=Health
 StatMin=0
-StatMax=1000
+StatMax=100
 StatFail=0
-StatCurrent=1000
+StatCurrent=100
+
+AddStat=MovementSpeed
+StatMin=1
+StatMax=100
+StatFail=0
+StatCurrent=50
 
 AddStat=Hate
 StatMin=0
@@ -16,26 +22,20 @@ StatMin=1
 StatMax=500
 StatFail=0
 StatCurrent=0
-
-AddStat=TargetingRange
-StatMin=1
-StatMax=2000
-StatFail=0
-StatCurrent=1000
 ;
 
-Effect=CatapultHit:StatChange
+Effect=FireMinionPunch:StatChange
 TickCount=1
 TickDuration=0
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
-MinValue=-100
-MaxValue=-100
+MinValue=-30
+MaxValue=-30
 ;
 
-Hitbox=CatapultHB:
-AddEffect=CatapultHit
+Hitbox=FireMinionPunchHB:
+AddEffect=FireMinionPunch
 OffsetX=0
 OffsetZ=30
 Collider_Width=20
@@ -44,8 +44,8 @@ Collider_Length=20
 SingleHit=true
 ;
 
-Action=CatapultFire:
-Cooldown=4.2
+Action=FireMinionPunch:
+Cooldown=0.8
 Duration=0.5
-AddHitBox=CatapultHB
+AddHitBox=FireMinionPunchHB
 ;

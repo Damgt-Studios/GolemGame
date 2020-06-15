@@ -14,8 +14,8 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	fireCPtr = &fireCollider;
 
-	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolemSheet"];
-	testAttack = DefinitionDatabase::Instance()->actionDatabase["GolemPunch"];
+	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
+	testAttack = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
 	//testAttack = new Action();		
 	testAttack->active = false;
 	//testAttack->hitboxCount = 1;

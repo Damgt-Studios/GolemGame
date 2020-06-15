@@ -9,7 +9,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=8
+StatCurrent=0
 ;
 
 StatSheet=House2:
@@ -23,7 +23,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=12
+StatCurrent=3
 ;
 
 StatSheet=House3:
@@ -37,7 +37,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=12
+StatCurrent=3
 ;
 
 StatSheet=House4:
@@ -51,7 +51,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=14
+StatCurrent=3
 ;
 
 StatSheet=Barn1:
@@ -65,7 +65,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=14
+StatCurrent=4
 ;
 
 StatSheet=Barn2:
@@ -79,7 +79,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=14
+StatCurrent=4
 ;
 
 StatSheet=Tavern:
@@ -93,7 +93,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=14
+StatCurrent=6
 ;
 
 StatSheet=Barracks:
@@ -107,7 +107,7 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=25
+StatCurrent=10
 ;
 
 StatSheet=EmptyTower:
@@ -121,5 +121,5 @@ AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=35
+StatCurrent=8
 ;

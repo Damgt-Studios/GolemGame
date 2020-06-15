@@ -1291,7 +1291,7 @@ namespace ADPhysics
 			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)))
 		};
 
-		int AxisOfMinimumCollision;
+		int AxisOfMinimumCollision ;
 		float MinOverlap = 100;
 
 		//Floating Point "Fix"

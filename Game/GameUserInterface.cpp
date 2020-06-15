@@ -85,8 +85,8 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
-			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
+			overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			//overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
 		return buttonPressed;

@@ -6,6 +6,7 @@
 #include <unordered_map>
 //#include "GameUtilities.h"
 //#include "GameObjectClasses.h"
+#include "ADUserInterface.h"
 
 
 class DefinitionDatabase
@@ -19,7 +20,7 @@ public:
 
 	std::unordered_map<std::string, ADResource::ADGameplay::Effect*> effectsDatabase;
 	std::unordered_map<std::string, ADResource::ADGameplay::StatSheet*> statsheetDatabase;
-	std::unordered_map<std::string, ADResource::ADGameplay::Trigger*> hitboxDatabase;
+	std::unordered_map<std::string, ADResource::ADGameplay::HitBox*> hitboxDatabase;
 	std::unordered_map<std::string, ADResource::ADGameplay::Action*> actionDatabase;
 
 	static DefinitionDatabase* Instance()
@@ -81,6 +82,10 @@ public:
 		{
 			isFinished = true;
 		}
+		if (tickOnEnter)
+		{
+			Tick();
+		}
 		tickTimer = tickDuration;
 		return 0;
 	};
@@ -90,8 +95,6 @@ public:
 		for (int i = 0; i < targetedStats.size(); i++)
 		{
 			targetedStats[i]->currentValue += minimumChange[i];
-			//if (targetedStats[i]->failValue == targetedStats[i]->currentValue)
-			//	return -1;
 			targetedStats[i]->currentValue = min(targetedStats[i]->currentValue, targetedStats[i]->maxValue);
 			targetedStats[i]->currentValue = max(targetedStats[i]->currentValue, targetedStats[i]->minValue);
 		}
@@ -100,6 +103,10 @@ public:
 
 	virtual UINT OnExit() override
 	{
+		if (tickOnExit)
+		{
+			Tick();
+		}
 		return 0;
 	};
 
@@ -219,21 +226,29 @@ public:
 						statSheet->AddStat(rhs);
 						currentStat = rhs;
 					}
-					if (lhs == "StatMin")
+					else if (lhs == "StatMin")
 					{
 						statSheet->SetMin(currentStat, std::stoi(rhs));
 					}
-					if (lhs == "StatMax")
+					else if (lhs == "StatMax")
 					{
 						statSheet->SetMax(currentStat, std::stoi(rhs));
 					}
-					if (lhs == "StatFail")
+					else if (lhs == "StatFail")
 					{
 						statSheet->SetEvent(currentStat, std::stoi(rhs));
 					}
-					if (lhs == "StatCurrent")
+					else if (lhs == "StatCurrent")
 					{
 						statSheet->SetCurrent(currentStat, std::stoi(rhs));
+					}
+					else
+					{
+						std::string msg = "Error Loading Data Driven File: ";
+						msg.append(lhs);
+						msg.append(mid);
+						msg.append(rhs);
+						ADUI::MessageReceiver::Log(msg);
 					}
 					_entityStr.erase(0, endPos + 1);
 				}
@@ -258,50 +273,134 @@ public:
 						{
 							effect->tickCount = std::stoi(rhs);
 						}
-						if (lhs == "TickOnEnter")
+						else if (lhs == "TickDuration")
+						{
+							effect->tickDuration = std::stof(rhs);
+						}
+						else if (lhs == "TickOnEnter")
 						{
 							if (rhs == "true")
 								effect->tickOnEnter = true; \
 						}
-						if (lhs == "TickOnExit")
+						else if (lhs == "TickOnExit")
 						{
 							if (rhs == "true")
 								effect->tickOnExit = true; \
 						}
-						if (lhs == "Stat")
+						else if (lhs == "Stat")
 						{
 							effect->statsAffected.push_back(rhs);
 						}
-						if (lhs == "MinValue")
+						else if (lhs == "MinValue")
 						{
 							int min = std::stoi(rhs);
 							effect->minimumChange.push_back(min);
 						}
-						if (lhs == "MaxValue")
+						else if (lhs == "MaxValue")
 						{
 							int min = std::stoi(rhs);
 							effect->maximumChange.push_back(min);
+						}
+						else
+						{
+							std::string msg = "Error Loading Data Driven File: ";
+							msg.append(lhs);
+							msg.append(mid);
+							msg.append(rhs);
+							ADUI::MessageReceiver::Log(msg);
 						}
 						_entityStr.erase(0, endPos + 1);
 					}
 					DefinitionDatabase::Instance()->effectsDatabase[mid] = effect;
 					//Needs an ID from a map.
 				}
+				else if (rhs == "StatBuff")
+				{
+					_entityStr.erase(0, endPos + 1);
+					StatChange* effect = new StatChange();
+					while (endPos != std::string::npos)
+					{
+						midPos = _entityStr.find('=');
+						endPos = _entityStr.find('\n');
+						lhs = _entityStr.substr(0, midPos);
+						rhs = _entityStr.substr(midPos + 1, endPos - (midPos + 1));
+
+						if (lhs == "Duration")
+						{
+							effect->tickDuration = std::stof(rhs);
+						}
+						else if (lhs == "Stat")
+						{
+							effect->statsAffected.push_back(rhs);
+						}
+						else if (lhs == "MinValue")
+						{
+							int min = std::stoi(rhs);
+							effect->minimumChange.push_back(min);
+						}
+						else if (lhs == "MaxValue")
+						{
+							int min = std::stoi(rhs);
+							effect->maximumChange.push_back(min);
+						}
+						else
+						{
+							std::string msg = "Error Loading Data Driven File: ";
+							msg.append(lhs);
+							msg.append(mid);
+							msg.append(rhs);
+							ADUI::MessageReceiver::Log(msg);
+						}
+						_entityStr.erase(0, endPos + 1);
+					}
+					DefinitionDatabase::Instance()->effectsDatabase[mid] = effect;
+				}
+				else if (rhs == "Stun")
+				{
+
+					_entityStr.erase(0, endPos + 1);
+					StatChange* effect = new StatChange();
+					while (endPos != std::string::npos)
+					{
+						midPos = _entityStr.find('=');
+						endPos = _entityStr.find('\n');
+						lhs = _entityStr.substr(0, midPos);
+						rhs = _entityStr.substr(midPos + 1, endPos - (midPos + 1));
+
+						if (lhs == "Duration")
+						{
+							effect->tickDuration = std::stof(rhs);
+						}
+						else
+						{
+							std::string msg = "Error Loading Data Driven File: ";
+							msg.append(lhs);
+							msg.append(mid);
+							msg.append(rhs);
+							ADUI::MessageReceiver::Log(msg);
+						}
+						_entityStr.erase(0, endPos + 1);
+					}
+					DefinitionDatabase::Instance()->effectsDatabase[mid] = effect;
+				}
 			}
 			else if (lhs == "Hitbox")
 			{
 				_entityStr.erase(0, endPos + 1);
-				ADResource::ADGameplay::Trigger* trigger = new ADResource::ADGameplay::Trigger();
+				ADResource::ADGameplay::HitBox* trigger = new ADResource::ADGameplay::HitBox();
 				XMFLOAT3 scale = XMFLOAT3(1,1,1);
+				XMFLOAT3 modelScale = XMFLOAT3(1,1,1);
 				trigger->SetScale(scale);
 				trigger->SetRotation(scale);
 				trigger->SetPosition(scale);
-				std::vector<std::string> stoneMinionAnimations;
-				stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
-				AD_ULONG id = ResourceManager::AddAnimatedModel("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 
-				trigger->SetScale(XMFLOAT3(0.1f, 0.1f, 0.1f)); 
-				trigger->SetMeshID(id);
+
+				//std::vector<std::string> stoneMinionAnimations;
+				//stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
+				//AD_ULONG id = ResourceManager::AddAnimatedModel("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+				//trigger->SetScale(XMFLOAT3(0.1f, 0.1f, 0.1f)); 
+				//trigger->SetMeshID(id);
+
 				trigger->active = false;
 				trigger->team = 1;
 
@@ -320,51 +419,69 @@ public:
 						trigger->effects[0].get()->sourceID = ResourceManager::GenerateEffectID();
 						currentEffect = rhs;
 					}
-					if (lhs == "OffsetX")
+					else if (lhs == "OffsetX")
 					{
 						trigger->offsetX = std::stof(rhs);
 					}
-					if (lhs == "OffsetZ")
+					else if (lhs == "OffsetY")
+					{
+						trigger->offsetY = std::stof(rhs);
+					}
+					else if (lhs == "OffsetZ")
 					{
 						trigger->offsetZ = std::stof(rhs);
 					}
-					if (lhs == "Collider_Width")
+					else if (lhs == "Collider_Width")
 					{
 						scale.x = std::stof(rhs);
 					}
-					if (lhs == "Collider_Height")
+					else if (lhs == "Collider_Height")
 					{
 						scale.y = std::stof(rhs);
 					}
-					if (lhs == "Collider_Length")
+					else if (lhs == "Collider_Length")
 					{
 						scale.z = std::stof(rhs);
 					}
-					if (lhs == "Model_Scale_Width")
+					else if (lhs == "Model_Scale_Width")
 					{
-						scale.x = std::stof(rhs);
+						modelScale.x = std::stof(rhs);
 					}
-					if (lhs == "Model_Scale_Height")
+					else if (lhs == "Model_Scale_Height")
 					{
-						scale.y = std::stof(rhs);
+						modelScale.y = std::stof(rhs);
 					}
-					if (lhs == "Model_Scale_Length")
+					else if (lhs == "Model_Scale_Length")
 					{
-						scale.z = std::stof(rhs);
+						modelScale.z = std::stof(rhs);
 					}
-					if (lhs == "SingleHit")
+					else if (lhs == "SingleHit")
 					{
 						if (rhs == "true")
 							trigger->isDeactivateOnFirstApplication = true;
 					}
+					else
+					{
+						std::string msg = "Error Loading Data Driven File: ";
+						msg.append(lhs);
+						msg.append(mid);
+						msg.append(rhs);
+						ADUI::MessageReceiver::Log(msg);
+					}
 					_entityStr.erase(0, endPos + 1);
 				}
+
+				//Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), modelScale, XMFLOAT3(0, 0, 0));
+
+				AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				trigger->SetMeshID(id);
 				trigger->colScale = scale;
-				trigger->collider = ADPhysics::AABB(XMFLOAT3(1,1,1), scale);
+				XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
+				trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, XMFLOAT3(1, 1, 1));
 				trigger->collider.trigger = true;
+				trigger->SetScale(scale);
 				trigger->colliderPtr = &trigger->collider;
 				DefinitionDatabase::Instance()->hitboxDatabase[mid] = trigger;
-				//GameUtilities::AddGameObject(trigger);
 				//Needs an ID from a map.
 			}
 			else if (lhs == "Action")
@@ -383,22 +500,42 @@ public:
 						action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
 						action->hitboxCount++;
 					}
-					if (lhs == "Cooldown")
+					else if (lhs == "Cooldown")
 					{
 						action->cooldownDuration = std::stof(rhs);
 					}
-					if (lhs == "Duration")
+					else if (lhs == "Duration")
 					{
 						action->attackDuration = std::stof(rhs);
 					}
-					if (lhs == "Persist_After_Attack")
+					else if (lhs == "Persist_After_Attack")
 					{
 
+					}
+					else if(lhs == "AddSoundTrigger")
+					{
+
+					}
+					else
+					{
+						std::string msg = "Error Loading Data Driven File: ";
+						msg.append(lhs);
+						msg.append(mid);
+						msg.append(rhs);
+						ADUI::MessageReceiver::Log(msg);
 					}
 					_entityStr.erase(0, endPos + 1);
 				}
 				DefinitionDatabase::Instance()->actionDatabase[mid] = action;
 				//Needs an ID from a map.
+			}
+			else
+			{
+			std::string msg = "Error Loading Data Driven File: ";
+			msg.append(lhs);
+			msg.append(mid);
+			msg.append(rhs);
+			ADUI::MessageReceiver::Log(msg);
 			}
 		}
 
@@ -431,7 +568,10 @@ public:
 			}
 			myfile.close();
 		}
-		else cout << "Unable to open master defines file";
+		else
+		{
+			ADUI::MessageReceiver::Log("Unable to open master defines file");
+		}
 
 		for (int i = 0; i < definitionFiles.size(); i++)
 		{

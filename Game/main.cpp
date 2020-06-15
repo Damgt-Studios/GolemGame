@@ -18,7 +18,7 @@
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
 
-//#define ShowColliders
+#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;

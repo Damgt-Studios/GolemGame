@@ -97,9 +97,9 @@ Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XM
 	return temp;
 }
 
-Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+HitBox* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
+	ADResource::ADGameplay::HitBox* temp = new ADResource::ADGameplay::HitBox;
 
 	// Transform data
 	temp->SetScale(scale);
@@ -113,9 +113,9 @@ Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFL
 	scale.y *= 1.8f;
 	scale.z *= 1.8f;
 	temp->colScale = scale;
-	temp->collider = ADPhysics::AABB(position, temp->colScale);
+	temp->collider = ADPhysics::OBB(temp->transform, temp->colScale);
 	temp->collider.trigger = true;
-	//temp->isDeactivateOnFirstApplication = true;
+	temp->isDeactivateOnFirstApplication = true;
 	temp->active = false;
 	temp->gamePlayType = ENEMY_HITBOX;
 	temp->team = 1;
