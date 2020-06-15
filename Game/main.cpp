@@ -18,7 +18,7 @@
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
 
-#define ShowColliders
+//#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -216,7 +216,7 @@ public:
 
 #ifdef _DEBUG
 		Renderable* golemCollider = GameUtilities::AddRenderableCollider();
-		/*Renderable* house1Collider = GameUtilities::AddRenderableCollider();
+		Renderable* house1Collider = GameUtilities::AddRenderableCollider();
 		Renderable* house2Collider = GameUtilities::AddRenderableCollider();
 		Renderable* house3Collider = GameUtilities::AddRenderableCollider();
 		Renderable* house4Collider = GameUtilities::AddRenderableCollider();
@@ -226,7 +226,7 @@ public:
 		Renderable* towerCollider = GameUtilities::AddRenderableCollider();
 		Renderable* scaffoldingCollider = GameUtilities::AddRenderableCollider();
 		Renderable* wallCollider = GameUtilities::AddRenderableCollider();
-		Renderable* wellCollider = GameUtilities::AddRenderableCollider();*/
+		Renderable* wellCollider = GameUtilities::AddRenderableCollider();
 		Renderable* tavernCollider = GameUtilities::AddRenderableCollider();
 		Renderable* rockCollider = GameUtilities::AddRenderableCollider();
 		Renderable* meeting_hallCollider = GameUtilities::AddRenderableCollider();
@@ -238,7 +238,7 @@ public:
 
 #ifdef ShowColliders
 		GameUtilities::AddGameObject(golemCollider);
-		/*GameUtilities::AddGameObject(house1Collider);
+		GameUtilities::AddGameObject(house1Collider);
 		GameUtilities::AddGameObject(house2Collider);
 		GameUtilities::AddGameObject(house3Collider);
 		GameUtilities::AddGameObject(house4Collider);
@@ -248,7 +248,7 @@ public:
 		GameUtilities::AddGameObject(towerCollider);
 		GameUtilities::AddGameObject(scaffoldingCollider);
 		GameUtilities::AddGameObject(wallCollider);
-		GameUtilities::AddGameObject(wellCollider);*/
+		GameUtilities::AddGameObject(wellCollider);
 		GameUtilities::AddGameObject(tavernCollider);
 		GameUtilities::AddGameObject(rockCollider);
 		GameUtilities::AddGameObject(meeting_hallCollider);
@@ -378,13 +378,13 @@ public:
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
 
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	GameUtilities::AddGameObject(stoneMinions[i]);
-		//	GameUtilities::AddGameObject(waterMinions[i]);
-		//	GameUtilities::AddGameObject(fireMinions[i]);
-		//	GameUtilities::AddGameObject(woodMinions[i]);
-		//}
+		for (int i = 0; i < 10; i++)
+		{
+			GameUtilities::AddGameObject(stoneMinions[i]);
+			GameUtilities::AddGameObject(waterMinions[i]);
+			GameUtilities::AddGameObject(fireMinions[i]);
+			GameUtilities::AddGameObject(woodMinions[i]);
+		}
 		GameUtilities::AddGameObject(m1);
 		//GameUtilities::AddGameObject(m2);
 		//GameUtilities::AddGameObject(t1);
@@ -392,7 +392,7 @@ public:
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
-		/*Building* house1 = new Building(XMFLOAT3(-3, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25,25,30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
+		Building* house1 = new Building(XMFLOAT3(-3, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25,25,30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
 		GameUtilities::AddGameObject(house1);
 
 		Building* house2 = new Building(XMFLOAT3(-1, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
@@ -410,10 +410,10 @@ public:
 		Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
 		GameUtilities::AddGameObject(barn2);
 
-		Building* tower = new Building(0, 0, XMFLOAT3(-5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
-		GameUtilities::AddGameObject(tower);*/
+		Building* tower = new Building(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
+		GameUtilities::AddGameObject(tower);
 
-		/*Building* gateway = new Building(XMFLOAT3(5, 0, 0), XMFLOAT3(0, -90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway);
+		Building* gateway = new Building(XMFLOAT3(5, 0, 0), XMFLOAT3(0, -90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway);
 		GameUtilities::AddGameObject(gateway);
 
 		Building* scaffolding = new Building(XMFLOAT3(5, 0, 1.5), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWall);
@@ -423,7 +423,7 @@ public:
 		GameUtilities::AddGameObject(wall);
 
 		Building* well = new Building(XMFLOAT3(0, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
-		GameUtilities::AddGameObject(well);*/
+		GameUtilities::AddGameObject(well);
 
 		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
 		GameUtilities::AddGameObject(tavern);
@@ -572,24 +572,24 @@ public:
 #ifdef _DEBUG
 			golemCollider->transform = golem->GetColliderInfo();
 
-			//house1Collider->transform = house1->GetColliderInfo();
-			//house2Collider->transform = house2->GetColliderInfo();
-			//house3Collider->transform = house3->GetColliderInfo();
-			//house4Collider->transform = house4->GetColliderInfo();
+			house1Collider->transform = house1->GetColliderInfo();
+			house2Collider->transform = house2->GetColliderInfo();
+			house3Collider->transform = house3->GetColliderInfo();
+			house4Collider->transform = house4->GetColliderInfo();
 
-			//barn1Collider->transform = barn1->GetColliderInfo();
+			barn1Collider->transform = barn1->GetColliderInfo();
 
-			//barn2Collider->transform = barn2->GetColliderInfo();
+			barn2Collider->transform = barn2->GetColliderInfo();
 
-			//gatewayCollider->transform = gateway->GetColliderInfo();
+			gatewayCollider->transform = gateway->GetColliderInfo();
 
-			//towerCollider->transform = tower->GetColliderInfo();
+			towerCollider->transform = tower->GetColliderInfo();
 
-			/*scaffoldingCollider->transform = scaffolding->GetColliderInfo();
+			scaffoldingCollider->transform = scaffolding->GetColliderInfo();
 
 			wallCollider->transform = wall->GetColliderInfo();
 
-			wellCollider->transform = well->GetColliderInfo();*/
+			wellCollider->transform = well->GetColliderInfo();
 
 			tavernCollider->transform = tavern->GetColliderInfo();
 
