@@ -9,7 +9,6 @@
 #include <iostream>
 #include <Types.h>
 #include "ADUserInterface.h"
-#include <ADEventSystem.h>
 
 namespace AD_AUDIO
 {
@@ -74,16 +73,6 @@ namespace AD_AUDIO
         void Play();
         void RefreshVolume();
         void UpdatePosition(XMFLOAT3 pos);
-    };
-
-    //Decouples AudioSource form owner if you want by using an event.
-    class AudioSourceEvent : public ADEvents::Listener
-    {
-    private:
-        AudioSource& audioSource;
-    public:
-        AudioSourceEvent(AudioSource& _audioSource) : audioSource(_audioSource) {};
-        void HandleEvent(ADEvents::ADEvent* _event) override;
     };
 
     struct AudioImplementation {

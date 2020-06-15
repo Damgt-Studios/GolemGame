@@ -17,6 +17,7 @@
 #include "ADAI.h"
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
+#include "Listeners.h"
 
 #define ShowColliders
 
@@ -142,8 +143,18 @@ public:
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
     
-		AD_AUDIO::AudioSourceEvent playTitleEvent(titleMusic);
+		AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
+
+
+		AD_AUDIO::AudioSource golemPunch;
+		golemPunch.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemPunch.engine = &audioEngine;
+		golemPunch.personalVolume = 0.5f;
+		golemPunch.restartOnRepeat = false;
+		golemPunch.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
+		AudioSourceEvent playPunch(golemPunch);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &playPunch);
 
 
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
@@ -462,6 +473,15 @@ public:
 		}
 
 
+
+		FountainEmitter femitter;
+		femitter.Initialize(engine->GetPBRRenderer()->GetRendererResources()->device.Get(), 10, XMFLOAT4(1, 1, 1, 1), L"files\\textures\\Particle_Dust.dds", 100);
+		ParticleEmitterEvent golemPunchParticles(femitter);
+		golemPunchParticles.lifespan = 100.f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+
+
+
 		// Timing
 		game_time.Restart();
 
@@ -508,7 +528,6 @@ public:
 			}
 			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
 		
-    
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
 			// Debug draw
@@ -526,16 +545,15 @@ public:
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
 
-			// Physics test
+			XMFLOAT4X4 viewPass;
+			XMStoreFloat4x4(&viewPass, view);
+			XMFLOAT4 cpos = XMFLOAT4(CamPosition.x, CamPosition.y, CamPosition.z, 0);
 
-			/*spyro->CheckCollision(c1);
-			spyro->CheckCollision(c2);
-			spyro->CheckCollision(p1);
-			a3->CheckCollision(spyro);
-			e1->CheckCollision(spyro);
-			e2->CheckCollision(spyro);
-			e3->CheckCollision(spyro);
-			t1->CheckCollision(spyro);*/
+
+			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
+			XMFLOAT4X4 persPass;
+			XMStoreFloat4x4(&persPass, pers);
+			femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
 
 #ifdef _DEBUG
 			golemCollider->transform = golem->GetColliderInfo();
@@ -606,6 +624,7 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
+			femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 
 			// Update framerate
 			if (timer > 1)

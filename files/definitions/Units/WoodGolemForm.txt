@@ -35,6 +35,8 @@ Action=WoodGolemPunch:
 Cooldown=1
 Duration=0.5
 AddHitBox=WoodGolemPunchHB
+AddEvent=Sfx_GolemPunch
+SetEventsDelay=0
 ;
 
 Effect=WoodGolemKick:StatChange

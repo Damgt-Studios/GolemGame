@@ -471,8 +471,6 @@ public:
 					_entityStr.erase(0, endPos + 1);
 				}
 
-				//Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), modelScale, XMFLOAT3(0, 0, 0));
-
 				AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 				trigger->SetMeshID(id);
 				trigger->colScale = scale;
@@ -512,9 +510,14 @@ public:
 					{
 
 					}
-					else if(lhs == "AddSoundTrigger")
+					else if(lhs == "AddEvent")
 					{
-
+						action->eventName.push_back(rhs);
+						action->eventFired.push_back(false);
+					}
+					else if (lhs == "SetEventsDelay")
+					{
+						action->eventDelay.push_back(std::stof(rhs));
 					}
 					else
 					{
@@ -531,11 +534,11 @@ public:
 			}
 			else
 			{
-			std::string msg = "Error Loading Data Driven File: ";
-			msg.append(lhs);
-			msg.append(mid);
-			msg.append(rhs);
-			ADUI::MessageReceiver::Log(msg);
+				std::string msg = "Error Loading Data Driven File: ";
+				msg.append(lhs);
+				msg.append(mid);
+				msg.append(rhs);
+				ADUI::MessageReceiver::Log(msg);
 			}
 		}
 

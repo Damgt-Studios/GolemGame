@@ -1,6 +1,7 @@
 #pragma once
 #include "ADUserInterface.h"
 #include "GameplayBaseClasses.h"
+#include "ADEventSystem.h"
 #include <Types.h>
 
 namespace ADResource
@@ -296,6 +297,11 @@ namespace ADResource
 			bool removeHbIfEnd = true;
 			bool movesToPlayer = true;
 
+			std::vector<bool> eventFired;
+			std::vector<float> eventDelay;
+			std::vector<std::string> eventName;
+
+
 			//If the attack doesn't own the hitbox this needs to change.
 			~Action() { delete hitbox; };
 
@@ -334,6 +340,10 @@ namespace ADResource
 				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
+					for (int i = 0; i < eventDelay.size(); i++)
+					{
+						eventFired[i] = false;
+					}
 					if (hitbox)
 					{
 						cooldownTimer = cooldownDuration;
@@ -359,6 +369,16 @@ namespace ADResource
 				{
 					if (attackTimer > 0)
 					{
+						for (int i = 0; i < eventDelay.size(); i++)
+						{
+							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
+							{
+								XMFLOAT3 hbpos = hitbox->GetPosition();
+								XMFLOAT4 hbpos2 = XMFLOAT4(hbpos.x, hbpos.y, hbpos.z, 0);
+								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)&hbpos2);
+								eventFired[i] = true;
+							}
+						}
 						attackTimer -= _deltaTime;
 						if (attackTimer <= 0)
 						{
