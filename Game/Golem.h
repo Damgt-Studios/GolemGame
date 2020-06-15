@@ -51,6 +51,8 @@ namespace ADResource
 			Action* golemKick;
 			Action* golemSlam;
 			Action* golemConsume;
+			Action* golemWaterWave;
+			Action* golemFireball;
 			GameObject* targetMarker;
 			ADAI::FlockingGroup** flockingGroups;
 			virtual void Update(float time_delta);

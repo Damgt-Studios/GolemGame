@@ -172,6 +172,24 @@ public:
 		golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
 		AudioSourceEvent golemSlamEvent(golemSlamSound);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
+		
+		AD_AUDIO::AudioSource golemWaveSound;
+		golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemWaveSound.engine = &audioEngine;
+		golemWaveSound.personalVolume = 0.5f;
+		golemWaveSound.restartOnRepeat = false;
+		golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
+		AudioSourceEvent golemWaveEvent(golemWaveSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
+
+		AD_AUDIO::AudioSource golemFireball;
+		golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemFireball.engine = &audioEngine;
+		golemFireball.personalVolume = 0.5f;
+		golemFireball.restartOnRepeat = false;
+		golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
+		AudioSourceEvent golemFireballEvent(golemFireball);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
 
 		AD_AUDIO::AudioSource golemEatMinion;
 		golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
@@ -182,6 +200,9 @@ public:
 		AudioSourceEvent golemEatMinionEvent(golemEatMinion);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
 
+
+
+		
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 
 		// Create the engine
@@ -189,6 +210,9 @@ public:
 
 		DefinitionReader df;
 		df.ReadMasterFile();
+
+		ApplyEffectEvent golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -302,7 +326,7 @@ public:
 		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
 
 		golem->targetMarker = m1;
-
+		golemEatingEvent.SetTarget(golem);
 
 
    // No more.

@@ -31,6 +31,7 @@ namespace ADResource
 			FIRE_OBJECT,
 			ALLY_HITBOX,
 			ENEMY_HITBOX,
+			CONSUMPTION_HITBOX,
 			PROJECTILE,
 			EVENT_TRIGGER
 		};
@@ -140,12 +141,15 @@ namespace ADResource
 
 		public:
 			XMFLOAT3 colScale;
+			XMFLOAT3 vel;
 
 			bool isDeactivateOnFirstApplication = false;
 			float offsetX;
 			float offsetZ;
 			float offsetY = 0;
 			ADPhysics::OBB collider;
+
+			std::string eventName;
 
 			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
 
@@ -164,6 +168,8 @@ namespace ADResource
 				collider = ADPhysics::OBB(transform, XMFLOAT3(1,1,1));
 				colliderPtr = &collider;
 				collider.trigger = true;
+
+				AddToPositionVector((XMFLOAT3&)Velocity);
 			};
 
 			void CheckCollision(GameObject* obj) override
@@ -175,7 +181,10 @@ namespace ADResource
 					{
 						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 						{
-							PassEffects(obj);
+							if(gamePlayType != CONSUMPTION_HITBOX)
+								PassEffects(obj);
+							else if(obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+								PassEffects(obj);
 						}
 					}
 				}
@@ -189,6 +198,9 @@ namespace ADResource
 					{
 						obj->effects.push_back(effects[i].get()->clone());
 						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
+						XMFLOAT3 hbpos = GetPosition();
+						XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
+						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos2);
 						if (isDeactivateOnFirstApplication)
 						{
 							active = false;
@@ -337,6 +349,10 @@ namespace ADResource
 
 					hitbox->SetPosition(targetPos);
 
+					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
+					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
+					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
+					
 				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{

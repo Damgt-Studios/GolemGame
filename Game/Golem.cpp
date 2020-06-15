@@ -19,10 +19,14 @@ ADResource::ADGameplay::Golem::Golem() {
 	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
 	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
 	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
 	golemPunch->active = false;
 	golemKick->active = false;
 	golemSlam->active = false;
 	golemConsume->active = false;
+	golemWaterWave->active = false;
+	golemFireball->active = false;
 
 
 	flockingGroups = new ADAI::FlockingGroup*[5];
@@ -49,6 +53,8 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 	golemKick->Update(delta_time);
 	golemSlam->Update(delta_time);
 	golemConsume->Update(delta_time);
+	golemWaterWave->Update(delta_time);
+	golemFireball->Update(delta_time);
 	ProcessEffects(delta_time);
 
 	for (int i = 0; i < 5; ++i)
@@ -353,9 +359,16 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (responseTimer < 0)
 		{
 			responseTimer = 0.2f;
+			if(GetCurrentElement() == WATER)
+				golemWaterWave->StartAction(&transform);
+			else if (GetCurrentElement())
+				golemFireball->StartAction(&transform);
+
 			stats->RequestStats("Token")->currentValue--;
 			if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+			{
 				stats->RequestStats("Token")->currentValue = 0;
+			}
 		}
 	}
 

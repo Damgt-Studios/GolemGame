@@ -350,6 +350,7 @@ namespace ADResource
 
 
 			virtual UINT OnApply(StatSheet* _targetsStatSheet) { return 0; };
+
 			virtual void Update(float _deltaTime)
 			{
 				if (tickTimer > 0)
@@ -357,10 +358,10 @@ namespace ADResource
 					tickTimer -= _deltaTime;
 					if (tickTimer <= 0)
 					{
-						if (currentTick < tickCount)
+						++currentTick;
+						if (currentTick <= tickCount)
 						{
 							Tick();
-							++currentTick;
 							if (currentTick == tickCount)
 							{
 								isFinished = true;
@@ -369,6 +370,10 @@ namespace ADResource
 							{
 								tickTimer = tickDuration;
 							}
+						}
+						else
+						{
+							isFinished = true;
 						}
 					}
 				}

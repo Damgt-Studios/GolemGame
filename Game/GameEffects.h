@@ -455,10 +455,34 @@ public:
 					{
 						modelScale.z = std::stof(rhs);
 					}
+					else if (lhs == "XVelocity")
+					{
+						trigger->vel.x = std::stof(rhs);
+					}
+					else if (lhs == "YVelocity")
+					{
+						trigger->vel.y = std::stof(rhs);
+					}
+					else if (lhs == "ZVelocity")
+					{
+						trigger->vel.z = std::stof(rhs);
+					}
+					else if (lhs == "Team")
+					{
+						trigger->team = std::stoi(rhs);
+						if (trigger->team == 3)
+						{
+							trigger->gamePlayType = ADResource::ADGameplay::CONSUMPTION_HITBOX;
+						}
+					}
 					else if (lhs == "SingleHit")
 					{
 						if (rhs == "true")
 							trigger->isDeactivateOnFirstApplication = true;
+					}
+					else if (lhs == "SetEvent")
+					{
+						trigger->eventName = rhs;
 					}
 					else
 					{
@@ -508,7 +532,8 @@ public:
 					}
 					else if (lhs == "Persist_After_Attack")
 					{
-
+						if (rhs == "true")
+							action->removeHbIfEnd = false;
 					}
 					else if(lhs == "AddEvent")
 					{

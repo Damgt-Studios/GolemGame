@@ -5,22 +5,24 @@ MaxValue=15
 ;
 
 Effect=FireGolemPunch:StatChange
-TickCount=1
-TickDuration=0
-TickOnEnter=false
+TickCount=0
+TickDuration=2
+TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-280
-MaxValue=-280
+MinValue=-200
+MaxValue=-200
 ;
 
 Hitbox=FireGolemPunchHB:
 AddEffect=FireGolemPunch
-OffsetX=0
-OffsetZ=30
-Collider_Width=20
+OffsetX=-0
+OffsetY=20
+OffsetZ=20
+Collider_Width=10
 Collider_Height=20
-Collider_Length=20
+Collider_Length=10
+Team=0
 SingleHit=false
 ;
 
@@ -28,12 +30,14 @@ Action=FireGolemPunch:
 Cooldown=1
 Duration=0.5
 AddHitBox=FireGolemPunchHB
+AddEvent=Sfx_GolemPunch
+SetEventsDelay=0
 ;
 
 Effect=FireGolemKick:StatChange
-TickCount=1
-TickDuration=0
-TickOnEnter=false
+TickCount=0
+TickDuration=2
+TickOnEnter=true
 TickOnExit=false
 Stat=Health
 MinValue=-200
@@ -42,37 +46,43 @@ MaxValue=-200
 
 Hitbox=FireGolemKickHB:
 AddEffect=FireGolemKick
-OffsetX=0
-OffsetZ=1
-Collider_Width=20
-Collider_Height=20
-Collider_Length=20
+OffsetX=-0
+OffsetY=0
+OffsetZ=0
+Collider_Width=15
+Collider_Height=10
+Collider_Length=40
+Team=0
 SingleHit=false
 ;
 
 Action=FireGolemKick:
-Cooldown=1.2
+Cooldown=1
 Duration=0.5
-AddHitBox=FireGolemKickHB
+AddHitBox=WoodGolemKickHB
+AddEvent=Sfx_GolemKick
+SetEventsDelay=0
 ;
 
 Effect=FireGolemSlam:StatChange
-TickCount=1
-TickDuration=0
-TickOnEnter=false
+TickCount=0
+TickDuration=2
+TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-250
-MaxValue=-250
+MinValue=-200
+MaxValue=-200
 ;
 
 Hitbox=FireGolemSlamHB:
 AddEffect=FireGolemSlam
-OffsetX=0
-OffsetZ=1
-Collider_Width=20
-Collider_Height=20
-Collider_Length=20
+OffsetX=-0
+OffsetY=0
+OffsetZ=15
+Collider_Width=10
+Collider_Height=10
+Collider_Length=25
+Team=0
 SingleHit=false
 ;
 
@@ -80,11 +90,13 @@ Action=FireGolemSlam:
 Cooldown=1.2
 Duration=0.5
 AddHitBox=FireGolemSlamHB
+AddEvent=Sfx_GolemSlam
+SetEventsDelay=0
 ;
 
 Effect=GolemFireball:StatChange
-TickCount=1
-TickDuration=0
+TickCount=0
+TickDuration=2
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
@@ -95,10 +107,13 @@ MaxValue=-450
 Hitbox=GolemFireballHB:
 AddEffect=GolemFireball
 OffsetX=0
-OffsetZ=1
-Collider_Width=20
-Collider_Height=20
-Collider_Length=20
+OffsetY=15
+OffsetZ=10
+Collider_Width=15
+Collider_Height=40
+Collider_Length=15
+ZVelocity=10
+Team=0
 SingleHit=false
 ;
 
@@ -106,4 +121,7 @@ Action=GolemFireball:
 Cooldown=1.2
 Duration=0.5
 AddHitBox=GolemFireballHB
+AddEvent=Sfx_GolemFireball
+SetEventsDelay=0
+Persist_After_Attack=true
 ;

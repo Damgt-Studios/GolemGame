@@ -162,6 +162,7 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 {
 	ADAI::AIUnit* temp = new ADAI::AIUnit;
 	temp->owner = _destructable;
+	_destructable->gamePlayType = WOOD_MINION;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();
 	temp->states.push_back(idling);
