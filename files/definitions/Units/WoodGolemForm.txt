@@ -107,10 +107,10 @@ Duration=40
 Hitbox=GolemRootingHB:
 AddEffect=GolemRooting
 OffsetX=0
-OffsetZ=100
-Collider_Width=20
+OffsetZ=200
+Collider_Width=35
 Collider_Height=20
-Collider_Length=20
+Collider_Length=35
 Team=0
 SingleHit=false
 ;
@@ -119,6 +119,9 @@ Action=GolemRooting:
 Cooldown=1
 Duration=0.5
 AddHitBox=GolemRootingHB
+AddEvent=Sfx_GolemRooting
+SetEventsDelay=0
+Persist_After_Attack=true
 ;
 
 

@@ -191,6 +191,26 @@ public:
 		AudioSourceEvent golemFireballEvent(golemFireball);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
 
+		AD_AUDIO::AudioSource golemIronHide;
+		golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemIronHide.engine = &audioEngine;
+		golemIronHide.personalVolume = 0.5f;
+		golemIronHide.restartOnRepeat = false;
+		golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
+		AudioSourceEvent golemTauntEvent(golemIronHide);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
+
+		
+
+		AD_AUDIO::AudioSource golemRootingSpell;
+		golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemRootingSpell.engine = &audioEngine;
+		golemRootingSpell.personalVolume = 0.5f;
+		golemRootingSpell.restartOnRepeat = false;
+		golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
+		AudioSourceEvent golemRootEvent(golemRootingSpell);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
+
 		AD_AUDIO::AudioSource golemEatMinion;
 		golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
 		golemEatMinion.engine = &audioEngine;

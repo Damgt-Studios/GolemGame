@@ -106,5 +106,25 @@ AddEvent=Sfx_GolemSlam
 SetEventsDelay=0
 ;
 
+Hitbox=GolemTauntHB:
+AddEffect=IronHideBuffArmor
+AddEffect=IronHideBuffHate
+OffsetX=-0
+OffsetY=0
+OffsetZ=0
+Collider_Width=2
+Collider_Height=2
+Collider_Length=2
+Team=1
+SingleHit=true
+;
+
+Action=GolemTaunt:
+Cooldown=1.2
+Duration=0.5
+AddHitBox=GolemTauntHB
+AddEvent=Sfx_GolemTaunt
+SetEventsDelay=0
+;
 
 
