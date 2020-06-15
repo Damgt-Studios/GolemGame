@@ -140,7 +140,7 @@ public:
 		titleMusic.engine = &audioEngine;
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
-    
+
 		AD_AUDIO::AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
@@ -210,7 +210,7 @@ public:
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		
+
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
 
@@ -257,7 +257,7 @@ public:
 		GameUtilities::AddGameObject(rubbleCollider1);
 		GameUtilities::AddGameObject(rubbleCollider2);
 		GameUtilities::AddGameObject(rubbleCollider3);
-		
+
 #endif
 
 #endif
@@ -286,7 +286,7 @@ public:
 			fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE]));
 			woodMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
 			woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD]));
-		}	
+		}
 		//Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
@@ -308,58 +308,58 @@ public:
 
 
 
-   // No more.
-     /////////////////////////////////////////
+		// No more.
+		  /////////////////////////////////////////
 
-		//Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Trigger* t1 = GameUtilities::AddEndGameTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-//=======
-		//ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
+			 //Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //Trigger* t1 = GameUtilities::AddEndGameTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+	 //=======
+			 //ResourceManager::AddPBRModel("files/models/mapped_skybox.wobj", XMFLOAT3(0, -1.3, 0), XMFLOAT3(100, .1, 100), XMFLOAT3(0, 0, 0));
 
-		//Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		//Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
-		//Collectable** collectables = new Collectable*[10];
-		//for (int i = 0; i < 10; ++i)
-		//{
-		//	collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//	GameUtilities::AddGameObject(collectables[i]);
-		//}
-		//Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //Renderable* a1 = GameUtilities::AddPBRStaticAsset("files/models/oildrum.wobj", XMFLOAT3(3, 0, -1), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+			 //Renderable* a2 = GameUtilities::AddPBRStaticAsset("files/models/text.wobj", XMFLOAT3(1, 0, 0), XMFLOAT3(.03, .03, .03), XMFLOAT3(0, 0, 0));
+			 //Collectable** collectables = new Collectable*[10];
+			 //for (int i = 0; i < 10; ++i)
+			 //{
+			 //	collectables[i] = GameUtilities::AddCollectableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3((i&10) *-5, 0, 5*(i%2)), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //	GameUtilities::AddGameObject(collectables[i]);
+			 //}
+			 //Enemy* e1 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -5), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //Enemy* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //Enemy* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //Trigger* t1 = GameUtilities::AddTriggerFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, 30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 
-		//ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
+			 //ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
-		//Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//spyro->testAttack.active = false;
-		//spyro->testAttack.hitboxCount = 1;
-		//spyro->testAttack.cooldownDuration = 0.5;
-		//spyro->testAttack.hitbox = myHitBox;
+			 //Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+			 //spyro->testAttack.active = false;
+			 //spyro->testAttack.hitboxCount = 1;
+			 //spyro->testAttack.cooldownDuration = 0.5;
+			 //spyro->testAttack.hitbox = myHitBox;
 
-		// Colliders
-		/*Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c8 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(250, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c9 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(450, 0, 250), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-200, 0, 300), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c5 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-300, 0, 400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		Renderable* c6 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-400, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-		
-		c1->physicsType = ADResource::ADGameplay::STATIC;
-		c2->physicsType = ADResource::ADGameplay::STATIC;
-		c3->physicsType = ADResource::ADGameplay::STATIC;
-		c4->physicsType = ADResource::ADGameplay::STATIC;
-		c5->physicsType = ADResource::ADGameplay::STATIC;
-		c6->physicsType = ADResource::ADGameplay::STATIC;
-		c7->physicsType = ADResource::ADGameplay::STATIC;
-		c8->physicsType = ADResource::ADGameplay::STATIC;
-		c9->physicsType = ADResource::ADGameplay::STATIC;*/
-		
+			 // Colliders
+			 /*Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c8 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(250, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c9 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(450, 0, 250), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-200, 0, 300), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c5 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-300, 0, 400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+			 Renderable* c6 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-400, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+
+			 c1->physicsType = ADResource::ADGameplay::STATIC;
+			 c2->physicsType = ADResource::ADGameplay::STATIC;
+			 c3->physicsType = ADResource::ADGameplay::STATIC;
+			 c4->physicsType = ADResource::ADGameplay::STATIC;
+			 c5->physicsType = ADResource::ADGameplay::STATIC;
+			 c6->physicsType = ADResource::ADGameplay::STATIC;
+			 c7->physicsType = ADResource::ADGameplay::STATIC;
+			 c8->physicsType = ADResource::ADGameplay::STATIC;
+			 c9->physicsType = ADResource::ADGameplay::STATIC;*/
+
 		float mapWidth = 1000;
 		float mapLength = 1000;
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
@@ -378,13 +378,13 @@ public:
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
 
-		for (int i = 0; i < 10; i++)
-		{
-			GameUtilities::AddGameObject(stoneMinions[i]);
-			GameUtilities::AddGameObject(waterMinions[i]);
-			GameUtilities::AddGameObject(fireMinions[i]);
-			GameUtilities::AddGameObject(woodMinions[i]);
-		}
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	GameUtilities::AddGameObject(stoneMinions[i]);
+		//	GameUtilities::AddGameObject(waterMinions[i]);
+		//	GameUtilities::AddGameObject(fireMinions[i]);
+		//	GameUtilities::AddGameObject(woodMinions[i]);
+		//}
 		GameUtilities::AddGameObject(m1);
 		//GameUtilities::AddGameObject(m2);
 		//GameUtilities::AddGameObject(t1);
@@ -392,7 +392,7 @@ public:
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
-		Building* house1 = new Building(XMFLOAT3(-3, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25,25,30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
+		Building* house1 = new Building(XMFLOAT3(-3, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
 		GameUtilities::AddGameObject(house1);
 
 		Building* house2 = new Building(XMFLOAT3(-1, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
@@ -507,7 +507,7 @@ public:
 		// Construct physics stuff
 		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
 		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
-		
+
 		//Needed to add this to the colliders for the collision queue
 
 		/*c2->colliderPtr = &test_colider1;
@@ -516,7 +516,7 @@ public:
 		ADAI::ADPathfinding pathfinder;
 		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
 		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapLength);
-    
+
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
 		while (!shutdown)
@@ -543,12 +543,12 @@ public:
 				pathfinder.update(0.00001f);
 			}
 			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
-		
-    
+
+
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
 
-			
+
 
 			// Test
 			//spyro->Update(delta_time);
@@ -561,8 +561,8 @@ public:
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
 			golem->GetView(view);
-      
-      
+
+
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
@@ -578,7 +578,7 @@ public:
 			house4Collider->transform = house4->GetColliderInfo();
 
 			barn1Collider->transform = barn1->GetColliderInfo();
-
+			
 			barn2Collider->transform = barn2->GetColliderInfo();
 
 			gatewayCollider->transform = gateway->GetColliderInfo();
@@ -586,7 +586,7 @@ public:
 			towerCollider->transform = tower->GetColliderInfo();
 
 			scaffoldingCollider->transform = scaffolding->GetColliderInfo();
-
+			
 			wallCollider->transform = wall->GetColliderInfo();
 
 			wellCollider->transform = well->GetColliderInfo();
@@ -609,12 +609,15 @@ public:
 			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
 
 		//	Works the exact same as the commented code above
+			ADQuad collisionBoundary(0, 0, mapWidth * 2, mapLength * 2);
+			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
+
 			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
 			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 
 			for (int i = 0; i < OBJ_COUNT; i++)
 			{
-				for (unsigned int j = 0; j < OBJ_COUNT; j++)
+				/*for (unsigned int j = 0; j < OBJ_COUNT; j++)
 				{
 					if (i != j)
 					{
@@ -632,6 +635,31 @@ public:
 							}
 						}
 					}
+				}*/
+
+				if (OBJS[i]->colliderPtr)
+				{
+					int* index = new int(i);
+					if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index))) 
+					{
+						int somethingswrong = 0;
+						somethingswrong++;
+					}
+				}
+			}
+
+			for (unsigned int i = 0; i < OBJ_COUNT; i++)
+			{
+				if (OBJS[i]->colliderPtr) 
+				{
+					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+
+					for (unsigned int j = 0; j < collisionVector.size(); j++)
+					{
+						if (OBJS[*collisionVector[j].data]->colliderPtr)
+							OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+					}
 				}
 			}
 
@@ -642,13 +670,13 @@ public:
 			if (physics_timer > physics_rate)
 			{
 				physics_timer = 0;
-				for (int i = 0; i < 10; i++)
-				{
-					GroundClamping(stoneMinions[i], tree, delta_time);
-					GroundClamping(waterMinions[i], tree, delta_time);
-					GroundClamping(fireMinions[i], tree, delta_time);
-					GroundClamping(woodMinions[i], tree, delta_time);
-				}
+				//for (int i = 0; i < 10; i++)
+				//{
+				//	GroundClamping(stoneMinions[i], tree, delta_time);
+				//	GroundClamping(waterMinions[i], tree, delta_time);
+				//	GroundClamping(fireMinions[i], tree, delta_time);
+				//	GroundClamping(woodMinions[i], tree, delta_time);
+				//}
 
 
 			}
@@ -664,6 +692,8 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
+
+			collisionTree->Shutdown();
 
 			// Update framerate
 			if (timer > 1)
