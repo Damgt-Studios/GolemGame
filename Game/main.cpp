@@ -18,7 +18,7 @@
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
 
-//#define ShowColliders
+#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -209,19 +209,59 @@ public:
 		woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
 
-		Renderable* cube = GameUtilities::AddSimpleAsset("files/models/Cube.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-
 #ifdef _DEBUG
-		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		Renderable* golemCollider = GameUtilities::AddRenderableCollider();
+		/*Renderable* house1Collider = GameUtilities::AddRenderableCollider();
+		Renderable* house2Collider = GameUtilities::AddRenderableCollider();
+		Renderable* house3Collider = GameUtilities::AddRenderableCollider();
+		Renderable* house4Collider = GameUtilities::AddRenderableCollider();
+		Renderable* barn1Collider = GameUtilities::AddRenderableCollider();
+		Renderable* barn2Collider = GameUtilities::AddRenderableCollider();
+		Renderable* gatewayCollider = GameUtilities::AddRenderableCollider();
+		Renderable* towerCollider = GameUtilities::AddRenderableCollider();
+		Renderable* scaffoldingCollider = GameUtilities::AddRenderableCollider();
+		Renderable* wallCollider = GameUtilities::AddRenderableCollider();
+		Renderable* wellCollider = GameUtilities::AddRenderableCollider();*/
+		Renderable* tavernCollider = GameUtilities::AddRenderableCollider();
+		Renderable* rockCollider = GameUtilities::AddRenderableCollider();
+		Renderable* meeting_hallCollider = GameUtilities::AddRenderableCollider();
+		Renderable* cartCollider = GameUtilities::AddRenderableCollider();
+
+		Renderable* rubbleCollider1 = GameUtilities::AddRenderableCollider();
+		Renderable* rubbleCollider2 = GameUtilities::AddRenderableCollider();
+		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
+
+#ifdef ShowColliders
+		GameUtilities::AddGameObject(golemCollider);
+		/*GameUtilities::AddGameObject(house1Collider);
+		GameUtilities::AddGameObject(house2Collider);
+		GameUtilities::AddGameObject(house3Collider);
+		GameUtilities::AddGameObject(house4Collider);
+		GameUtilities::AddGameObject(barn1Collider);
+		GameUtilities::AddGameObject(barn2Collider);
+		GameUtilities::AddGameObject(gatewayCollider);
+		GameUtilities::AddGameObject(towerCollider);
+		GameUtilities::AddGameObject(scaffoldingCollider);
+		GameUtilities::AddGameObject(wallCollider);
+		GameUtilities::AddGameObject(wellCollider);*/
+		GameUtilities::AddGameObject(tavernCollider);
+		GameUtilities::AddGameObject(rockCollider);
+		GameUtilities::AddGameObject(meeting_hallCollider);
+		GameUtilities::AddGameObject(cartCollider);
+
+		GameUtilities::AddGameObject(rubbleCollider1);
+		GameUtilities::AddGameObject(rubbleCollider2);
+		GameUtilities::AddGameObject(rubbleCollider3);
+		
 #endif
 
-		cubeCollider->colliderPtr = nullptr;
+#endif
+
 		//////////////////////////////
 	//THis is the stuff for you.
 		ADAI::FlockingGroup commandFlock;
@@ -264,6 +304,8 @@ public:
 
 		golem->targetMarker = m1;
 
+		m1->colliderPtr = nullptr;
+
 
 
    // No more.
@@ -298,7 +340,7 @@ public:
 		//spyro->testAttack.hitbox = myHitBox;
 
 		// Colliders
-		Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		/*Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 		Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 		Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 		Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
@@ -316,35 +358,33 @@ public:
 		c6->physicsType = ADResource::ADGameplay::STATIC;
 		c7->physicsType = ADResource::ADGameplay::STATIC;
 		c8->physicsType = ADResource::ADGameplay::STATIC;
-		c9->physicsType = ADResource::ADGameplay::STATIC;
+		c9->physicsType = ADResource::ADGameplay::STATIC;*/
 		
 		float mapWidth = 1000;
 		float mapLength = 1000;
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
 
-		GameUtilities::AddGameObject(cube);
-
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
-		GameUtilities::AddGameObject(c1);
-		GameUtilities::AddGameObject(c2);
-		GameUtilities::AddGameObject(c3);
-		GameUtilities::AddGameObject(c4);
-		GameUtilities::AddGameObject(c5);
-		GameUtilities::AddGameObject(c6);
-		GameUtilities::AddGameObject(c7);
-		GameUtilities::AddGameObject(c8);
-		GameUtilities::AddGameObject(c9);
+		//GameUtilities::AddGameObject(c1);
+		//GameUtilities::AddGameObject(c2);
+		//GameUtilities::AddGameObject(c3);
+		//GameUtilities::AddGameObject(c4);
+		//GameUtilities::AddGameObject(c5);
+		//GameUtilities::AddGameObject(c6);
+		//GameUtilities::AddGameObject(c7);
+		//GameUtilities::AddGameObject(c8);
+		//GameUtilities::AddGameObject(c9);
 		//GameUtilities::AddGameObject(c2);
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
 
-		for (int i = 0; i < 10; i++)
-		{
-			GameUtilities::AddGameObject(stoneMinions[i]);
-			GameUtilities::AddGameObject(waterMinions[i]);
-			GameUtilities::AddGameObject(fireMinions[i]);
-			GameUtilities::AddGameObject(woodMinions[i]);
-		}
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	GameUtilities::AddGameObject(stoneMinions[i]);
+		//	GameUtilities::AddGameObject(waterMinions[i]);
+		//	GameUtilities::AddGameObject(fireMinions[i]);
+		//	GameUtilities::AddGameObject(woodMinions[i]);
+		//}
 		GameUtilities::AddGameObject(m1);
 		//GameUtilities::AddGameObject(m2);
 		//GameUtilities::AddGameObject(t1);
@@ -352,58 +392,59 @@ public:
 		//GameUtilities::AddGameObject(AnimationTester);
 		GameUtilities::AddGameObject(tempPlane);
 
-		Building* house1 = new Building(5, 5, XMFLOAT3(0, 0, -5), XMFLOAT3(0, 45, 0), GameUtilities::GenerateHouse1);
+		/*Building* house1 = new Building(XMFLOAT3(-3, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25,25,30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
+		GameUtilities::AddGameObject(house1);
 
-		GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0));
+		Building* house2 = new Building(XMFLOAT3(-1, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
+		GameUtilities::AddGameObject(house2);
 
-		GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
+		Building* house3 = new Building(XMFLOAT3(1, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
+		GameUtilities::AddGameObject(house3);
 
-		GameUtilities::GenerateHouse3(XMFLOAT3(0, 0, -5), XMFLOAT3(0, -45, 0));
+		Building* house4 = new Building(XMFLOAT3(3, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
+		GameUtilities::AddGameObject(house4);
 
-		GameUtilities::GenerateHouse4(XMFLOAT3(0, 0, -7.5), XMFLOAT3(0, 45, 0));
+		Building* barn1 = new Building(XMFLOAT3(-5, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
+		GameUtilities::AddGameObject(barn1);
 
-		GameUtilities::GenerateBarn1(XMFLOAT3(-10, 0, 0), XMFLOAT3(0, 0, 0));
+		Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
+		GameUtilities::AddGameObject(barn2);
 
-		GameUtilities::GenerateBarn2(XMFLOAT3(-10, 0, 2.5), XMFLOAT3(0, 0, 0));
+		Building* tower = new Building(0, 0, XMFLOAT3(-5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
+		GameUtilities::AddGameObject(tower);*/
 
-		GameUtilities::GenerateGateway(XMFLOAT3(10, 0, 0), XMFLOAT3(0, -90, 0));
+		/*Building* gateway = new Building(XMFLOAT3(5, 0, 0), XMFLOAT3(0, -90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway);
+		GameUtilities::AddGameObject(gateway);
 
-		GameUtilities::GenerateScaffolding(XMFLOAT3(10, 0, 1), XMFLOAT3(0, 0, 0));
+		Building* scaffolding = new Building(XMFLOAT3(5, 0, 1.5), XMFLOAT3(0, 0, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWall);
+		GameUtilities::AddGameObject(scaffolding);
 
-		GameUtilities::GenerateWall(XMFLOAT3(10, 0, 5), XMFLOAT3(0, 45, 0));
+		Building* wall = new Building(XMFLOAT3(5, 0, 3), XMFLOAT3(0, -90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		GameUtilities::AddGameObject(wall);
 
-		GameUtilities::GenerateWell(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, 0, 0));
+		Building* well = new Building(XMFLOAT3(0, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
+		GameUtilities::AddGameObject(well);*/
 
-		GameUtilities::GenerateTavern(XMFLOAT3(-5, 0, 5), XMFLOAT3(0, 45, 0));
+		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
+		GameUtilities::AddGameObject(tavern);
 
-		GameUtilities::GenerateTree(XMFLOAT3(-2.5, 0, 2.5), XMFLOAT3(0, 0, 0));
+		Building* rock = new Building(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1);
+		GameUtilities::AddGameObject(rock);
 
-		GameUtilities::GenerateLadder(XMFLOAT3(-2.5, 0, 0), XMFLOAT3(0, 0, 0));
+		Building* meeting_hall = new Building(XMFLOAT3(10, 0, 10), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall);
+		GameUtilities::AddGameObject(meeting_hall);
 
-		GameUtilities::GenerateRock1(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0));
+		Building* cart = new Building(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart);
+		GameUtilities::AddGameObject(cart);
 
-		GameUtilities::GenerateLamp(XMFLOAT3(2.5, 0, 2.5), XMFLOAT3(0, 0, 0));
+		Building* rubble1 = new Building(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1);
+		GameUtilities::AddGameObject(rubble1);
 
-		GameUtilities::GenerateMeetingHall(XMFLOAT3(5, 0, 5), XMFLOAT3(0, 225, 0));
+		Building* rubble2 = new Building(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
+		GameUtilities::AddGameObject(rubble2);
 
-		GameUtilities::GenerateTower(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateCart(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0,0,0));
-
-		GameUtilities::GenerateStraw(XMFLOAT3(-2.5, 0, 2), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateDebris1(XMFLOAT3(-2.5, 0, 5), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRubble1(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRubble2(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));
-
-#ifdef _DEBUG
-#ifdef ShowColliders
-		GameUtilities::AddGameObject(golemCollider);
-		GameUtilities::AddGameObject(cubeCollider);
-#endif
-#endif
+		Building* rubble3 = new Building(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
+		GameUtilities::AddGameObject(rubble3);
 
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
@@ -528,22 +569,39 @@ public:
 
 			// Physics test
 
-			/*spyro->CheckCollision(c1);
-			spyro->CheckCollision(c2);
-			spyro->CheckCollision(p1);
-			a3->CheckCollision(spyro);
-			e1->CheckCollision(spyro);
-			e2->CheckCollision(spyro);
-			e3->CheckCollision(spyro);
-			t1->CheckCollision(spyro);*/
-
 #ifdef _DEBUG
 			golemCollider->transform = golem->GetColliderInfo();
-			XMMATRIX colliderLocation = cube->transform;
 
-			cube->colliderPtr = &AABB(VectorToFloat3(colliderLocation.r[3]), XMFLOAT3(1, 1, 1));
-			cube->physicsType = COLLIDABLE;
-			cubeCollider->transform = colliderLocation;
+			//house1Collider->transform = house1->GetColliderInfo();
+			//house2Collider->transform = house2->GetColliderInfo();
+			//house3Collider->transform = house3->GetColliderInfo();
+			//house4Collider->transform = house4->GetColliderInfo();
+
+			//barn1Collider->transform = barn1->GetColliderInfo();
+
+			//barn2Collider->transform = barn2->GetColliderInfo();
+
+			//gatewayCollider->transform = gateway->GetColliderInfo();
+
+			//towerCollider->transform = tower->GetColliderInfo();
+
+			/*scaffoldingCollider->transform = scaffolding->GetColliderInfo();
+
+			wallCollider->transform = wall->GetColliderInfo();
+
+			wellCollider->transform = well->GetColliderInfo();*/
+
+			tavernCollider->transform = tavern->GetColliderInfo();
+
+			rockCollider->transform = rock->GetColliderInfo();
+
+			meeting_hallCollider->transform = meeting_hall->GetColliderInfo();
+
+			cartCollider->transform = cart->GetColliderInfo();
+
+			rubbleCollider1->transform = rubble1->GetColliderInfo();
+			rubbleCollider2->transform = rubble2->GetColliderInfo();
+			rubbleCollider3->transform = rubble3->GetColliderInfo();
 #endif
 
 			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them

@@ -287,7 +287,7 @@ XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
 	temp.r[3] = Float3ToVector(collider.Pos);
 	temp.r[3].m128_f32[3] = 1;
 
-	temp = XMMatrixScaling(collider.GetWidth() / 2, collider.GetHeight() / 2, collider.GetWidth() / 2) * temp;
+	temp = XMMatrixScaling(collider.GetWidth() / 2, collider.GetHeight() / 2, collider.GetLength() / 2) * temp;
 
 	return temp;
 }

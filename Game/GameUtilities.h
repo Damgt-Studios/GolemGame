@@ -30,7 +30,7 @@ public:
 
 	static Renderable* AddSimpleAsset(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, RotationType type = RotationType::xyz);
 	static Renderable* AddSimpleAnimAsset(std::string modelname, std::string materials, std::vector<std::string> AnimationFiles, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	static Renderable* AddRenderableCollider(XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static Renderable* AddRenderableCollider();
 
 	static std::vector<Renderable*> GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 rotation);
@@ -40,6 +40,7 @@ public:
 	static std::vector<Renderable*> GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateGateway(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateScaffolding(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateScaffoldWall(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateWell(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateTavern(XMFLOAT3 pos, XMFLOAT3 rotation);

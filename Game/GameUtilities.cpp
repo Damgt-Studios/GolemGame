@@ -222,15 +222,12 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAnimAsset(std::strin
 	return temp;
 }
 
-ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider(XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation)
+ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider()
 {
 
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
-	temp->SetPosition(pos);
-	temp->SetRotation(rotation);
-	temp->SetScale(scale);
 
-	AD_ULONG id = ResourceManager::AddRenderableCollider(pos, scale, rotation);
+	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0,0,0), XMFLOAT3(1,1,1), XMFLOAT3(0,0,0));
 	temp->SetMeshID(id);
 
 	return temp;
@@ -404,6 +401,27 @@ std::vector<Renderable*> GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLOA
 
 	return temp;
 }
+
+std::vector<Renderable*> GameUtilities::GenerateScaffoldWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(pos.x, pos.y, pos.z + 0.5f), XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(pos.x, pos.y, pos.z - 0.5f), XMFLOAT3(25, 25, 25), rotation));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
 std::vector<Renderable*> GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
