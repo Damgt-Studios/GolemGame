@@ -85,8 +85,8 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
-			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
+			overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			//overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
 		return buttonPressed;
@@ -157,10 +157,10 @@ namespace GolemGameUISetup
 			break;
 		}
 
-		ADResource::ADGameplay::Stat* health = player->GetStatSheet()->RequestStats(ADResource::ADGameplay::HEALTH);
+		ADResource::ADGameplay::Stat* health = player->GetStatSheet()->RequestStats("Health");
 		healthIcon->SetTiled(health->currentValue);
 
-		ADResource::ADGameplay::Stat* tokens = player->GetStatSheet()->RequestStats(ADResource::ADGameplay::TOKENS);
+		ADResource::ADGameplay::Stat* tokens = player->GetStatSheet()->RequestStats("Token");
 
 		for (int i = 0; i < 3; i++)
 		{

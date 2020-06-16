@@ -334,8 +334,5 @@ namespace AD_AUDIO
     {
         vPos = pos;
     }
-    void AudioSourceEvent::HandleEvent(ADEvents::ADEvent* _event)
-    {
-        audioSource.Play();
-    }
+
 }

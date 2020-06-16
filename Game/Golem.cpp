@@ -7,8 +7,29 @@ ADResource::ADGameplay::Golem::Golem() {
 	collider = OBB(transform * translateToMiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
-	stats = new StatSheet();
+	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
 	InitAnims();
+
+	golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+
+	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+
+	golemPunch->active = false;
+	golemKick->active = false;
+	golemSlam->active = false;
+	golemConsume->active = false;
+
+	golemWaterWave->active = false;
+	golemFireball->active = false;
+	golemTaunt->active = false;
+	golemRoot->active = false;
+
 
 	flockingGroups = new ADAI::FlockingGroup * [5];
 	for (int i = 0; i < 5; ++i)
@@ -32,6 +53,14 @@ ADResource::ADGameplay::Golem::~Golem()
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
+	golemPunch->Update(delta_time);
+	golemKick->Update(delta_time);
+	golemSlam->Update(delta_time);
+	golemConsume->Update(delta_time);
+	golemWaterWave->Update(delta_time);
+	golemFireball->Update(delta_time);
+	golemTaunt->Update(delta_time);
+	golemRoot->Update(delta_time);
 	ProcessEffects(delta_time);
 
 	for (int i = 0; i < 5; ++i)
@@ -76,7 +105,7 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 			i--;
 		}
 	}
-	if (stats->health.currentValue <= 0)
+	if (stats->RequestStats("Health")->currentValue <= 0)
 	{
 		//Death();
 	}
@@ -150,7 +179,7 @@ XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
 	return temp;
 }
 
-iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
+StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
 {
 	return stats;
 }
@@ -184,66 +213,58 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		isActing = false;
 
 	// Golem Tower Punch
-	if (Input::QueryButtonDown(GamepadButtons::X) && !isActing)
+	if (Input::QueryButtonDown(GamepadButtons::X) && !isActing && responseTimer < 0)
 	{
 		TowerPunch();
 	}
 
 	// Golem Ground Slam
-	if (Input::QueryButtonDown(GamepadButtons::A) && !isActing)
+	if (Input::QueryButtonDown(GamepadButtons::A) && !isActing && responseTimer < 0)
 	{
 		GroundSlam();
 	}
 
 	// Golem Kick
-	if (Input::QueryButtonDown(GamepadButtons::B) && !isActing)
+	if (Input::QueryButtonDown(GamepadButtons::B) && !isActing && responseTimer < 0)
 	{
 		Kick();
 	}
 
 	// Golem Special Move
-	if (Input::QueryButtonDown(GamepadButtons::Y) && !isActing && specialCoins > 0)
+	if (Input::QueryButtonDown(GamepadButtons::Y) && !isActing && responseTimer < 0 && stats->RequestStats("Token")->currentValue > stats->RequestStats("Token")->minValue)
 	{
 		PerformSpecial();
 	}
 
-	// Increment Player Element
-	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && responseTimer < 0)
 	{
 		ChangeElement(true);
 	}
 
 	// Decrement Player Element
-	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && responseTimer < 0)
 	{
 		ChangeElement(false);
 	}
 
 	// Move up minions list
-	if (Input::QueryButtonDown(GamepadButtons::DPadDown))
+	if (Input::QueryButtonDown(GamepadButtons::DPadDown) && responseTimer < 0)
 	{
 		ChangeMinionGroup(true);
 	}
 
 	// Move down minions list
-	if (Input::QueryButtonDown(GamepadButtons::DPadUp))
+	if (Input::QueryButtonDown(GamepadButtons::DPadUp) && responseTimer < 0)
 	{
 		ChangeMinionGroup(false);
 	}
 
-	// Summon Minions
-	if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing)
+	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && responseTimer < 0)
 	{
-		SummonMinions();
+		ConsumeMinion();
 	}
 
-	// Eat Minions
-	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing)
-	{
-		EatMinion();
-	}
 
-	// Recall Minions
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
 	{
 		RecallMinions();
@@ -363,13 +384,20 @@ void ADResource::ADGameplay::Golem::PerformSpecial()
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
-	if (responseTimer < 0)
+	responseTimer = 0.2f;
+	if (GetCurrentElement() == WATER)
+		golemWaterWave->StartAction(&transform);
+	else if (GetCurrentElement() == FIRE)
+		golemFireball->StartAction(&transform);
+	else if (GetCurrentElement() == STONE)
+		golemTaunt->StartAction(&transform);
+	else if (GetCurrentElement() == WOOD)
+		golemRoot->StartAction(&transform);
+
+	stats->RequestStats("Token")->currentValue--;
+	if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
 	{
-		responseTimer = 0.2f;
-		stats->token.currentValue--;
-		if (stats->token.currentValue < stats->token.minValue)
-			stats->token.currentValue = 0;
-		--specialCoins;
+		stats->RequestStats("Token")->currentValue = 0;
 	}
 }
 
@@ -379,6 +407,8 @@ void ADResource::ADGameplay::Golem::TowerPunch()
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
+	responseTimer = 0.2f;
+	golemPunch->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::GroundSlam()
@@ -387,6 +417,8 @@ void ADResource::ADGameplay::Golem::GroundSlam()
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
+	responseTimer = 0.2f;
+	golemSlam->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::Kick()
@@ -395,6 +427,8 @@ void ADResource::ADGameplay::Golem::Kick()
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
+	responseTimer = 0.2f;
+	golemKick->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::CommandMinions()
@@ -438,24 +472,18 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 	if (nextElement)
 	{
 		idleTime = 0.0;
-		if (responseTimer < 0)
-		{
-			responseTimer = 0.2f;
-			++playerElement;
-			if (playerElement == 4)
-				playerElement = 0;
-		}
+		responseTimer = 0.2f;
+		++playerElement;
+		if (playerElement == 4)
+			playerElement = 0;
 	}
 	else
 	{
 		idleTime = 0.0;
-		if (responseTimer < 0)
-		{
-			responseTimer = 0.2f;
-			--playerElement;
-			if (playerElement < 0)
-				playerElement = 3;
-		}
+		responseTimer = 0.2f;
+		--playerElement;
+		if (playerElement < 0)
+			playerElement = 3;
 	}
 }
 
@@ -464,32 +492,29 @@ void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
 	if (nextElement)
 	{
 		idleTime = 0.0;
-		if (responseTimer < 0)
-		{
-			responseTimer = 0.2f;
-			++commandTargetGroup;
-			if (commandTargetGroup == 5)
-				commandTargetGroup = 4;
-		}
+		responseTimer = 0.2f;
+		++commandTargetGroup;
+		if (commandTargetGroup == 5)
+			commandTargetGroup = 4;
 	}
 	else
 	{
-		if (responseTimer < 0)
-		{
-			responseTimer = 0.2f;
-			--commandTargetGroup;
-			if (commandTargetGroup < 0)
-				commandTargetGroup = 0;
-		}
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+		--commandTargetGroup;
+		if (commandTargetGroup < 0)
+			commandTargetGroup = 0;
 	}
 }
 
-void ADResource::ADGameplay::Golem::EatMinion()
+void ADResource::ADGameplay::Golem::ConsumeMinion()
 {
 	anim_controller->PlayAnimationByName(anims[playerElement].eat.c_str());
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].eat.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
+	responseTimer = 0.2f;
+	golemConsume->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::SummonMinions()

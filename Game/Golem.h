@@ -5,6 +5,7 @@
 #include "AudioManager.h"
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
+#include "GameEffects.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -68,8 +69,14 @@ namespace ADResource
 			Golem();
 			~Golem();
 
-
-			// Update Methods
+			Action* golemPunch;
+			Action* golemKick;
+			Action* golemSlam;
+			Action* golemConsume;
+			Action* golemWaterWave;
+			Action* golemFireball;
+			Action* golemTaunt;
+			Action* golemRoot;
 			virtual void Update(float time_delta);
 			void ProcessEffects(float _deltaTime);
 			void CheckCollision(GameObject* obj);
@@ -81,7 +88,7 @@ namespace ADResource
 			void GetView(XMMATRIX& view);
 			void GetAnimationController(AnimationStateMachine& controller);
 			XMMATRIX GetColliderInfo();
-			virtual iStatSheet* GetStatSheet() override;
+			virtual StatSheet* GetStatSheet() override;
 			int GetCurrentElement();
 
 
@@ -102,12 +109,6 @@ namespace ADResource
 			// Physics
 			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
-			
-
-
-			// Commented Out Methods
-			//void Damage(DAMAGE_TYPE d_type);
-			//virtual void OnTrigger(GameObject* other);
 
 		private:
 			// Private Methods
@@ -122,7 +123,7 @@ namespace ADResource
 			void RecallMinions();
 			void ChangeElement(bool nextElement);
 			void ChangeMinionGroup(bool nextElement);
-			void EatMinion();
+			void ConsumeMinion();
 			void SummonMinions();
 
 
@@ -148,7 +149,6 @@ namespace ADResource
 			const float invulnerablePeriod = 1.6f;
 			float invulnerableTimer = 0;
 			float responseTimer = 0;
-			int specialCoins = 3;
 
 
 			// Movement
