@@ -92,11 +92,8 @@ void ADEvents::ADEventSystem::ProcessEvents()
 {
 	while (currentEvents.size())
 	{
-		while (currentEvents.size())
-		{
-			DispatchEvent(&currentEvents.front());
-			currentEvents.pop_front();
-		}
+		DispatchEvent(&currentEvents.front());
+		currentEvents.pop_front();
 	}
 }
 

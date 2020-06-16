@@ -1,6 +1,7 @@
 #pragma once
 #include "ADUserInterface.h"
 #include "GameplayBaseClasses.h"
+#include "ADEventSystem.h"
 #include <Types.h>
 
 namespace ADResource
@@ -30,21 +31,10 @@ namespace ADResource
 			FIRE_OBJECT,
 			ALLY_HITBOX,
 			ENEMY_HITBOX,
+			CONSUMPTION_HITBOX,
 			PROJECTILE,
 			EVENT_TRIGGER
 		};
-
-		enum STATS
-		{
-			HEALTH = 1,
-			TOKENS,
-			STORED_ESSENCE,
-			ATTACK,
-			SPEED,
-			ARMOR,
-			STRUCTURES_DESTROYED,		//we can get more specific when it comes time
-		};
-
 
 		enum GAME_ELEMENTS
 		{
@@ -55,64 +45,46 @@ namespace ADResource
 			ELECTRIC
 		};
 
-		struct StatSheet : public iStatSheet
-		{
-			Stat health = {100,99999,0, INT_MAX};
-			Stat token = {3,3,0, INT_MAX };
-
-			Stat* RequestStats(UINT _statID)
-			{
-				switch (_statID)
-				{
-				case ADResource::ADGameplay::HEALTH:
-					return &health;
-					break;
-				case ADResource::ADGameplay::TOKENS:
-					return &token;
-					break;
-				case ADResource::ADGameplay::STORED_ESSENCE:
-					break;
-				case ADResource::ADGameplay::ATTACK:
-					break;
-				case ADResource::ADGameplay::SPEED:
-					break;
-				case ADResource::ADGameplay::ARMOR:
-					break;
-				case ADResource::ADGameplay::STRUCTURES_DESTROYED:
-					break;
-				default:
-					break;
-				}
-			};
-		};
 
 		class Destructable : public Renderable
 		{
 		protected:
 			StatSheet* stats;
 		public:
+			XMFLOAT3 colScale;
 			ADPhysics::AABB collider;
 
-
-			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; stats = new StatSheet(); }
+			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; }
 			~Destructable() override
-			{ 
-				delete stats; 
+			{
+				delete stats;
 			}
 
-			virtual void Update(float _deltaTime) 
+			virtual void Update(float _deltaTime)
 			{
 				ProcessEffects(_deltaTime);
+
+				// Physics
+				XMFLOAT3 dang;
+				XMStoreFloat3(&dang, transform.r[3]);
+				collider = ADPhysics::AABB(dang, colScale);
+				colliderPtr = &collider;
+
 			};
 
-			virtual iStatSheet* GetStatSheet() override
-			{ 
+			virtual StatSheet* GetStatSheet() override
+			{
 				return stats;
+			};
+
+			void SetStatSheet(StatSheet* statSheet)
+			{
+				stats = statSheet;
 			};
 
 			void CheckCollision(GameObject* obj) override
 			{
-				if (this->active)
+				if (active && obj->active)
 				{
 					ADPhysics::Manifold m;
 					obj->colliderPtr->isCollision(&collider, m);
@@ -140,7 +112,7 @@ namespace ADResource
 					//updateHudDeleteMeOneDay.number = 1;
 					//ADUI::MessageReceiver::SendMessage(&updateHudDeleteMeOneDay);
 				}
-				if (stats->health.currentValue <= 0)
+				if (stats->RequestStats("Health")->currentValue <= 0)
 				{
 					Death();
 				}
@@ -164,10 +136,101 @@ namespace ADResource
 			}
 		};
 
+		class HitBox : public Renderable
+		{
+
+		public:
+			XMFLOAT3 colScale;
+			XMFLOAT3 vel;
+
+			bool isDeactivateOnFirstApplication = false;
+			float offsetX;
+			float offsetZ;
+			float offsetY = 0;
+			float lifespan;
+			ADPhysics::OBB collider;
+
+			std::string eventName;
+
+			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			~HitBox() = default;
+
+
+			void Enable()
+			{
+				active = true;
+				for (int i = 0; i < effects.size(); ++i)
+				{
+					effects[i].get()->instanceID++;
+				}
+			}
+
+			virtual void Update(float _deltaTime)
+			{
+				// Physics
+				collider = ADPhysics::OBB(transform, XMFLOAT3(1,1,1));
+				colliderPtr = &collider;
+				collider.trigger = true;
+				
+				if (lifespan > 0)
+				{
+					lifespan -= _deltaTime;
+					if (lifespan <= 0)
+					{
+						active = false;
+					}
+				}
+
+				AddToPositionVector((XMFLOAT3&)Velocity);
+			};
+
+			void CheckCollision(GameObject* obj) override
+			{
+				if (active && obj->active)
+				{
+					ADPhysics::Manifold m;
+					if (obj->colliderPtr->isCollision(&collider, m))
+					{
+						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						{
+							if(gamePlayType != CONSUMPTION_HITBOX)
+								PassEffects(obj);
+							else if(obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+								PassEffects(obj);
+						}
+					}
+				}
+			}
+
+			void PassEffects(GameObject* obj)
+			{
+				for (int i = 0; i < effects.size(); ++i)
+				{
+					if (!obj->HasEffectID(effects[i].get()->sourceID, effects[i].get()->instanceID))
+					{
+						obj->effects.push_back(effects[i].get()->clone());
+						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
+						XMFLOAT3 hbpos = GetPosition();
+						XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
+						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos2);
+						if (isDeactivateOnFirstApplication)
+						{
+							active = false;
+						}
+					}
+				}
+			}
+		};
+
 		class Trigger : public Renderable
 		{
 		public:
+			XMFLOAT3 colScale;
+
 			bool isDeactivateOnFirstApplication = false;
+			float offsetX;
+			float offsetZ;
+			float offsetY = 0;
 			ADPhysics::AABB collider;
 
 			//Until we have an event manager this is our solution for events.
@@ -185,14 +248,24 @@ namespace ADResource
 				}
 			}
 
+			virtual void Update(float _deltaTime)
+			{
+				// Physics
+				XMFLOAT3 dang;
+				XMStoreFloat3(&dang, transform.r[3]);
+				collider = ADPhysics::AABB(dang, colScale);
+				colliderPtr = &collider;
+				collider.trigger = true;
+			};
+
 			void CheckCollision(GameObject* obj) override
 			{
-				if (active)
+				if (active && obj->active)
 				{
 					ADPhysics::Manifold m;
 					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						if (obj->team != team)
+						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 						{
 							if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
 							{
@@ -234,7 +307,7 @@ namespace ADResource
 			}
 		};
 
-		class Attack
+		class Action
 		{
 		public:
 			bool active;
@@ -242,16 +315,63 @@ namespace ADResource
 			float cooldownTimer;
 			float attackDuration;
 			float attackTimer;
-			Trigger* hitbox;
+			HitBox* hitbox;
 			UINT hitboxCount;
 
-			//If the attack doesn't own the hitbox this needs to change.
-			~Attack() { delete hitbox; };
+			bool removeHbIfEnd = true;
+			bool movesToPlayer = true;
 
-			void StartAttack()
+			std::vector<bool> eventFired;
+			std::vector<float> eventDelay;
+			std::vector<std::string> eventName;
+
+
+			//If the attack doesn't own the hitbox this needs to change.
+			~Action() { delete hitbox; };
+
+			bool StartAction(XMMATRIX* _casterTransform)
 			{
+				if (movesToPlayer)
+				{
+					hitbox->transform = *_casterTransform;
+					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x*10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
+					XMVECTOR castSideNormal = _casterTransform->r[0];
+					XMVECTOR castUpNormal = _casterTransform->r[1];
+					XMVECTOR castHeadingNormal = _casterTransform->r[2];
+					XMVECTOR targetLocation = _casterTransform->r[3];
+
+					castUpNormal = XMVector4Normalize(castUpNormal);
+					XMFLOAT3 casterUN;
+					XMStoreFloat3(&casterUN, castUpNormal);
+
+					castSideNormal = XMVector4Normalize(castSideNormal);
+					XMFLOAT3 casterSN;
+					XMStoreFloat3(&casterSN, castSideNormal);
+
+
+					castHeadingNormal = XMVector4Normalize(castHeadingNormal);
+					XMFLOAT3 casterFN;
+					XMStoreFloat3(&casterFN, castHeadingNormal);
+					XMFLOAT3 targetPos;
+					XMStoreFloat3(&targetPos, targetLocation);
+
+					targetPos.x += (casterFN.x * hitbox->offsetZ) + (casterUN.x * hitbox->offsetY) + (casterSN.x * hitbox->offsetX);
+					targetPos.y += (casterFN.y * hitbox->offsetZ) + (casterUN.y * hitbox->offsetY) + (casterSN.y * hitbox->offsetX);
+					targetPos.z += (casterFN.z * hitbox->offsetZ) + (casterUN.z * hitbox->offsetY) + (casterSN.z * hitbox->offsetX);
+
+					hitbox->SetPosition(targetPos);
+
+					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
+					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
+					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
+					
+				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
+					for (int i = 0; i < eventDelay.size(); i++)
+					{
+						eventFired[i] = false;
+					}
 					if (hitbox)
 					{
 						cooldownTimer = cooldownDuration;
@@ -259,10 +379,12 @@ namespace ADResource
 						for (int i = 0; i < hitboxCount; ++i)
 						{
 							hitbox[i].Enable();
+							active = true;
+							return true;
 						}
 					}
 				}
-
+				return false;
 			}
 
 			void Update(float _deltaTime)
@@ -271,26 +393,43 @@ namespace ADResource
 				{
 					cooldownTimer -= _deltaTime;
 				}
-				if (attackTimer > 0)
+				if (active)
 				{
-					attackTimer -= _deltaTime;
-					if (attackTimer <= 0)
+					if (attackTimer > 0)
 					{
-						EndAttack();
+						for (int i = 0; i < eventDelay.size(); i++)
+						{
+							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
+							{
+								XMFLOAT3 hbpos = hitbox->GetPosition();
+								XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
+								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)&hbpos2);
+								eventFired[i] = true;
+							}
+						}
+						attackTimer -= _deltaTime;
+						if (attackTimer <= 0)
+						{
+							EndAction();
+						}
 					}
+
+					hitbox->collider.Pos = hitbox->GetPosition();
 				}
+
 			}
 			
-			void EndAttack()
+			void EndAction()
 			{
 				//Some hit boxes would turn off this way, others require they burn out or collide.
-				//if (hitbox)
-				//{
-				//	for (int i = 0; i < hitboxCount; ++i)
-				//	{
-				//		hitbox[i].active = false;
-				//	}
-				//}
+				if (hitbox && removeHbIfEnd)
+				{
+					active = false;
+					for (int i = 0; i < hitboxCount; ++i)
+					{
+						hitbox[i].active = false;
+					}
+				}
 			}
 		};
 

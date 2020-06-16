@@ -35,7 +35,6 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 	temp->SetRotation(rotation);
 	temp->SetPosition(position);
 
-	temp->transform;
 
 	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
@@ -43,29 +42,30 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 	return temp;
 };
 
-Trigger* GameUtilities::AddTinyEssenceFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Trigger* GameUtilities::AddTinyEssenceFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
+	//ADResource::ADGameplay::Trigger* temp = DefinitionDatabase::Instance()->hitboxDatabase["GolemPunchHB"];
 
-	// Transform data
-	temp->SetScale(scale);
-	temp->SetRotation(rotation);
-	temp->SetPosition(position);
+	//// Transform data
+	//temp->SetScale(scale);
+	//temp->SetRotation(rotation);
+	//temp->SetPosition(position);
 
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-	temp->SetMeshID(id);
+	//AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
+	//temp->SetMeshID(id);
 
-	scale.x *= 1.8f;
-	scale.y *= 1.8f;
-	scale.z *= 1.8f;
-	temp->collider = ADPhysics::AABB(position, scale);
-	temp->collider.trigger = true;
-	temp->isDeactivateOnFirstApplication = true;
+	//temp->active = false;
+	//temp->team = 1;
 
-	temp->effects.push_back(std::unique_ptr<EssenceEffect>(new EssenceEffect()));
-	temp->effects[0].get()->sourceID = ResourceManager::GenerateEffectID();
+	//scale.x *= 500.0f;
+	//scale.y *= 500.0f;
+	//scale.z *= 500.0f;
+	//temp->collider = ADPhysics::AABB(position, scale);
+	//temp->collider.trigger = true;
+	//temp->colliderPtr = &temp->collider;
 
-	return temp;
+	//return temp;
+	return nullptr;
 };
 
 Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
@@ -83,7 +83,8 @@ Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XM
 	scale.x *= 1.8f;
 	scale.y *= 1.8f;
 	scale.z *= 1.8f;
-	temp->collider = ADPhysics::AABB(position, scale);
+	temp->colScale = scale;
+	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->collider.trigger = true;
 	temp->gamePlayType = EVENT_TRIGGER;
 
@@ -96,9 +97,9 @@ Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XM
 	return temp;
 }
 
-Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+HitBox* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
+	ADResource::ADGameplay::HitBox* temp = new ADResource::ADGameplay::HitBox;
 
 	// Transform data
 	temp->SetScale(scale);
@@ -111,11 +112,12 @@ Trigger* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFL
 	scale.x *= 1.8f;
 	scale.y *= 1.8f;
 	scale.z *= 1.8f;
-	temp->collider = ADPhysics::AABB(position, scale);
+	temp->colScale = scale;
+	temp->collider = ADPhysics::OBB(temp->transform, temp->colScale);
 	temp->collider.trigger = true;
 	temp->isDeactivateOnFirstApplication = true;
 	temp->active = false;
-	temp->gamePlayType = ALLY_HITBOX;
+	temp->gamePlayType = ENEMY_HITBOX;
 	temp->team = 1;
 
 	temp->effects.push_back(std::unique_ptr<EssenceEffect>(new EssenceEffect()));
@@ -128,6 +130,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 {
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
 
+	
 	// Transform data
 	temp->SetScale(scale);
 	temp->SetRotation(rotation);
@@ -138,14 +141,19 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 
 	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	temp->SetMeshID(id);
+	temp->team = 0;
 
-	scale.x *= 5.f;
-	scale.y *= 5.f;
-	scale.z *= 5.f;
+	scale.x *= 100.0f;
+	scale.y *= 100.0f;
+	scale.z *= 100.0f;
 	//scale.x *= 0.5f;
 	//scale.y *= 0.5f;
 	//scale.z *= 0.5f;
-	temp->collider = ADPhysics::AABB(position, scale);
+	temp->colScale = scale;
+	temp->collider = ADPhysics::AABB(position, temp->colScale);
+	temp->colliderPtr = &temp->collider;
+	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["House1"]));
+
 
 	return temp;
 }
@@ -154,6 +162,7 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 {
 	ADAI::AIUnit* temp = new ADAI::AIUnit;
 	temp->owner = _destructable;
+	_destructable->gamePlayType = WOOD_MINION;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();
 	temp->states.push_back(idling);

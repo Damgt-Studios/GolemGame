@@ -14,7 +14,28 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	fireCPtr = &fireCollider;
 
-	stats = new StatSheet();
+	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
+
+	golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+
+	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+
+	golemPunch->active = false;
+	golemKick->active = false;
+	golemSlam->active = false;
+	golemConsume->active = false;
+
+	golemWaterWave->active = false;
+	golemFireball->active = false;
+	golemTaunt->active = false;
+	golemRoot->active = false;
+
 
 	flockingGroups = new ADAI::FlockingGroup*[5];
 	for (int i = 0; i < 5; ++i)
@@ -36,6 +57,14 @@ ADResource::ADGameplay::Golem::~Golem()
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
+	golemPunch->Update(delta_time);
+	golemKick->Update(delta_time);
+	golemSlam->Update(delta_time);
+	golemConsume->Update(delta_time);
+	golemWaterWave->Update(delta_time);
+	golemFireball->Update(delta_time);
+	golemTaunt->Update(delta_time);
+	golemRoot->Update(delta_time);
 	ProcessEffects(delta_time);
 
 	for (int i = 0; i < 5; ++i)
@@ -92,7 +121,7 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 			i--;
 		}
 	}
-	if (stats->health.currentValue <= 0)
+	if (stats->RequestStats("Health")->currentValue <= 0)
 	{
 		//Death();
 	}
@@ -297,7 +326,7 @@ void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine
 	anim_controller = &controller;
 }
 
-iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
+StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
 {
 	return stats;
 }
@@ -312,18 +341,18 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	anim_controller->PlayAnimationByName("Golem_1_Idle");
 
 	XMFLOAT3 pos(0, 0, 0);
-	if (Input::QueryButtonDown(GamepadButtons::X))
-	{
+	//if (Input::QueryButtonDown(GamepadButtons::X))
+	//{
 		spyro_move_speed = 500;
-		charging = true;
+	//	charging = true;
 
-	}
-	else
-	{
-		charging = false;
+	//}
+	//else
+	//{
+	//	charging = false;
 
-		spyro_move_speed = 500;
-	}
+	//	spyro_move_speed = 500;
+	//}
 
 	//if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER) == 1) && fire == false)
 	//{
@@ -340,11 +369,50 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (responseTimer < 0)
 		{
 			responseTimer = 0.2f;
-			stats->token.currentValue--;
-			if (stats->token.currentValue < stats->token.minValue)
-				stats->token.currentValue = 0;
+			if(GetCurrentElement() == WATER)
+				golemWaterWave->StartAction(&transform);
+			else if (GetCurrentElement() == FIRE)
+				golemFireball->StartAction(&transform);
+			else if (GetCurrentElement() == STONE)
+				golemTaunt->StartAction(&transform);
+			else if (GetCurrentElement() == WOOD)
+				golemRoot->StartAction(&transform);
+
+			stats->RequestStats("Token")->currentValue--;
+			if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+			{
+				stats->RequestStats("Token")->currentValue = 0;
+			}
 		}
 	}
+
+	if (Input::QueryButtonDown(GamepadButtons::X))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			golemPunch->StartAction(&transform);
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::A))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			golemSlam->StartAction(&transform);
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::B))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			golemKick->StartAction(&transform);
+		}
+	}
+
 
 	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 	{
@@ -355,7 +423,6 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			if (playerElement == 4)
 				playerElement = 0;
 		}
-
 	}
 
 	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
@@ -388,6 +455,15 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			--commandTargetGroup;
 			if (commandTargetGroup < 0)
 				commandTargetGroup = 0;
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f; 
+			golemConsume->StartAction(&transform);
 		}
 	}
 

@@ -5,6 +5,7 @@
 #include "AudioManager.h"
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
+#include "GameEffects.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -46,6 +47,14 @@ namespace ADResource
 			Golem();
 			~Golem();
 
+			Action* golemPunch;
+			Action* golemKick;
+			Action* golemSlam;
+			Action* golemConsume;
+			Action* golemWaterWave;
+			Action* golemFireball;
+			Action* golemTaunt;
+			Action* golemRoot;
 			GameObject* targetMarker;
 			ADAI::FlockingGroup** flockingGroups;
 			virtual void Update(float time_delta);
@@ -79,7 +88,7 @@ namespace ADResource
 
 			XMMATRIX GetColliderInfo();
 
-			virtual iStatSheet* GetStatSheet() override;
+			virtual StatSheet* GetStatSheet() override;
 			int GetCurrentElement();
 
 		private:
