@@ -354,7 +354,7 @@ public:
 		GameUtilities::AddGameObject(rubbleCollider3);
 
 #endif
-
+#endif
 
 		ADAI::FlockingGroup commandFlock;
 		ADAI::FlockingGroup idleFlock;
@@ -452,7 +452,7 @@ public:
 		
 		float mapWidth = 1000;
 		float mapLength = 1000;
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Dirt.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(3, 1, 3), XMFLOAT3(0, 0, 0));
 
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
 		//GameUtilities::AddGameObject(c1);
