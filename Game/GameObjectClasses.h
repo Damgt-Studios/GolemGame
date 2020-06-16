@@ -63,7 +63,7 @@ namespace ADResource
 			virtual void Update(float _deltaTime)
 			{
 				ProcessEffects(_deltaTime);
-				collider = ADPhysics::AABB(VectorToFloat3(transform.r[3]), XMFLOAT3(1, 1, 1));
+				collider = ADPhysics::AABB(VectorToFloat3(transform.r[3]), colScale);
 				colliderPtr = &collider;
 				physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 			};
