@@ -415,6 +415,11 @@ public:
 
 					if (lhs == "AddEffect")
 					{
+						//auto tFoundIt = DefinitionDatabase::Instance()->effectsDatabase.find(rhs);
+						//if (tFoundIt == DefinitionDatabase::Instance()->effectsDatabase.end())
+						//{
+						//	int a = 0;
+						//}
 						trigger->effects.push_back(DefinitionDatabase::Instance()->effectsDatabase[rhs]->clone());
 						trigger->effects[0].get()->sourceID = ResourceManager::GenerateEffectID();
 						currentEffect = rhs;
@@ -523,6 +528,11 @@ public:
 
 					if (lhs == "AddHitBox")
 					{
+						//auto tFoundIt = DefinitionDatabase::Instance()->hitboxDatabase.find(rhs);
+						//if (tFoundIt == DefinitionDatabase::Instance()->hitboxDatabase.end())
+						//{
+						//	int a = 0;
+						//}
 						action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
 						action->hitboxCount++;
 					}
@@ -558,6 +568,14 @@ public:
 					}
 					_entityStr.erase(0, endPos + 1);
 				}
+				//if (action->hitbox == nullptr || action->hitbox->colliderPtr == nullptr)
+				//{
+				//	std::string msg = "Dick Sauce ";
+				//	msg.append(lhs);
+				//	msg.append(mid);
+				//	msg.append(rhs);
+				//	ADUI::MessageReceiver::Log(msg);
+				//}
 				DefinitionDatabase::Instance()->actionDatabase[mid] = action;
 				//Needs an ID from a map.
 			}

@@ -1,10 +1,10 @@
-Effect=WaterArmorBuff:StatBuff
+Effect=WoodArmorBuff:StatBuff
 Stat=Armor
 MinValue=5
 MaxValue=5
 ;
 
-Effect=WaterMoveBuff:StatBuff
+Effect=WoodMoveBuff:StatBuff
 Stat=MovementSpeed
 MinValue=5
 MaxValue=5

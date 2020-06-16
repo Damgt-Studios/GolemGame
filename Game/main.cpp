@@ -20,7 +20,7 @@
 #include "AnimationStateMachine.h"
 #include "Listeners.h"
 
-#define ShowColliders
+//#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -279,7 +279,7 @@ public:
 		animations.push_back("files/models/Golem_1_Run.animfile");
 		animations.push_back("files/models/Golem_1_Death.animfile");
 		animations.push_back("files/models/Golem_1_Kick.animfile");
-golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
@@ -332,13 +332,13 @@ golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "
 		for (int i = 0; i < 10; i++)
 		{
 			stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE]));
+			stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE], STONE_MINION));
 			waterMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", waterMinionAnimations, XMFLOAT3(-130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER]));
+			waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER], WATER_MINION));
 			fireMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, XMFLOAT3(130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE]));
+			fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE], FIRE_MINION));
 			woodMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD]));
+			woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD], WOOD_MINION));
 		}	
 		//Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
@@ -497,12 +497,13 @@ golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "
 		GameUtilities::AddGameObject(golemCollider);
 		GameUtilities::AddGameObject(cubeCollider);
 
+#endif
+#endif
+
 		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
 		{
-			GameUtilities::AddGameObject(it->second);
+			GameUtilities::AddGameObject(it->second, false);
 		}
-#endif
-#endif
 
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
@@ -567,8 +568,8 @@ golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "
 		c2->type = OBJECT_TYPE::STATIC;*/
 
 		ADAI::ADPathfinding pathfinder;
-		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
-		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapLength);
+		//pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.tileMap.columns, mapWidth, mapLength);
     
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
@@ -577,10 +578,10 @@ golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
 				//pathfinder.clearDebug();
-				UINT row;
-				UINT column;
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
-				pathfinder.enter(0, 0, column, row);
+				//UINT row;
+				//UINT column;
+				//pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
+				//pathfinder.enter(0, 0, column, row);
 			}
 
 

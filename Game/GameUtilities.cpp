@@ -152,17 +152,17 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["House1"]));
+	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
 
 
 	return temp;
 }
 
-ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup)
+ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType)
 {
 	ADAI::AIUnit* temp = new ADAI::AIUnit;
 	temp->owner = _destructable;
-	_destructable->gamePlayType = WOOD_MINION;
+	_destructable->gamePlayType = _minionType;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();
 	temp->states.push_back(idling);
@@ -170,7 +170,22 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 
 	_commandGroup->AddUnitToGroup(_destructable, charging);
 
-	return nullptr;
+	return temp;
+}
+
+ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI::FlockingGroup* _fearGroup)
+{
+	ADAI::AIUnit* temp = new ADAI::AIUnit;
+	temp->owner = _destructable;
+	_destructable->gamePlayType = OBJECT_TAG::PEASANT;
+	ADAI::IdleState* idling = new ADAI::IdleState();
+	ADAI::FlockingState* fleeing = new ADAI::FlockingState();
+	temp->states.push_back(idling);
+	temp->states.push_back(fleeing);
+
+	//_commandGroup->AddUnitToGroup(_destructable, charging);
+
+	return temp;
 }
 
 ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)

@@ -69,8 +69,13 @@ namespace ADResource
 				XMStoreFloat3(&dang, transform.r[3]);
 				collider = ADPhysics::AABB(dang, colScale);
 				colliderPtr = &collider;
-
 			};
+
+			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
+			{
+				effects.push_back(_effect->clone());
+				effects[effects.size() - 1].get()->OnApply(GetStatSheet());
+			}
 
 			virtual StatSheet* GetStatSheet() override
 			{
@@ -212,6 +217,7 @@ namespace ADResource
 						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
 						XMFLOAT3 hbpos = GetPosition();
 						XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
+
 						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos2);
 						if (isDeactivateOnFirstApplication)
 						{
