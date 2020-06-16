@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "ADPhysics.h"
 #include "ADQuadTree.h"
+#include "TheGreatGolem.h"
 
 #include "ADUserInterface.h"
 #include "GameUserInterface.h"
@@ -17,6 +18,7 @@
 #include "ADAI.h"
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
+#include "Listeners.h"
 
 //#define ShowColliders
 
@@ -46,6 +48,7 @@ ref class App sealed : public IFrameworkView
 {
 private:
 	Engine* engine;
+	TheGreatGolem* game;
 	ADResource::ADGameplay::Golem* golem;
 	AnimationStateMachine GolemAnimController;
 	AD_ULONG golem_collider = 0;
@@ -55,9 +58,9 @@ private:
 
 	bool shutdown = false;
 
-	// Temp music
-	int effect_id;
-	bool effect_triggered = false;
+	//// Temp music
+	//int effect_id;
+	//bool effect_triggered = false;
 
 	// Timing
 	XTime game_time;
@@ -67,9 +70,9 @@ private:
 	const float physics_rate = 0.2f;
 	float physics_timer = 0;
 
-	// Audio
-	float main_music_loop_timer = 3;
-	bool music_triggered = false;
+	//// Audio
+	//float main_music_loop_timer = 3;
+	//bool music_triggered = false;
 
 	// Rotation
 	float rot = 0;
@@ -121,9 +124,13 @@ public:
 
 	virtual void Run()
 	{
+		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+		//---------------------Create The Engines
+		engine = new Engine;
 		AD_AUDIO::ADAudio audioEngine;
 		audioEngine.Init();
 
+		//Implement Audio Engine
 		audioEngine.LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 		audioEngine.LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 
@@ -141,14 +148,89 @@ public:
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
 
-		AD_AUDIO::AudioSourceEvent playTitleEvent(titleMusic);
+		AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
+		AD_AUDIO::AudioSource golemPunchSound;
+		golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemPunchSound.engine = &audioEngine;
+		golemPunchSound.personalVolume = 0.5f;
+		golemPunchSound.restartOnRepeat = false;
+		golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
+		AudioSourceEvent golemPunchEvent(golemPunchSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
 
-		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+		AD_AUDIO::AudioSource golemKickSound;
+		golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemKickSound.engine = &audioEngine;
+		golemKickSound.personalVolume = 0.5f;
+		golemKickSound.restartOnRepeat = false;
+		golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
+		AudioSourceEvent golemKickEvent(golemKickSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
 
-		// Create the engine
-		engine = new Engine;
+		AD_AUDIO::AudioSource golemSlamSound;
+		golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemSlamSound.engine = &audioEngine;
+		golemSlamSound.personalVolume = 0.5f;
+		golemSlamSound.restartOnRepeat = false;
+		golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
+		AudioSourceEvent golemSlamEvent(golemSlamSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
+
+		AD_AUDIO::AudioSource golemWaveSound;
+		golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemWaveSound.engine = &audioEngine;
+		golemWaveSound.personalVolume = 0.5f;
+		golemWaveSound.restartOnRepeat = false;
+		golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
+		AudioSourceEvent golemWaveEvent(golemWaveSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
+
+		AD_AUDIO::AudioSource golemFireball;
+		golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemFireball.engine = &audioEngine;
+		golemFireball.personalVolume = 0.5f;
+		golemFireball.restartOnRepeat = false;
+		golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
+		AudioSourceEvent golemFireballEvent(golemFireball);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
+
+		AD_AUDIO::AudioSource golemIronHide;
+		golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemIronHide.engine = &audioEngine;
+		golemIronHide.personalVolume = 0.5f;
+		golemIronHide.restartOnRepeat = false;
+		golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
+		AudioSourceEvent golemTauntEvent(golemIronHide);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
+
+
+
+		AD_AUDIO::AudioSource golemRootingSpell;
+		golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemRootingSpell.engine = &audioEngine;
+		golemRootingSpell.personalVolume = 0.5f;
+		golemRootingSpell.restartOnRepeat = false;
+		golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
+		AudioSourceEvent golemRootEvent(golemRootingSpell);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
+
+		AD_AUDIO::AudioSource golemEatMinion;
+		golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemEatMinion.engine = &audioEngine;
+		golemEatMinion.personalVolume = 0.5f;
+		golemEatMinion.restartOnRepeat = false;
+		golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
+		AudioSourceEvent golemEatMinionEvent(golemEatMinion);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
+
+		DefinitionReader df;
+		df.ReadMasterFile();
+
+		ApplyEffectEvent golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
+
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -197,6 +279,19 @@ public:
 		animations.push_back("files/models/Golem_1_Run.animfile");
 		animations.push_back("files/models/Golem_1_Death.animfile");
 		animations.push_back("files/models/Golem_1_Kick.animfile");
+		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		
+		// Orbit camera
+		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
+		engine->GetOrbitCamera()->SetRadius(20);
+		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+		GolemGameUISetup::GameUserInterface gameUI;
+
+		if (!engine->Initialize())
+		{
+			return;
+		}
 
 
 		std::vector<std::string> stoneMinionAnimations;
@@ -260,10 +355,7 @@ public:
 
 #endif
 
-#endif
 
-		//////////////////////////////
-	//THis is the stuff for you.
 		ADAI::FlockingGroup commandFlock;
 		ADAI::FlockingGroup idleFlock;
 
@@ -279,14 +371,14 @@ public:
 		for (int i = 0; i < 10; i++)
 		{
 			stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE]));
+			stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE], STONE_MINION));
 			waterMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", waterMinionAnimations, XMFLOAT3(-130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER]));
+			waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER], WATER_MINION));
 			fireMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, XMFLOAT3(130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE]));
+			fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE], FIRE_MINION));
 			woodMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-			woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD]));
-		}
+			woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD], WOOD_MINION));
+		}	
 		//Destructable* e3 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-15, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e4 = GameUtilities::AddDestructableFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(-5, 5, -40), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
 		//Destructable* e5 = GameUtilities::AddDestructableFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(5, 5, -40), XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 0));
@@ -303,13 +395,12 @@ public:
 		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
 
 		golem->targetMarker = m1;
+		golemEatingEvent.SetTarget(golem);
 
 		m1->colliderPtr = nullptr;
 
-
-
-		// No more.
-		  /////////////////////////////////////////
+   // No more.
+     /////////////////////////////////////////
 
 			 //Destructable* e2 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -10), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 			 //Destructable* e3 = GameUtilities::AddEnemyFromModelFile("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -20), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -333,33 +424,32 @@ public:
 
 			 //ADPhysics::AABB a3c = ADPhysics::AABB(XMFLOAT3(10, 0, 0), XMFLOAT3(1, 1, 1));
 
-			 //Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-			 //spyro->testAttack.active = false;
-			 //spyro->testAttack.hitboxCount = 1;
-			 //spyro->testAttack.cooldownDuration = 0.5;
-			 //spyro->testAttack.hitbox = myHitBox;
+		//Trigger* myHitBox = GameUtilities::AddHitbox("files/models/mapped_skybox.wobj", XMFLOAT3(0, 0, -30), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
-			 // Colliders
-			 /*Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c8 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(250, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c9 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(450, 0, 250), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-200, 0, 300), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c5 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-300, 0, 400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-			 Renderable* c6 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-400, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-
-			 c1->physicsType = ADResource::ADGameplay::STATIC;
-			 c2->physicsType = ADResource::ADGameplay::STATIC;
-			 c3->physicsType = ADResource::ADGameplay::STATIC;
-			 c4->physicsType = ADResource::ADGameplay::STATIC;
-			 c5->physicsType = ADResource::ADGameplay::STATIC;
-			 c6->physicsType = ADResource::ADGameplay::STATIC;
-			 c7->physicsType = ADResource::ADGameplay::STATIC;
-			 c8->physicsType = ADResource::ADGameplay::STATIC;
-			 c9->physicsType = ADResource::ADGameplay::STATIC;*/
-
+		// Colliders
+		//Trigger* ess1 = GameUtilities::AddTinyEssenceFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		
+		/*
+		Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(200, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c3 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(400, 0, 200), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c7 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(350, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c8 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(250, 0, 150), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c9 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(450, 0, 250), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c4 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-200, 0, 300), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c5 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-300, 0, 400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		Renderable* c6 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-400, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
+		
+		c1->physicsType = ADResource::ADGameplay::STATIC;
+		c2->physicsType = ADResource::ADGameplay::STATIC;
+		c3->physicsType = ADResource::ADGameplay::STATIC;
+		c4->physicsType = ADResource::ADGameplay::STATIC;
+		c5->physicsType = ADResource::ADGameplay::STATIC;
+		c6->physicsType = ADResource::ADGameplay::STATIC;
+		c7->physicsType = ADResource::ADGameplay::STATIC;
+		c8->physicsType = ADResource::ADGameplay::STATIC;
+		c9->physicsType = ADResource::ADGameplay::STATIC;*/
+		
 		float mapWidth = 1000;
 		float mapLength = 1000;
 		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Dirt.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
@@ -447,6 +537,11 @@ public:
 		Building* rubble3 = new Building(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
 		GameUtilities::AddGameObject(rubble3);
 
+		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
+		{
+			GameUtilities::AddGameObject(it->second, false);
+		}
+
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
 		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
@@ -482,21 +577,16 @@ public:
 
 		float minionWidth = 10;
 
-		//Add Game Objects to their collision groupings
-		//GameObject* passables[1];
-		//passables[0] = a3;
 
-		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		engine->GetOrbitCamera()->SetRadius(20);
-		engine->GetOrbitCamera()->Rotate(yaw, pitch);
 
-		GolemGameUISetup::GameUserInterface gameUI;
 
-		if (!engine->Initialize())
-		{
-			return;
-		}
+
+		//FountainEmitter femitter;
+		//femitter.Initialize(engine->GetPBRRenderer()->GetRendererResources()->device.Get(), 100, XMFLOAT4(1, 1, 1, 0), L"files\\textures\\Particle_Dust.dds", 1000);
+		//ParticleEmitterEvent golemPunchParticles(femitter);
+		//golemPunchParticles.lifespan = 1000.f;
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+
 
 
 		// Timing
@@ -515,9 +605,9 @@ public:
 		c2->type = OBJECT_TYPE::STATIC;*/
 
 		ADAI::ADPathfinding pathfinder;
-		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
-		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapLength);
-
+		//pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.tileMap.columns, mapWidth, mapLength);
+    
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
 		while (!shutdown)
@@ -525,17 +615,17 @@ public:
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
 				//pathfinder.clearDebug();
-				UINT row;
-				UINT column;
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
-				pathfinder.enter(0, 0, column, row);
+				//UINT row;
+				//UINT column;
+				//pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
+				//pathfinder.enter(0, 0, column, row);
 			}
 
 
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
-			main_music_loop_timer -= delta_time;
+			//main_music_loop_timer -= delta_time;
 
 			ProcessInput();
 
@@ -544,15 +634,9 @@ public:
 				pathfinder.update(0.00001f);
 			}
 			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
-
-
+		
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
-
-
-
-			// Test
-			//spyro->Update(delta_time);
 			// Debug draw
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
@@ -568,7 +652,15 @@ public:
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
 
-			// Physics test
+			XMFLOAT4X4 viewPass;
+			XMStoreFloat4x4(&viewPass, view);
+			XMFLOAT4 cpos = XMFLOAT4(CamPosition.x, CamPosition.y, CamPosition.z, 0);
+
+
+			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
+			XMFLOAT4X4 persPass;
+			XMStoreFloat4x4(&persPass, pers);
+			//femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
 
 #ifdef _DEBUG
 			golemCollider->transform = golem->GetColliderInfo();
@@ -674,6 +766,7 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
+			//femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 
 			collisionTree->Shutdown();
 

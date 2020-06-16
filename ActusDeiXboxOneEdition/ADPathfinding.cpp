@@ -357,22 +357,22 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 void ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, int goalRow)
 {
 	//Setup the search process
-	ClearDebug();
-	done = false;
-	solution.clear();
-	visited_map.clear();
-	pHeap.clear();
-	target = GetTile(goalColumn, goalRow)->tile;
-	PlannerNode* first = new PlannerNode();
-	first->parent = NULL;
-	first->searchNode = GetTile(startColumn, startRow);
-	first->givenCost = 0;
-	first->heuristicCost = DistanceCalculation(first->searchNode->tile);
-	first->finalCost = first->givenCost + first->heuristicCost * hWeight;
-	//pQueue.(first);
-	std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
-	pHeap.push_back(first);
-	visited_map[GetTile(startColumn, startRow)] = first;
+	//ClearDebug();
+	//done = false;
+	//solution.clear();
+	//visited_map.clear();
+	//pHeap.clear();
+	//target = GetTile(goalColumn, goalRow)->tile;
+	//PlannerNode* first = new PlannerNode();
+	//first->parent = NULL;
+	//first->searchNode = GetTile(startColumn, startRow);
+	//first->givenCost = 0;
+	//first->heuristicCost = DistanceCalculation(first->searchNode->tile);
+	//first->finalCost = first->givenCost + first->heuristicCost * hWeight;
+	////pQueue.(first);
+	//std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
+	//pHeap.push_back(first);
+	//visited_map[GetTile(startColumn, startRow)] = first;
 }
 
 void ADAI::ADPathfinding::update(long timeslice)

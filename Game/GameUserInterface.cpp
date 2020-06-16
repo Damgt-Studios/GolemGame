@@ -85,8 +85,8 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
-			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
+			overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			//overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
 		return buttonPressed;
@@ -157,10 +157,10 @@ namespace GolemGameUISetup
 			break;
 		}
 
-		ADResource::ADGameplay::Stat* health = player->GetStatSheet()->RequestStats(ADResource::ADGameplay::HEALTH);
+		ADResource::ADGameplay::Stat* health = player->GetStatSheet()->RequestStats("Health");
 		healthIcon->SetTiled(health->currentValue);
 
-		ADResource::ADGameplay::Stat* tokens = player->GetStatSheet()->RequestStats(ADResource::ADGameplay::TOKENS);
+		ADResource::ADGameplay::Stat* tokens = player->GetStatSheet()->RequestStats("Token");
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -1343,7 +1343,7 @@ namespace GolemGameUISetup
 		return logid;
 	}
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem, std::vector<ADAI::PathingNode*>* _planeNodes, int columnCount, float mapWidth, float mapHeight)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADResource::ADGameplay::Golem* _player, AD_AUDIO::ADAudio* _audioSystem, int columnCount, float mapWidth, float mapHeight)
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
@@ -1408,7 +1408,7 @@ namespace GolemGameUISetup
 		DebugController* debugController = new DebugController(myUI->GetUIState());
 		myUI->AddUIController("DebugController", debugController);
 		debugController->Enable();
-		UINT pathingID = SetupPathingMap(myUI, debugController, _planeNodes, columnCount, mapWidth, mapHeight);
+		//UINT pathingID = SetupPathingMap(myUI, debugController, _planeNodes, columnCount, mapWidth, mapHeight);
 		
 
 		titleScreenController->AddOverlay(myUI->overlays[hudid]);
@@ -1430,8 +1430,8 @@ namespace GolemGameUISetup
 		gameplayMessageController->AddOverlay(myUI->overlays[titleID]);
 		gameplayMessageController->AddController(PauseScreenController);
 		gameplayMessageController->AddOverlay(myUI->overlays[pauseID]);
-		gameplayMessageController->AddController(optionScreenController);
-		gameplayMessageController->AddOverlay(myUI->overlays[pathingID]);
+		//gameplayMessageController->AddController(optionScreenController);
+		//gameplayMessageController->AddOverlay(myUI->overlays[pathingID]);
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);
