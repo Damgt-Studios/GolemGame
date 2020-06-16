@@ -34,7 +34,7 @@ namespace ADResource
 				}
 
 				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
-				physicsType = COLLIDABLE;
+				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 				colliderPtr = &collider;
 			}
 

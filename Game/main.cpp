@@ -362,7 +362,7 @@ public:
 
 		float mapWidth = 1000;
 		float mapLength = 1000;
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Dirt.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
 		//GameUtilities::AddGameObject(c1);
@@ -378,13 +378,14 @@ public:
 		////GameUtilities::AddGameObject(a1);
 		//GameUtilities::AddGameObject(a2);
 
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	GameUtilities::AddGameObject(stoneMinions[i]);
-		//	GameUtilities::AddGameObject(waterMinions[i]);
-		//	GameUtilities::AddGameObject(fireMinions[i]);
-		//	GameUtilities::AddGameObject(woodMinions[i]);
-		//}
+		for (int i = 0; i < 10; i++)
+		{
+			GameUtilities::AddGameObject(stoneMinions[i]);
+			GameUtilities::AddGameObject(waterMinions[i]);
+			GameUtilities::AddGameObject(fireMinions[i]);
+			GameUtilities::AddGameObject(woodMinions[i]);
+		}
+
 		GameUtilities::AddGameObject(m1);
 		//GameUtilities::AddGameObject(m2);
 		//GameUtilities::AddGameObject(t1);
@@ -617,25 +618,6 @@ public:
 
 			for (int i = 0; i < OBJ_COUNT; i++)
 			{
-				/*for (unsigned int j = 0; j < OBJ_COUNT; j++)
-				{
-					if (i != j)
-					{
-						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
-						{
-							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
-							{
-								if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
-								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
-									{
-										OBJS[i]->CheckCollision(OBJS[j]);
-									}
-								}
-							}
-						}
-					}
-				}*/
 
 				if (OBJS[i]->colliderPtr)
 				{
@@ -650,7 +632,7 @@ public:
 
 			for (unsigned int i = 0; i < OBJ_COUNT; i++)
 			{
-				if (OBJS[i]->colliderPtr) 
+				if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
 				{
 					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
 					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
@@ -670,13 +652,13 @@ public:
 			if (physics_timer > physics_rate)
 			{
 				physics_timer = 0;
-				//for (int i = 0; i < 10; i++)
-				//{
-				//	GroundClamping(stoneMinions[i], tree, delta_time);
-				//	GroundClamping(waterMinions[i], tree, delta_time);
-				//	GroundClamping(fireMinions[i], tree, delta_time);
-				//	GroundClamping(woodMinions[i], tree, delta_time);
-				//}
+				for (int i = 0; i < 10; i++)
+				{
+					GroundClamping(stoneMinions[i], tree, delta_time);
+					GroundClamping(waterMinions[i], tree, delta_time);
+					GroundClamping(fireMinions[i], tree, delta_time);
+					GroundClamping(woodMinions[i], tree, delta_time);
+				}
 
 
 			}

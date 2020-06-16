@@ -103,6 +103,9 @@ namespace ADResource
 			virtual void Update(float _deltaTime) 
 			{
 				ProcessEffects(_deltaTime);
+				collider = ADPhysics::AABB(VectorToFloat3(transform.r[3]), XMFLOAT3(1, 1, 1));
+				colliderPtr = &collider;
+				physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 			};
 
 			virtual iStatSheet* GetStatSheet() override
@@ -115,7 +118,10 @@ namespace ADResource
 				if (this->active)
 				{
 					ADPhysics::Manifold m;
-					obj->colliderPtr->isCollision(&collider, m);
+					if (obj->colliderPtr->isCollision(&collider, m))
+					{
+						collisionQueue.push(CollisionPacket(this, obj, m));
+					}
 				}
 			}
 
