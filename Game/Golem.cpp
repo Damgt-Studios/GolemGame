@@ -15,18 +15,22 @@ ADResource::ADGameplay::Golem::Golem() {
 	fireCPtr = &fireCollider;
 
 	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
+
 	golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
 	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
 	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
 	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+
 	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
 	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
 	golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
 	golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+
 	golemPunch->active = false;
 	golemKick->active = false;
 	golemSlam->active = false;
 	golemConsume->active = false;
+
 	golemWaterWave->active = false;
 	golemFireball->active = false;
 	golemTaunt->active = false;

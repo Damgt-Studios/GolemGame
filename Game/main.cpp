@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "ADPhysics.h"
 #include "ADQuadTree.h"
+#include "TheGreatGolem.h"
 
 #include "ADUserInterface.h"
 #include "GameUserInterface.h"
@@ -47,6 +48,7 @@ ref class App sealed : public IFrameworkView
 {
 private:
 	Engine* engine;
+	TheGreatGolem* game;
 	ADResource::ADGameplay::Golem* golem;
 	AnimationStateMachine GolemAnimController;
 	AD_ULONG golem_collider = 0;
@@ -56,9 +58,9 @@ private:
 
 	bool shutdown = false;
 
-	// Temp music
-	int effect_id;
-	bool effect_triggered = false;
+	//// Temp music
+	//int effect_id;
+	//bool effect_triggered = false;
 
 	// Timing
 	XTime game_time;
@@ -68,9 +70,9 @@ private:
 	const float physics_rate = 0.2f;
 	float physics_timer = 0;
 
-	// Audio
-	float main_music_loop_timer = 3;
-	bool music_triggered = false;
+	//// Audio
+	//float main_music_loop_timer = 3;
+	//bool music_triggered = false;
 
 	// Rotation
 	float rot = 0;
@@ -122,10 +124,13 @@ public:
 
 	virtual void Run()
 	{
-
+		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+		//---------------------Create The Engines
+		engine = new Engine;
 		AD_AUDIO::ADAudio audioEngine;
 		audioEngine.Init();
 
+		//Implement Audio Engine
 		audioEngine.LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 		audioEngine.LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 
@@ -142,7 +147,7 @@ public:
 		titleMusic.engine = &audioEngine;
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
-    
+
 		AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
@@ -172,7 +177,7 @@ public:
 		golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
 		AudioSourceEvent golemSlamEvent(golemSlamSound);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
-		
+
 		AD_AUDIO::AudioSource golemWaveSound;
 		golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
 		golemWaveSound.engine = &audioEngine;
@@ -200,7 +205,7 @@ public:
 		AudioSourceEvent golemTauntEvent(golemIronHide);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
 
-		
+
 
 		AD_AUDIO::AudioSource golemRootingSpell;
 		golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
@@ -220,19 +225,12 @@ public:
 		AudioSourceEvent golemEatMinionEvent(golemEatMinion);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
 
-
-
-		
-		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
-
-		// Create the engine
-		engine = new Engine;
-
 		DefinitionReader df;
 		df.ReadMasterFile();
 
 		ApplyEffectEvent golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
+
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -281,6 +279,19 @@ public:
 		animations.push_back("files/models/Golem_1_Run.animfile");
 		animations.push_back("files/models/Golem_1_Death.animfile");
 		animations.push_back("files/models/Golem_1_Kick.animfile");
+golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		
+		// Orbit camera
+		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
+		engine->GetOrbitCamera()->SetRadius(20);
+		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+		GolemGameUISetup::GameUserInterface gameUI;
+
+		if (!engine->Initialize())
+		{
+			return;
+		}
 
 
 		std::vector<std::string> stoneMinionAnimations;
@@ -293,7 +304,6 @@ public:
 		woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
 
 		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
@@ -530,17 +540,6 @@ public:
 		float minionWidth = 10;
 
 
-		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		engine->GetOrbitCamera()->SetRadius(20);
-		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-
-		GolemGameUISetup::GameUserInterface gameUI;
-
-		if (!engine->Initialize())
-		{
-			return;
-		}
 
 
 
@@ -588,7 +587,7 @@ public:
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
-			main_music_loop_timer -= delta_time;
+			//main_music_loop_timer -= delta_time;
 
 			ProcessInput();
 

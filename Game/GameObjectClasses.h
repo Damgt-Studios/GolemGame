@@ -147,11 +147,14 @@ namespace ADResource
 			float offsetX;
 			float offsetZ;
 			float offsetY = 0;
+			float lifespan;
 			ADPhysics::OBB collider;
 
 			std::string eventName;
 
 			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			~HitBox() = default;
+
 
 			void Enable()
 			{
@@ -168,6 +171,15 @@ namespace ADResource
 				collider = ADPhysics::OBB(transform, XMFLOAT3(1,1,1));
 				colliderPtr = &collider;
 				collider.trigger = true;
+				
+				if (lifespan > 0)
+				{
+					lifespan -= _deltaTime;
+					if (lifespan <= 0)
+					{
+						active = false;
+					}
+				}
 
 				AddToPositionVector((XMFLOAT3&)Velocity);
 			};

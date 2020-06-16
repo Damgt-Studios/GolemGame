@@ -467,6 +467,10 @@ public:
 					{
 						trigger->vel.z = std::stof(rhs);
 					}
+					else if (lhs == "Lifespan")
+					{
+						trigger->lifespan = std::stof(rhs);
+					}
 					else if (lhs == "Team")
 					{
 						trigger->team = std::stoi(rhs);

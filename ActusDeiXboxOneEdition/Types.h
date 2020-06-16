@@ -328,7 +328,6 @@ namespace ADResource
 					return nullptr;
 				return &stats[_name];
 			};
-
 		};
 
 

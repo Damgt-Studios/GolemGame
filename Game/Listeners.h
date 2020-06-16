@@ -36,3 +36,9 @@ public:
     void SetTarget(ADResource::ADGameplay::GameObject* _target);
     void HandleEvent(ADEvents::ADEvent* _event) override;
 };
+
+//
+//void ImplementListeners()
+//{
+//
+//}
