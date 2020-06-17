@@ -89,7 +89,6 @@ private:
 	ADPhysics::Plane test_plane;
 
 
-
 public:
 	// some functions called by Windows
 	virtual void Initialize(CoreApplicationView^ AppView)
@@ -729,6 +728,12 @@ public:
 	{
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 		Window->Activate();
+		SystemNavigationManager::GetForCurrentView()->BackRequested += ref new EventHandler<BackRequestedEventArgs^>(this, &App::OnBackRequested);
+	}
+
+	void OnBackRequested(Platform::Object^ sender, Windows::UI::Core::BackRequestedEventArgs^ e)
+	{
+		e->Handled = true;
 	}
 
 	void ProcessInput()

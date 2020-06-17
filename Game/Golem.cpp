@@ -236,6 +236,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		PerformSpecial();
 	}
 
+	// Increment Player Element
 	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && responseTimer < 0)
 	{
 		ChangeElement(true);
@@ -259,12 +260,13 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		ChangeMinionGroup(false);
 	}
 
+	// Consume Minion
 	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && responseTimer < 0)
 	{
 		ConsumeMinion();
 	}
 
-
+	// Recall Minions
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
 	{
 		RecallMinions();
