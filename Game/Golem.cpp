@@ -9,27 +9,8 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
 	InitAnims();
-
-	golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
-	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
-	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
-	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
-
-	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
-	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
-	golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
-	golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
-
-	golemPunch->active = false;
-	golemKick->active = false;
-	golemSlam->active = false;
-	golemConsume->active = false;
-
-	golemWaterWave->active = false;
-	golemFireball->active = false;
-	golemTaunt->active = false;
-	golemRoot->active = false;
-
+	InitEffects();
+	InitActions();
 
 	flockingGroups = new ADAI::FlockingGroup * [5];
 	for (int i = 0; i < 5; ++i)
@@ -53,14 +34,14 @@ ADResource::ADGameplay::Golem::~Golem()
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
-	golemPunch->Update(delta_time);
-	golemKick->Update(delta_time);
-	golemSlam->Update(delta_time);
-	golemConsume->Update(delta_time);
-	golemWaterWave->Update(delta_time);
-	golemFireball->Update(delta_time);
-	golemTaunt->Update(delta_time);
-	golemRoot->Update(delta_time);
+	consume->Update(delta_time);
+	for (int i = 0; i < 4; ++i)
+	{
+		gActions[i].kick->Update(delta_time);
+		gActions[i].punch->Update(delta_time);
+		gActions[i].slam->Update(delta_time);
+		gActions[i].special->Update(delta_time);
+	}
 	ProcessEffects(delta_time);
 
 	for (int i = 0; i < 5; ++i)
@@ -118,6 +99,42 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 
 	if (obj->active)
 	{
+		if (gActions[playerElement].punch->active)
+		{
+			if (obj->colliderPtr->isCollision(&gActions[playerElement].punch->hitbox->collider, m))
+			{
+				PunchCollision(obj);
+			}
+		}
+		else if (gActions[playerElement].slam->active)
+		{
+			if (obj->colliderPtr->isCollision(&gActions[playerElement].slam->hitbox->collider, m))
+			{
+				SlamCollision(obj);
+			}
+		}
+		else if (gActions[playerElement].kick->active)
+		{
+			if (obj->colliderPtr->isCollision(&gActions[playerElement].kick->hitbox->collider, m))
+			{
+				KickCollision(obj);
+			}
+		}
+		else if (consume->active)
+		{
+			if (obj->colliderPtr->isCollision(&consume->hitbox->collider, m))
+			{
+				ConsumeCollision(obj);
+			}
+		}
+		else if (gActions[playerElement].special->active)
+		{
+			if (obj->colliderPtr->isCollision(&gActions[playerElement].special->hitbox->collider, m))
+			{
+				SpecialCollision(obj);
+			}
+		}
+
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
 
@@ -294,73 +311,73 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 
 void ADResource::ADGameplay::Golem::InitAnims()
 {
-	anims[0].born = "Golem_3_Born";
-	anims[0].command = "Golem_3_Command";
-	anims[0].death = "Golem_3_Death";
-	anims[0].eat = "Golem_3_Eat";
-	anims[0].groundSlam = "Golem_3_GroundSlam";
-	anims[0].heavyHitBack = "Golem_3_Heavy_Hit_Back";
-	anims[0].heavyHitFront = "Golem_3_Heavy_Hit_Front";
-	anims[0].heavyHitLeft = "Golem_3_Heavy_Hit_Left";
-	anims[0].heavyHitRight = "Golem_3_Heavy_Hit_Right";
-	anims[0].idle = "Golem_3_Idle";
-	anims[0].idleLook = "Golem_3_IdleLook";
-	anims[0].kick = "Golem_3_Kick";
-	anims[0].run = "Golem_3_Run";
-	anims[0].special = "Golem_3_Special";
-	anims[0].summonMinions = "Golem_3_SummonMinions";
-	anims[0].towerPunch = "Golem_3_TowerPunch";
+	anims[STONE].born = "Golem_3_Born";
+	anims[STONE].command = "Golem_3_Command";
+	anims[STONE].death = "Golem_3_Death";
+	anims[STONE].eat = "Golem_3_Eat";
+	anims[STONE].groundSlam = "Golem_3_GroundSlam";
+	anims[STONE].heavyHitBack = "Golem_3_Heavy_Hit_Back";
+	anims[STONE].heavyHitFront = "Golem_3_Heavy_Hit_Front";
+	anims[STONE].heavyHitLeft = "Golem_3_Heavy_Hit_Left";
+	anims[STONE].heavyHitRight = "Golem_3_Heavy_Hit_Right";
+	anims[STONE].idle = "Golem_3_Idle";
+	anims[STONE].idleLook = "Golem_3_IdleLook";
+	anims[STONE].kick = "Golem_3_Kick";
+	anims[STONE].run = "Golem_3_Run";
+	anims[STONE].special = "Golem_3_Special";
+	anims[STONE].summonMinions = "Golem_3_SummonMinions";
+	anims[STONE].towerPunch = "Golem_3_TowerPunch";
 
-	anims[1].born = "Golem_4_Born";
-	anims[1].command = "Golem_4_Command";
-	anims[1].death = "Golem_4_Death";
-	anims[1].eat = "Golem_4_Eat";
-	anims[1].groundSlam = "Golem_4_GroundSlam";
-	anims[1].heavyHitBack = "Golem_4_Heavy_Hit_Back";
-	anims[1].heavyHitFront = "Golem_4_Heavy_Hit_Front";
-	anims[1].heavyHitLeft = "Golem_4_Heavy_Hit_Left";
-	anims[1].heavyHitRight = "Golem_4_Heavy_Hit_Right";
-	anims[1].idle = "Golem_4_Idle";
-	anims[1].idleLook = "Golem_4_IdleLook";
-	anims[1].kick = "Golem_4_Kick";
-	anims[1].run = "Golem_4_Run";
-	anims[1].special = "Golem_4_Special";
-	anims[1].summonMinions = "Golem_4_SummonMinions";
-	anims[1].towerPunch = "Golem_4_TowerPunch";
+	anims[WATER].born = "Golem_4_Born";
+	anims[WATER].command = "Golem_4_Command";
+	anims[WATER].death = "Golem_4_Death";
+	anims[WATER].eat = "Golem_4_Eat";
+	anims[WATER].groundSlam = "Golem_4_GroundSlam";
+	anims[WATER].heavyHitBack = "Golem_4_Heavy_Hit_Back";
+	anims[WATER].heavyHitFront = "Golem_4_Heavy_Hit_Front";
+	anims[WATER].heavyHitLeft = "Golem_4_Heavy_Hit_Left";
+	anims[WATER].heavyHitRight = "Golem_4_Heavy_Hit_Right";
+	anims[WATER].idle = "Golem_4_Idle";
+	anims[WATER].idleLook = "Golem_4_IdleLook";
+	anims[WATER].kick = "Golem_4_Kick";
+	anims[WATER].run = "Golem_4_Run";
+	anims[WATER].special = "Golem_4_Special";
+	anims[WATER].summonMinions = "Golem_4_SummonMinions";
+	anims[WATER].towerPunch = "Golem_4_TowerPunch";
 
-	anims[2].born = "Golem_2_Born";
-	anims[2].command = "Golem_2_Command";
-	anims[2].death = "Golem_2_Death";
-	anims[2].eat = "Golem_2_Eat";
-	anims[2].groundSlam = "Golem_2_GroundSlam";
-	anims[2].heavyHitBack = "Golem_2_Heavy_Hit_Back";
-	anims[2].heavyHitFront = "Golem_2_Heavy_Hit_Front";
-	anims[2].heavyHitLeft = "Golem_2_Heavy_Hit_Left";
-	anims[2].heavyHitRight = "Golem_2_Heavy_Hit_Right";
-	anims[2].idle = "Golem_2_Idle";
-	anims[2].idleLook = "Golem_2_IdleLook";
-	anims[2].kick = "Golem_2_Kick";
-	anims[2].run = "Golem_2_Run";
-	anims[2].special = "Golem_2_Special";
-	anims[2].summonMinions = "Golem_2_SummonMinions";
-	anims[2].towerPunch = "Golem_2_TowerPunch";
+	anims[FIRE].born = "Golem_2_Born";
+	anims[FIRE].command = "Golem_2_Command";
+	anims[FIRE].death = "Golem_2_Death";
+	anims[FIRE].eat = "Golem_2_Eat";
+	anims[FIRE].groundSlam = "Golem_2_GroundSlam";
+	anims[FIRE].heavyHitBack = "Golem_2_Heavy_Hit_Back";
+	anims[FIRE].heavyHitFront = "Golem_2_Heavy_Hit_Front";
+	anims[FIRE].heavyHitLeft = "Golem_2_Heavy_Hit_Left";
+	anims[FIRE].heavyHitRight = "Golem_2_Heavy_Hit_Right";
+	anims[FIRE].idle = "Golem_2_Idle";
+	anims[FIRE].idleLook = "Golem_2_IdleLook";
+	anims[FIRE].kick = "Golem_2_Kick";
+	anims[FIRE].run = "Golem_2_Run";
+	anims[FIRE].special = "Golem_2_Special";
+	anims[FIRE].summonMinions = "Golem_2_SummonMinions";
+	anims[FIRE].towerPunch = "Golem_2_TowerPunch";
 
-	anims[3].born = "Golem_1_Born";
-	anims[3].command = "Golem_1_Command";
-	anims[3].death = "Golem_1_Death";
-	anims[3].eat = "Golem_1_Eat";
-	anims[3].groundSlam = "Golem_1_GroundSlam";
-	anims[3].heavyHitBack = "Golem_1_Heavy_Hit_Back";
-	anims[3].heavyHitFront = "Golem_1_Heavy_Hit_Front";
-	anims[3].heavyHitLeft = "Golem_1_Heavy_Hit_Left";
-	anims[3].heavyHitRight = "Golem_1_Heavy_Hit_Right";
-	anims[3].idle = "Golem_1_Idle";
-	anims[3].idleLook = "Golem_1_IdleLook";
-	anims[3].kick = "Golem_1_Kick";
-	anims[3].run = "Golem_1_Run";
-	anims[3].special = "Golem_1_Special";
-	anims[3].summonMinions = "Golem_1_SummonMinions";
-	anims[3].towerPunch = "Golem_1_TowerPunch";
+	anims[WOOD].born = "Golem_1_Born";
+	anims[WOOD].command = "Golem_1_Command";
+	anims[WOOD].death = "Golem_1_Death";
+	anims[WOOD].eat = "Golem_1_Eat";
+	anims[WOOD].groundSlam = "Golem_1_GroundSlam";
+	anims[WOOD].heavyHitBack = "Golem_1_Heavy_Hit_Back";
+	anims[WOOD].heavyHitFront = "Golem_1_Heavy_Hit_Front";
+	anims[WOOD].heavyHitLeft = "Golem_1_Heavy_Hit_Left";
+	anims[WOOD].heavyHitRight = "Golem_1_Heavy_Hit_Right";
+	anims[WOOD].idle = "Golem_1_Idle";
+	anims[WOOD].idleLook = "Golem_1_IdleLook";
+	anims[WOOD].kick = "Golem_1_Kick";
+	anims[WOOD].run = "Golem_1_Run";
+	anims[WOOD].special = "Golem_1_Special";
+	anims[WOOD].summonMinions = "Golem_1_SummonMinions";
+	anims[WOOD].towerPunch = "Golem_1_TowerPunch";
 }
 
 void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_time)
@@ -387,14 +404,7 @@ void ADResource::ADGameplay::Golem::PerformSpecial()
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	if (GetCurrentElement() == WATER)
-		golemWaterWave->StartAction(&transform);
-	else if (GetCurrentElement() == FIRE)
-		golemFireball->StartAction(&transform);
-	else if (GetCurrentElement() == STONE)
-		golemTaunt->StartAction(&transform);
-	else if (GetCurrentElement() == WOOD)
-		golemRoot->StartAction(&transform);
+	gActions[playerElement].special->StartAction(&transform);
 
 	stats->RequestStats("Token")->currentValue--;
 	if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
@@ -410,7 +420,7 @@ void ADResource::ADGameplay::Golem::TowerPunch()
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	golemPunch->StartAction(&transform);
+	gActions[playerElement].punch->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::GroundSlam()
@@ -420,7 +430,7 @@ void ADResource::ADGameplay::Golem::GroundSlam()
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	golemSlam->StartAction(&transform);
+	gActions[playerElement].slam->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::Kick()
@@ -430,7 +440,7 @@ void ADResource::ADGameplay::Golem::Kick()
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	golemKick->StartAction(&transform);
+	gActions[playerElement].kick->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::CommandMinions()
@@ -516,7 +526,7 @@ void ADResource::ADGameplay::Golem::ConsumeMinion()
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	golemConsume->StartAction(&transform);
+	consume->StartAction(&transform);
 }
 
 void ADResource::ADGameplay::Golem::SummonMinions()
@@ -525,6 +535,101 @@ void ADResource::ADGameplay::Golem::SummonMinions()
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].summonMinions.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::PunchCollision(GameObject* other)
+{
+	other->effects.push_back(static_cast<unique_ptr<Effect>>(gEffects[playerElement].punchEffect));
+}
+
+void ADResource::ADGameplay::Golem::SlamCollision(GameObject* other)
+{
+	other->effects.push_back(static_cast<unique_ptr<Effect>>(gEffects[playerElement].slamEffect));
+}
+
+void ADResource::ADGameplay::Golem::KickCollision(GameObject* other)
+{
+	other->effects.push_back(static_cast<unique_ptr<Effect>>(gEffects[playerElement].kickEffect));
+}
+
+void ADResource::ADGameplay::Golem::ConsumeCollision(GameObject* other)
+{
+
+}
+
+void ADResource::ADGameplay::Golem::SpecialCollision(GameObject* other)
+{
+
+}
+
+void ADResource::ADGameplay::Golem::InitEffects()
+{
+	golemConsumeEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemEat"];
+	minionConsumeEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemConsume"];
+	ironHideArmor = DefinitionDatabase::Instance()->effectsDatabase["IronHideBuffArmor"];
+	ironHideHate = DefinitionDatabase::Instance()->effectsDatabase["IronHideBuffHate"];
+
+	gEffects[STONE].armorBuff = DefinitionDatabase::Instance()->effectsDatabase["StoneArmorBuff"];
+	gEffects[STONE].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["StoneGolemKick"];
+	gEffects[STONE].moveBuff = nullptr;
+	gEffects[STONE].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["StoneGolemPunch"];
+	gEffects[STONE].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["StoneGolemSlam"];
+	gEffects[STONE].specialEffect = nullptr;
+
+	gEffects[WATER].armorBuff = DefinitionDatabase::Instance()->effectsDatabase["WaterArmorBuff"];
+	gEffects[WATER].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["WaterGolemKick"];
+	gEffects[WATER].moveBuff = DefinitionDatabase::Instance()->effectsDatabase["WaterMoveBuff"];
+	gEffects[WATER].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["WaterGolemPunch"];
+	gEffects[WATER].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["WaterGolemSlam"];
+	gEffects[WATER].specialEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemWaterWave"];
+
+	gEffects[FIRE].armorBuff = nullptr;
+	gEffects[FIRE].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["FireGolemKick"];
+	gEffects[FIRE].moveBuff = DefinitionDatabase::Instance()->effectsDatabase["FireMoveBuff"];
+	gEffects[FIRE].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["FireGolemPunch"];
+	gEffects[FIRE].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["FireGolemSlam"];
+	gEffects[FIRE].specialEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemFireball"];
+
+	gEffects[WOOD].armorBuff = DefinitionDatabase::Instance()->effectsDatabase["WoodArmorBuff"];
+	gEffects[WOOD].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["WoodGolemKick"];
+	gEffects[WOOD].moveBuff = DefinitionDatabase::Instance()->effectsDatabase["WoodMoveBuff"];
+	gEffects[WOOD].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["WoodGolemPunch"];
+	gEffects[WOOD].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["WoodGolemSlam"];
+	gEffects[WOOD].specialEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemRooting"];
+}
+
+void ADResource::ADGameplay::Golem::InitActions()
+{
+	consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+
+	gActions[STONE].kick = DefinitionDatabase::Instance()->actionDatabase["StoneGolemKick"];
+	gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
+	gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
+	gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+
+	gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
+	gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
+	gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
+	gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+
+	gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
+	gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
+	gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
+	gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+
+	gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+
+	consume->active = false;
+	for (int i = 0; i < 4; ++i)
+	{
+		gActions[i].kick->active = false;
+		gActions[i].punch->active = false;
+		gActions[i].slam->active = false;
+		gActions[i].special->active = false;
+	}
 }
 
 //void ADResource::ADGameplay::Golem::OnTrigger(GameObject* other)
