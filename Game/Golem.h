@@ -93,12 +93,6 @@ namespace ADResource
 			void ChangeMinionGroup(bool nextElement);
 			void ConsumeMinion();
 			void SummonMinions();
-			void PunchCollision(GameObject* other);
-			void SlamCollision(GameObject* other);
-			void KickCollision(GameObject* other);
-			void ConsumeCollision(GameObject* other);
-			void SpecialCollision(GameObject* other);
-			void InitEffects();
 			void InitActions();
 
 
@@ -108,19 +102,6 @@ namespace ADResource
 			ADResource::ADGameplay::StatSheet* stats;
 			int health;
 			int playerElement = 0;
-			struct GolemEffects
-			{
-				Effect* armorBuff;
-				Effect* moveBuff;
-				Effect* punchEffect;
-				Effect* kickEffect;
-				Effect* slamEffect;
-				Effect* specialEffect;
-			} gEffects[4];
-			Effect* ironHideArmor;
-			Effect* ironHideHate;
-			Effect* golemConsumeEffect;
-			Effect* minionConsumeEffect;
 			struct GolemActions
 			{
 				Action* punch;

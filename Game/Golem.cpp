@@ -9,7 +9,6 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
 	InitAnims();
-	InitEffects();
 	InitActions();
 
 	flockingGroups = new ADAI::FlockingGroup * [5];
@@ -99,42 +98,6 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 
 	if (obj->active)
 	{
-		if (gActions[playerElement].punch->active)
-		{
-			if (obj->colliderPtr->isCollision(&gActions[playerElement].punch->hitbox->collider, m))
-			{
-				PunchCollision(obj);
-			}
-		}
-		else if (gActions[playerElement].slam->active)
-		{
-			if (obj->colliderPtr->isCollision(&gActions[playerElement].slam->hitbox->collider, m))
-			{
-				SlamCollision(obj);
-			}
-		}
-		else if (gActions[playerElement].kick->active)
-		{
-			if (obj->colliderPtr->isCollision(&gActions[playerElement].kick->hitbox->collider, m))
-			{
-				KickCollision(obj);
-			}
-		}
-		else if (consume->active)
-		{
-			if (obj->colliderPtr->isCollision(&consume->hitbox->collider, m))
-			{
-				ConsumeCollision(obj);
-			}
-		}
-		else if (gActions[playerElement].special->active)
-		{
-			if (obj->colliderPtr->isCollision(&gActions[playerElement].special->hitbox->collider, m))
-			{
-				SpecialCollision(obj);
-			}
-		}
-
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
 
@@ -278,7 +241,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	}
 
 	// Consume Minion
-	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && responseTimer < 0)
+	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing && responseTimer < 0)
 	{
 		ConsumeMinion();
 	}
@@ -535,67 +498,6 @@ void ADResource::ADGameplay::Golem::SummonMinions()
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].summonMinions.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
-}
-
-void ADResource::ADGameplay::Golem::PunchCollision(GameObject* other)
-{
-	other->effects.push_back(static_cast<unique_ptr<Effect>>(gEffects[playerElement].punchEffect));
-}
-
-void ADResource::ADGameplay::Golem::SlamCollision(GameObject* other)
-{
-	other->effects.push_back(static_cast<unique_ptr<Effect>>(gEffects[playerElement].slamEffect));
-}
-
-void ADResource::ADGameplay::Golem::KickCollision(GameObject* other)
-{
-	other->effects.push_back(static_cast<unique_ptr<Effect>>(gEffects[playerElement].kickEffect));
-}
-
-void ADResource::ADGameplay::Golem::ConsumeCollision(GameObject* other)
-{
-
-}
-
-void ADResource::ADGameplay::Golem::SpecialCollision(GameObject* other)
-{
-
-}
-
-void ADResource::ADGameplay::Golem::InitEffects()
-{
-	golemConsumeEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemEat"];
-	minionConsumeEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemConsume"];
-	ironHideArmor = DefinitionDatabase::Instance()->effectsDatabase["IronHideBuffArmor"];
-	ironHideHate = DefinitionDatabase::Instance()->effectsDatabase["IronHideBuffHate"];
-
-	gEffects[STONE].armorBuff = DefinitionDatabase::Instance()->effectsDatabase["StoneArmorBuff"];
-	gEffects[STONE].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["StoneGolemKick"];
-	gEffects[STONE].moveBuff = nullptr;
-	gEffects[STONE].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["StoneGolemPunch"];
-	gEffects[STONE].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["StoneGolemSlam"];
-	gEffects[STONE].specialEffect = nullptr;
-
-	gEffects[WATER].armorBuff = DefinitionDatabase::Instance()->effectsDatabase["WaterArmorBuff"];
-	gEffects[WATER].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["WaterGolemKick"];
-	gEffects[WATER].moveBuff = DefinitionDatabase::Instance()->effectsDatabase["WaterMoveBuff"];
-	gEffects[WATER].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["WaterGolemPunch"];
-	gEffects[WATER].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["WaterGolemSlam"];
-	gEffects[WATER].specialEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemWaterWave"];
-
-	gEffects[FIRE].armorBuff = nullptr;
-	gEffects[FIRE].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["FireGolemKick"];
-	gEffects[FIRE].moveBuff = DefinitionDatabase::Instance()->effectsDatabase["FireMoveBuff"];
-	gEffects[FIRE].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["FireGolemPunch"];
-	gEffects[FIRE].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["FireGolemSlam"];
-	gEffects[FIRE].specialEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemFireball"];
-
-	gEffects[WOOD].armorBuff = DefinitionDatabase::Instance()->effectsDatabase["WoodArmorBuff"];
-	gEffects[WOOD].kickEffect = DefinitionDatabase::Instance()->effectsDatabase["WoodGolemKick"];
-	gEffects[WOOD].moveBuff = DefinitionDatabase::Instance()->effectsDatabase["WoodMoveBuff"];
-	gEffects[WOOD].punchEffect = DefinitionDatabase::Instance()->effectsDatabase["WoodGolemPunch"];
-	gEffects[WOOD].slamEffect = DefinitionDatabase::Instance()->effectsDatabase["WoodGolemSlam"];
-	gEffects[WOOD].specialEffect = DefinitionDatabase::Instance()->effectsDatabase["GolemRooting"];
 }
 
 void ADResource::ADGameplay::Golem::InitActions()
