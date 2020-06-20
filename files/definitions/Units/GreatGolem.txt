@@ -22,7 +22,7 @@ StatCurrent=200
 AddStat=MovementSpeed
 StatMin=1
 StatMax=100
-StatCurrent=35
+StatCurrent=50
 
 AddStat=Armor
 StatMin=1

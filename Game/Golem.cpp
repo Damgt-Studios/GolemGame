@@ -246,6 +246,12 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		ConsumeMinion();
 	}
 
+	// Summon Minion
+	if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing && responseTimer < 0)
+	{
+		SummonMinions();
+	}
+
 	// Recall Minions
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
 	{
@@ -353,9 +359,9 @@ void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_tim
 	anim_controller->PlayAnimationByName(anims[playerElement].run.c_str());
 
 
-	Velocity.x += forward.x * delta_time * golemMoveSpeed;
-	Velocity.y += forward.y * delta_time * golemMoveSpeed;
-	Velocity.z += forward.z * delta_time * golemMoveSpeed;
+	Velocity.x += forward.x * delta_time * (stats->RequestStats("MovementSpeed")->currentValue * 10);
+	Velocity.y += forward.y * delta_time * (stats->RequestStats("MovementSpeed")->currentValue * 10);
+	Velocity.z += forward.z * delta_time * (stats->RequestStats("MovementSpeed")->currentValue * 10);
 
 	transform = XMMatrixScaling(0.1, 0.1, 0.1) * transform;
 }
@@ -532,6 +538,38 @@ void ADResource::ADGameplay::Golem::InitActions()
 		gActions[i].slam->active = false;
 		gActions[i].special->active = false;
 	}
+}
+
+void ADResource::ADGameplay::Golem::FlinchFromFront()
+{
+	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitFront.c_str());
+	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitFront.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::FlinchFromBack()
+{
+	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitBack.c_str());
+	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitBack.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::FlinchFromLeft()
+{
+	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitLeft.c_str());
+	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitLeft.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::FlinchFromRight()
+{
+	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitRight.c_str());
+	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitRight.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
 }
 
 //void ADResource::ADGameplay::Golem::OnTrigger(GameObject* other)

@@ -94,6 +94,10 @@ namespace ADResource
 			void ConsumeMinion();
 			void SummonMinions();
 			void InitActions();
+			void FlinchFromFront();
+			void FlinchFromBack();
+			void FlinchFromLeft();
+			void FlinchFromRight();
 
 
 
@@ -129,8 +133,6 @@ namespace ADResource
 
 
 			// Movement
-			float golemTurnSpeed = 5;
-			float golemMoveSpeed = 500;
 			XMFLOAT3 golemMovementDeltas = XMFLOAT3(0, 0, 0);
 
 
