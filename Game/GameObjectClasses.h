@@ -1,8 +1,9 @@
 #pragma once
+#include <Types.h>
 #include "ADUserInterface.h"
 #include "GameplayBaseClasses.h"
 #include "ADEventSystem.h"
-#include <Types.h>
+#include <ADAI.h>
 
 namespace ADResource
 {
@@ -11,6 +12,7 @@ namespace ADResource
 		enum OBJECT_TAG
 		{
 			PLAYER = 0,
+			UNTYPED_MINION,
 			WOOD_MINION,
 			WATER_MINION,
 			FIRE_MINION,
@@ -53,6 +55,7 @@ namespace ADResource
 		public:
 			XMFLOAT3 colScale;
 			ADPhysics::AABB collider;
+			std::string deathEvent;
 
 			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; }
 			~Destructable() override
@@ -125,6 +128,7 @@ namespace ADResource
 
 			void Death()
 			{
+				ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)1);
 				//Death Time
 				DropLoot();
 				Remove();
@@ -215,10 +219,9 @@ namespace ADResource
 					{
 						obj->effects.push_back(effects[i].get()->clone());
 						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
-						XMFLOAT3 hbpos = GetPosition();
-						XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
+						XMFLOAT4 hbpos = XMFLOAT4(1, 1, 1, 1);
 
-						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos2);
+						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos);
 						if (isDeactivateOnFirstApplication)
 						{
 							active = false;
@@ -321,15 +324,18 @@ namespace ADResource
 			float cooldownTimer;
 			float attackDuration;
 			float attackTimer;
+			float hitboxDelay = 0;
 			HitBox* hitbox;
 			UINT hitboxCount;
 
 			bool removeHbIfEnd = true;
 			bool movesToPlayer = true;
+			bool hitboxFired = false;
 
 			std::vector<bool> eventFired;
 			std::vector<float> eventDelay;
 			std::vector<std::string> eventName;
+
 
 
 			//If the attack doesn't own the hitbox this needs to change.
@@ -384,7 +390,11 @@ namespace ADResource
 						attackTimer = attackDuration;
 						for (int i = 0; i < hitboxCount; ++i)
 						{
-							hitbox[i].Enable();
+							if (hitboxDelay <= 0)
+							{
+								hitboxFired = true;
+								hitbox[i].Enable();
+							}
 							active = true;
 							return true;
 						}
@@ -398,11 +408,20 @@ namespace ADResource
 				if (cooldownTimer > 0)
 				{
 					cooldownTimer -= _deltaTime;
+
 				}
 				if (active)
 				{
 					if (attackTimer > 0)
 					{
+						if (hitboxFired == false && attackDuration - attackTimer > hitboxDelay)
+						{
+							for (int i = 0; i < hitboxCount; ++i)
+							{
+								hitboxFired = true;
+								hitbox[i].Enable();
+							}
+						}
 						for (int i = 0; i < eventDelay.size(); i++)
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
@@ -430,7 +449,8 @@ namespace ADResource
 				//Some hit boxes would turn off this way, others require they burn out or collide.
 				if (hitbox && removeHbIfEnd)
 				{
-					active = false;
+					active = false; 
+					hitboxFired = false;
 					for (int i = 0; i < hitboxCount; ++i)
 					{
 						hitbox[i].active = false;
@@ -484,3 +504,25 @@ namespace ADResource
 		//};
 	}
 }
+
+namespace ADAI
+{
+	class AIUnit
+	{
+	public:
+		ADResource::ADGameplay::Destructable* owner;
+		std::vector<ADAI::State*> states;
+		ADAI::State* currentState;
+
+		void SwitchState()
+		{
+			//currentState = ...
+		}
+
+		void Update()
+		{
+			// currentState.Run();
+		}
+
+	};
+};

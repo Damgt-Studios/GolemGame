@@ -2,6 +2,9 @@
 #include "Golem.h"
 
 ADResource::ADGameplay::Golem::Golem() {
+
+	anim_controller = new AnimationStateMachine();
+
 	collider = OBB(transform * translatetomiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
@@ -13,28 +16,6 @@ ADResource::ADGameplay::Golem::Golem() {
 	fireCollider.trigger = true;
 
 	fireCPtr = &fireCollider;
-
-	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
-
-	golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
-	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
-	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
-	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
-
-	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
-	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
-	golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
-	golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
-
-	golemPunch->active = false;
-	golemKick->active = false;
-	golemSlam->active = false;
-	golemConsume->active = false;
-
-	golemWaterWave->active = false;
-	golemFireball->active = false;
-	golemTaunt->active = false;
-	golemRoot->active = false;
 
 
 	flockingGroups = new ADAI::FlockingGroup*[5];
@@ -69,10 +50,7 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 
 	for (int i = 0; i < 5; ++i)
 	{
-		//if (!flockingGroups[i].isEmpty())
-		//{
-			flockingGroups[i]->Update(delta_time);
-		//}
+		flockingGroups[i]->Update(delta_time);
 	}
 
 	// Physics
@@ -103,6 +81,8 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 			//defenseType = OBJECT_DEFENSE::NONE;
 		}
 	}
+
+	anim_controller->SetModel_To_CurrentAnimation();
 }
 
 void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
@@ -110,9 +90,6 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 	for (int i = 0; i < effects.size(); ++i)
 	{
 		effects[i].get()->Update(_deltaTime);
-
-		std::string msg = std::to_string(effects[i].get()->tickTimer);
-		ADUI::MessageReceiver::Log(msg);
 
 		if (effects[i].get()->isFinished)
 		{
@@ -321,9 +298,14 @@ XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
 	return temp;
 }
 
-void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
+//void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
+//{
+//	anim_controller = &controller;
+//}
+
+void ADResource::ADGameplay::Golem::InitializeController()
 {
-	anim_controller = &controller;
+	anim_controller->Initialize(this);
 }
 
 StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
@@ -383,6 +365,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			{
 				stats->RequestStats("Token")->currentValue = 0;
 			}
+			ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
 		}
 	}
 
@@ -422,6 +405,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			++playerElement;
 			if (playerElement == 4)
 				playerElement = 0;
+			ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementForm", (void*)playerElement);
 		}
 	}
 
@@ -433,6 +417,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			--playerElement;
 			if (playerElement < 0)
 				playerElement = 3;
+			ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementForm", (void*)playerElement);
 		}
 	}
 
@@ -444,6 +429,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			++commandTargetGroup;
 			if (commandTargetGroup == 5)
 				commandTargetGroup = 4;
+			ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementalGroup", (void*)commandTargetGroup);
 		}
 	}
 
@@ -455,6 +441,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			--commandTargetGroup;
 			if (commandTargetGroup < 0)
 				commandTargetGroup = 0;
+			ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementalGroup", (void*)commandTargetGroup);
 		}
 	}
 
@@ -491,12 +478,12 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			{
 				flockingGroups[i]->SetCommandDirection(camera);
 			}
-			targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
+			//targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
 		}
-		else
-		{
-			targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
-		}
+		//else
+		//{
+		//	targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
+		//}
 	}
 
 	XMFLOAT4 forward;

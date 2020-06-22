@@ -328,6 +328,7 @@
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="Listeners.h" />
+    <ClInclude Include="MinionManager.h" />
     <ClInclude Include="pchgame.h" />
     <ClInclude Include="Spyro.h" />
     <ClInclude Include="TheGreatGolem.h" />
@@ -343,6 +344,7 @@
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MinionManager.cpp" />
     <ClCompile Include="pchgame.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

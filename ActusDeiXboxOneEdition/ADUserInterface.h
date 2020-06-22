@@ -151,7 +151,7 @@ namespace ADUI
 
         virtual void Enable() { visible = true; active = true; };
         virtual void Disable() { visible = false; active = false; };
-        virtual void Focus() { controlFocus = true; };
+        virtual void Focus(bool _focus = true) { controlFocus = _focus; };
         virtual void Unfocus() { controlFocus = false; };
         virtual bool IsFocus() { return controlFocus; };
 
@@ -223,14 +223,15 @@ namespace ADUI
     class OverlayController
     {
     protected:
+        std::vector<Overlay2D*> overlays;
+        std::vector<OverlayController*> controllers;
+
+    public:
         std::map<std::string, UINT> overlaysNameToID;
         std::map<std::string, UINT> controllersNameToID;
         std::map<std::string, UINT> componentsNameToID;
-        std::vector<Overlay2D*> overlays;
-        std::vector<OverlayController*> controllers;
         std::map<UINT, UIComponent*> componentTypeMap;
 
-    public:
         bool active;
         std::string name;
         ~OverlayController()
@@ -404,7 +405,7 @@ namespace ADUI
         virtual void SetCorners(XMFLOAT4 _pos) override;
         void SetText(std::string _message);
         virtual Label2D* GetText();
-        virtual void Focus() override;
+        virtual void Focus(bool _focus = true) override;
         virtual void Unfocus() override;
 
 

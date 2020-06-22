@@ -1516,11 +1516,11 @@ ADUI::Label2D* ADUI::Button2D::GetText()
     return buttonLabel;
 }
 
-void ADUI::Button2D::Focus()
+void ADUI::Button2D::Focus(bool _focus)
 {
-    controlFocus = true;
-    image->Focus();
-    buttonLabel->Focus();
+    controlFocus = _focus;
+    image->Focus(_focus);
+    buttonLabel->Focus(_focus);
 }
 
 void ADUI::Button2D::Unfocus()

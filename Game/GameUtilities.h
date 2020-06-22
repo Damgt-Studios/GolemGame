@@ -2,12 +2,63 @@
 
 #include <string>
 
-#include "Spyro.h"
+//#include "Spyro.h"
 #include "Golem.h"
 #include "GameObjectClasses.h"
 #include "ResourceManager.h"
-//#include "GameEffects.h"
+//#include "TheGreatGolem.h"
+#include "GameEffects.h"
 #include "ADAI.h"
+
+class DefinitionDatabase
+{
+	DefinitionDatabase() {};
+	~DefinitionDatabase() { Shutdown(); };
+	DefinitionDatabase(const DefinitionDatabase& _rhs) {};
+	DefinitionDatabase& operator =(const DefinitionDatabase& _rhs) {};
+
+public:
+
+	std::unordered_map<std::string, ADResource::ADGameplay::Effect*>	effectsDatabase;
+	std::unordered_map<std::string, ADResource::ADGameplay::StatSheet*> statsheetDatabase;
+	std::unordered_map<std::string, ADResource::ADGameplay::HitBox*>	hitboxDatabase;
+	std::unordered_map<std::string, ADResource::ADGameplay::Action*>	actionDatabase;
+
+	//AD_ULONG villagerIdleMeshid;
+	//AD_ULONG villagerWalkingMeshid;
+	//AD_ULONG villagerRunningMeshid;
+
+
+	static DefinitionDatabase* Instance()
+	{
+		static DefinitionDatabase instance;
+		return &instance;
+	};
+
+	void Shutdown()
+	{
+		for (auto it = effectsDatabase.begin(), itEnd = effectsDatabase.end(); it != itEnd; ++it)
+		{
+			delete it->second;
+		}
+		effectsDatabase.clear();
+		for (auto it = statsheetDatabase.begin(), itEnd = statsheetDatabase.end(); it != itEnd; ++it)
+		{
+			delete it->second;
+		}
+		statsheetDatabase.clear();
+		for (auto it = hitboxDatabase.begin(), itEnd = hitboxDatabase.end(); it != itEnd; ++it)
+		{
+			delete it->second;
+		}
+		hitboxDatabase.clear();
+		for (auto it = actionDatabase.begin(), itEnd = actionDatabase.end(); it != itEnd; ++it)
+		{
+			delete it->second;
+		}
+		actionDatabase.clear();
+	};
+};
 
 class GameUtilities
 {
@@ -16,18 +67,20 @@ public:
 	//static Spyro* LoadSpyroFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	//static Trigger* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	//static Hitbox* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	static Trigger* AddTinyEssenceFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	static Trigger* AddEndGameTriggerFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	static HitBox* AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	/*static Trigger* AddTinyEssenceFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static Trigger* AddEndGameTriggerFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);*/
+	//static HitBox* AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static Destructable* AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static ADAI::AIUnit* AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType);
+	//static void InitializeMinionModels();
+	//static ADAI::AIUnit* BirthStoneMinion(ADAI::FlockingGroup* _commandGroup);
 	static ADAI::AIUnit* AttachVillagerAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup);
 	//static Destructable* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	//static Enemy* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static Renderable* AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static Renderable* AddPBRStaticAsset(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
-	static Golem* LoadGolemFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static Golem* LoadGolemFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	static Renderable* AddSimpleAsset(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, RotationType type = RotationType::xyz);
 	static Renderable* AddSimpleAnimAsset(std::string modelname, std::string materials, std::vector<std::string> AnimationFiles, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);

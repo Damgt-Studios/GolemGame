@@ -2,6 +2,7 @@
 #include "Types.h"
 
 
+
 namespace ADAI
 {
 
@@ -261,23 +262,5 @@ namespace ADAI
 		};
 	};
 
-	class AIUnit
-	{
-	public:
-		ADResource::ADGameplay::GameObject* owner;
-		std::vector<State*> states;
-		State* currentState;
-
-		void SwitchState()
-		{
-			//currentState = ...
-		}
-
-		void Update()
-		{
-			// currentState.Run();
-		}
-
-	};
 };
 
