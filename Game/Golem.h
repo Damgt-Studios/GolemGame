@@ -5,6 +5,7 @@
 #include "AudioManager.h"
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
+#include "GameEffects.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -46,6 +47,14 @@ namespace ADResource
 			Golem();
 			~Golem();
 
+			Action* golemPunch;
+			Action* golemKick;
+			Action* golemSlam;
+			Action* golemConsume;
+			Action* golemWaterWave;
+			Action* golemFireball;
+			Action* golemTaunt;
+			Action* golemRoot;
 			GameObject* targetMarker;
 			ADAI::FlockingGroup** flockingGroups;
 			virtual void Update(float time_delta);
@@ -63,7 +72,7 @@ namespace ADResource
 			//virtual void OnTrigger(GameObject* other);
 
 			void GetView(XMMATRIX& view);
-			OBB collider = OBB(transform, XMFLOAT3(2, 2, 2));
+			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 			int commandTargetGroup = 0;
@@ -77,7 +86,9 @@ namespace ADResource
 
 			void GetAnimationController(AnimationStateMachine& controller);
 
-			virtual iStatSheet* GetStatSheet() override;
+			XMMATRIX GetColliderInfo();
+
+			virtual StatSheet* GetStatSheet() override;
 			int GetCurrentElement();
 
 		private:
@@ -115,7 +126,7 @@ namespace ADResource
 
 			float floatiness = 0.25f;
 			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
-
+			XMMATRIX translatetomiddle = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1] + 15, transform.r[3].m128_f32[2]);
 
 			bool buttonup = false;
 			XMMATRIX camera;

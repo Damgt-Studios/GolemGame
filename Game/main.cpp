@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "ADPhysics.h"
 #include "ADQuadTree.h"
+#include "TheGreatGolem.h"
 
 #include "ADUserInterface.h"
 #include "GameUserInterface.h"
@@ -17,7 +18,10 @@
 #include "ADAI.h"
 #include "ADPathfinding.h"
 #include "AnimationStateMachine.h"
+#include "Listeners.h"
 #include "../ActusDeiXboxOneEdition/Scene.h"
+
+//#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -47,6 +51,7 @@ private:
 
 	Engine* engine;
 	ADGameplay::Scene currentScene;
+	TheGreatGolem* game;
 	ADResource::ADGameplay::Golem* golem;
 	AnimationStateMachine GolemAnimController;
 	AD_ULONG golem_collider = 0;
@@ -56,9 +61,9 @@ private:
 
 	bool shutdown = false;
 
-	// Temp music
-	int effect_id;
-	bool effect_triggered = false;
+	//// Temp music
+	//int effect_id;
+	//bool effect_triggered = false;
 
 	// Timing
 	XTime game_time;
@@ -68,16 +73,16 @@ private:
 	const float physics_rate = 0.2f;
 	float physics_timer = 0;
 
-	// Audio
-	float main_music_loop_timer = 3;
-	bool music_triggered = false;
+	//// Audio
+	//float main_music_loop_timer = 3;
+	//bool music_triggered = false;
 
 	// Rotation
 	float rot = 0;
 
 	float yaw = 180.0f;
 	float pitch = 30.0f;
-	
+
 	float default_yaw = 180.0f;
 	float default_pitch = 30.0f;
 
@@ -97,7 +102,8 @@ public:
 		{
 			Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode =
 				Windows::UI::ViewManagement::ApplicationViewWindowingMode::FullScreen;
-		} else
+		}
+		else
 		{
 			Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode =
 				Windows::UI::ViewManagement::ApplicationViewWindowingMode::CompactOverlay;
@@ -121,9 +127,13 @@ public:
 
 	virtual void Run()
 	{
+		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+		//---------------------Create The Engines
+		engine = new Engine;
 		AD_AUDIO::ADAudio audioEngine;
 		audioEngine.Init();
 
+		//Implement Audio Engine
 		audioEngine.LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 		audioEngine.LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 
@@ -140,20 +150,107 @@ public:
 		titleMusic.engine = &audioEngine;
 		titleMusic.personalVolume = 0.02f;
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
-    
-		AD_AUDIO::AudioSourceEvent playTitleEvent(titleMusic);
+
+		AudioSourceEvent playTitleEvent(titleMusic);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
+		AD_AUDIO::AudioSource golemPunchSound;
+		golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemPunchSound.engine = &audioEngine;
+		golemPunchSound.personalVolume = 0.5f;
+		golemPunchSound.restartOnRepeat = false;
+		golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
+		AudioSourceEvent golemPunchEvent(golemPunchSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
 
-		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
+		AD_AUDIO::AudioSource golemKickSound;
+		golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemKickSound.engine = &audioEngine;
+		golemKickSound.personalVolume = 0.5f;
+		golemKickSound.restartOnRepeat = false;
+		golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
+		AudioSourceEvent golemKickEvent(golemKickSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
 
-		// Create the engine
-		engine = new Engine;
+		AD_AUDIO::AudioSource golemSlamSound;
+		golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemSlamSound.engine = &audioEngine;
+		golemSlamSound.personalVolume = 0.5f;
+		golemSlamSound.restartOnRepeat = false;
+		golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
+		AudioSourceEvent golemSlamEvent(golemSlamSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
+
+		AD_AUDIO::AudioSource golemWaveSound;
+		golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemWaveSound.engine = &audioEngine;
+		golemWaveSound.personalVolume = 0.5f;
+		golemWaveSound.restartOnRepeat = false;
+		golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
+		AudioSourceEvent golemWaveEvent(golemWaveSound);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
+
+		AD_AUDIO::AudioSource golemFireball;
+		golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemFireball.engine = &audioEngine;
+		golemFireball.personalVolume = 0.5f;
+		golemFireball.restartOnRepeat = false;
+		golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
+		AudioSourceEvent golemFireballEvent(golemFireball);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
+
+		AD_AUDIO::AudioSource golemIronHide;
+		golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemIronHide.engine = &audioEngine;
+		golemIronHide.personalVolume = 0.5f;
+		golemIronHide.restartOnRepeat = false;
+		golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
+		AudioSourceEvent golemTauntEvent(golemIronHide);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
+
+
+
+		AD_AUDIO::AudioSource golemRootingSpell;
+		golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemRootingSpell.engine = &audioEngine;
+		golemRootingSpell.personalVolume = 0.5f;
+		golemRootingSpell.restartOnRepeat = false;
+		golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
+		AudioSourceEvent golemRootEvent(golemRootingSpell);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
+
+		AD_AUDIO::AudioSource golemEatMinion;
+		golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		golemEatMinion.engine = &audioEngine;
+		golemEatMinion.personalVolume = 0.5f;
+		golemEatMinion.restartOnRepeat = false;
+		golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
+		AudioSourceEvent golemEatMinionEvent(golemEatMinion);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
+
+		DefinitionReader df;
+		df.ReadMasterFile();
+
+		ApplyEffectEvent golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
+
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 
 		currentScene.LoadScene("files/scenes/test.scene");
+
+
+		// Orbit camera
+		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
+		engine->GetOrbitCamera()->SetRadius(20);
+		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+		GolemGameUISetup::GameUserInterface gameUI;
+		if (!engine->Initialize())
+		{
+			return;
+		}
 
 
 		std::vector<std::string> stoneMinionAnimations;
@@ -164,6 +261,17 @@ public:
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
 
+		Renderable* cube = GameUtilities::AddSimpleAsset("files/models/Cube.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+
+#ifdef _DEBUG
+		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		cubeCollider->colliderPtr = nullptr;
+#endif
+
+
+		ADAI::FlockingGroup commandFlock;
+		ADAI::FlockingGroup idleFlock;
 
 		std::vector<Destructable*> stoneMinions;
 		std::vector<Destructable*> waterMinions;
@@ -176,9 +284,9 @@ public:
 		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
 
 		golem->targetMarker = m1;
+		golemEatingEvent.SetTarget(golem);
 
-		std::vector<std::string> animationFiles;
-		animationFiles.push_back("files/models/Golem_2_Idle.animfile");
+		//GameUtilities::AddGameObject(cube);
 
 		animationFiles[0] = "files/models/BattleMage.animfile";
 		float mapWidth = 1000;
@@ -190,16 +298,70 @@ public:
 		GameUtilities::AddGameObject(m1);
 		GameUtilities::AddGameObject(tempPlane);
 
-		//testPlane->colliderPtr = nullptr;
+		/*GameUtilities::GenerateHouse1(XMFLOAT3(0, 0, 0), XMFLOAT3(0,45,0));
 
-		
+		GameUtilities::GenerateHouse2(XMFLOAT3(0, 0, -2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateHouse3(XMFLOAT3(0, 0, -5), XMFLOAT3(0, -45, 0));
+
+		GameUtilities::GenerateHouse4(XMFLOAT3(0, 0, -7.5), XMFLOAT3(0, 45, 0));
+
+		GameUtilities::GenerateBarn1(XMFLOAT3(-10, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateBarn2(XMFLOAT3(-10, 0, 2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateGateway(XMFLOAT3(10, 0, 0), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateScaffolding(XMFLOAT3(10, 0, 1), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateWall(XMFLOAT3(10, 0, 5), XMFLOAT3(0, 45, 0));
+
+		GameUtilities::GenerateWell(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateTavern(XMFLOAT3(-5, 0, 5), XMFLOAT3(0, 45, 0));
+
+		GameUtilities::GenerateTree(XMFLOAT3(-2.5, 0, 2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateLadder(XMFLOAT3(-2.5, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRock1(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateLamp(XMFLOAT3(2.5, 0, 2.5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateMeetingHall(XMFLOAT3(5, 0, 5), XMFLOAT3(0, 225, 0));
+
+		GameUtilities::GenerateTower(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateCart(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0,0,0));
+
+		GameUtilities::GenerateStraw(XMFLOAT3(-2.5, 0, 2), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateDebris1(XMFLOAT3(-2.5, 0, 5), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRubble1(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRubble2(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRubble3(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0));*/
+
+#ifdef _DEBUG
+#ifdef ShowColliders
+		GameUtilities::AddGameObject(golemCollider);
+		GameUtilities::AddGameObject(cubeCollider);
+
+#endif
+#endif
+
+		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
+		{
+			GameUtilities::AddGameObject(it->second, false);
+		}
+
 		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
 		std::vector<ADPhysics::Triangle> ground;
-		std::vector<ADQuadTreePoint> treePoints;
+		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
 		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
 		tempPlane->GetWorldMatrix(groundWorld);
-		for(unsigned int i = 0; i < (*planeModel).indices.size(); i+=3)
+		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
 		{
 			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
 			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
@@ -214,37 +376,30 @@ public:
 			ground.push_back(*tri);
 
 			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
-			ADQuadTreePoint point = ADQuadTreePoint(centroid.x, centroid.z, *tri);
+			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
 			treePoints.push_back(point);
 		}
 
 		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
-		QuadTree* tree = new QuadTree(boundary);
+		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
 
 		for (unsigned int i = 0; i < treePoints.size(); i++)
 		{
 			tree->Insert(treePoints[i]);
 		}
 
-
 		float minionWidth = 10;
 
-		//Add Game Objects to their collision groupings
-		//GameObject* passables[1];
-		//passables[0] = a3;
 
-		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		engine->GetOrbitCamera()->SetRadius(20);
-		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		engine->GetOrbitCamera()->SetPosition(XMFLOAT3(100, 200, -200));
 
-		GolemGameUISetup::GameUserInterface gameUI;
 
-		if (!engine->Initialize())
-		{
-			return;
-		}
+
+		//FountainEmitter femitter;
+		//femitter.Initialize(engine->GetPBRRenderer()->GetRendererResources()->device.Get(), 100, XMFLOAT4(1, 1, 1, 0), L"files\\textures\\Particle_Dust.dds", 1000);
+		//ParticleEmitterEvent golemPunchParticles(femitter);
+		//golemPunchParticles.lifespan = 1000.f;
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+
 
 
 		// Timing
@@ -263,8 +418,8 @@ public:
 		c2->type = OBJECT_TYPE::STATIC;*/
 
 		ADAI::ADPathfinding pathfinder;
-		pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapHeight), minionWidth, 20.f);
-		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.GetPlaneNodes(), pathfinder.tileMap.columns, mapWidth, mapHeight);
+		//pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.tileMap.columns, mapWidth, mapLength);
     
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
@@ -273,17 +428,17 @@ public:
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
 				//pathfinder.clearDebug();
-				UINT row;
-				UINT column;
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
-				pathfinder.enter(0, 0, column, row);
+				//UINT row;
+				//UINT column;
+				//pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
+				//pathfinder.enter(0, 0, column, row);
 			}
 
 
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
-			main_music_loop_timer -= delta_time;
+			//main_music_loop_timer -= delta_time;
 
 			ProcessInput();
 
@@ -291,16 +446,10 @@ public:
 			{
 				pathfinder.update(0.00001f);
 			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
+			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
 		
-    
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
-
-			
-
-			// Test
-			//spyro->Update(delta_time);
 			// Debug draw
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
@@ -316,17 +465,24 @@ public:
 			audioEngine.Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
 			audioEngine.Update();
 
-			// Physics test
+			XMFLOAT4X4 viewPass;
+			XMStoreFloat4x4(&viewPass, view);
+			XMFLOAT4 cpos = XMFLOAT4(CamPosition.x, CamPosition.y, CamPosition.z, 0);
 
-			/*spyro->CheckCollision(c1);
-			spyro->CheckCollision(c2);
-			spyro->CheckCollision(p1);
-			a3->CheckCollision(spyro);
-			e1->CheckCollision(spyro);
-			e2->CheckCollision(spyro);
-			e3->CheckCollision(spyro);
-			t1->CheckCollision(spyro);*/
 
+			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
+			XMFLOAT4X4 persPass;
+			XMStoreFloat4x4(&persPass, pers);
+			//femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
+
+#ifdef _DEBUG
+			golemCollider->transform = golem->GetColliderInfo();
+			XMMATRIX colliderLocation = cube->transform;
+
+			cube->colliderPtr = &AABB(VectorToFloat3(colliderLocation.r[3]), XMFLOAT3(1, 1, 1));
+			cube->physicsType = COLLIDABLE;
+			cubeCollider->transform = colliderLocation;
+#endif
 
 			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
 
@@ -346,24 +502,21 @@ public:
 						{
 							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
 							{
-								if (OBJS[i]->colliderPtr->type != ColliderType::Plane)
+								if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
 								{
-									OBJS[i]->CheckCollision(OBJS[j]);
+									if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+									{
+										OBJS[i]->CheckCollision(OBJS[j]);
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			XMFLOAT3 SpyrosPosition = VectorToFloat3(golem->transform.r[3]);
-			std::vector<ADQuadTreePoint> optimizedPoints = tree->Query(ADQuad(golem->transform.r[3].m128_f32[0], golem->transform.r[3].m128_f32[2], 100, 100));
-			std::vector<Triangle> trisInRange;
-			for (unsigned int i = 0; i < optimizedPoints.size(); i++)
-			{
-				trisInRange.push_back(*optimizedPoints[i].tri);
-			}
 
-			GroundClamping(golem, trisInRange, delta_time);
+			//Resolve all collisions that occurred this frame
+			ADResource::ADGameplay::ResolveCollisions();
 
 			physics_timer += delta_time;
 			if (physics_timer > physics_rate)
@@ -371,18 +524,18 @@ public:
 				physics_timer = 0;
 				for (int i = 0; i < 10; i++)
 				{
-					GroundClampingF(stoneMinions[i], trisInRange, delta_time, tree);
-					GroundClampingF(waterMinions[i], trisInRange, delta_time, tree);
-					GroundClampingF(fireMinions[i], trisInRange, delta_time, tree);
-					GroundClampingF(woodMinions[i], trisInRange, delta_time, tree);
+					GroundClamping(stoneMinions[i], tree, delta_time);
+					GroundClamping(waterMinions[i], tree, delta_time);
+					GroundClamping(fireMinions[i], tree, delta_time);
+					GroundClamping(woodMinions[i], tree, delta_time);
 				}
+
+
 			}
 
-
-			//Resolve all collisions that occurred this frame
-			ADResource::ADGameplay::ResolveCollisions();
-
-			// Test
+			GroundClamping(golem, tree, delta_time);
+			//GroundClamping(cube, tree, delta_time);
+			//cube->transform.r[3].m128_f32[1] += 5;
 
 			// Poll input
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
@@ -391,15 +544,14 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
-
-
+			//femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 
 			// Update framerate
 			if (timer > 1)
 			{
 				timer = 0;
 
-				fr = std::to_string(1.0 /delta_time) + " FPS";
+				fr = std::to_string(1.0 / delta_time) + " FPS";
 				tfw = std::wstring(fr.begin(), fr.end());
 				wchar = tfw.c_str();
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
@@ -440,14 +592,16 @@ public:
 			if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::RIGHT)
 			{
 				yaw += camera_rotation_thresh * dt;
-			} else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
+			}
+			else if (Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::LEFT)
 			{
 				yaw += -camera_rotation_thresh * dt;
 			}
 			if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::UP)
 			{
 				pitch += -camera_rotation_thresh * dt;
-			} else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
+			}
+			else if (Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::RIGHT_THUMBSTICK) == (int)Input::DIRECTION::DOWN)
 			{
 				pitch += camera_rotation_thresh * dt;
 			}

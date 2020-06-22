@@ -8,6 +8,7 @@ class AnimationStateMachine
 	struct AnimationState
 	{
 		string name;
+		double duration;
 		bool boolCondition = false;
 		float valueCondition = 0;
 		int index;
@@ -49,7 +50,7 @@ public:
 	void Initialize(ADResource::ADGameplay::GameObject* obj);
 
 	
-	void CreateAnimationState(string name, int index,bool truefalseCondition = false, float valueCondition = 0 );
+	void CreateAnimationState(string name, double duration, int index,bool truefalseCondition = false, float valueCondition = 0 );
 	void GenerationAnimationStates(vector<anim_clip> animations);
 	void PlayAnimationByName( string name);
 	void PlayAnimationByNameBasedOnBoolCondition(string name, bool condition);
@@ -60,7 +61,7 @@ public:
 	void SetBothConditions(string name, bool condition, float valuecondition);
 	void SetName(string prevName, const string newName);
 	void SetNamebyIndex(int index, const string name);
-
+	double GetDurationByName(string name);
 	int GetCurrentAnimation();
 	void SetModel_To_CurrentAnimation();
 

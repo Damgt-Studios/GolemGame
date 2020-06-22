@@ -15,11 +15,17 @@ namespace ADAI
 
 	};
 
+	class WayPointState : public State
+	{
+		std::vector<XMFLOAT4> wayPoints;
+		//Current Pathfinding Path
+	};
+
 	class FlockingState : public State
 	{
 	public:
-		//XMVECTOR personalTarget;
 		XMVECTOR personalTarget;
+		//Current Pathfinding Path
 
 	};
 

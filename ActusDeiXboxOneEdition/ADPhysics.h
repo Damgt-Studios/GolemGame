@@ -81,39 +81,39 @@ namespace ADPhysics
 		AABB(XMFLOAT3 Position, XMFLOAT3 Size)
 		{
 			Pos = Position;
-			HalfSize = Size;
+			HalfSize = VectorToFloat3(Float3ToVector(Size) / 2);
 			Max = XMFLOAT3(Pos.x + HalfSize.x, Pos.y + HalfSize.y, Pos.z + HalfSize.z);
 			Min = XMFLOAT3(Pos.x - HalfSize.x, Pos.y - HalfSize.y, Pos.z - HalfSize.z);
 			Extents = XMFLOAT3(Max.x - Pos.x, Max.y - Pos.y, Max.z - Pos.z);
 			type = ColliderType::Aabb;
 		};
 
-		virtual bool isCollision(Sphere* other, Manifold& m) {
+		virtual bool isCollision(Sphere* other, Manifold& m) override {
 			return SphereToAabbCollision(*other, *this, m);
 		}
 
-		virtual bool isCollision(AABB* other, Manifold& m) {
+		virtual bool isCollision(AABB* other, Manifold& m) override {
 			return AabbToAabbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(OBB* other, Manifold& m) {
+		virtual bool isCollision(OBB* other, Manifold& m) override {
 			return AabbToObbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) {
+		virtual bool isCollision(Plane* other, Manifold& m) override {
 			return AabbToPlaneCollision(*this, *other, m);
 		}
 
-		virtual float GetWidth() {
-			return HalfSize.x;
+		virtual float GetWidth() override {
+			return HalfSize.x * 2;
 		}
 
-		virtual float GetHeight() {
-			return HalfSize.y;
+		virtual float GetHeight() override {
+			return HalfSize.y * 2;
 		}
 
-		virtual float GetLength() {
-			return HalfSize.z;
+		virtual float GetLength() override {
+			return HalfSize.z * 2;
 		}
 	};
 
@@ -135,36 +135,36 @@ namespace ADPhysics
 			AxisX = (XMFLOAT3&)Transform.r[0];
 			AxisY = (XMFLOAT3&)Transform.r[1];
 			AxisZ = (XMFLOAT3&)Transform.r[2];
-			HalfSize = Size;
+			HalfSize = VectorToFloat3(Float3ToVector(Size) / 2);
 			type = ColliderType::Obb;
 		}
 
-		virtual bool isCollision(Sphere* other, Manifold& m) {
+		virtual bool isCollision(Sphere* other, Manifold& m) override {
 			return SphereToObbCollision(*other, *this, m);
 		}
 
-		virtual bool isCollision(AABB* other, Manifold& m) {
+		virtual bool isCollision(AABB* other, Manifold& m) override {
 			return AabbToObbCollision(*other, *this, m);
 		}
 
-		virtual bool isCollision(OBB* other, Manifold& m) {
+		virtual bool isCollision(OBB* other, Manifold& m) override {
 			return ObbToObbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) {
+		virtual bool isCollision(Plane* other, Manifold& m) override {
 			return ObbToPlaneCollision(*this, *other, m);
 		}
 
-		virtual float GetWidth() {
-			return HalfSize.x;
+		virtual float GetWidth() override {
+			return HalfSize.x * 2;
 		}
 
-		virtual float GetHeight() {
-			return HalfSize.y;
+		virtual float GetHeight() override {
+			return HalfSize.y * 2;
 		}
 
-		virtual float GetLength() {
-			return HalfSize.z;
+		virtual float GetLength() override {
+			return HalfSize.z * 2;
 		}
 
 	};
@@ -215,7 +215,7 @@ namespace ADPhysics
 			AxisY = (XMFLOAT3&)Transform.r[1];
 			AxisZ = (XMFLOAT3&)Transform.r[2];
 			Normal = AxisY;
-			HalfSize = Size;
+			HalfSize = VectorToFloat3(Float3ToVector(Size) / 2);
 			type = ColliderType::Plane;
 		}
 
@@ -232,15 +232,15 @@ namespace ADPhysics
 		}
 
 		virtual float GetWidth() {
-			return HalfSize.x;
+			return HalfSize.x * 2;
 		}
 
 		virtual float GetHeight() {
-			return HalfSize.y;
+			return HalfSize.y * 2;
 		}
 
 		virtual float GetLength() {
-			return HalfSize.z;
+			return HalfSize.z * 2;
 		}
 		
 	};
@@ -883,8 +883,11 @@ namespace ADPhysics
 		//Manifold Setup
 		m.Normal = Axises[AxisOfMinimumCollision];
 
-		if (VectorDot((XMVECTOR&)box2.Pos - (XMVECTOR&)box1.Pos, (XMVECTOR&)m.Normal) < 0)
+
+		if (VectorDot(XMLoadFloat3(&box2.Pos) - XMLoadFloat3(&box1.Pos), (XMVECTOR&)m.Normal) < 0)
 			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
+		//if (VectorDot((XMVECTOR&)box2.Pos - (XMVECTOR&)box1.Pos, (XMVECTOR&)m.Normal) < 0)
+		//	m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
 
 		m.PenetrationDepth = MinOverlap;
 
@@ -1291,7 +1294,7 @@ namespace ADPhysics
 			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)))
 		};
 
-		int AxisOfMinimumCollision;
+		int AxisOfMinimumCollision ;
 		float MinOverlap = 100;
 
 		//Floating Point "Fix"

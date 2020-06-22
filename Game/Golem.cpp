@@ -2,7 +2,7 @@
 #include "Golem.h"
 
 ADResource::ADGameplay::Golem::Golem() {
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	collider = OBB(transform * translatetomiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
@@ -14,7 +14,28 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	fireCPtr = &fireCollider;
 
-	stats = new StatSheet();
+	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
+
+	golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+
+	golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+
+	golemPunch->active = false;
+	golemKick->active = false;
+	golemSlam->active = false;
+	golemConsume->active = false;
+
+	golemWaterWave->active = false;
+	golemFireball->active = false;
+	golemTaunt->active = false;
+	golemRoot->active = false;
+
 
 	flockingGroups = new ADAI::FlockingGroup*[5];
 	for (int i = 0; i < 5; ++i)
@@ -36,6 +57,14 @@ ADResource::ADGameplay::Golem::~Golem()
 void ADResource::ADGameplay::Golem::Update(float delta_time)
 {
 	HandleInput(delta_time);
+	golemPunch->Update(delta_time);
+	golemKick->Update(delta_time);
+	golemSlam->Update(delta_time);
+	golemConsume->Update(delta_time);
+	golemWaterWave->Update(delta_time);
+	golemFireball->Update(delta_time);
+	golemTaunt->Update(delta_time);
+	golemRoot->Update(delta_time);
 	ProcessEffects(delta_time);
 
 	for (int i = 0; i < 5; ++i)
@@ -47,7 +76,14 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 	}
 
 	// Physics
-	collider = OBB(transform, XMFLOAT3(2, 2, 2));
+	XMMATRIX colliderLocation = transform;
+	colliderLocation.r[3].m128_f32[1] += 15;
+
+	colliderLocation.r[0] = XMVector3Normalize(transform.r[0]);
+	colliderLocation.r[1] = XMVector3Normalize(transform.r[1]);
+	colliderLocation.r[2] = XMVector3Normalize(transform.r[2]);
+
+	collider = OBB(colliderLocation, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
@@ -85,7 +121,7 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 			i--;
 		}
 	}
-	if (stats->health.currentValue <= 0)
+	if (stats->RequestStats("Health")->currentValue <= 0)
 	{
 		//Death();
 	}
@@ -258,7 +294,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 			//If collision and collision object is a collider then go to OnCollision Function
 			else
 			{
-				collisionQueue.push(CollisionPacket(this, obj, m));
+				collisionQueue.push(CollisionPacket(obj, this, m));
 				OnCollision(obj);
 			}
 		}
@@ -271,12 +307,26 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 //	audioManager = _audioManager;
 //}
 
+XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
+{
+	XMMATRIX temp;
+	temp.r[0] = XMVector3Normalize(Float3ToVector(collider.AxisX));
+	temp.r[1] = XMVector3Normalize(Float3ToVector(collider.AxisY));
+	temp.r[2] = XMVector3Normalize(Float3ToVector(collider.AxisZ));
+	temp.r[3] = Float3ToVector(collider.Pos);
+	temp.r[3].m128_f32[3] = 1;
+
+	temp = XMMatrixScaling(collider.GetWidth() / 2, collider.GetHeight() / 2, collider.GetWidth() / 2) * temp;
+
+	return temp;
+}
+
 void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
 {
 	anim_controller = &controller;
 }
 
-iStatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
+StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
 {
 	return stats;
 }
@@ -291,18 +341,18 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	anim_controller->PlayAnimationByName("Golem_1_Idle");
 
 	XMFLOAT3 pos(0, 0, 0);
-	if (Input::QueryButtonDown(GamepadButtons::X))
-	{
+	//if (Input::QueryButtonDown(GamepadButtons::X))
+	//{
 		spyro_move_speed = 500;
-		charging = true;
+	//	charging = true;
 
-	}
-	else
-	{
-		charging = false;
+	//}
+	//else
+	//{
+	//	charging = false;
 
-		spyro_move_speed = 500;
-	}
+	//	spyro_move_speed = 500;
+	//}
 
 	//if ((Input::QueryButtonDown(GamepadButtons::B) || Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER) == 1) && fire == false)
 	//{
@@ -319,11 +369,50 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (responseTimer < 0)
 		{
 			responseTimer = 0.2f;
-			stats->token.currentValue--;
-			if (stats->token.currentValue < stats->token.minValue)
-				stats->token.currentValue = 0;
+			if(GetCurrentElement() == WATER)
+				golemWaterWave->StartAction(&transform);
+			else if (GetCurrentElement() == FIRE)
+				golemFireball->StartAction(&transform);
+			else if (GetCurrentElement() == STONE)
+				golemTaunt->StartAction(&transform);
+			else if (GetCurrentElement() == WOOD)
+				golemRoot->StartAction(&transform);
+
+			stats->RequestStats("Token")->currentValue--;
+			if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+			{
+				stats->RequestStats("Token")->currentValue = 0;
+			}
 		}
 	}
+
+	if (Input::QueryButtonDown(GamepadButtons::X))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			golemPunch->StartAction(&transform);
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::A))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			golemSlam->StartAction(&transform);
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::B))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f;
+			golemKick->StartAction(&transform);
+		}
+	}
+
 
 	if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 	{
@@ -334,7 +423,6 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			if (playerElement == 4)
 				playerElement = 0;
 		}
-
 	}
 
 	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder))
@@ -367,6 +455,15 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			--commandTargetGroup;
 			if (commandTargetGroup < 0)
 				commandTargetGroup = 0;
+		}
+	}
+
+	if (Input::QueryButtonDown(GamepadButtons::DPadLeft))
+	{
+		if (responseTimer < 0)
+		{
+			responseTimer = 0.2f; 
+			golemConsume->StartAction(&transform);
 		}
 	}
 

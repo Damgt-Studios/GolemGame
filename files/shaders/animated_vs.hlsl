@@ -42,16 +42,22 @@ OutputVertex main(Vertex v)
     OutputVertex output = (OutputVertex) 0;
     
         // Skinned position
-    float4 skinned_position = float4(0, 0, 0, 0);
-    float4 skinned_normal = float4(0, 0, 0, 0);
+    float4 skinned_position = float4(0,0,0,0);
+    float4 skinned_normal = float4(0,0,0,0);
     
-    //skinned_position = float4(v.xyzw, 1);
-    //skinned_normal = float4(v.normals, 0);
-    
-    for (int i = 0; i < 4; i++)
+    int fuckme = v.joints.x + v.joints.y + v.joints.z + v.joints.w;
+    if (fuckme == 0)
     {
-        skinned_position += mul(float4(v.xyzw, 1), m[v.joints[i]]) * v.weights[i];
-        skinned_normal += mul(float4(v.normals, 0), m[v.joints[i]]) * v.weights[i];
+        skinned_position = float4(v.xyzw, 1);
+        skinned_normal = float4(v.normals, 0);
+    }
+    else
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            skinned_position += mul(float4(v.xyzw, 1), m[v.joints[i]]) * v.weights[i];
+            skinned_normal += mul(float4(v.normals, 0), m[v.joints[i]]) * v.weights[i];
+        }
     }
     
         // Applymatrices

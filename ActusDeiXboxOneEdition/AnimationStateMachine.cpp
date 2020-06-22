@@ -12,9 +12,9 @@ void AnimationStateMachine::Initialize(ADResource::ADGameplay::GameObject* obj)
 
 }
 
-void AnimationStateMachine::CreateAnimationState( string name, int index, bool truefalseCondition, float valueCondition)
+void AnimationStateMachine::CreateAnimationState( string name, double duration, int index, bool truefalseCondition, float valueCondition)
 {
-	AnimationState n_AnimState{ name,truefalseCondition,valueCondition, index };
+	AnimationState n_AnimState{ name, duration/ 46186158.0, truefalseCondition,valueCondition, index };
 
 	A_States.push_back(n_AnimState);
 
@@ -26,7 +26,7 @@ void AnimationStateMachine::GenerationAnimationStates(vector<anim_clip> animatio
 {
 	for (unsigned int i = 0; i < animations.size(); i++)
 	{
-		CreateAnimationState(animations[i].animfilename, i);
+		CreateAnimationState(animations[i].animfilename, animations[i].duration, i);
 	}
 
 }
@@ -147,6 +147,17 @@ void AnimationStateMachine::SetName(string prevName,  string newName)
 void AnimationStateMachine::SetNamebyIndex(int index,  string name)
 {
 	A_States[index].name = name;
+}
+
+double AnimationStateMachine::GetDurationByName(string name)
+{
+	for (unsigned int i = 0; i < A_States.size(); i++)
+	{
+		if (A_States[i].name == name)
+		{
+			return A_States[i].duration;
+		}
+	}
 }
 
 
