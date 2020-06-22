@@ -240,6 +240,7 @@ public:
 
 		currentScene.LoadScene("files/scenes/test.scene");
 
+		golem = currentScene.GetGolem();
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
@@ -256,7 +257,6 @@ public:
 		std::vector<std::string> stoneMinionAnimations;
 		stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
 
-		golem = currentScene.GetGolem();
 		
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
@@ -288,7 +288,7 @@ public:
 
 		//GameUtilities::AddGameObject(cube);
 
-		animationFiles[0] = "files/models/BattleMage.animfile";
+		//animationFiles[0] = "files/models/BattleMage.animfile";
 		float mapWidth = 1000;
 		float mapHeight = 1000;
 		//Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0));
@@ -419,7 +419,7 @@ public:
 
 		ADAI::ADPathfinding pathfinder;
 		//pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
-		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.tileMap.columns, mapWidth, mapLength);
+		gameUI.SetupUI(engine->GetUI(), golem, &audioEngine, pathfinder.tileMap.columns, mapWidth, mapHeight);
     
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 
@@ -446,7 +446,7 @@ public:
 			{
 				pathfinder.update(0.00001f);
 			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
+			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
 		
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
