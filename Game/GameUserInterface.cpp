@@ -92,22 +92,6 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void HUDController::SetPlayer(ADResource::ADGameplay::Golem* _player, ADUI::Image2D* _golemIcon, ADUI::Image2D* _healthIcon, ADUI::Image2D* _tk1, ADUI::Image2D* _tk2, ADUI::Image2D* _tk3, ADUI::ComponentGrid* _minionTargetingGroup, ADUI::Label2D* _allCount, ADUI::Label2D* _stoneCount, ADUI::Label2D* _waterCount, ADUI::Label2D* _fireCount, ADUI::Label2D* _woodCount)
-	{
-		player = _player;
-		golemIcon = _golemIcon;
-		healthIcon = _healthIcon;
-		tokenIcons.push_back(_tk1);
-		tokenIcons.push_back(_tk2);
-		tokenIcons.push_back(_tk3);
-		targetMinionGroup = _minionTargetingGroup;
-		allCount = _allCount;
-		stoneCount = _stoneCount;
-		waterCount = _waterCount;
-		fireCount = _fireCount;
-		woodCount = _woodCount;
-	}
-
 	bool HUDController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
 		if (uiState == ADUI::UISTATE::GAMEPLAY)

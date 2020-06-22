@@ -29,7 +29,6 @@
     <ClCompile Include="pchgame.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="Spyro.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
@@ -202,7 +201,6 @@
     <ClInclude Include="pchgame.h" />
     <ClInclude Include="XTime.h" />
     <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="Spyro.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />

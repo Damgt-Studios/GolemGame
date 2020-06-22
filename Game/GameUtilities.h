@@ -2,11 +2,9 @@
 
 #include <string>
 
-//#include "Spyro.h"
 #include "Golem.h"
 #include "GameObjectClasses.h"
 #include "ResourceManager.h"
-//#include "TheGreatGolem.h"
 #include "GameEffects.h"
 #include "ADAI.h"
 

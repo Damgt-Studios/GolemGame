@@ -330,7 +330,6 @@
     <ClInclude Include="Listeners.h" />
     <ClInclude Include="MinionManager.h" />
     <ClInclude Include="pchgame.h" />
-    <ClInclude Include="Spyro.h" />
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
@@ -355,7 +354,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Spyro.cpp" />
     <ClCompile Include="TheGreatGolem.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>

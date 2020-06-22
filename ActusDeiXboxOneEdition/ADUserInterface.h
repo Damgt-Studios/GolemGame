@@ -194,10 +194,10 @@ namespace ADUI
 
         ~Overlay2D()
         {
-            for (int i = 0; i < components.size(); ++i)
-            {
-                delete components[i];
-            }
+            //for (int i = 0; i < components.size(); ++i)
+            //{
+            //    delete components[i];
+            //}
             components.clear();
         };
 
@@ -236,20 +236,20 @@ namespace ADUI
         std::string name;
         ~OverlayController()
         {
-            for (int i = 0; i < overlays.size(); ++i)
-            {
-                delete overlays[i];
-            }
+            //for (int i = 0; i < overlays.size(); ++i)
+            //{
+            //    delete overlays[i];
+            //}
             overlays.clear();
-            for (int i = 0; i < overlays.size(); ++i)
-            {
-                delete controllers[i];
-            }
+            //for (int i = 0; i < controllers.size(); ++i)
+            //{
+            //    delete controllers[i];
+            //}
             controllers.clear();
-            for (int i = 0; i < overlays.size(); ++i)
-            {
-                delete componentTypeMap[i];
-            }
+            //for (int i = 0; i < componentTypeMap.size(); ++i)
+            //{
+            //    delete componentTypeMap[i];
+            //}
             componentTypeMap.clear();
         };
         virtual bool ProcessInput(float delta_time, float& quick);
@@ -619,13 +619,13 @@ namespace ADUI
         UINT fontCount;
         Text2D* spriteFonts;
         UINT uiState = 1;
-        UILog uiLog;
+        UILog* uiLog;
 
     public:
         std::vector<UIComponent*> uiComponents;
         std::vector<Overlay2D*> overlays;
         std::vector<OverlayController*> uiControllers;
-
+        std::vector<AnimationData*> animations;
 
         std::unique_ptr<SpriteBatch> spriteBatch;
         UIRendererResources uiResources;
@@ -642,7 +642,7 @@ namespace ADUI
 
         void Update(float delta_time);
         void Render();
-        void ShutDown();
+        void Shutdown();
 
         void RecieveMessage(UIMessage* _message);
         UINT* GetUIState();

@@ -130,10 +130,6 @@ ADUI::Image2D::Image2D(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _tex
 
 ADUI::Image2D::~Image2D()
 {
-    if (animations)
-    {
-        delete[] animations;
-    }
     
 }
 
@@ -672,22 +668,7 @@ ADUI::ADUI::ADUI()
 
 ADUI::ADUI::~ADUI()
 {
-    delete spriteFonts;
-    for (int i = 0; i < uiComponents.size(); ++i)
-    {
-        delete uiComponents[i];
-    }
-    uiComponents.clear();
-    for (int i = 0; i < overlays.size(); ++i)
-    {
-        delete overlays[i];
-    }
-    overlays.clear();
-    for (int i = 0; i < uiControllers.size(); ++i)
-    {
-        delete uiControllers[i];
-    }
-    uiControllers.clear();
+    Shutdown();
 }
 
 void ADUI::ADUI::Initialize(ComPtr<ID3D11Device1> _device, ComPtr<ID3D11DeviceContext1> _context, ComPtr<ID3D11RenderTargetView> _rtv, D3D11_VIEWPORT* _vp)
@@ -708,7 +689,7 @@ void ADUI::ADUI::Initialize(ComPtr<ID3D11Device1> _device, ComPtr<ID3D11DeviceCo
     device->CreateDepthStencilState(&dsDesc, &uiResources.depthStencilState);
 
     m_states = std::make_unique<CommonStates>(device.Get());
-
+    uiLog = new UILog();
 }
 
 void ADUI::ADUI::AddTextureArray(char** _fileNameArray, UINT _count)
@@ -819,20 +800,42 @@ void ADUI::ADUI::Render()
     context->OMSetBlendState(nullptr, Colors::Black, 0xFFFFFFFF);
 }
 
-void ADUI::ADUI::ShutDown()
+void ADUI::ADUI::Shutdown()
 {
 
-    delete[] spriteFonts;
     for (int i = 0; i < uiComponents.size(); ++i)
     {
-        if (uiComponents[i])
-            delete uiComponents[i];
+        delete uiComponents[i];
     }
+    uiComponents.clear();
+    for (int i = 0; i < overlays.size(); ++i)
+    {
+        delete overlays[i];
+    }
+    overlays.clear();
+    for (int i = 0; i < uiControllers.size(); ++i)
+    {
+        delete uiControllers[i];
+    }
+    uiControllers.clear();
+
     for (int i = 0; i < uiResources.textureCount; ++i)
     {
         if (uiResources.uiTextures[i])
             uiResources.uiTextures[i]->Release();
     }
+    
+    for (int i = 0; i < animations.size(); ++i)
+    {
+        if (animations[i] != nullptr)
+        {
+            delete[] animations[i];
+        }
+    }
+    delete[] spriteFonts;
+    animations.clear();
+
+
 }
 
 void ADUI::UILog::Render()
@@ -862,7 +865,7 @@ void ADUI::ADUI::GetUIState(UINT _newState)
 
 ADUI::UILog* ADUI::ADUI::GetLog()
 {
-    return &uiLog;
+    return uiLog;
 }
 
 ADUI::Text2D* ADUI::ADUI::GetFont(UINT _id)
@@ -908,7 +911,7 @@ ADUI::UIComponentSelector::~UIComponentSelector()
     {
         delete components[i];
     }
-    delete components;
+    delete[] components;
 }
 
 
@@ -1066,7 +1069,7 @@ ADUI::ComponentGrid::ComponentGrid(float _x, float _y, float _spacing, UINT _col
 ADUI::ComponentGrid::~ComponentGrid()
 {
     if (positions)
-        delete positions;
+        delete[] positions;
 }
 
 void ADUI::ComponentGrid::AddComponent(UIComponent* _component)

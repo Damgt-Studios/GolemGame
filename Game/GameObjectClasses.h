@@ -114,11 +114,6 @@ namespace ADResource
 						effects.erase(effects.begin() + i);
 						i--;
 					}
-					//AD_UI::UIMessage updateHudDeleteMeOneDay;
-					//updateHudDeleteMeOneDay.messageType = ADUI::UIMessageTypes::ExternalMsg;
-					//updateHudDeleteMeOneDay.controllerID = 0;
-					//updateHudDeleteMeOneDay.number = 1;
-					//ADUI::MessageReceiver::SendMessage(&updateHudDeleteMeOneDay);
 				}
 				if (stats->RequestStats("Health")->currentValue <= 0)
 				{
@@ -458,50 +453,6 @@ namespace ADResource
 				}
 			}
 		};
-
-
-		//class Enemy : public Renderable
-		//{
-		//	/*ADResource::AD_AI::AI ai;
-		//	int health;
-		//	void Update()
-		//	{
-		//		ai.Update();
-		//	}
-		//	void Damage(ADResource::ADGameplay::DAMAGE_TYPE damageType) override
-		//	{
-		//		if (defenseType != ADResource::ADGameplay::INVULNERABLE && defenseType != damageType)
-		//		{
-		//			health--;
-		//			if (health < 1)
-		//			{
-		//				Remove();
-		//			}
-		//		}
-		//	};*/
-
-		////public:
-		////	ADPhysics::AABB collider;
-
-		////	Enemy() { colliderPtr = &collider; type = OBJECT_TYPE::ENEMY; };
-
-		////	virtual void CheckCollision(GameObject* obj)
-		////	{
-		////		if (this->active)
-		////		{
-		////			ADPhysics::Manifold m;
-		////			obj->colliderPtr->isCollision(&collider, m);
-		////		}
-		////	}
-
-		////	void Damage(DAMAGE_TYPE damageType)
-		////	{
-		////		if (defenseType != INVULNERABLE && defenseType != damageType)
-		////		{
-		////			Remove();
-		////		}
-		////	};
-		//};
 	}
 }
 

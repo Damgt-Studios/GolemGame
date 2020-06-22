@@ -8,10 +8,7 @@
 #include "ADQuadTree.h"
 #include "TheGreatGolem.h"
 
-#include "ADUserInterface.h"
 #include "GameUserInterface.h"
-//#include "AudioManager.h"
-#include "ADAudio.h"
 #include "GameUtilities.h"
 #include "GameObjectClasses.h"
 #include "MeshLoader.h"
@@ -52,7 +49,7 @@ private:
 	TheGreatGolem* game;
 	AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
-	MinionManager* minionManager;
+	//MinionManager* minionManager;
 	AD_ULONG golem_collider = 0;
 
 	bool shutdown = false;
@@ -117,8 +114,8 @@ public:
 
 	void AIUintsLoad()
 	{
-		std::vector<Destructable*> villagers;
-		std::vector<ADAI::AIUnit*> villagersAI;
+		//std::vector<Destructable*> villagers;
+		//std::vector<ADAI::AIUnit*> villagersAI;
 
 		//for (int i = 0; i < 10; i++)
 		//{
@@ -126,11 +123,11 @@ public:
 		//	villagersAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
 		//}
 
-		for (int i = 0; i < 10; i++)
-		{
-			//GameUtilities::AddGameObject(villagers[i]);
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	//GameUtilities::AddGameObject(villagers[i]);
 
-		}
+		//}
 	}
 
 	void SceneLoad()
@@ -198,7 +195,7 @@ public:
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
 		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		minionManager->Instance()->Initialize(golem);
+		//minionManager->Instance()->Initialize(golem);
 
 		AIUintsLoad();
 		game->LoadListeners(golem);
@@ -377,7 +374,7 @@ public:
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
 
-				minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
+				//minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
 				//pathfinder.clearDebug();
 				//UINT row;
 				//UINT column;
@@ -495,6 +492,7 @@ public:
 			}
 		}
 		audioEngine->Shutdown();
+		engine->ShutDown();
 	}
 	virtual void Uninitialize() {}
 

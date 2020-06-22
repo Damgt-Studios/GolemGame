@@ -86,7 +86,7 @@ bool Engine::Render()
 bool Engine::ShutDown()
 {
 	pbr.ShutDown();
-	userInterface.ShutDown();
+	userInterface.Shutdown();
 	return true;
 }
 
