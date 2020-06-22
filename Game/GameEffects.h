@@ -548,6 +548,10 @@ public:
 					{
 						action->eventDelay.push_back(std::stof(rhs));
 					}
+					else if (lhs == "SetHitboxDelay")
+					{
+						action->hitboxDelay = std::stof(rhs);
+					}
 					else
 					{
 						std::string msg = "Error Loading Data Driven File: ";

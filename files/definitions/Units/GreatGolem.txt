@@ -61,10 +61,11 @@ SingleHit=true
 
 Action=GolemConsume:
 Cooldown=0.5
-Duration=0.5
+Duration=1.0
 AddHitBox=GolemConsumeHB
 AddEvent=Sfx_GolemEat
 SetEventsDelay=0
+SetHitboxDelay=0.75
 ;
 
 Effect=GolemEat:StatChange

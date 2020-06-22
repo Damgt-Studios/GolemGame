@@ -315,11 +315,13 @@ namespace ADResource
 			float cooldownTimer;
 			float attackDuration;
 			float attackTimer;
+			float hitboxDelay = 0;
 			HitBox* hitbox;
 			UINT hitboxCount;
 
 			bool removeHbIfEnd = true;
 			bool movesToPlayer = true;
+			bool hitboxFired = false;
 
 			std::vector<bool> eventFired;
 			std::vector<float> eventDelay;
@@ -378,7 +380,11 @@ namespace ADResource
 						attackTimer = attackDuration;
 						for (int i = 0; i < hitboxCount; ++i)
 						{
-							hitbox[i].Enable();
+							if (hitboxDelay <= 0)
+							{
+								hitboxFired = true;
+								hitbox[i].Enable();
+							}
 							active = true;
 							return true;
 						}
@@ -397,6 +403,14 @@ namespace ADResource
 				{
 					if (attackTimer > 0)
 					{
+						if (hitboxFired == false && attackDuration - attackTimer > hitboxDelay)
+						{
+							for (int i = 0; i < hitboxCount; ++i)
+							{
+								hitboxFired = true;
+								hitbox[i].Enable();
+							}
+						}
 						for (int i = 0; i < eventDelay.size(); i++)
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
@@ -425,6 +439,7 @@ namespace ADResource
 				if (hitbox && removeHbIfEnd)
 				{
 					active = false;
+					hitboxFired = false;
 					for (int i = 0; i < hitboxCount; ++i)
 					{
 						hitbox[i].active = false;
