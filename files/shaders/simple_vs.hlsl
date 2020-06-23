@@ -42,8 +42,8 @@ OutputVertex main( InputVertex vertex )
     output.pos = mul(output.pos, viewMatrix);
     output.pos = mul(output.pos, projectionMatrix);
     
-    output.normal = mul(float4(vertex.normal.xyz, 0), worldMatrix);
-    output.tangent = mul(float4(vertex.tangent.xyz, 0), worldMatrix);
+    output.normal = normalize(mul(float4(vertex.normal.xyz, 0), worldMatrix));
+    output.tangent = normalize(mul(float4(vertex.tangent.xyz, 0), worldMatrix));
     return output;
 
 }

@@ -110,7 +110,8 @@ namespace ADGameplay
 
 			float mapWidth = 1000;
 			float mapHeight = 1000;
-			PlaneArguments = { "files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0) };
+
+			PlaneArguments = { "files/models/Plane.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0) };
 			
 
 			
@@ -274,7 +275,7 @@ namespace ADGameplay
 
 			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(),GolemArguments.Texture.data(), animations, GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
-			for (int i = 0; i < 10; i++)
+			/*for (int i = 0; i < 10; i++)
 			{
 				stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile(stoneMinionArguments[i].Model.data(), stoneMinionArguments[i].Texture.data(), stoneMinionAnimations, stoneMinionArguments[i].position, stoneMinionArguments[i].scale, stoneMinionArguments[i].rotation));
 				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE], STONE_MINION));
@@ -284,7 +285,7 @@ namespace ADGameplay
 				fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE], FIRE_MINION));
 				woodMinions.push_back(GameUtilities::AddDestructableFromModelFile(woodMinionArguments[i].Model.data(), woodMinionArguments[i].Texture.data(), woodMinionAnimations, woodMinionArguments[i].position, woodMinionArguments[i].scale, woodMinionArguments[i].rotation));
 				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD], WOOD_MINION));
-			}
+			}*/
 
 			for (int i = 0; i < renderableArguments.size(); i++)
 			{
@@ -292,13 +293,13 @@ namespace ADGameplay
 				renderables[i]->physicsType = renderableArguments[i].type;
 			}
 
-			for (int i = 0; i < 10; i++)
+			/*for (int i = 0; i < 10; i++)
 			{
 				GameUtilities::AddGameObject(stoneMinions[i]);
 				GameUtilities::AddGameObject(waterMinions[i]);
 				GameUtilities::AddGameObject(fireMinions[i]);
 				GameUtilities::AddGameObject(woodMinions[i]);
-			}
+			}*/
 
 			for (int i = 0; i < renderables.size(); i++)
 			{

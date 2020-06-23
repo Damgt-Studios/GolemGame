@@ -62,7 +62,7 @@ float4 main(OutputVertex v) : SV_TARGET
     v.normals = normalize(mul(normalMap, TBN));
     
     //Create the Directional Lighting on the Normal Map
-    float3 lightDirection = float3(0, 0, -1);
+    float3 lightDirection = float3(0, 0.5f, -1);
     float lightMagnitude = saturate(dot(-lightDirection, v.normals)) + (float4(0.156f, 0.003f, 0.215f, 1) * 3);
     float4 dirFinal = lightMagnitude * float4(0.5f, 0.5f, 0.5f, 1);
     
@@ -82,5 +82,5 @@ float4 main(OutputVertex v) : SV_TARGET
     //float4 specularFinal = float4(1, 1, 1, 1) * Intensity;
     
     //Multiply the sum of the Additional Modifications
-    return texelColor * dirFinal + emissive.Sample(textureSampler, v.tex.xy);
+    return texelColor * dirFinal + emissiveColor;
 }

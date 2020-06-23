@@ -558,16 +558,14 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get() };
 			renderer_resources.context->PSSetSamplers(0, 1, samplers);
 
-			//if (current_static_model->albedo)
-			//	renderer_resources.context.Get()->GenerateMips(current_static_model->albedo.Get());
-
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_static_model->albedo.Get(),
+				current_static_model->normal.Get()
 			};
 
 			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
 
-			renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
+			renderer_resources.context->PSSetShaderResources(0, 2, resource_views);
 			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
 
 			renderer_resources.context->VSSetShaderResources(0, 1, current_static_model->normal.GetAddressOf());
