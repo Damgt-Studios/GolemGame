@@ -48,7 +48,7 @@ namespace ADResource
 			virtual void Update(float time_delta);
 			void ProcessEffects(float _deltaTime);
 			void CheckCollision(GameObject* obj);
-			virtual void OnCollision(GameObject* other);
+			virtual void OnCollision(GameObject* other, Manifold& m);
 			void Remove();
 
 

@@ -110,14 +110,19 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 			else
 			{
 				collisionQueue.push(CollisionPacket(obj, this, m));
-				OnCollision(obj);
+				OnCollision(obj, m);
 			}
 		}
 	}
 }
 
-void ADResource::ADGameplay::Golem::OnCollision(GameObject* other)
+void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 {
+	XMFLOAT3 forward;
+	XMFLOAT3 right;
+	XMStoreFloat3(&forward, transform.r[2]);
+	XMStoreFloat3(&right, transform.r[0]);
+	XMVECTOR direction = XMLoadFloat3(&m.Normal);
 	//Sample of what to do with what we have right now
 	if (other->colliderPtr->type == ColliderType::Plane || other->colliderPtr->type == ColliderType::Aabb)
 	{
