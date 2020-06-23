@@ -26,6 +26,7 @@ bool Engine::Initialize()
 	engine_time.Restart();
 
 	userInterface.Initialize(pbr.GetRendererResources()->device, pbr.GetRendererResources()->context, pbr.GetRendererResources()->render_target_view, &pbr.GetRendererResources()->viewport);
+	bigCloud.Initialize(pbr.renderer_resources.device.Get(), 100, { 0, 25, 25, 1 }, L"files/textures/Particle_Blood_Sheet.dds");
 
 	return true;
 }
@@ -41,7 +42,7 @@ bool Engine::Update()
 	{
 
 		// For each game object, call update
-		int OBJ_COUNT =  ResourceManager::GetGameObjectCount();
+		int OBJ_COUNT = ResourceManager::GetGameObjectCount();
 		ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 
 		for (int i = 0; i < OBJ_COUNT; i++)
@@ -62,6 +63,18 @@ bool Engine::Update()
 		lightdir *= -1;*/
 
 	userInterface.Update(delta_time_sf);
+	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 proj;
+	XMFLOAT4 camPos;
+	XMMATRIX temp;
+	ocamera->GetViewMatrix(temp);
+	XMStoreFloat4x4(&view, temp);
+	temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+	XMStoreFloat4x4(&proj, temp);
+	camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
+	bigCloud.UpdateParticles(engine_time.SmoothDelta(), view, proj, camPos);
 
 	return true;
 }
@@ -75,8 +88,9 @@ bool Engine::Render()
 	{
 		OBJS[i]->Render();
 	}
-  
+
 	pbr.Render(camera, ocamera, delta_time_sf);
+	bigCloud.RenderParticles(pbr.renderer_resources.context.Get());
 	userInterface.Render();
 	pbr.Frame();
 
