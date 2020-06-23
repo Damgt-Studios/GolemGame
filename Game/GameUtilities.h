@@ -41,7 +41,8 @@ public:
 	static std::vector<Renderable*> GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateGateway(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateScaffolding(XMFLOAT3 pos, XMFLOAT3 rotation);
-	static std::vector<Renderable*> GenerateScaffoldWall(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateScaffoldWallX(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateScaffoldWallZ(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateWell(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateTavern(XMFLOAT3 pos, XMFLOAT3 rotation);

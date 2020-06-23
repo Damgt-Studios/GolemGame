@@ -426,7 +426,27 @@ std::vector<Renderable*> GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLOA
 	return temp;
 }
 
-std::vector<Renderable*> GameUtilities::GenerateScaffoldWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateScaffoldWallX(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(pos.x + 0.5f, pos.y, pos.z), XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", XMFLOAT3(pos.x - 0.5f, pos.y, pos.z), XMFLOAT3(25, 25, 25), rotation));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateScaffoldWallZ(XMFLOAT3 pos, XMFLOAT3 rotation) {
 
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
@@ -593,7 +613,7 @@ std::vector<Renderable*> GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 rot
 
 	temp.push_back(AddSimpleAsset("files/models/Tower_WoodenFrame.mesh", "files/textures/Tower_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 	temp.push_back(AddSimpleAsset("files/models/Tower_Structure.mesh", "files/textures/Tower_Structure.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tower_StoneDetails.mesh", "files/textures/Tower_StoneDetails.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	//temp.push_back(AddSimpleAsset("files/models/Tower_StoneDetails.mesh", "files/textures/Tower_StoneDetails.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 	temp.push_back(AddSimpleAsset("files/models/Tower_BrickDetails.mesh", "files/textures/Tower_BrickDetails.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
