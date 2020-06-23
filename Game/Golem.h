@@ -43,7 +43,7 @@ namespace ADResource
 			Action* golemRoot;
 
 
-			//GameObject* targetMarker;
+			GameObject* targetMarker;
 			ADAI::FlockingGroup** flockingGroups;
 
 

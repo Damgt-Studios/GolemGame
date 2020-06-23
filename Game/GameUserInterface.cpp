@@ -1137,7 +1137,7 @@ namespace GolemGameUISetup
 		_hUDController->AddComponent(rightButtonList);
 
 		//Health Units
-		_hUDController->healthTileListener.SetTarget(healthUnits);
+		_hUDController->healthTileListener.SetTarget(healthUnits, 0, 20000, true);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("ChangedHealth", &_hUDController->healthTileListener);
 
 		//Essence
@@ -1168,13 +1168,15 @@ namespace GolemGameUISetup
 
 		//Minion Count Labels
 		_hUDController->stoneMinionCountListener.SetTarget(stoneCountLabel);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("StoneMinionCountChange", &_hUDController->stoneMinionCountListener);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("StoneMinionCountChanged", &_hUDController->stoneMinionCountListener);
 		_hUDController->waterMinionCountListener.SetTarget(waterCountLabel);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("WaterMinionCountChange", &_hUDController->waterMinionCountListener);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("WaterMinionCountChanged", &_hUDController->waterMinionCountListener);
 		_hUDController->fireMinionCountListener.SetTarget(fireCountLabel);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("FireMinionCountChange", &_hUDController->fireMinionCountListener);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("FireMinionCountChanged", &_hUDController->fireMinionCountListener);
 		_hUDController->woodMinionCountListener.SetTarget(woodCountLabel);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("WoodMinionCountChange", &_hUDController->woodMinionCountListener);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("WoodMinionCountChanged", &_hUDController->woodMinionCountListener);
+		_hUDController->allMinionCountListener.SetTarget(allCountLabel);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("MinionCountChanged", &_hUDController->allMinionCountListener);
 
 		//Group Selection
 		_hUDController->controlGroupListener.SetTarget(rightButtonList);

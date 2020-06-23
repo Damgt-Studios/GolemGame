@@ -478,12 +478,12 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			{
 				flockingGroups[i]->SetCommandDirection(camera);
 			}
-			//targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
+			targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
 		}
-		//else
-		//{
-		//	targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
-		//}
+		else
+		{
+			targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
+		}
 	}
 
 	XMFLOAT4 forward;

@@ -157,6 +157,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
+	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
 	return temp;
 }
 
@@ -167,21 +168,23 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 	ADAI::AIUnit* temp = new ADAI::AIUnit;
 	temp->owner = _destructable;
 	_destructable->gamePlayType = _minionType;
-	switch (_destructable->gamePlayType)
-	{
-	case STONE_MINION:
-		_destructable->deathEvent = "StoneMinionCountChange";
-		break;
-	case WATER_MINION:
-		_destructable->deathEvent = "WaterMinionCountChange";
-		break;
-	case FIRE_MINION:
-		_destructable->deathEvent = "FireMinionCountChange";
-		break;
-	case WOOD_MINION:
-		_destructable->deathEvent = "WoodMinionCountChange";
-		break;
-	}
+	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
+	_destructable->deathEvent = "MinionDeath";
+	//switch (_destructable->gamePlayType)
+	//{
+	//case STONE_MINION:
+	//	_destructable->deathEvent = "StoneMinionDeath";
+	//	break;
+	//case WATER_MINION:
+	//	_destructable->deathEvent = "WaterMinionDeath";
+	//	break;
+	//case FIRE_MINION:
+	//	_destructable->deathEvent = "FireMinionDeath";
+	//	break;
+	//case WOOD_MINION:
+	//	_destructable->deathEvent = "WoodMinionDeath";
+	//	break;
+	//}
 	_destructable->team = 0;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();

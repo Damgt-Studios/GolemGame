@@ -53,6 +53,7 @@ namespace GolemGameUISetup
         SetUITextListener waterMinionCountListener;
         SetUITextListener fireMinionCountListener;
         SetUITextListener woodMinionCountListener;
+        SetUITextListener allMinionCountListener;
         SetUISelectionListener controlGroupListener;
 
         HUDController(UINT* _uiState) : uiState(*_uiState) {};

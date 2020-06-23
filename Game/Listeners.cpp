@@ -117,12 +117,27 @@ std::string SetUISetFrameListener::ToString()
     return "";
 }
 
+void SetUITilingListener::SetTarget(ADUI::Image2D* _image, UINT _minimum, UINT _maximum, bool _lerped)
+{
+    image = _image;
+    maximum = _maximum;
+    minimum = _minimum;
+    lerped = _lerped;
+}
+
 void SetUITilingListener::HandleEvent(ADEvents::ADEvent* _event)
 {
-    int value = static_cast<int>(reinterpret_cast<intptr_t>(_event->Parameter()));
-    if (value < 0)
-        value = 0;
-    image->tiled = value;
+    float cvalue = static_cast<float>(reinterpret_cast<intptr_t>(_event->Parameter()));
+    if (lerped)
+    {
+        cvalue = ceil((cvalue * 100.f) / float(maximum));
+        //value = Lerp(minimum, maximum, value);
+    }
+    if (cvalue < minimum)
+        cvalue = minimum;
+    if (cvalue > maximum)
+        cvalue = maximum;
+    image->tiled = cvalue;
 }
 
 std::string SetUITilingListener::ToString()
@@ -145,10 +160,21 @@ std::string SetUISelectionListener::ToString()
 
 void SetUITextListener::HandleEvent(ADEvents::ADEvent* _event)
 {
-    label->output = *static_cast<std::string*>(_event->Parameter());
+    label->output.clear();
+    label->output.append(*(static_cast<std::string*>(_event->Parameter())));
 }
 
 std::string SetUITextListener::ToString()
 {
     return std::string();
+}
+
+void MinionCountListener::HandleEvent(ADEvents::ADEvent* _event)
+{
+    scene->UpdateMinionCounts(static_cast<int>(reinterpret_cast<intptr_t>(_event->Parameter())));
+}
+
+std::string MinionCountListener::ToString()
+{
+	return std::string();
 }

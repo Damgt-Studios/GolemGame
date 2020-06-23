@@ -65,19 +65,26 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				ProcessEffects(_deltaTime);
+				if (active)
+				{
+					ProcessEffects(_deltaTime);
 
-				// Physics
-				XMFLOAT3 dang;
-				XMStoreFloat3(&dang, transform.r[3]);
-				collider = ADPhysics::AABB(dang, colScale);
-				colliderPtr = &collider;
+					// Physics
+					XMFLOAT3 dang;
+					XMStoreFloat3(&dang, transform.r[3]);
+					collider = ADPhysics::AABB(dang, colScale);
+					colliderPtr = &collider;
+				}
+
 			};
 
 			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
 			{
-				effects.push_back(_effect->clone());
-				effects[effects.size() - 1].get()->OnApply(GetStatSheet());
+				if (active)
+				{
+					effects.push_back(_effect->clone());
+					effects[effects.size() - 1].get()->OnApply(GetStatSheet());
+				}
 			}
 
 			virtual StatSheet* GetStatSheet() override
@@ -123,7 +130,7 @@ namespace ADResource
 
 			void Death()
 			{
-				ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)1);
+				ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
 				//Death Time
 				DropLoot();
 				Remove();

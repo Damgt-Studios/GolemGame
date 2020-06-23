@@ -516,6 +516,9 @@ class TheGreatGolem
 
 	ApplyEffectEvent golemEatingEvent;
 
+
+	MinionCountListener allMinionDeathListener;
+
 	GolemGameUISetup::GameUserInterface gameUI;
 
 	bool LoadGameEmitters()
@@ -692,10 +695,14 @@ public:
 	};
 
 	//Must be AFTER any models or units.
-	bool LoadListeners(Golem* _golem)
+	bool LoadListeners(Golem* _golem, ADGameplay::Scene* _scene)
 	{
 		golemEatingEvent.SetTarget(_golem, DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
+
+
+		allMinionDeathListener.SetTarget(_scene);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("MinionDeath", &allMinionDeathListener);
 		return true;
 	};
 

@@ -77,8 +77,8 @@ TickDuration=0.2
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
-MinValue=20
-MaxValue=20
+MinValue=200
+MaxValue=200
 ;
 
 

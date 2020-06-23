@@ -17,6 +17,7 @@
 #include "AnimationStateMachine.h"
 #include "Listeners.h"
 #include "MinionManager.h"
+#include <Scene.h>
 
 //#define ShowColliders
 
@@ -49,8 +50,10 @@ private:
 	TheGreatGolem* game;
 	AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
+	ADGameplay::Scene currentScene;
 	//MinionManager* minionManager;
 	AD_ULONG golem_collider = 0;
+	FountainEmitter femitter;
 
 	bool shutdown = false;
 
@@ -110,76 +113,9 @@ public:
 
 	virtual void Load(String^ EntryPoint) {}
 	
-	////This is stuff I believe the scene should handle, so I moved it here when cleaning up as to avoid conflicts.
-
-	void AIUintsLoad()
+	void LoadGameEmitters()
 	{
-		//std::vector<Destructable*> villagers;
-		//std::vector<ADAI::AIUnit*> villagersAI;
-
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 5, (i - 5) * 10), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
-		//	villagersAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
-		//}
-
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	//GameUtilities::AddGameObject(villagers[i]);
-
-		//}
-	}
-
-	void SceneLoad()
-	{
-		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
-
-		Light light;
-		ZeroMemory(&light, sizeof(Light));
-		light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-		light.diffuse =
-			light.ambientUp =
-			light.ambientDown =
-			light.specular =
-			XMFLOAT4(1, 1, 1, 1);
-		light.ambientIntensityDown = .1;
-		light.ambientIntensityUp = .1;
-		light.lightDirection = XMFLOAT4(0, -1, 0, 1);
-		light.diffuseIntensity = 1;
-		light.specularIntensity = .2;
-		light.diffuse =
-			light.ambientUp =
-			light.ambientDown =
-			light.specular =
-			XMFLOAT4(1, 1, 1, 1);
-		ResourceManager::AddLight(light);
-
-		// Point light
-		Light light1;
-		ZeroMemory(&light1, sizeof(Light));
-		light1.ambientIntensityDown = .1;
-		light1.ambientIntensityUp = .1;
-		light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
-		light1.diffuseIntensity = .5;
-		light1.specularIntensity = .2;
-		light1.diffuse =
-			light1.ambientUp =
-			light1.ambientDown =
-			light1.specular =
-			XMFLOAT4(1, 1, 1, 1);
-		light1.lightType = (int)LIGHTTYPE::POINT;
-		light1.position = XMFLOAT4(10, 0, 0, 1);
-		light1.lightRadius = 100;
-		ResourceManager::AddLight(light1);
-
-		// Orbit camera
-		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		engine->GetOrbitCamera()->SetRadius(20);
-		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-
-		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
-
+		femitter.Initialize(engine->GetPBRRenderer()->GetRendererResources()->device.Get(), 100, XMFLOAT4(1, 1, 1, 1), L"files\\textures\\Particle_Essence.dds", 9999999);
 	}
 
 	virtual void Run()
@@ -194,12 +130,23 @@ public:
 		audioEngine->Init();
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+
+		//golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		//minionManager->Instance()->Initialize(golem);
 
-		AIUintsLoad();
-		game->LoadListeners(golem);
-		SceneLoad();
+		// Orbit camera
+		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
+
+
+		currentScene.LoadScene("files/scenes/test.scene");
+		golem = currentScene.GetGolem();
+		game->LoadListeners(golem, &currentScene);
+		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
+		engine->GetOrbitCamera()->SetRadius(20);
+		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+
+
+
 
 		if (!engine->Initialize())
 		{
@@ -207,24 +154,36 @@ public:
 		}
 		game->LoadGameUserInterface(engine->GetUI());
 
+		LoadGameEmitters();
+		//minionManager stuff
+		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
+
+
+		float mapWidth = 1000;
+		float mapHeight = 1000;
+		Renderable* tempPlane = currentScene.GetPlane();
+
+		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
+		//GameUtilities::AddGameObject(m1);
+		GameUtilities::AddGameObject(tempPlane);
 
 		//ALl Static Models and shit before pathfinder
 #pragma region Testing
 
 		//-------------Testing Stuff
-		float mapWidth = 1000;
-		float mapLength = 1000;
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
-		GameUtilities::AddGameObject(tempPlane);
+		//float mapWidth = 1000;
+		//float mapLength = 1000;
+		//Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapLength), XMFLOAT3(0, 0, 0));
+		//GameUtilities::AddGameObject(tempPlane);
 
 
-		Renderable* cube = GameUtilities::AddSimpleAsset("files/models/Cube.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-#ifdef _DEBUG
-		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
-		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		cubeCollider->colliderPtr = nullptr;
-#endif
-		//GameUtilities::AddGameObject(cube);
+//		Renderable* cube = GameUtilities::AddSimpleAsset("files/models/Cube.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+//#ifdef _DEBUG
+//		Renderable* golemCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+//		Renderable* cubeCollider = GameUtilities::AddRenderableCollider(XMFLOAT3(0, 1, 10), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+//		cubeCollider->colliderPtr = nullptr;
+//#endif
+//		//GameUtilities::AddGameObject(cube);
 
 		/*
 		Renderable* c1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
@@ -355,7 +314,7 @@ public:
 		c2->type = OBJECT_TYPE::STATIC;*/
 
 #pragma endregion
-
+		femitter.Activate(999999999, { 250,1,250,0 });
 		//---Run		
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
@@ -369,7 +328,6 @@ public:
 
 			ProcessInput();
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
-
 
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
@@ -385,7 +343,7 @@ public:
 			{
 				pathfinder.update(0.00001f);
 			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapLength);
+			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
 		
 
 			// Debug draw
@@ -411,16 +369,16 @@ public:
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
 			XMFLOAT4X4 persPass;
 			XMStoreFloat4x4(&persPass, pers);
-			//femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
+			femitter.UpdateParticles(delta_time, viewPass, persPass, cpos);
 
-#ifdef _DEBUG
-			golemCollider->transform = golem->GetColliderInfo();
-			XMMATRIX colliderLocation = cube->transform;
-
-			cube->colliderPtr = &AABB(VectorToFloat3(colliderLocation.r[3]), XMFLOAT3(1, 1, 1));
-			cube->physicsType = COLLIDABLE;
-			cubeCollider->transform = colliderLocation;
-#endif
+//#ifdef _DEBUG
+//			golemCollider->transform = golem->GetColliderInfo();
+//			XMMATRIX colliderLocation = cube->transform;
+//
+//			cube->colliderPtr = &AABB(VectorToFloat3(colliderLocation.r[3]), XMFLOAT3(1, 1, 1));
+//			cube->physicsType = COLLIDABLE;
+//			cubeCollider->transform = colliderLocation;
+//#endif
 
 			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
 			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
@@ -478,7 +436,7 @@ public:
 			// D3d11 shit
 			if (!engine->Update()) break;
 			if (!engine->Render()) break;
-			//femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
+			femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 
 			// Update framerate
 			if (timer > 1)

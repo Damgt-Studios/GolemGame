@@ -45,7 +45,6 @@ public:
 	ADUI::ADUI* GetUI();
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();
 
-private:
 
 private:
 	Model m_model;
@@ -61,6 +60,8 @@ private:
 	
 	FPSCamera* camera;
 	OrbitCamera* ocamera;
+
+
 
 private:
 	// New shit

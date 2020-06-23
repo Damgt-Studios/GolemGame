@@ -2,8 +2,22 @@
 #include "ADAudio.h"
 #include <ADEventSystem.h>
 #include <ADParticles.h>
+#include <Scene.h>
 
 
+class MinionCountListener : public ADEvents::Listener
+{
+private:
+    ADGameplay::Scene* scene;
+public:
+    MinionCountListener() {};
+    void SetTarget(ADGameplay::Scene* _scene)
+    {
+        scene = _scene;
+    };
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+    std::string ToString() override;
+};
 
 class ParticleEmitterEvent : public ADEvents::Listener
 {
@@ -107,12 +121,12 @@ class SetUITilingListener : public ADEvents::Listener
 {
 private:
     ADUI::Image2D* image;
+    UINT maximum =1;
+    UINT minimum =0;
+    bool lerped;
 public:
     SetUITilingListener() {};
-    void SetTarget(ADUI::Image2D* _image)
-    {
-        image = _image;
-    };
+    void SetTarget(ADUI::Image2D* _image, UINT _minimum, UINT _maximum, bool _lerped);
     void HandleEvent(ADEvents::ADEvent* _event) override;
     std::string ToString() override;
 };

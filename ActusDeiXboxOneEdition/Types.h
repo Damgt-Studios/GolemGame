@@ -300,6 +300,8 @@ namespace ADResource
 
 			void Set(int _val)
 			{
+				currentValue = _val;
+				
 				if (eventName != "")
 				{
 					if (eventValue == -1 || currentValue == eventValue)
