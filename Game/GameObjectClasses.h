@@ -63,12 +63,9 @@ namespace ADResource
 			virtual void Update(float _deltaTime)
 			{
 				ProcessEffects(_deltaTime);
-
-				// Physics
-				XMFLOAT3 dang;
-				XMStoreFloat3(&dang, transform.r[3]);
-				collider = ADPhysics::AABB(dang, colScale);
+				collider = ADPhysics::AABB(VectorToFloat3(transform.r[3]), colScale);
 				colliderPtr = &collider;
+				physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 			};
 
 			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
@@ -92,7 +89,10 @@ namespace ADResource
 				if (active && obj->active)
 				{
 					ADPhysics::Manifold m;
-					obj->colliderPtr->isCollision(&collider, m);
+					if (obj->colliderPtr->isCollision(&collider, m))
+					{
+						collisionQueue.push(CollisionPacket(this, obj, m));
+					}
 				}
 			}
 
