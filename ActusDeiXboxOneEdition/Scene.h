@@ -249,13 +249,15 @@ namespace ADGameplay
 
 			file.close();
 
-			ResourceManager::AddLight(sceneLights[0]);
-			ResourceManager::AddLight(sceneLights[1]);
+			for (unsigned int i = 0; i < sceneLights.size(); i++)
+			{
+				ResourceManager::AddLight(sceneLights[i]);
+			}
 
 			Plane = GameUtilities::AddSimpleAsset(PlaneArguments.Model.data(), PlaneArguments.Texture.data(), PlaneArguments.position, PlaneArguments.scale, PlaneArguments.rotation);
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
 
-			//golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(),GolemArguments.Texture.data(), animations, GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
+			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(),GolemArguments.Texture.data(), animations, GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
 			/*for (int i = 0; i < 10; i++)
 			{

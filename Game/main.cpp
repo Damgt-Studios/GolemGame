@@ -248,14 +248,14 @@ public:
 		//light.lightDirection = XMFLOAT4(0, -0.5f, -1, 1);
 		//light.position = XMFLOAT4(0, 0, 0, 1);
 
-		//// Point light
-		//Light light1;
-		//ZeroMemory(&light1, sizeof(Light));
-		//light1.lightType = (int)LIGHTTYPE::POINT;
-		//light1.diffuse = XMFLOAT4(1, 0.807, 0, 1);
-		//light1.diffuseIntensity = 4;
-		//light1.position = (XMFLOAT4(2.5 * 25, 6, 2.25, 1));
-		//light1.lightRadius = 25;
+		// Point light
+		/*Light light1;
+		ZeroMemory(&light1, sizeof(Light));
+		light1.lightType = (int)LIGHTTYPE::POINT;
+		light1.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+		light1.diffuseIntensity = 4;
+		light1.position = (XMFLOAT4(-5 * 25, 6, 7.5 * 25 + 2.25, 1));
+		light1.lightRadius = 25;*/
 
 		//ResourceManager::AddLight(light);
 		//ResourceManager::AddLight(light1);
@@ -267,13 +267,13 @@ public:
 
 		golem = currentScene.GetGolem();
 
-		std::vector<std::string> animations;
+		/*std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
 		animations.push_back("files/models/Golem_1_Born.animfile");
 		animations.push_back("files/models/Golem_1_Run.animfile");
 		animations.push_back("files/models/Golem_1_Death.animfile");
-		animations.push_back("files/models/Golem_1_Kick.animfile");
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		animations.push_back("files/models/Golem_1_Kick.animfile");*/
+		//golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
@@ -458,8 +458,10 @@ public:
 		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
 		GameUtilities::AddGameObject(tavern);
 
-		Building* lamp = new Building(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		Building* lamp = new Building(XMFLOAT3(-5, 0, 7.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
 		GameUtilities::AddGameObject(lamp);
+		Building* lamp2 = new Building(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		GameUtilities::AddGameObject(lamp2);
 
 		Building* rock = new Building(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1);
 		GameUtilities::AddGameObject(rock);

@@ -79,7 +79,7 @@ float4 main(OutputVertex v) : SV_TARGET
     
     float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
     
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 10; i++)
     {
         //Directional
         if (l[i].lightType == 0)
