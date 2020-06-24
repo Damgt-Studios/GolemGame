@@ -280,7 +280,6 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 	renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
 	renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	unsigned int model_count = ResourceManager::GetPBRModelCount();
 
 
 	//for (int i = 0; i < model_count; i++)
@@ -450,6 +449,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	//pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
 	//pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 
+	//renderer_resources.context->UpdateSubresource(renderer_resources.lightBuffer.Get(), NULL, nullptr, lights.data(), 0, 0);
+
 	ADResource::ADGameplay::GameObject* current_obj = nullptr;
 	SimpleModel** current_model = nullptr;
 	SimpleStaticModel* current_static_model = nullptr;
@@ -507,6 +508,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 				current_animated_model->normal.Get(),
 			};
 
+			renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
 			renderer_resources.context->VSSetShaderResources(0, 1, current_animated_model->normal.GetAddressOf());
 
@@ -552,7 +554,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get() };
 			renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
 			// Model stuff
-
+			renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 			// Render stuff
 			// Set sampler
 			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get() };

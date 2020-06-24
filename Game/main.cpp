@@ -238,21 +238,42 @@ public:
 		golemPunchParticles.lifespan = 20.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
 
+		//Light light;
+		//ZeroMemory(&light, sizeof(Light));
+		//light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
+		//light.diffuse = XMFLOAT4(0.5, 0.5, 0.5, 1);
+		//light.diffuseIntensity = 1;
+		//light.ambient = XMFLOAT4(0.156f, 0.003f, 0.215f, 1);
+		//light.ambientIntensity = 3;
+		//light.lightDirection = XMFLOAT4(0, -0.5f, -1, 1);
+		//light.position = XMFLOAT4(0, 0, 0, 1);
+
+		// Point light
+		/*Light light1;
+		ZeroMemory(&light1, sizeof(Light));
+		light1.lightType = (int)LIGHTTYPE::POINT;
+		light1.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+		light1.diffuseIntensity = 4;
+		light1.position = (XMFLOAT4(-5 * 25, 6, 7.5 * 25 + 2.25, 1));
+		light1.lightRadius = 25;*/
+
+		//ResourceManager::AddLight(light);
+		//ResourceManager::AddLight(light1);
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 
-		currentScene.LoadScene("files/scenes/test.scene");
+		currentScene.LoadScene("files/scenes/TestScene.scenery");
 
 		golem = currentScene.GetGolem();
 
-		std::vector<std::string> animations;
+		/*std::vector<std::string> animations;
 		animations.push_back("files/models/Golem_1_Idle.animfile");
 		animations.push_back("files/models/Golem_1_Born.animfile");
 		animations.push_back("files/models/Golem_1_Run.animfile");
 		animations.push_back("files/models/Golem_1_Death.animfile");
-		animations.push_back("files/models/Golem_1_Kick.animfile");
-		golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		animations.push_back("files/models/Golem_1_Kick.animfile");*/
+		//golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations, XMFLOAT3(0, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
@@ -270,7 +291,7 @@ public:
 		stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
 
 		
-		ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
+		//ResourceManager::AddSkybox("files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0));
 
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
@@ -348,37 +369,38 @@ public:
 		//animationFiles[0] = "files/models/BattleMage.animfile";
 		float mapWidth = 1000;
 		float mapHeight = 1000;
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Plane.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-		//Renderable* tempPlane = currentScene.GetPlane();
+		//Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/Plane.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+		Renderable* tempPlane = currentScene.GetPlane();
 
 		GameUtilities::AddGameObject(dynamic_cast<GameObject*>(golem));
 		GameUtilities::AddGameObject(m1);
 		GameUtilities::AddGameObject(tempPlane);
 
-		//Building* house1 = new Building(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
-		//GameUtilities::AddGameObject(house1);
+		Building* house1 = new Building(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
+		GameUtilities::AddGameObject(house1);
+		
+		Building* house2 = new Building(XMFLOAT3(-5, 0, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
+		GameUtilities::AddGameObject(house2);
 		//
-		//Building* house2 = new Building(XMFLOAT3(-5, 0, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
-		//GameUtilities::AddGameObject(house2);
-		////
-		//Building* house3 = new Building(XMFLOAT3(-5, 0, 6), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
-		//GameUtilities::AddGameObject(house3);
-		//
-		//Building* house4 = new Building(XMFLOAT3(-5, 0, 9), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
-		//GameUtilities::AddGameObject(house4);
-		//
-		//Building* barn1 = new Building(XMFLOAT3(-5, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
-		//GameUtilities::AddGameObject(barn1);
-		//
-		//Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
-		//GameUtilities::AddGameObject(barn2);
+		Building* house3 = new Building(XMFLOAT3(-5, 0, 6), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
+		GameUtilities::AddGameObject(house3);
+		
+		Building* house4 = new Building(XMFLOAT3(-5, 0, 9), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
+		GameUtilities::AddGameObject(house4);
+		
+		Building* barn1 = new Building(XMFLOAT3(-5, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
+		GameUtilities::AddGameObject(barn1);
+		
+		Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
+		GameUtilities::AddGameObject(barn2);
 
+		Building* tower = new Building(XMFLOAT3(1.125, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower = new Building(XMFLOAT3(-24.475, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower2 = new Building(XMFLOAT3(-6.75, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower3 = new Building(XMFLOAT3(-6.75, 0, -3.125), XMFLOAT3(0, 90, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower4 = new Building(XMFLOAT3(0.5, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower5 = new Building(XMFLOAT3(13.875, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
-		//GameUtilities::AddGameObject(tower);
+		GameUtilities::AddGameObject(tower);
 		//GameUtilities::AddGameObject(tower2);
 		//GameUtilities::AddGameObject(tower3);
 		//GameUtilities::AddGameObject(tower4);
@@ -391,7 +413,7 @@ public:
 		//GameUtilities::AddGameObject(scaffolding);
 
 		//1.625 difference
-		//Building* wall = new Building(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		Building* wall = new Building(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
 		//Building* wall = new Building(XMFLOAT3(-23.475, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
 		/*Building* wall2 = new Building(XMFLOAT3(-20.25, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
 		Building* wall3 = new Building(XMFLOAT3(-18.625, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
@@ -410,24 +432,24 @@ public:
 		Building* wall16 = new Building(XMFLOAT3(9.625, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
 		Building* wall17 = new Building(XMFLOAT3(11.25, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
 		Building* wall18 = new Building(XMFLOAT3(12.875, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);*/
-		//GameUtilities::AddGameObject(wall);
-		/*GameUtilities::AddGameObject(wall2);
-		GameUtilities::AddGameObject(wall3);
-		GameUtilities::AddGameObject(wall4);
-		GameUtilities::AddGameObject(wall5);
-		GameUtilities::AddGameObject(wall6);
-		GameUtilities::AddGameObject(wall7);
-		GameUtilities::AddGameObject(wall8);
-		GameUtilities::AddGameObject(wall9);
-		GameUtilities::AddGameObject(wall10);
-		GameUtilities::AddGameObject(wall11);
-		GameUtilities::AddGameObject(wall12);
-		GameUtilities::AddGameObject(wall13);
-		GameUtilities::AddGameObject(wall14);
-		GameUtilities::AddGameObject(wall15);
-		GameUtilities::AddGameObject(wall16);
-		GameUtilities::AddGameObject(wall17);
-		GameUtilities::AddGameObject(wall18);*/
+		GameUtilities::AddGameObject(wall);
+		//GameUtilities::AddGameObject(wall2);
+		//GameUtilities::AddGameObject(wall3);
+		//GameUtilities::AddGameObject(wall4);
+		//GameUtilities::AddGameObject(wall5);
+		//GameUtilities::AddGameObject(wall6);
+		//GameUtilities::AddGameObject(wall7);
+		//GameUtilities::AddGameObject(wall8);
+		//GameUtilities::AddGameObject(wall9);
+		//GameUtilities::AddGameObject(wall10);
+		//GameUtilities::AddGameObject(wall11);
+		//GameUtilities::AddGameObject(wall12);
+		//GameUtilities::AddGameObject(wall13);
+		//GameUtilities::AddGameObject(wall14);
+		//GameUtilities::AddGameObject(wall15);
+		//GameUtilities::AddGameObject(wall16);
+		//GameUtilities::AddGameObject(wall17);
+		//GameUtilities::AddGameObject(wall18);
 
 
 		Building* well = new Building(XMFLOAT3(0, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
@@ -436,8 +458,10 @@ public:
 		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
 		GameUtilities::AddGameObject(tavern);
 
-		Building* lamp = new Building(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		Building* lamp = new Building(XMFLOAT3(-5, 0, 7.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
 		GameUtilities::AddGameObject(lamp);
+		Building* lamp2 = new Building(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		GameUtilities::AddGameObject(lamp2);
 
 		Building* rock = new Building(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1);
 		GameUtilities::AddGameObject(rock);
