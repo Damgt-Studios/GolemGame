@@ -8,11 +8,11 @@
 class ParticleEmitterEvent : public ADEvents::Listener
 {
 private:
-    FountainEmitter& emitter;
+    BigCloudEmitter& emitter;
     XMFLOAT4 position;
 public:
     float lifespan;
-    ParticleEmitterEvent(FountainEmitter& _emitter) : emitter(_emitter) {};
+    ParticleEmitterEvent(BigCloudEmitter& _emitter) : emitter(_emitter) {};
     void HandleEvent(ADEvents::ADEvent* _event) override;
 };
 

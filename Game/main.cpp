@@ -230,6 +230,10 @@ public:
 		ApplyEffectEvent golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
 
+		ParticleEmitterEvent golemPunchParticles(engine->bigCloud);
+		golemPunchParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);

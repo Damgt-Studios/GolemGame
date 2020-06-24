@@ -9,7 +9,8 @@ void AudioSourceEvent::HandleEvent(ADEvents::ADEvent* _event)
 
 void ParticleEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
 {
-    emitter.Activate(lifespan, *(XMFLOAT4*)_event->Parameter());
+    XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
+    emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
 }
 
 void ApplyEffectEvent::SetTarget(ADResource::ADGameplay::GameObject* _target)

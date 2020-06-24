@@ -168,10 +168,10 @@ namespace ADResource
 			virtual void Update(float _deltaTime)
 			{
 				// Physics
-				collider = ADPhysics::OBB(transform, XMFLOAT3(1,1,1));
+				collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
 				colliderPtr = &collider;
 				collider.trigger = true;
-				
+
 				if (lifespan > 0)
 				{
 					lifespan -= _deltaTime;
@@ -193,9 +193,9 @@ namespace ADResource
 					{
 						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 						{
-							if(gamePlayType != CONSUMPTION_HITBOX)
+							if (gamePlayType != CONSUMPTION_HITBOX)
 								PassEffects(obj);
-							else if(obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+							else if (obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
 								PassEffects(obj);
 						}
 					}
@@ -211,8 +211,8 @@ namespace ADResource
 						obj->effects.push_back(effects[i].get()->clone());
 						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
 						XMFLOAT3 hbpos = GetPosition();
-						XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
-						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos2);
+						//XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
+						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos);
 						if (isDeactivateOnFirstApplication)
 						{
 							active = false;
@@ -292,7 +292,7 @@ namespace ADResource
 					if (!obj->HasEffectID(effects[i].get()->sourceID, effects[i].get()->instanceID))
 					{
 						obj->effects.push_back(effects[i].get()->clone());
-						obj->effects[obj->effects.size()-1].get()->OnApply(obj->GetStatSheet());
+						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
 						if (isDeactivateOnFirstApplication)
 						{
 							active = false;
@@ -327,16 +327,24 @@ namespace ADResource
 			std::vector<float> eventDelay;
 			std::vector<std::string> eventName;
 
+			XMFLOAT3* hbpos = nullptr;
 
 			//If the attack doesn't own the hitbox this needs to change.
-			~Action() { delete hitbox; };
+			~Action()
+			{
+				delete hitbox;
+				if (hbpos)
+				{
+					delete hbpos;
+				}
+			};
 
 			bool StartAction(XMMATRIX* _casterTransform)
 			{
 				if (movesToPlayer)
 				{
 					hitbox->transform = *_casterTransform;
-					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x*10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
+					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
 					XMVECTOR castSideNormal = _casterTransform->r[0];
 					XMVECTOR castUpNormal = _casterTransform->r[1];
 					XMVECTOR castHeadingNormal = _casterTransform->r[2];
@@ -366,7 +374,7 @@ namespace ADResource
 					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
 					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
 					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
-					
+
 				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
@@ -415,9 +423,12 @@ namespace ADResource
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
 							{
-								XMFLOAT3 hbpos = hitbox->GetPosition();
-								XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
-								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)&hbpos2);
+								if (hbpos != nullptr)
+								{
+									delete hbpos;
+								}
+								hbpos = new XMFLOAT3(hitbox->GetPosition());
+								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)hbpos);
 								eventFired[i] = true;
 							}
 						}
@@ -432,7 +443,7 @@ namespace ADResource
 				}
 
 			}
-			
+
 			void EndAction()
 			{
 				//Some hit boxes would turn off this way, others require they burn out or collide.
