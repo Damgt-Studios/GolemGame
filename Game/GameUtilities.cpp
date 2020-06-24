@@ -77,7 +77,7 @@ Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XM
 	temp->SetRotation(rotation);
 	temp->SetPosition(position);
 
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, std::string(), position, scale, rotation);
 	temp->SetMeshID(id);
 
 	scale.x *= 1.8f;
@@ -106,7 +106,7 @@ HitBox* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLO
 	temp->SetRotation(rotation);
 	temp->SetPosition(position);
 
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, std::string(), position, scale, rotation);
 	temp->SetMeshID(id);
 
 	scale.x *= 1.8f;
@@ -139,7 +139,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
 	//temp->SetMeshID(id);
 
-	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
+	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
 	temp->team = 0;
 
@@ -184,36 +184,6 @@ ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI:
 	temp->states.push_back(fleeing);
 
 	//_commandGroup->AddUnitToGroup(_destructable, charging);
-
-	return temp;
-}
-
-ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-{
-	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
-
-	// Transform data
-	temp->SetScale(scale);
-	temp->SetRotation(rotation);
-	temp->SetPosition(position);
-
-	AD_ULONG id = ResourceManager::AddColliderBox(modelname, position, scale, rotation);
-	temp->SetMeshID(id);
-
-	return temp;
-}
-
-ADResource::ADGameplay::Renderable* GameUtilities::AddPBRStaticAsset(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-{
-	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
-
-	// Transform data
-	temp->SetScale(scale);
-	temp->SetRotation(rotation);
-	temp->SetPosition(position);
-
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-	temp->SetMeshID(id);
 
 	return temp;
 }

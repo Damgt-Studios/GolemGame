@@ -17,6 +17,17 @@ struct OutputVertex
     float4 worldPos : WorldPos;
 };
 
+struct Light
+{
+    float4 position, lightDirection, diffuse, ambient;
+    unsigned int lightType;  float lightRadius;
+    float diffuseIntensity, ambientIntensity;
+};
+
+cbuffer LightBuffer : register(b0)
+{
+    Light l[10];
+};
 float3 CalcHemisphericAmbient(float3 normal, float3 color)
 {
     float3 AmbientUp = float3(1,1,1);
@@ -62,9 +73,42 @@ float4 main(OutputVertex v) : SV_TARGET
     v.normals = normalize(mul(normalMap, TBN));
     
     //Create the Directional Lighting on the Normal Map
-    float3 lightDirection = float3(0, 0.5f, -1);
-    float lightMagnitude = saturate(dot(-lightDirection, v.normals)) + (float4(0.156f, 0.003f, 0.215f, 1) * 3);
-    float4 dirFinal = lightMagnitude * float4(0.5f, 0.5f, 0.5f, 1);
+    //float3 lightDirection = float3(0, 0.5f, -1);
+    //float lightMagnitude = saturate(dot(-lightDirection, v.normals)) + (float4(0.156f, 0.003f, 0.215f, 1) * 3);
+    //float4 dirFinal = lightMagnitude * float4(0.5f, 0.5f, 0.5f, 1);
+    
+    float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
+    
+    for (int i = 0; i < 2; i++)
+    {
+        //Directional
+        if (l[i].lightType == 0)
+        {
+            float3 lightDirection = -l[i].lightDirection;
+            float lightMagnitude = saturate(dot(lightDirection, v.normals)) + (l[i].ambient * l[i].ambientIntensity);
+            float4 dirLight = lightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
+            dirFinal += dirLight;
+        }
+        //Point Light
+        else if (l[i].lightType == 1)
+        {
+            float3 pointlightDirection = normalize(l[i].position.xyz - v.worldPos.xyz);
+            float pointlightMagnitude = saturate(dot(pointlightDirection, v.normals));
+    
+            float atten = 1.0 - saturate(length(l[i].position.xyz - v.worldPos.xyz) / l[i].lightRadius);
+    
+            pointlightMagnitude *= atten;
+    
+            float4 pointLight = pointlightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
+            
+            pointFinal += pointLight;
+        }
+        //Not supported
+        else
+        {
+            
+        }
+    }
     
     //Point Light
     //float3 pointlightDirection = normalize(float3(-2,0,-30) - v.worldPos.xyz);
@@ -82,5 +126,5 @@ float4 main(OutputVertex v) : SV_TARGET
     //float4 specularFinal = float4(1, 1, 1, 1) * Intensity;
     
     //Multiply the sum of the Additional Modifications
-    return texelColor * dirFinal + emissiveColor;
+    return texelColor * (dirFinal + pointFinal) + emissiveColor;
 }

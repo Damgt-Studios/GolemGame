@@ -17,8 +17,8 @@ struct OutputVertex
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    //int4 joints : JOINTS;
-    //float4 weights : WEIGHTS;
+    float3 localPos : LOCALPOS;
+    float3 worldPos : WORLDPOS;
 };
 
 cbuffer SHADER_VARIABLES : register(b0)
@@ -38,7 +38,9 @@ OutputVertex main( InputVertex vertex )
     output.normal = vertex.normal;
     output.tangent = vertex.tangent;
     
+    output.localPos = vertex.pos;
     output.pos = mul(float4(vertex.pos, 1), worldMatrix);
+    output.worldPos = output.pos.xyz;
     output.pos = mul(output.pos, viewMatrix);
     output.pos = mul(output.pos, projectionMatrix);
     
