@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="75ea3685-5b2d-4e3f-9c61-e7a2a6056177"
-    Publisher="CN=josep"
-    Version="0.1.0.0" />
+    Name="52214DamgtGames.TheGreatGolem"
+    Publisher="CN=C3C0448B-C73A-4903-B67F-A186CE92BCF1"
+    Version="0.1.20.0" />
 
-  <mp:PhoneIdentity PhoneProductId="75ea3685-5b2d-4e3f-9c61-e7a2a6056177" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="4cb65a5c-fe60-4b29-8849-67584b924006" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Game</DisplayName>
-    <PublisherDisplayName>josep</PublisherDisplayName>
+    <DisplayName>The Great Golem</DisplayName>
+    <PublisherDisplayName>Damgt Games</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -35,11 +35,15 @@
         DisplayName="The Great Golem"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="You are the Great Golem here to bring absolute destruction upon mankind!  Your goal is to reduce the human population of the area to zero.  Killing humans and destroying houses grants essence.  Across the map you will find spawn points.  Essence can be used at spawns to bring forth the minion type corresponding to the spawn.  There are four elemental types that the player can use.  They are fire, wood, water and stone.  (This selection is due to the asset.)  The golem may consume minions to recover his own health.  This means that spawns also form a sort of health restore checkpoint for any player who has not lost too much essence making minions.  The Great Golem can change into four different forms with slightly different properties to give them each purpose.  The player also has three ability charges that cannot be restored during the level like health and essence can.  They have the following skills attached to them as well."
+        Description="You are the Great Golem here to bring absolute destruction upon mankind!  Your goal is to reduce the human population of the area to zero.  Killing humans and destroying houses grants essence.  Across the map you will find spawn points.  Essence can be used at spawns to bring forth the minion type corresponding to the spawn.  There are four elemental types that the player can use.  They are fire, wood, water and stone.  The golem may consume minions to recover his own health.  This means that spawns also form a sort of health restore checkpoint for any player who has not lost too much essence making minions.  The Great Golem can change into four different forms with slightly different properties to give them each purpose.  The player also has three ability charges that cannot be restored during the level like health and essence can.  They have the following skills attached to them as well."
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.jpg">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
         <uap:SplashScreen Image="Assets\SplashScreen.png"  BackgroundColor="white"/>
-        <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badge"/>
+        <uap:LockScreen BadgeLogo="Assets\BadgeLogo.jpg" Notification="badge"/>
       </uap:VisualElements>
     </Application>
   </Applications>
