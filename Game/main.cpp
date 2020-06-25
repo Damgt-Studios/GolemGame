@@ -299,7 +299,8 @@ public:
 		std::vector<std::string> bucketheadanims;
 		bucketheadanims.push_back("files/models/Bucket_Idle.animfiles");
 
-		Renderable* buckethead = GameUtilities::AddSimpleAnimAsset()
+		Renderable* buckethead = GameUtilities::AddSimpleAnimAsset("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadanims, XMFLOAT3(2.5, 0, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		GameUtilities::AddGameObject(buckethead);
 
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
