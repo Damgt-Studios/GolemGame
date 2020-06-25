@@ -296,6 +296,11 @@ public:
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
 
+		std::vector<std::string> bucketheadanims;
+		bucketheadanims.push_back("files/models/Bucket_Idle.animfiles");
+
+		Renderable* buckethead = GameUtilities::AddSimpleAnimAsset()
+
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
