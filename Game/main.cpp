@@ -152,7 +152,7 @@ public:
 		{
 			return;
 		}
-		game->LoadGameUserInterface(engine->GetUI());
+		game->LoadGameUserInterface(engine->GetUI(), audioEngine);
 
 		LoadGameEmitters();
 		//minionManager stuff
@@ -435,6 +435,7 @@ public:
 
 			// D3d11 shit
 			if (!engine->Update()) break;
+			currentScene.Update(engine->GetEngineDeltaTime()); 
 			if (!engine->Render()) break;
 			femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 

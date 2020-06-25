@@ -636,11 +636,14 @@ public:
 			particles[i].Reset();
 			particles[i].SetLifeSpan(0);
 			renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
+			particles[i].SetHeight(10);
+			particles[i].SetWidth(10);
 		}
 		elaspedTime = 0.0f;
 		lifeSpan = newLife;
 		emitterPos = newPosition;
 		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+
 	}
 	XMFLOAT4 GetPosition()
 	{

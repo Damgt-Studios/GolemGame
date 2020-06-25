@@ -482,42 +482,46 @@ class TheGreatGolem
 	AD_AUDIO::AudioSource titleMusic;
 	AD_AUDIO::AudioSource levelMusic;
 	AD_AUDIO::AudioSource endMusic;
-	AudioSourceEvent playTitleEvent = (titleMusic);
-	AudioSourceEvent playLevelEvent = (levelMusic);
-	AudioSourceEvent playEndEvent = (endMusic);
+	AudioSourceListener playTitleEvent = (titleMusic);
+	AudioSourceListener playLevelEvent = (levelMusic);
+	AudioSourceListener playEndEvent = (endMusic);
+	AudioStopListener stopTitleMusicEvent = (titleMusic);
+	AudioStopListener stopLevelMusicEvent = (levelMusic);
+	AudioStopListener stopEndMusicEvent = (endMusic);
 	AD_AUDIO::AudioSource golemSteps;
-	AudioSourceEvent golemStepEvent = (golemSteps);
+	AudioSourceListener golemStepEvent = (golemSteps);
 	AD_AUDIO::AudioSource golemPunchSound;
-	AudioSourceEvent golemPunchEvent = (golemPunchSound);
+	AudioSourceListener golemPunchEvent = (golemPunchSound);
 	AD_AUDIO::AudioSource golemKickSound;
-	AudioSourceEvent golemKickEvent = (golemKickSound);
+	AudioSourceListener golemKickEvent = (golemKickSound);
 	AD_AUDIO::AudioSource golemSlamSound;
-	AudioSourceEvent golemSlamEvent = (golemSlamSound);
+	AudioSourceListener golemSlamEvent = (golemSlamSound);
 	AD_AUDIO::AudioSource golemWaveSound;
-	AudioSourceEvent golemWaveEvent = (golemWaveSound);
+	AudioSourceListener golemWaveEvent = (golemWaveSound);
 	AD_AUDIO::AudioSource golemFireball;
-	AudioSourceEvent golemFireballEvent = (golemFireball);
+	AudioSourceListener golemFireballEvent = (golemFireball);
 	AD_AUDIO::AudioSource golemIronHide;
-	AudioSourceEvent golemTauntEvent = (golemIronHide);
+	AudioSourceListener golemTauntEvent = (golemIronHide);
 	AD_AUDIO::AudioSource golemRootingSpell;
-	AudioSourceEvent golemRootEvent = (golemRootingSpell);
+	AudioSourceListener golemRootEvent = (golemRootingSpell);
 	AD_AUDIO::AudioSource golemEatMinion;
-	AudioSourceEvent golemEatMinionEvent = (golemEatMinion);
+	AudioSourceListener golemEatMinionEvent = (golemEatMinion);
 
 
 	AD_AUDIO::AudioSource menuConfirmSound;
-	AudioSourceEvent menuConfirmEvent = (menuConfirmSound);
+	AudioSourceListener menuConfirmEvent = (menuConfirmSound);
 	AD_AUDIO::AudioSource menuReturnSound;
-	AudioSourceEvent menuReturnEvent = (menuReturnSound);
+	AudioSourceListener menuReturnEvent = (menuReturnSound);
 	AD_AUDIO::AudioSource menuCursorMovementSound;
-	AudioSourceEvent menuCursorMovementEvent = (menuCursorMovementSound);
+	AudioSourceListener menuCursorMovementEvent = (menuCursorMovementSound);
 	AD_AUDIO::AudioSource golemSliderMovementSound;
-	AudioSourceEvent golemSliderMovementEvent = (golemSliderMovementSound);
+	AudioSourceListener golemSliderMovementEvent = (golemSliderMovementSound);
 
-	ApplyEffectEvent golemEatingEvent;
+	ApplyEffectListener golemEatingEvent;
 
 
 	MinionCountListener allMinionDeathListener;
+	VillagerDeathListener villagerDeathListener;
 
 	GolemGameUISetup::GameUserInterface gameUI;
 
@@ -580,16 +584,26 @@ public:
 		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
 		levelMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
 		levelMusic.engine = audioEngine;
-		levelMusic.personalVolume = 0.02f;
+		levelMusic.personalVolume = 1.f;
 		levelMusic.LoadSound("files\\audio\\Amysticaljourney3.wav", false, false, true, true);
 		endMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
 		endMusic.engine = audioEngine;
-		endMusic.personalVolume = 0.02f;
+		endMusic.personalVolume = 0.8f;
 		endMusic.LoadSound("files\\audio\\Ending.mp3", false, false, true, true);
 
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &stopLevelMusicEvent);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &stopEndMusicEvent);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
+
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &stopTitleMusicEvent);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &stopEndMusicEvent);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &playLevelEvent);
+
+
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &stopTitleMusicEvent);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &stopLevelMusicEvent);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &playEndEvent);
+
 
 
 		//Load The Golems Sound Effects
@@ -703,12 +717,15 @@ public:
 
 		allMinionDeathListener.SetTarget(_scene);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("MinionDeath", &allMinionDeathListener);
+
+		villagerDeathListener.SetTarget(_scene);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("VillagerDeath", &villagerDeathListener);
 		return true;
 	};
 
-	bool LoadGameUserInterface(ADUI::ADUI* _userInterface)
+	bool LoadGameUserInterface(ADUI::ADUI* _userInterface, AD_AUDIO::ADAudio* _audioEngine)
 	{
-		gameUI.SetupUI(_userInterface);
+		gameUI.SetupUI(_userInterface, _audioEngine);
 
 		return true;
 	};

@@ -157,7 +157,10 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
+
+	//replace when all objects have their own sheets attached.
+	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
+
 	return temp;
 }
 
@@ -168,26 +171,26 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 	ADAI::AIUnit* temp = new ADAI::AIUnit;
 	temp->owner = _destructable;
 	_destructable->gamePlayType = _minionType;
-	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
 	_destructable->deathEvent = "MinionDeath";
-	//switch (_destructable->gamePlayType)
-	//{
-	//case STONE_MINION:
-	//	_destructable->deathEvent = "StoneMinionDeath";
-	//	break;
-	//case WATER_MINION:
-	//	_destructable->deathEvent = "WaterMinionDeath";
-	//	break;
-	//case FIRE_MINION:
-	//	_destructable->deathEvent = "FireMinionDeath";
-	//	break;
-	//case WOOD_MINION:
-	//	_destructable->deathEvent = "WoodMinionDeath";
-	//	break;
-	//}
+	switch (_destructable->gamePlayType)
+	{
+	case STONE_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
+		break;
+	case WATER_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
+		break;
+	case FIRE_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
+		break;
+	case WOOD_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
+		break;
+	}
 	_destructable->team = 0;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();
+	charging->owner = _destructable;
 	temp->states.push_back(idling);
 	temp->states.push_back(charging);
 
@@ -306,6 +309,7 @@ ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI:
 	temp->states.push_back(fleeing);
 
 	_fearGroup->AddUnitToGroup(_destructable, fleeing);
+	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
 
 	return temp;
 }

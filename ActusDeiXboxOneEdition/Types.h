@@ -23,10 +23,10 @@ using namespace Microsoft::WRL;
 // Global type definitions
 typedef unsigned long long AD_ULONG;
 
-enum class ENGINE_STATE {
+enum ENGINE_STATE {
 	GAMEPLAY = 0,
 	PAUSED,
-	MENUSCREEN
+	CLOSE
 };
 
 enum class ADResourceType {
@@ -371,7 +371,6 @@ namespace ADResource
 			UINT sourceID;
 			UINT instanceID;
 
-
 			virtual UINT OnApply(StatSheet* _targetsStatSheet) { return 0; };
 
 			virtual void Update(float _deltaTime)
@@ -594,6 +593,8 @@ namespace ADResource
 		public:
 			bool active = true;
 			float safeRadius = 5.0f;
+			float desirability = 0;
+
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;

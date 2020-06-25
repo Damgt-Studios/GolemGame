@@ -2,39 +2,50 @@
 #include "Listeners.h"
 
 
-void AudioSourceEvent::HandleEvent(ADEvents::ADEvent* _event)
+void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     audioSource.Play();
 }
 
-std::string AudioSourceEvent::ToString()
+std::string AudioSourceListener::ToString()
 {
     return this->audioSource.soundName;
 }
 
-void ParticleEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
+void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
 {
-    emitter.Activate(lifespan, *(XMFLOAT4*)_event->Parameter());
+    audioSource.Stop();
 }
 
-std::string ParticleEmitterEvent::ToString()
+std::string AudioStopListener::ToString()
+{
+    return std::string();
+}
+
+void ParticleEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
+{
+    XMFLOAT3 float4Event = *(static_cast<XMFLOAT3*>(_event->Parameter()));
+    emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
+}
+
+std::string ParticleEmitterListener::ToString()
 {
     return "Fountain Emitter";
 }
 
-void ApplyEffectEvent::SetTarget(ADResource::ADGameplay::GameObject* _target, ADResource::ADGameplay::Effect* _effect)
+void ApplyEffectListener::SetTarget(ADResource::ADGameplay::GameObject* _target, ADResource::ADGameplay::Effect* _effect)
 {
     target = _target;
     effect = _effect;
 }
 
-void ApplyEffectEvent::HandleEvent(ADEvents::ADEvent* _event)
+void ApplyEffectListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     target->effects.push_back(effect->clone());
     target->effects[target->effects.size() - 1].get()->OnApply(target->GetStatSheet());
 }
 
-std::string ApplyEffectEvent::ToString()
+std::string ApplyEffectListener::ToString()
 {
     return effect->name;
 }
@@ -177,4 +188,14 @@ void MinionCountListener::HandleEvent(ADEvents::ADEvent* _event)
 std::string MinionCountListener::ToString()
 {
 	return std::string();
+}
+
+void VillagerDeathListener::HandleEvent(ADEvents::ADEvent* _event)
+{
+    scene->UpdateVillagerCount();
+}
+
+std::string VillagerDeathListener::ToString()
+{
+    return std::string();
 }

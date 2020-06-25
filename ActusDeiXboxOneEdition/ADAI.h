@@ -8,26 +8,41 @@ namespace ADAI
 
 	class State
 	{
-
+	public:
+		virtual void Update(float _deltaTime) = 0;
 	};
 
 	class IdleState : public State
 	{
+		virtual void Update(float _deltaTime)
+		{
 
+		};
 	};
 
 	class WayPointState : public State
 	{
 		std::vector<XMFLOAT4> wayPoints;
 		//Current Pathfinding Path
+		virtual void Update(float _deltaTime)
+		{
+
+		};
 	};
 
 	class FlockingState : public State
 	{
 	public:
+		ADResource::ADGameplay::GameObject* owner = nullptr;
 		XMVECTOR personalTarget;
-		//Current Pathfinding Path
+		XMFLOAT4 VelocityWhenFlocking = { 0,0,0,0 };
 
+		//Current Pathfinding Path
+		void Update(float _deltaTime)
+		{
+			owner->Velocity = VelocityWhenFlocking;
+			owner->AddToPositionVector((XMFLOAT3&)owner->Velocity);
+		}
 	};
 
 	class FlockingGroup
@@ -234,9 +249,9 @@ namespace ADAI
 				XMFLOAT4 heading;
 				XMStoreFloat4(&heading, XMVector4Normalize(velocity));
 
-				flockers[i]->Velocity.x += heading.x * _deltaTime * moveSpeed;
-				flockers[i]->Velocity.y += heading.y * _deltaTime * moveSpeed;
-				flockers[i]->Velocity.z += heading.z * _deltaTime * moveSpeed;
+				flockerState[i]->VelocityWhenFlocking.x += heading.x * _deltaTime * moveSpeed;
+				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
+				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
 
 				velocity = CalculateAlignmentAcceleration(flockers[i]) + CalculateCohesionAcceleration(flockers[i]) + CalculateSeparationAcceleration(flockers[i]) +CalculateDirectionalAcceleration(flockers[i]) + CalculateReturnAcceleration(flockers[i]);
 				velocity *= (maxSpeed * _deltaTime);
@@ -255,12 +270,31 @@ namespace ADAI
 					velocity = ShortenLength(velocity, maxSpeed);
 				}
 
-				XMStoreFloat4(&flockers[i]->Velocity, velocity);
-				flockers[i]->AddToPositionVector((XMFLOAT3&)flockers[i]->Velocity);
-
+				XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);
 			}
 		};
 	};
 
+	static float DistanceCalculation(XMFLOAT3 _obj1Pos, XMFLOAT3 _obj2Pos)
+	{
+		float xDist = abs(_obj1Pos.x - _obj2Pos.x);
+		float yDist = abs(_obj1Pos.z - _obj2Pos.z);
+		return sqrt((xDist * xDist) + (yDist * yDist));
+	}
+
+	static ADResource::ADGameplay::GameObject* FindNearest(ADResource::ADGameplay::GameObject _gameObject, std::vector<ADResource::ADGameplay::GameObject*> _searchGroup, float desirabilityWeight)
+	{
+		float currentTargetDistance = 9999999;
+		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
+		for (int i = 0; i < _searchGroup.size(); i++)
+		{
+			float distance = DistanceCalculation(_gameObject.GetPosition(), _searchGroup[i]->GetPosition());
+			if ((distance * (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
+			{
+				currentTarget = _searchGroup[i];
+			}
+		}
+		return currentTarget;
+	}
 };
 

@@ -54,6 +54,7 @@ namespace GolemGameUISetup
         SetUITextListener fireMinionCountListener;
         SetUITextListener woodMinionCountListener;
         SetUITextListener allMinionCountListener;
+        SetUITextListener villagerCountListener;
         SetUISelectionListener controlGroupListener;
 
         HUDController(UINT* _uiState) : uiState(*_uiState) {};
@@ -81,26 +82,27 @@ namespace GolemGameUISetup
     class OptionsMenuUIController : public ADUI::OverlayController
     {
         UINT& uiState;
-        //UINT audioIndex;
-        //AD_AUDIO::ADAudio* audioSystem;
+        UINT audioIndex;
+        AD_AUDIO::ADAudio* audioSystem;
     public:
         OptionsMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
-        //void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
+        void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick);
     };
 
     class GameUserInterface
-    {
-    public:
+    {     
         UINT SetupTitleScreen(ADUI::ADUI* myUI, StartMenuUIController* _titleScreenController);
         UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
+        UINT SetupEngGameScreen(ADUI::ADUI* myUI);
         UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController);
         UINT SetupDebugMenu(ADUI::ADUI* myUI);
         UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
         UINT SetupLog(ADUI::ADUI* myUI);
-        void SetupUI(ADUI::ADUI* myUI);
+    public:
+        void SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem);
     };
 
 }

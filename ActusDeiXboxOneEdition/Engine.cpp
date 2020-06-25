@@ -49,6 +49,18 @@ bool Engine::Update()
 			OBJS[i]->Update(delta_time_sf);
 		}
 
+		//Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+		//float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
+		//XMFLOAT4X4 view;
+		//XMFLOAT4X4 proj;
+		//XMFLOAT4 camPos;
+		//XMMATRIX temp;
+		//ocamera->GetViewMatrix(temp);
+		//XMStoreFloat4x4(&view, temp);
+		//temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+		//XMStoreFloat4x4(&proj, temp);
+		//camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
+		//bigCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
 		//pbr.Update(camera, ocamera); //  Needs error checking
 	}
 	else if (*userInterface.GetUIState() == 2)
@@ -143,4 +155,9 @@ ADUI::ADUI* Engine::GetUI()
 ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
 {
 	return &pbr;
+}
+
+float Engine::GetEngineDeltaTime()
+{
+	return delta_time_sf;
 }

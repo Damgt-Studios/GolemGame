@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <ADEventSystem.h>
+#include <ADUserInterface.h>
 
 
 namespace ADGameplay
@@ -45,11 +46,15 @@ namespace ADGameplay
 		std::vector<PBRArguments> fireMinionArguments;
 		std::vector<PBRArguments> woodMinionArguments;
 
+		std::vector<PBRArguments> villagerArguments;
+
 		//Minions
 		std::vector<Destructable*> stoneMinions;
 		std::vector<Destructable*> waterMinions;
 		std::vector<Destructable*> fireMinions;
 		std::vector<Destructable*> woodMinions;
+
+		std::vector<Destructable*> villagers;
 
 		//Minion AI
 		std::vector<ADAI::AIUnit*> stoneMinionsAI;
@@ -57,12 +62,16 @@ namespace ADGameplay
 		std::vector<ADAI::AIUnit*> fireMinionsAI;
 		std::vector<ADAI::AIUnit*> woodMinionsAI;
 
+		std::vector<ADAI::AIUnit*> villagerAI;
+
 		//Animation vecters
 		std::vector<std::string> animations;
 		std::vector<std::string> stoneMinionAnimations;
 		std::vector<std::string> waterMinionAnimations;
 		std::vector<std::string> fireMinionAnimations;
 		std::vector<std::string> woodMinionAnimations;
+
+		std::vector<std::string> villagerAnimations;
 
 		//Target
 		Destructable* m1;
@@ -74,9 +83,17 @@ namespace ADGameplay
 		UINT woodMinionCount = 10;
 		UINT totalMinionCount = 40;
 
+		UINT villagerCount = 10;
+
 		//String stuff for the events.
-		std::string* stype;
-		std::string* ftype;
+		std::string* stoneMinionCountstr;
+		std::string* waterMinionCountstr;
+		std::string* fireMinionCountstr;
+		std::string* woodMinionCountstr;
+		std::string* allMinionCountstr;
+
+		std::string* villagerCountstr;
+		ADAI::FlockingGroup villageFlock1;
 
 		void InitializeScene()
 		{
@@ -162,17 +179,26 @@ namespace ADGameplay
 
 			//m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 			//golem->targetMarker = m1;
+
+			villageFlock1.groupTarget = &golem->transform;
+			villageFlock1.alignmentDirectionalStrength = 0.2f;
+			villageFlock1.cohesionStrength = 0.2f;
+			villageFlock1.commandDestination;
+			villageFlock1.commandDirectionalStrength = 0;
+			villageFlock1.moveSpeed = 1.f;
+			villageFlock1.maxSpeed = 1.0f;
+			villageFlock1.returnDirectionalStrength = -0.9f;
+			villageFlock1.separationStrength = 0.4f;
+			villageFlock1.targetCohesionStrength = 0;
+
+			for (int i = 0; i < 10; i++)
+			{
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 0, -45), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
+				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
+				GameUtilities::AddGameObject(villagers[i]);
+			}
 		}
 
-		void UpdateEnemies()
-		{
-			
-		}
-
-		void RenderEnemies()
-		{
-
-		}
 
 
 	public:
@@ -300,11 +326,11 @@ namespace ADGameplay
 				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD], WOOD_MINION));
 			}
 
-			for (int i = 0; i < renderableArguments.size(); i++)
-			{
-				renderables.push_back(GameUtilities::AddDestructableFromModelFile(renderableArguments[i].Model.data(), renderableArguments[i].Texture.data(), woodMinionAnimations, renderableArguments[i].position, renderableArguments[i].scale, renderableArguments[i].rotation));
-				renderables[i]->physicsType = renderableArguments[i].type;
-			}
+			//for (int i = 0; i < renderableArguments.size(); i++)
+			//{
+			//	renderables.push_back(GameUtilities::AddDestructableFromModelFile(renderableArguments[i].Model.data(), renderableArguments[i].Texture.data(), woodMinionAnimations, renderableArguments[i].position, renderableArguments[i].scale, renderableArguments[i].rotation));
+			//	renderables[i]->physicsType = renderableArguments[i].type;
+			//}
 
 			for (int i = 0; i < 10; i++)
 			{
@@ -314,18 +340,28 @@ namespace ADGameplay
 				GameUtilities::AddGameObject(woodMinions[i]);
 			}
 
-			for (int i = 0; i < renderables.size(); i++)
-			{
-				GameUtilities::AddGameObject(renderables[i]);
-			}
+			//for (int i = 0; i < renderables.size(); i++)
+			//{
+			//	GameUtilities::AddGameObject(renderables[i]);
+			//}
 
-			m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
+
+
+			//Dan added this:
+			m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-45, 5, -45), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 			golem->targetMarker = m1;
 			GameUtilities::AddGameObject(m1);
 
-			stype = new std::string();
-			ftype = new std::string();
 
+
+			stoneMinionCountstr = new std::string();
+			waterMinionCountstr = new std::string();
+			fireMinionCountstr = new std::string();
+			woodMinionCountstr = new std::string();
+			allMinionCountstr = new std::string();
+			villagerCountstr = new std::string();
+
+			InitializeScene();
 		}
 
 		ADResource::ADGameplay::Golem* GetGolem()
@@ -349,18 +385,36 @@ namespace ADGameplay
 		void destroy()
 		{
 			sceneLights.clear();
-			delete stype;
-			delete ftype;
+			delete stoneMinionCountstr;
+			delete waterMinionCountstr;
+			delete fireMinionCountstr;
+			delete woodMinionCountstr;
+			delete allMinionCountstr;
+			delete villagerCountstr;
+
 		}
 
-		void Update()
+		void Update(float _delta_time)
 		{
-			UpdateEnemies();			//Happens after player input and uses the player's matrix to react.
+			villageFlock1.Update(_delta_time);
 		}
 
-		void Render()
+		void UpdateVillagerCount()
 		{
-		
+			villagerCount--;
+			villagerCountstr->clear();
+			villagerCountstr->append(to_string(villagerCount));
+			ADEvents::ADEventSystem::Instance()->SendEvent("VillagerCountChanged", static_cast<void*>(villagerCountstr));
+			
+			if (villagerCount <= 0)
+			{
+				//Using UI as a event Manager.  Temp solution.
+				ADUI::UIMessage eventUIMessage;
+				eventUIMessage.targetID = 0;
+				eventUIMessage.externalMsg = true;
+				eventUIMessage.commandID = 0;
+				ADUI::MessageReceiver::SendMessage(&eventUIMessage);
+			}
 		}
 
 		void UpdateMinionCounts(UINT _minionType)
@@ -371,40 +425,40 @@ namespace ADGameplay
 				case ADResource::ADGameplay::OBJECT_TAG::STONE_MINION:
 				{
 					stoneMinionCount--;	
-					stype->clear();
-					stype->append(to_string(stoneMinionCount));
-					ADEvents::ADEventSystem::Instance()->SendEvent("StoneMinionCountChanged", static_cast<void*>(stype));
+					stoneMinionCountstr->clear();
+					stoneMinionCountstr->append(to_string(stoneMinionCount));
+					ADEvents::ADEventSystem::Instance()->SendEvent("StoneMinionCountChanged", static_cast<void*>(stoneMinionCountstr));
 					break;
 				}
 				case ADResource::ADGameplay::OBJECT_TAG::WATER_MINION:
 				{
 					waterMinionCount--;
-					stype->clear();
-					stype->append(to_string(waterMinionCount));
-					ADEvents::ADEventSystem::Instance()->SendEvent("WaterMinionCountChanged", static_cast<void*>(stype));
+					waterMinionCountstr->clear();
+					waterMinionCountstr->append(to_string(waterMinionCount));
+					ADEvents::ADEventSystem::Instance()->SendEvent("WaterMinionCountChanged", static_cast<void*>(waterMinionCountstr));
 					break;
 				}
 				case ADResource::ADGameplay::OBJECT_TAG::FIRE_MINION:
 				{
 					fireMinionCount--;
-					stype->clear();
-					stype->append(to_string(fireMinionCount));
-					ADEvents::ADEventSystem::Instance()->SendEvent("FireMinionCountChanged", static_cast<void*>(stype));
+					fireMinionCountstr->clear();
+					fireMinionCountstr->append(to_string(fireMinionCount));
+					ADEvents::ADEventSystem::Instance()->SendEvent("FireMinionCountChanged", static_cast<void*>(fireMinionCountstr));
 					break;
 				}
 				case ADResource::ADGameplay::OBJECT_TAG::WOOD_MINION:
 				{
 					woodMinionCount--;
-					stype->clear();
-					stype->append(to_string(woodMinionCount));
-					ADEvents::ADEventSystem::Instance()->SendEvent("WoodMinionCountChanged", static_cast<void*>(stype));
+					woodMinionCountstr->clear();
+					woodMinionCountstr->append(to_string(woodMinionCount));
+					ADEvents::ADEventSystem::Instance()->SendEvent("WoodMinionCountChanged", static_cast<void*>(woodMinionCountstr));
 					break;
 				}
 			}
 			totalMinionCount--;
-			ftype->clear();
-			ftype->append(to_string(totalMinionCount));
-			ADEvents::ADEventSystem::Instance()->SendEvent("MinionCountChanged", static_cast<void*>(ftype));
+			allMinionCountstr->clear();
+			allMinionCountstr->append(to_string(totalMinionCount));
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionCountChanged", static_cast<void*>(allMinionCountstr));
 		}
 
 	};

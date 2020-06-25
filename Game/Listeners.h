@@ -19,35 +19,73 @@ public:
     std::string ToString() override;
 };
 
-class ParticleEmitterEvent : public ADEvents::Listener
+class VillagerDeathListener : public ADEvents::Listener
+{
+private:
+    ADGameplay::Scene* scene;
+public:
+    VillagerDeathListener() {};
+    void SetTarget(ADGameplay::Scene* _scene)
+    {
+        scene = _scene;
+    };
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+    std::string ToString() override;
+};
+
+class GameEndListener : public ADEvents::Listener
+{
+private:
+    ADGameplay::Scene* scene;
+public:
+    GameEndListener() {};
+    void SetTarget(ADGameplay::Scene* _scene)
+    {
+        scene = _scene;
+    };
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+    std::string ToString() override;
+};
+
+class ParticleEmitterListener : public ADEvents::Listener
 {
 private:
     FountainEmitter& emitter;
     XMFLOAT4 position;
 public:
     float lifespan;
-    ParticleEmitterEvent(FountainEmitter& _emitter) : emitter(_emitter) {};
+    ParticleEmitterListener(FountainEmitter& _emitter) : emitter(_emitter) {};
     void HandleEvent(ADEvents::ADEvent* _event) override;
     std::string ToString() override;
 };
 
-class AudioSourceEvent : public ADEvents::Listener
+class AudioSourceListener : public ADEvents::Listener
 {
 private:
     AD_AUDIO::AudioSource& audioSource;
 public:
-    AudioSourceEvent(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
+    AudioSourceListener(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
     void HandleEvent(ADEvents::ADEvent* _event) override;
     std::string ToString() override;
 };
 
-class ApplyEffectEvent : public ADEvents::Listener
+class AudioStopListener : public ADEvents::Listener
+{
+private:
+    AD_AUDIO::AudioSource& audioSource;
+public:
+    AudioStopListener(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+    std::string ToString() override;
+};
+
+class ApplyEffectListener : public ADEvents::Listener
 {
 private:
     ADResource::ADGameplay::Effect* effect;
     ADResource::ADGameplay::GameObject* target;
 public:
-    ApplyEffectEvent() {};
+    ApplyEffectListener() {};
     void SetTarget(ADResource::ADGameplay::GameObject* _target, ADResource::ADGameplay::Effect* _effect);
     void HandleEvent(ADEvents::ADEvent* _event) override;
     std::string ToString() override;

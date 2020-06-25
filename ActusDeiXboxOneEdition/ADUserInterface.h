@@ -233,23 +233,12 @@ namespace ADUI
         std::map<UINT, UIComponent*> componentTypeMap;
 
         bool active;
+        float delayInputTimer = 0;
         std::string name;
         ~OverlayController()
         {
-            //for (int i = 0; i < overlays.size(); ++i)
-            //{
-            //    delete overlays[i];
-            //}
             overlays.clear();
-            //for (int i = 0; i < controllers.size(); ++i)
-            //{
-            //    delete controllers[i];
-            //}
             controllers.clear();
-            //for (int i = 0; i < componentTypeMap.size(); ++i)
-            //{
-            //    delete componentTypeMap[i];
-            //}
             componentTypeMap.clear();
         };
         virtual bool ProcessInput(float delta_time, float& quick);

@@ -2,7 +2,7 @@ StatSheet=GreatGolem:
 AddStat=Health
 StatMin=0
 StatMax=20000
-StatCurrent= 100
+StatCurrent=20000
 SetEventVal=-1
 SetEvent=ChangedHealth
 

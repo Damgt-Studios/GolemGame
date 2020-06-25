@@ -339,9 +339,17 @@ namespace ADResource
 			std::vector<std::string> eventName;
 
 
+			XMFLOAT3* hbpos = nullptr;
 
 			//If the attack doesn't own the hitbox this needs to change.
-			~Action() { delete hitbox; };
+			~Action()
+			{
+				delete hitbox;
+				if (hbpos != nullptr)
+				{
+					delete hbpos;
+				}
+			};
 
 			bool StartAction(XMMATRIX* _casterTransform)
 			{
@@ -477,9 +485,9 @@ namespace ADAI
 			//currentState = ...
 		}
 
-		void Update()
+		void Update(float _deltaTime)
 		{
-			// currentState.Run();
+			currentState->Update(_deltaTime);
 		}
 
 	};

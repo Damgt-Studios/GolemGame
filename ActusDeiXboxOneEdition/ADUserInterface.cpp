@@ -426,6 +426,7 @@ UINT ADUI::OverlayController::AddComponent(UIComponent* _comp)
 void ADUI::OverlayController::Enable()
 {
     active = true;
+    delayInputTimer = 0.1f;
 }
 
 void ADUI::OverlayController::Disable()

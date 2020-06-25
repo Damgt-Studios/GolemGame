@@ -44,6 +44,7 @@ public:
 	void RotateCamera(float yaw, float pitch);
 	ADUI::ADUI* GetUI();
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();
+	float GetEngineDeltaTime();
 
 
 private:

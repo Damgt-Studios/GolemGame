@@ -15,20 +15,30 @@ namespace GolemGameUISetup
 	bool GameplayUIPrimaryController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
 		bool buttonPressed = false;
+		//if (delayInputTimer > 0)
+		//{
+		//	delayInputTimer -= 
+		//}
 		if (_message)
 		{
 			if (_message->externalMsg)
 			{
-				switch (_message->commandID)
+				switch (_message->targetID)
 				{
-				case 1:
+				case 0:
 				{
-					
-					//timesPressed += 1;
-					//UINT gemCountID = componentsNameToID["GemCount"];
-					//GetComponentSpecfic<ADUI::Label2D*>(gemCountID)->output.clear();
-					//GetComponentSpecfic<ADUI::Label2D*>(gemCountID)->output = std::to_string(timesPressed);
-					//buttonPressed = true;
+					//overlays[overlaysNameToID["TitleScreen"]]->Enable();
+					uiState = ENGINE_STATE::PAUSED;
+					controllers[controllersNameToID["TitleScreenController"]]->Enable();
+					overlays[overlaysNameToID["SuccessScreen"]]->Enable();
+					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
+					Disable();
+
+					//controllers[controllersNameToID["EndScreenController"]]->Enable();
+
+					//componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
+					buttonPressed = true;
 					break;
 				}
 				case 2:
@@ -48,13 +58,12 @@ namespace GolemGameUISetup
 				}
 				case 3:
 				{
-					//overlays[overlaysNameToID["SuccessScreen"]]->Enable();
-					//Disable();
 
-					//controllers[controllersNameToID["EndScreenController"]]->Enable();
-
-					//componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
-					buttonPressed = true;
+					//timesPressed += 1;
+					//UINT gemCountID = componentsNameToID["GemCount"];
+					//GetComponentSpecfic<ADUI::Label2D*>(gemCountID)->output.clear();
+					//GetComponentSpecfic<ADUI::Label2D*>(gemCountID)->output = std::to_string(timesPressed);
+					//buttonPressed = true;
 					break;
 				}
 				case 4:
@@ -109,10 +118,10 @@ namespace GolemGameUISetup
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
 		bool buttonPressed = false;
-		if (_message)
+		if (_message && !overlays[overlaysNameToID["SuccessScreen"]]->active)
 		{
 			buttonPressed = true;
-			if (_message->targetID == ADUI::UIMessageTargets::Controller )
+			if (_message->targetID == ADUI::UIMessageTargets::Controller)
 			{
 				if (_message->commandID == 1)
 				{
@@ -128,6 +137,7 @@ namespace GolemGameUISetup
 						controllers[controllersNameToID["PauseScreenController"]]->Enable();
 						overlays[overlaysNameToID["HUD"]]->Enable();
 						uiState = ADUI::UISTATE::GAMEPLAY;
+
 						ADEvents::ADEventSystem::Instance()->SendEvent("PlayLevel", (void*)0);
 						buttonPressed = true;
 						break;
@@ -189,36 +199,17 @@ namespace GolemGameUISetup
 				message.ivalue = 4;
 
 				ADUI::MessageReceiver::SendMessage(&message);
-				Disable();
+				//Disable();
 
 				overlays[overlaysNameToID["TitleScreen"]]->Enable();
 				componentTypeMap[componentsNameToID["TitleMenu"]]->Enable();
-				controllers[controllersNameToID["TitleScreenController"]]->Enable();
+				//controllers[controllersNameToID["TitleScreenController"]]->Enable();
 
 				buttonPressed = true;
 			}
 		}
 		return buttonPressed;
 	}
-
-	//void PauseMenuController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
-	//{
-	//	buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-	//	buttonClick.engine = _audioSystem;
-	//	buttonClick.personalVolume = 1.00f;
-	//	buttonClick.LoadSound("files\\audio\\UI_SFX_GridConfirm.wav", false, false, false);
-
-
-	//	buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-	//	buttonMove.engine = _audioSystem;
-	//	buttonMove.personalVolume = 1.00f;
-	//	buttonMove.LoadSound("files\\audio\\UI_SFX_GridMovement.wav", false, false, false);
-
-	//	menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-	//	menuBack.engine = _audioSystem;
-	//	menuBack.personalVolume = 0.30f;
-	//	menuBack.LoadSound("files\\audio\\UI_SFX_MenuReturn.wav", false, false, false);
-	//}
 
 	bool PauseMenuController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
@@ -233,9 +224,9 @@ namespace GolemGameUISetup
 				{
 					if (_message->commandID == 1)
 					{
-						ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 						if (uiState == ADUI::UISTATE::MENUSTATE)
 						{
+							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 							UINT pauseOverlayID = overlaysNameToID["PauseScreen"];
 							if (overlays[pauseOverlayID]->active)
 							{
@@ -332,31 +323,10 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	/*void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
+	void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
 	{
 		audioSystem = _audioSystem;
-
-		sliderClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		sliderClick.engine = audioSystem;
-		sliderClick.personalVolume = 1.00f;
-		sliderClick.LoadSound("files\\audio\\UI_SFX_Sliderclick.wav", false, false, false, false);
-
-		buttonClick.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		buttonClick.engine = audioSystem;
-		buttonClick.personalVolume = 1.00f;
-		buttonClick.LoadSound("files\\audio\\UI_SFX_GridConfirm.wav", false, false, false, false);
-
-
-		buttonMove.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		buttonMove.engine = audioSystem;
-		buttonMove.personalVolume = 1.00f;
-		buttonMove.LoadSound("files\\audio\\UI_SFX_GridMovement.wav", false, false, false, false);
-
-		menuBack.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		menuBack.engine = audioSystem;
-		menuBack.personalVolume = 0.30f;
-		menuBack.LoadSound("files\\audio\\UI_SFX_MenuReturn.wav", false, false, false, false);
-	}*/
+	}
 
 	bool OptionsMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
@@ -373,7 +343,7 @@ namespace GolemGameUISetup
 						if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)
 						{
 							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
-							/*switch (_message->componentIndex)
+							switch (_message->componentIndex)
 							{
 							case AD_AUDIO::MUSIC:
 								audioSystem->masterMusicVolume = _message->fvalue.x;
@@ -389,8 +359,8 @@ namespace GolemGameUISetup
 								quick = 0.1f;
 								break;
 							default:
-								break;*/
-								//}
+								break;
+								}
 
 						}
 						else
@@ -530,10 +500,6 @@ namespace GolemGameUISetup
 		myUI->AddUIComponent("CreditsLabel3", creditsLabel5);
 		myUI->overlays[creditsID]->AddComponent(creditsLabel5);
 
-		//SuccessScreen
-		UINT successID = myUI->AddNewOverlay("SuccessScreen", false, false);
-		myUI->overlays[successID]->AddComponent(creditsImage);
-
 
 		//Start Menu Buttons
 		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
@@ -563,7 +529,6 @@ namespace GolemGameUISetup
 		_titleScreenController->AddComponent(buttonList);
 		_titleScreenController->AddOverlay(myUI->overlays[titleid]);
 		_titleScreenController->AddOverlay(myUI->overlays[creditsID]);
-		_titleScreenController->AddOverlay(myUI->overlays[successID]);
 
 		return titleid;
 	}
@@ -882,6 +847,22 @@ namespace GolemGameUISetup
 		return optionsID;
 	}
 
+	UINT GameUserInterface::SetupEngGameScreen(ADUI::ADUI* myUI)
+	{
+		//SuccessScreen
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 1, 1 };
+		UINT creditsID = myUI->AddNewOverlay("SuccessScreen", false, false);
+		ADUI::Image2D* creditsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
+		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
+		myUI->AddUIComponent("CreditsBG", creditsImage);
+		myUI->overlays[creditsID]->AddComponent(creditsImage);
+		UINT successID = myUI->AddNewOverlay("SuccessScreen", false, false);
+		myUI->overlays[successID]->AddComponent(creditsImage);
+
+		return successID;
+	}
+
 	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
@@ -1113,6 +1094,15 @@ namespace GolemGameUISetup
 		myUI->overlays[hudID]->AddComponent(allCountLabel);
 		_hUDController->AddComponent(allCountLabel);
 
+		ADUI::Label2D* villagerCountLabel = new ADUI::Label2D();
+		villagerCountLabel->SetFont(myUI->GetFont(2));
+		villagerCountLabel->SetText("10", { 3590, 250 });// XMFLOAT2(1920, 1080));
+		villagerCountLabel->active = true;
+		villagerCountLabel->visible = true;
+		myUI->AddUIComponent("VillagerCountLabel", villagerCountLabel);
+		myUI->overlays[hudID]->AddComponent(villagerCountLabel);
+		_hUDController->AddComponent(villagerCountLabel);
+
 
 		ADUI::ComponentGrid* rightButtonList = new ADUI::ComponentGrid();
 		rightButtonList->SetCorners({ 97, 331, 197, 431 });
@@ -1177,6 +1167,9 @@ namespace GolemGameUISetup
 		ADEvents::ADEventSystem::Instance()->RegisterClient("WoodMinionCountChanged", &_hUDController->woodMinionCountListener);
 		_hUDController->allMinionCountListener.SetTarget(allCountLabel);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("MinionCountChanged", &_hUDController->allMinionCountListener);
+
+		_hUDController->villagerCountListener.SetTarget(villagerCountLabel);
+		ADEvents::ADEventSystem::Instance()->RegisterClient("VillagerCountChanged", &_hUDController->villagerCountListener);
 
 		//Group Selection
 		_hUDController->controlGroupListener.SetTarget(rightButtonList);
@@ -1312,7 +1305,8 @@ namespace GolemGameUISetup
 		return logid;
 	}
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI)
+
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem)
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
@@ -1356,6 +1350,8 @@ namespace GolemGameUISetup
 		myUI->AddUIController("TitleScreenController", titleScreenController);
 		titleScreenController->Enable();
 		UINT titleID = SetupTitleScreen(myUI, titleScreenController);
+		UINT endgameID = SetupEngGameScreen(myUI);
+		titleScreenController->AddOverlay(myUI->overlays[endgameID]);
 
 		//// PauseScreen Controller
 		PauseMenuController* PauseScreenController = new PauseMenuController(myUI->GetUIState());
@@ -1397,12 +1393,17 @@ namespace GolemGameUISetup
 		gameplayMessageController->AddOverlay(myUI->overlays[titleID]);
 		gameplayMessageController->AddController(PauseScreenController);
 		gameplayMessageController->AddOverlay(myUI->overlays[pauseID]);
-		gameplayMessageController->AddController(optionScreenController);
+		gameplayMessageController->AddController(optionScreenController); 
+
+		gameplayMessageController->AddOverlay(myUI->overlays[endgameID]);
+
+		//gameplayMessageController
+
 		//gameplayMessageController->AddOverlay(myUI->overlays[pathingID]);
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);
-		//optionScreenController->SetAudio(_audioSystem);
+		optionScreenController->SetAudio(_audioSystem);
 
 		//////gameplayScreenController->AddComponent(sliderList);
 		//gameplayScreenController->AddComponent(buttonList2);

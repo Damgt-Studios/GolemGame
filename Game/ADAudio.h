@@ -71,6 +71,7 @@ namespace AD_AUDIO
         int currentChannel;
         void LoadSound(std::string _soundName, bool _isEvent = true, bool is3D = true, bool isLooping = false, bool isStream = false);
         void Play();
+        void Stop();
         void RefreshVolume();
         void UpdatePosition(XMFLOAT3 pos);
     };
