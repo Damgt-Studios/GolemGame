@@ -45,10 +45,29 @@ namespace ADAI
 		}
 	};
 
+	class AIUnit
+	{
+	public:
+		ADResource::ADGameplay::GameObject* owner;
+		std::vector<ADAI::State*> states;
+		ADAI::State* currentState;
+
+		void SwitchState()
+		{
+			//currentState = ...
+		}
+
+		void Update(float _deltaTime)
+		{
+			currentState->Update(_deltaTime);
+		}
+
+	};
+
 	class FlockingGroup
 	{
 	public:
-		std::vector<ADResource::ADGameplay::GameObject*> flockers;
+		std::vector<AIUnit*> flockers;
 		std::vector<FlockingState*> flockerState;
 		float commandDirectionalStrength = 0.00f;
 		float returnDirectionalStrength = 0.00f;
@@ -67,6 +86,10 @@ namespace ADAI
 
 		XMFLOAT3 SetCommandDirection(XMMATRIX _camera)
 		{
+			for (int i = 0; i < flockers.size(); ++i)
+			{
+				flockers[i]->currentState = flockers[i]->states[1];
+			}
 			commandDirectionalStrength = 1.2f;
 			returnDirectionalStrength = 0.f;
 
@@ -94,11 +117,15 @@ namespace ADAI
 
 		void ReturnCall()
 		{
+			for (int i = 0; i < flockers.size(); ++i)
+			{
+				flockers[i]->currentState = flockers[i]->states[1];
+;			}
 			commandDirectionalStrength = 0.f;
 			returnDirectionalStrength = 1.2f;
 		};
 
-		void AddUnitToGroup(ADResource::ADGameplay::GameObject* _flocker, FlockingState* _flockersState)
+		void AddUnitToGroup(AIUnit* _flocker, FlockingState* _flockersState)
 		{
 			flockers.push_back(_flocker);
 			flockerState.push_back(_flockersState);
@@ -111,8 +138,8 @@ namespace ADAI
 			int count = flockers.size();
 			for (int i = 0; i < count; ++i)
 			{
-				averagePosition += flockers[i]->transform.r[3];
-				averageForward += XMLoadFloat4(&flockers[i]->Velocity);
+				averagePosition += flockers[i]->owner->transform.r[3];
+				averageForward += XMLoadFloat4(&flockers[i]->owner->Velocity);
 			}
 			XMVECTOR cnt = { count, count, count, count };
 			XMVECTOR forward = { count, count, count, count };
@@ -201,13 +228,13 @@ namespace ADAI
 			int count = flockers.size();
 			for (int i = 0; i < count; ++i)
 			{
-				sigh = flockers[i]->GetPosition();
+				sigh = flockers[i]->owner->GetPosition();
 				sigh2 = _object->GetPosition();
 				XMVECTOR enemyPOS = XMLoadFloat3(&sigh);
 				XMVECTOR myPOS = XMLoadFloat3(&sigh2);
 				distance = enemyPOS - myPOS;
 
-				float threshold = flockers[i]->safeRadius + _object->safeRadius;
+				float threshold = flockers[i]->owner->safeRadius + _object->safeRadius;
 
 				XMFLOAT4 length;
 				XMStoreFloat4(&length, XMVector4Length(distance));
@@ -245,7 +272,7 @@ namespace ADAI
 			CalculateAverages();
 			for (int i = 0; i < flockers.size(); ++i)
 			{
-				XMVECTOR velocity = XMLoadFloat4(&flockers[i]->Velocity);
+				XMVECTOR velocity = XMLoadFloat4(&flockers[i]->owner->Velocity);
 				XMFLOAT4 heading;
 				XMStoreFloat4(&heading, XMVector4Normalize(velocity));
 
@@ -253,9 +280,9 @@ namespace ADAI
 				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
 				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
 
-				velocity = CalculateAlignmentAcceleration(flockers[i]) + CalculateCohesionAcceleration(flockers[i]) + CalculateSeparationAcceleration(flockers[i]) +CalculateDirectionalAcceleration(flockers[i]) + CalculateReturnAcceleration(flockers[i]);
+				velocity = CalculateAlignmentAcceleration(flockers[i]->owner) + CalculateCohesionAcceleration(flockers[i]->owner) + CalculateSeparationAcceleration(flockers[i]->owner) +CalculateDirectionalAcceleration(flockers[i]->owner) + CalculateReturnAcceleration(flockers[i]->owner);
 				velocity *= (maxSpeed * _deltaTime);
-				velocity += XMLoadFloat4(&flockers[i]->Velocity);
+				velocity += XMLoadFloat4(&flockers[i]->owner->Velocity);
 
 				XMFLOAT4 yCancel;
 				XMStoreFloat4(&yCancel, velocity);

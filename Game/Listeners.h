@@ -50,11 +50,11 @@ public:
 class ParticleEmitterListener : public ADEvents::Listener
 {
 private:
-    FountainEmitter& emitter;
+    BigCloudEmitter& emitter;
     XMFLOAT4 position;
 public:
     float lifespan;
-    ParticleEmitterListener(FountainEmitter& _emitter) : emitter(_emitter) {};
+    ParticleEmitterListener(BigCloudEmitter& _emitter) : emitter(_emitter) {};
     void HandleEvent(ADEvents::ADEvent* _event) override;
     std::string ToString() override;
 };
@@ -133,7 +133,7 @@ public:
     //If this is an OffSwitch and switchFailures is true, then all failures will turn ON!
     bool switchFailures = false;
     SetUIFocusListener() {};
-    void SetTarget(ADUI::UIComponent* _uiComponent) 
+    void SetTarget(ADUI::UIComponent* _uiComponent)
     {
         uiComponent = _uiComponent;
     };
@@ -159,8 +159,8 @@ class SetUITilingListener : public ADEvents::Listener
 {
 private:
     ADUI::Image2D* image;
-    UINT maximum =1;
-    UINT minimum =0;
+    UINT maximum = 1;
+    UINT minimum = 0;
     bool lerped;
 public:
     SetUITilingListener() {};

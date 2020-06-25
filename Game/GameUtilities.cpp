@@ -139,6 +139,7 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 //	return temp;
 //}
 
+
 Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
@@ -148,7 +149,10 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->SetRotation(rotation);
 	temp->SetPosition(position);
 
-	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
+	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	//temp->SetMeshID(id);
+
+	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
 
 	scale.x *= 100.0f;
@@ -193,8 +197,9 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 	charging->owner = _destructable;
 	temp->states.push_back(idling);
 	temp->states.push_back(charging);
+	temp->currentState = idling;
 
-	_commandGroup->AddUnitToGroup(_destructable, charging);
+	_commandGroup->AddUnitToGroup(temp, charging);
 
 	return temp;
 }
@@ -307,39 +312,10 @@ ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI:
 	ADAI::FlockingState* fleeing = new ADAI::FlockingState();
 	temp->states.push_back(idling);
 	temp->states.push_back(fleeing);
+	temp->currentState = idling;
 
-	_fearGroup->AddUnitToGroup(_destructable, fleeing);
+	_fearGroup->AddUnitToGroup(temp, fleeing);
 	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
-
-	return temp;
-}
-
-ADResource::ADGameplay::Renderable* GameUtilities::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-{
-	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
-
-	// Transform data
-	temp->SetScale(scale);
-	temp->SetRotation(rotation);
-	temp->SetPosition(position);
-
-	AD_ULONG id = ResourceManager::AddColliderBox(modelname, position, scale, rotation);
-	temp->SetMeshID(id);
-
-	return temp;
-}
-
-ADResource::ADGameplay::Renderable* GameUtilities::AddPBRStaticAsset(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-{
-	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
-
-	// Transform data
-	temp->SetScale(scale);
-	temp->SetRotation(rotation);
-	temp->SetPosition(position);
-
-	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-	temp->SetMeshID(id);
 
 	return temp;
 }
@@ -355,6 +331,7 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation);
 	temp->SetMeshID(id);
 
+
 	return temp;
 }
 
@@ -368,19 +345,15 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAnimAsset(std::strin
 
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, AnimationFiles, position, scale, rotation);
 	temp->SetMeshID(id);
-
 	return temp;
 }
 
-ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider(XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation)
+ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider()
 {
 
 	ADResource::ADGameplay::Renderable* temp = new ADResource::ADGameplay::Renderable;
-	temp->SetPosition(pos);
-	temp->SetRotation(rotation);
-	temp->SetScale(scale);
 
-	AD_ULONG id = ResourceManager::AddRenderableCollider(pos, scale, rotation);
+	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 	temp->SetMeshID(id);
 
 	return temp;
@@ -403,16 +376,16 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider(XMFLOAT
 	return temp;
 */
 
-std::vector<Renderable*>& GameUtilities::GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
-	temp.push_back(AddSimpleAsset("files/models/House_1_WoodenFrame.mesh", "files/textures/House_1_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_1_Roof.mesh", "files/textures/House_1_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_1_Structure.mesh", "files/textures/House_1_Structure.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_1_StoneDetails.mesh", "files/textures/House_1_StoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_1_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_1_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_1_Structure.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_1_StoneDetails.mesh", "files/textures/Stones2B.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -421,17 +394,17 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse1(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/House_2_WoodenFrame.mesh", "files/textures/House_2_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_2_Roof.mesh", "files/textures/House_2_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_2_Structure.mesh", "files/textures/House_2_Structure.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_2_StoneDetails.mesh", "files/textures/House_2_StoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_2_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_2_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_2_Structure.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_2_StoneDetails.mesh", "files/textures/Stones2B.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -440,17 +413,17 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse2(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateHouse3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse3(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/House_3_WoodenFrame.mesh", "files/textures/House_3_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_3_Roof.mesh", "files/textures/House_3_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_3_Structure.mesh", "files/textures/House_3_Structure.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_3_StoneDetails.mesh", "files/textures/House_3_StoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_3_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_3_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_3_Structure.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_3_StoneDetails.mesh", "files/textures/Stones2A.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -459,17 +432,17 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse3(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateHouse4(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateHouse4(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/House_4_WoodenFrame.mesh", "files/textures/House_4_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_4_Roof.mesh", "files/textures/House_4_Roof.mat", pos, XMFLOAT3(25, 25, 25), XMFLOAT3(90, rotation.y, 0), RotationType::yzx));
-	temp.push_back(AddSimpleAsset("files/models/House_4_Structure.mesh", "files/textures/House_4_Structure.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/House_4_StoneDetails.mesh", "files/textures/House_4_StoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_4_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_4_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), XMFLOAT3(90, rotation.y, 0), RotationType::yzx));
+	temp.push_back(AddSimpleAsset("files/models/House_4_Structure.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/House_4_StoneDetails.mesh", "files/textures/Stones2A.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -478,16 +451,16 @@ std::vector<Renderable*>& GameUtilities::GenerateHouse4(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateBarn1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateBarn1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Barn_01_WoodenFrame.mesh", "files/textures/Barn_01_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Barn_01_Planks.mesh", "files/textures/Barn_01_Planks.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Barn_01_Roof.mesh", "files/textures/Barn_01_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_01_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_01_Planks.mesh", "files/textures/Planks.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_01_Roof.mesh", "files/textures/Roof_02.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -496,17 +469,17 @@ std::vector<Renderable*>& GameUtilities::GenerateBarn1(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Barn_02_WoodenFrame.mesh", "files/textures/Barn_02_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Barn_02_Structure.mesh", "files/textures/Barn_02_Structure.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Barn_02_Roof.mesh", "files/textures/Barn_02_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Barn_02_StoneDetails.mesh", "files/textures/Barn_02_StoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_02_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_02_Structure.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_02_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_02_StoneDetails.mesh", "files/textures/Stones2A.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -515,20 +488,20 @@ std::vector<Renderable*>& GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/GateWayOpenning.mesh", "files/textures/GateWayOpenning.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayTowers.mesh", "files/textures/GateWayOpenning.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayStoneDetails.mesh", "files/textures/GateWayStoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayStoneWindows.mesh", "files/textures/GateWayStoneWindows.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayWooden.mesh", "files/textures/GateWayWooden.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayWoodenStructure.mesh", "files/textures/GateWayWoodenStructure.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayLattice.mesh", "files/textures/GateWayLattice.mat", XMFLOAT3(pos.x, pos.y + .366f, pos.z), XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayOpenning.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayTowers.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayStoneDetails.mesh", "files/textures/Stones1.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayStoneWindows.mesh", "files/textures/Stones2A.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayWooden.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayWoodenStructure.mesh", "files/textures/Planks.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayLattice.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + .366f, pos.z), XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -537,7 +510,7 @@ std::vector<Renderable*>& GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLOAT3 rotation) {
 
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
@@ -545,7 +518,7 @@ std::vector<Renderable*>& GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLO
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Scaffolding.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -554,16 +527,18 @@ std::vector<Renderable*>& GameUtilities::GenerateScaffolding(XMFLOAT3 pos, XMFLO
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
+std::vector<Renderable*> GameUtilities::GenerateScaffoldWallX(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/WallBase.mesh", "files/textures/WallBase.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/WallRoof.mesh", "files/textures/WallRoof.mat", pos, XMFLOAT3(25, 25, 25), XMFLOAT3(90, 0, -rotation.y)));
-	temp.push_back(AddSimpleAsset("files/models/WallDetails.mesh", "files/textures/WallDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x + 0.5f, pos.y, pos.z), XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x - 0.5f, pos.y, pos.z), XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -572,15 +547,18 @@ std::vector<Renderable*>& GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
+std::vector<Renderable*> GameUtilities::GenerateScaffoldWallZ(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Well_Wooden.mesh", "files/textures/Well_Wooden.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Well_Hole.mesh", "files/textures/Well_Hole.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y, pos.z + 0.5f), XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Scaffolding.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y, pos.z - 0.5f), XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -589,16 +567,17 @@ std::vector<Renderable*>& GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateTavern(XMFLOAT3 pos, XMFLOAT3 rotation) {
+
+std::vector<Renderable*> GameUtilities::GenerateWall(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Tavern_Frame.mesh", "files/textures/Tavern_Frame.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tavern_Roof.mesh", "files/textures/Tavern_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tavern_Structure.mesh", "files/textures/Tavern_Structure.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/WallBase.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/WallRoof.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), XMFLOAT3(90, 0, -rotation.y)));
+	temp.push_back(AddSimpleAsset("files/models/WallDetails.mesh", "files/textures/Stones1.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -607,15 +586,15 @@ std::vector<Renderable*>& GameUtilities::GenerateTavern(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateTree(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Tree_Bark.mesh", "files/textures/Tree_Bark.mat", XMFLOAT3(pos.x * 1000, pos.y * 1200, pos.z * 1000), XMFLOAT3(0.025, 0.02, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tree_Branch.mesh", "files/textures/Tree_Branch.mat", XMFLOAT3(pos.x * 1000, pos.y * 1200, pos.z * 1000), XMFLOAT3(0.025, 0.02, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Well_Wooden.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Well_Hole.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -624,14 +603,16 @@ std::vector<Renderable*>& GameUtilities::GenerateTree(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateLadder(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateTavern(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Ladder.mesh", "files/textures/Ladder.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000 + 250, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tavern_Frame.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tavern_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tavern_Structure.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -640,14 +621,15 @@ std::vector<Renderable*>& GameUtilities::GenerateLadder(XMFLOAT3 pos, XMFLOAT3 r
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRock1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateTree(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rock_1.mesh", "files/textures/Rock_1.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tree_Bark.mesh", "files/textures/Bark.mat", XMFLOAT3(pos.x * 1000, pos.y * 1200, pos.z * 1000), XMFLOAT3(0.025, 0.02, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tree_Branch.mesh", "files/textures/Branch.mat", XMFLOAT3(pos.x * 1000, pos.y * 1200, pos.z * 1000), XMFLOAT3(0.025, 0.02, 0.025), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -656,7 +638,39 @@ std::vector<Renderable*>& GameUtilities::GenerateRock1(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateLamp(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateLadder(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Ladder.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000 + 250, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+std::vector<Renderable*> GameUtilities::GenerateRock1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Rock_1.mesh", "files/textures/Rock.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+std::vector<Renderable*> GameUtilities::GenerateLamp(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -672,18 +686,18 @@ std::vector<Renderable*>& GameUtilities::GenerateLamp(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateMeetingHall(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateMeetingHall(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/MeetingHall_WoodenFrame.mesh", "files/textures/MeetingHall_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/MeetingHall_Structure.mesh", "files/textures/MeetingHall_Structure.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/MeetingHall_Roof.mesh", "files/textures/MeetingHall_Roof.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/MeetingHall_StoneDetails.mesh", "files/textures/MeetingHall_StoneDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/MeetingHall_BrickDetails.mesh", "files/textures/MeetingHall_BrickDetails.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/MeetingHall_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/MeetingHall_Structure.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/MeetingHall_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/MeetingHall_StoneDetails.mesh", "files/textures/Stones2B.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/MeetingHall_BrickDetails.mesh", "files/textures/Brick_rock1.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -692,17 +706,17 @@ std::vector<Renderable*>& GameUtilities::GenerateMeetingHall(XMFLOAT3 pos, XMFLO
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Tower_WoodenFrame.mesh", "files/textures/Tower_WoodenFrame.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tower_Structure.mesh", "files/textures/Tower_Structure.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tower_StoneDetails.mesh", "files/textures/Tower_StoneDetails.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Tower_BrickDetails.mesh", "files/textures/Tower_BrickDetails.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tower_WoodenFrame.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tower_Structure.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tower_StoneDetails.mesh", "files/textures/Stones2A.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Tower_BrickDetails.mesh", "files/textures/Brick_rock1.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -712,14 +726,14 @@ std::vector<Renderable*>& GameUtilities::GenerateTower(XMFLOAT3 pos, XMFLOAT3 ro
 	return temp;
 }
 
-std::vector<Renderable*>& GameUtilities::GenerateCart(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateCart(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cart.mesh", "files/textures/Cart.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Cart.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -728,14 +742,14 @@ std::vector<Renderable*>& GameUtilities::GenerateCart(XMFLOAT3 pos, XMFLOAT3 rot
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Straw_01.mesh", "files/textures/Straw_01.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Straw_01.mesh", "files/textures/Straw.mat", XMFLOAT3(pos.x * 1000, pos.y * 1000, pos.z * 1000), XMFLOAT3(0.025, 0.025, 0.025), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -744,7 +758,7 @@ std::vector<Renderable*>& GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 ro
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateDebris1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateDebris1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
@@ -760,15 +774,15 @@ std::vector<Renderable*>& GameUtilities::GenerateDebris1(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Stone.mesh", "files/textures/Rubble_01_Stone.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Wood.mesh", "files/textures/Rubble_01_Wood.mat", XMFLOAT3(pos.x, pos.y - 0.15, pos.z / 2 - 0.1f), XMFLOAT3(50, 50, 50), XMFLOAT3(14.030, 0.585 + rotation.y, 7.898)));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Stone.mesh", "files/textures/Debris.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Wood.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y - 0.15, pos.z / 2 - 0.1f), XMFLOAT3(50, 50, 50), XMFLOAT3(14.030, 0.585 + rotation.y, 7.898)));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -777,15 +791,15 @@ std::vector<Renderable*>& GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Stone.mesh", "files/textures/Rubble_02_Stone.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Wood.mesh", "files/textures/Rubble_02_Wood.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Stone.mesh", "files/textures/Debris.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Wood.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -794,15 +808,15 @@ std::vector<Renderable*>& GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 
 
 	return temp;
 }
-std::vector<Renderable*>& GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+std::vector<Renderable*> GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 rotation) {
 #ifndef MEMORY_MANAGER
 	std::vector<Renderable*> temp;
 #else
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Rubble_03_Stone.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Rubble_03_Wood.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Debris.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x * 500, pos.y * 500, pos.z * 500), XMFLOAT3(0.05, 0.05, 0.05), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{

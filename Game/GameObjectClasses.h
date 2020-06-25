@@ -68,14 +68,11 @@ namespace ADResource
 				if (active)
 				{
 					ProcessEffects(_deltaTime);
-
-					// Physics
-					XMFLOAT3 dang;
-					XMStoreFloat3(&dang, transform.r[3]);
-					collider = ADPhysics::AABB(dang, colScale);
+					collider = ADPhysics::AABB(VectorToFloat3(transform.r[3]), colScale);
 					colliderPtr = &collider;
-				}
+					physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
+				}
 			};
 
 			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
@@ -102,7 +99,10 @@ namespace ADResource
 				if (active && obj->active)
 				{
 					ADPhysics::Manifold m;
-					obj->colliderPtr->isCollision(&collider, m);
+					if (obj->colliderPtr->isCollision(&collider, m))
+					{
+						collisionQueue.push(CollisionPacket(this, obj, m));
+					}
 				}
 			}
 
@@ -179,10 +179,10 @@ namespace ADResource
 			virtual void Update(float _deltaTime)
 			{
 				// Physics
-				collider = ADPhysics::OBB(transform, XMFLOAT3(1,1,1));
+				collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
 				colliderPtr = &collider;
 				collider.trigger = true;
-				
+
 				if (lifespan > 0)
 				{
 					lifespan -= _deltaTime;
@@ -204,9 +204,9 @@ namespace ADResource
 					{
 						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 						{
-							if(gamePlayType != CONSUMPTION_HITBOX)
+							if (gamePlayType != CONSUMPTION_HITBOX)
 								PassEffects(obj);
-							else if(obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+							else if (obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
 								PassEffects(obj);
 						}
 					}
@@ -221,7 +221,7 @@ namespace ADResource
 					{
 						obj->effects.push_back(effects[i].get()->clone());
 						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
-						XMFLOAT4 hbpos = XMFLOAT4(1, 1, 1, 1);
+						XMFLOAT3 hbpos = GetPosition();
 
 						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos);
 						if (isDeactivateOnFirstApplication)
@@ -303,7 +303,7 @@ namespace ADResource
 					if (!obj->HasEffectID(effects[i].get()->sourceID, effects[i].get()->instanceID))
 					{
 						obj->effects.push_back(effects[i].get()->clone());
-						obj->effects[obj->effects.size()-1].get()->OnApply(obj->GetStatSheet());
+						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
 						if (isDeactivateOnFirstApplication)
 						{
 							active = false;
@@ -356,7 +356,7 @@ namespace ADResource
 				if (movesToPlayer)
 				{
 					hitbox->transform = *_casterTransform;
-					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x*10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
+					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
 					XMVECTOR castSideNormal = _casterTransform->r[0];
 					XMVECTOR castUpNormal = _casterTransform->r[1];
 					XMVECTOR castHeadingNormal = _casterTransform->r[2];
@@ -386,7 +386,7 @@ namespace ADResource
 					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
 					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
 					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
-					
+
 				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
@@ -453,13 +453,13 @@ namespace ADResource
 				}
 
 			}
-			
+
 			void EndAction()
 			{
 				//Some hit boxes would turn off this way, others require they burn out or collide.
 				if (hitbox && removeHbIfEnd)
 				{
-					active = false; 
+					active = false;
 					hitboxFired = false;
 					for (int i = 0; i < hitboxCount; ++i)
 					{
@@ -468,27 +468,113 @@ namespace ADResource
 				}
 			}
 		};
+
+		class Building : public GameObject
+		{
+			StatSheet* stats;
+			std::string deathEvent;
+		public:
+			Building()
+			{
+				//stats = new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]);
+			}
+			~Building() { delete stats; };
+			Building(Building&) = delete;
+			Building(const Building&) = delete;
+			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3))
+			{
+				pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
+				models = Generator(position, rotation);
+
+				for (size_t i = 0; i < models.size(); i++)
+				{
+					models[i]->colliderPtr = nullptr;
+				}
+
+				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+				colliderPtr = &collider;
+			}
+
+			virtual void Update(float delta_time)
+			{
+				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				collider.Pos = VectorToFloat3(XMVector3Transform(Float3ToVector(collider.Pos), XMMatrixScaling(25, 25, 25)));
+
+				physicsType = COLLIDABLE;
+				colliderPtr = &collider;
+
+				if (active)
+				{
+					//ProcessEffects(delta_time);
+				}
+			}
+
+			XMMATRIX GetColliderInfo()
+			{
+				XMMATRIX temp;
+				temp.r[0] = XMVector3Normalize(Float3ToVector(collider.AxisX));
+				temp.r[1] = XMVector3Normalize(Float3ToVector(collider.AxisY));
+				temp.r[2] = XMVector3Normalize(Float3ToVector(collider.AxisZ));
+				temp.r[3] = Float3ToVector(collider.Pos);
+				temp.r[3].m128_f32[3] = 1;
+
+				temp = XMMatrixScaling(collider.GetWidth() + 10, collider.GetHeight() + 10, collider.GetLength() + 10) * temp;;
+
+				temp.r[3].m128_f32[0] += off.x;
+				temp.r[3].m128_f32[1] += off.y;
+				temp.r[3].m128_f32[2] += off.z;
+
+				temp.r[3].m128_f32[3] = 1;
+
+				return temp;
+			}
+
+			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
+			{
+				if (active)
+				{
+					effects.push_back(_effect->clone());
+					effects[effects.size() - 1].get()->OnApply(GetStatSheet());
+				}
+			}
+
+			virtual StatSheet* GetStatSheet() override
+			{
+				return stats;
+			};
+
+			void SetStatSheet(StatSheet* statSheet)
+			{
+				stats = statSheet;
+			};
+
+			void ProcessEffects(float _deltaTime)
+			{
+				for (int i = 0; i < effects.size(); ++i)
+				{
+					effects[i].get()->Update(_deltaTime);
+
+					if (effects[i].get()->isFinished)
+					{
+						effects[i].get()->OnExit();
+						effects.erase(effects.begin() + i);
+						i--;
+					}
+				}
+				if (stats->RequestStats("Health")->currentValue <= 0)
+				{
+					ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
+					active = false;
+				}
+			}
+
+
+		private:
+			XMFLOAT3 pos, rot, off, colliderScale;
+			std::vector<Renderable*> models;
+			ADPhysics::OBB collider;
+		};
 	}
 }
 
-namespace ADAI
-{
-	class AIUnit
-	{
-	public:
-		ADResource::ADGameplay::Destructable* owner;
-		std::vector<ADAI::State*> states;
-		ADAI::State* currentState;
-
-		void SwitchState()
-		{
-			//currentState = ...
-		}
-
-		void Update(float _deltaTime)
-		{
-			currentState->Update(_deltaTime);
-		}
-
-	};
-};

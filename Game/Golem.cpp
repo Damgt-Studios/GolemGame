@@ -462,6 +462,7 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 			for (int i = 0; i < 4; ++i)
 			{
 				flockingGroups[i]->ReturnCall();
+
 			}
 		}
 		else

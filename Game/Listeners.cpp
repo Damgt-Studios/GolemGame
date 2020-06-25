@@ -69,7 +69,7 @@ void SetUIVisibilityListener::HandleEvent(ADEvents::ADEvent* _event)
         {
             uiComponent->visible = isOnSwitch;
         }
-        else if(switchFailures)
+        else if (switchFailures)
         {
             uiComponent->visible = !isOnSwitch;
         }
@@ -187,7 +187,7 @@ void MinionCountListener::HandleEvent(ADEvents::ADEvent* _event)
 
 std::string MinionCountListener::ToString()
 {
-	return std::string();
+    return std::string();
 }
 
 void VillagerDeathListener::HandleEvent(ADEvents::ADEvent* _event)
