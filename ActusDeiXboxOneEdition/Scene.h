@@ -71,39 +71,21 @@ namespace ADGameplay
 			Light light;
 			ZeroMemory(&light, sizeof(Light));
 			light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-			light.diffuse =
-				light.ambientUp =
-				light.ambientDown =
-				light.specular =
-				XMFLOAT4(1, 1, 1, 1);
-			light.ambientIntensityDown = .1;
-			light.ambientIntensityUp = .1;
-			light.lightDirection = XMFLOAT4(0, -1, 0, 1);
+			light.diffuse = XMFLOAT4(0.5, 0.5, 0.5, 1);
 			light.diffuseIntensity = 1;
-			light.specularIntensity = .2;
-			light.diffuse =
-				light.ambientUp =
-				light.ambientDown =
-				light.specular =
-				XMFLOAT4(1, 1, 1, 1);
-			
+			light.ambient = XMFLOAT4(0.156f, 0.003f, 0.215f, 1);
+			light.ambientIntensity = 3;
+			light.lightDirection = XMFLOAT4(0, -0.5f, -1, 1);
+			light.position = XMFLOAT4(0, 0, 0, 1);
 
 			// Point light
 			Light light1;
 			ZeroMemory(&light1, sizeof(Light));
-			light1.ambientIntensityDown = .1;
-			light1.ambientIntensityUp = .1;
-			light1.lightDirection = XMFLOAT4(0, 0, 10, 1);
-			light1.diffuseIntensity = .5;
-			light1.specularIntensity = .2;
-			light1.diffuse =
-				light1.ambientUp =
-				light1.ambientDown =
-				light1.specular =
-				XMFLOAT4(1, 1, 1, 1);
-			light1.lightType = (int)LIGHTTYPE::POINT;
-			light1.position = XMFLOAT4(10, 0, 0, 1);
-			light1.lightRadius = 100;
+			light.lightType - (int)LIGHTTYPE::POINT;
+			light.diffuse = XMFLOAT4(1, 0.647, 0, 1);
+			light.diffuseIntensity = 1;
+			light.position = (XMFLOAT4(2.5, 0, 0, 1));
+			light.lightRadius = 20;
 
 			sceneLights.push_back(light);
 			sceneLights.push_back(light1);
@@ -267,15 +249,17 @@ namespace ADGameplay
 
 			file.close();
 
-			ResourceManager::AddLight(sceneLights[0]);
-			ResourceManager::AddLight(sceneLights[1]);
+			for (unsigned int i = 0; i < sceneLights.size(); i++)
+			{
+				ResourceManager::AddLight(sceneLights[i]);
+			}
 
 			Plane = GameUtilities::AddSimpleAsset(PlaneArguments.Model.data(), PlaneArguments.Texture.data(), PlaneArguments.position, PlaneArguments.scale, PlaneArguments.rotation);
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
 
 			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(),GolemArguments.Texture.data(), animations, GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
-			for (int i = 0; i < 10; i++)
+			/*for (int i = 0; i < 10; i++)
 			{
 				stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile(stoneMinionArguments[i].Model.data(), stoneMinionArguments[i].Texture.data(), stoneMinionAnimations, stoneMinionArguments[i].position, stoneMinionArguments[i].scale, stoneMinionArguments[i].rotation));
 				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE], STONE_MINION));
@@ -285,26 +269,27 @@ namespace ADGameplay
 				fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE], FIRE_MINION));
 				woodMinions.push_back(GameUtilities::AddDestructableFromModelFile(woodMinionArguments[i].Model.data(), woodMinionArguments[i].Texture.data(), woodMinionAnimations, woodMinionArguments[i].position, woodMinionArguments[i].scale, woodMinionArguments[i].rotation));
 				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD], WOOD_MINION));
-			}
+			}*/
 
-			for (int i = 0; i < renderableArguments.size(); i++)
+			/*for (int i = 0; i < renderableArguments.size(); i++)
 			{
 				renderables.push_back(GameUtilities::AddDestructableFromModelFile(renderableArguments[i].Model.data(), renderableArguments[i].Texture.data(), woodMinionAnimations, renderableArguments[i].position, renderableArguments[i].scale, renderableArguments[i].rotation));
 				renderables[i]->physicsType = renderableArguments[i].type;
-			}
+			}*/
 
-			for (int i = 0; i < 10; i++)
+			/*for (int i = 0; i < 10; i++)
 			{
 				GameUtilities::AddGameObject(stoneMinions[i]);
 				GameUtilities::AddGameObject(waterMinions[i]);
 				GameUtilities::AddGameObject(fireMinions[i]);
 				GameUtilities::AddGameObject(woodMinions[i]);
-			}
+			}*/
 
-			for (int i = 0; i < renderables.size(); i++)
+			/*for (int i = 0; i < renderables.size(); i++)
 			{
 				GameUtilities::AddGameObject(renderables[i]);
-			}
+			}*/
+
 			//GameUtilities::AddGameObject(m1);
 		}
 

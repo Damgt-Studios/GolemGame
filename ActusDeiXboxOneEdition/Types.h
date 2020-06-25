@@ -267,13 +267,9 @@ namespace ADResource
 
 		struct Light
 		{
-			XMFLOAT4 position, lightDirection;
-			XMFLOAT4 ambientUp, ambientDown, diffuse, specular;
-			unsigned int lightType;
-			float lightRadius;
-			float cosineInnerCone, cosineOuterCone;
-			float ambientIntensityUp, ambientIntensityDown, diffuseIntensity, specularIntensity;
-			float lightLength, p1, p2, p3;
+			XMFLOAT4 position, lightDirection, diffuse, ambient;
+			unsigned int lightType; float lightRadius;
+			float diffuseIntensity, ambientIntensity;
 		};
 	}
 
