@@ -17,6 +17,17 @@ struct OutputVertex
     float4 worldPos : WorldPos;
 };
 
+struct Light
+{
+    float4 position, lightDirection, diffuse, ambient;
+    unsigned int lightType;  float lightRadius;
+    float diffuseIntensity, ambientIntensity;
+};
+
+cbuffer LightBuffer : register(b0)
+{
+    Light l[10];
+};
 float3 CalcHemisphericAmbient(float3 normal, float3 color)
 {
     float3 AmbientUp = float3(1,1,1);
@@ -28,7 +39,7 @@ float3 CalcHemisphericAmbient(float3 normal, float3 color)
     return Ambient * color;
 }
 
-float3 CalcDirectional(float3 position, float3 normal, float4 diffuse)
+float3 CalcDirectional(float3 direction, float3 normal, float4 diffuse)
 {
    // Phong diffuse
     float NDotL = dot(normalize(float3(1, 0.5f, 1)), normal);
@@ -41,26 +52,79 @@ float4 main(OutputVertex v) : SV_TARGET
 {
     float4 texelColor = diffuse.Sample(textureSampler, v.tex.xy);
     
-    float4 emissiveColor = emissive.Sample(textureSampler, v.tex.xy);
+    clip(texelColor.a < 0.1 ? -1 : 1);
     
     //Load normal from normal map
-    float4 normalMap = normal.Sample(textureSampler, v.tex.xy);
+    float3 normalMap = normal.Sample(textureSampler, v.tex.xy);
+    
+    float4 emissiveColor = emissive.Sample(textureSampler, v.tex.xy);
 
     //Change normal map range from [0, 1] to [-1, 1]
-    normalMap = normalize((2.0f * normalMap) - 1.0f);
+    normalMap = (2.0f * normalMap) - 1.0f;
+    //normalMap.z = -normalMap.z;
     
-    //Create Bitangent / Binormal
-    float3 binormal = cross(v.tangent, v.normals);
+    float3 bitangent = cross(v.tangent, v.normals);
+
+    //Create the "Texture Space"
+    float3x3 TBN = float3x3(normalize(v.tangent), normalize(bitangent), normalize(v.normals));
+    //texSpace = transpose(texSpace);
     
-    float3x3 TBN = float3x3(v.tangent, binormal, v.normals);
-    normalMap.xyz = mul(normalMap.xyz, TBN);
+    //Convert normal from normal map to texture space and store in input.normal
+    v.normals = normalize(mul(normalMap, TBN));
     
-    float3 lightDirection = normalize(float3(0, -0.5f, 1));
-    float lightMagnitude = saturate(dot(-lightDirection, normalMap.xyz)) + (float4(0.156f, 0.003f, 0.215f, 1) * 0.3f);
-    float4 dirFinal = lightMagnitude * float4(4, 4, 4, 4);
+    //Create the Directional Lighting on the Normal Map
+    //float3 lightDirection = float3(0, 0.5f, -1);
+    //float lightMagnitude = saturate(dot(-lightDirection, v.normals)) + (float4(0.156f, 0.003f, 0.215f, 1) * 3);
+    //float4 dirFinal = lightMagnitude * float4(0.5f, 0.5f, 0.5f, 1);
     
-    clip(texelColor.a < 0.1f ? -1 : 1);
+    float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
     
+    for (int i = 0; i < 10; i++)
+    {
+        //Directional
+        if (l[i].lightType == 0)
+        {
+            float3 lightDirection = -l[i].lightDirection;
+            float lightMagnitude = saturate(dot(lightDirection, v.normals)) + (l[i].ambient * l[i].ambientIntensity);
+            float4 dirLight = lightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
+            dirFinal += dirLight;
+        }
+        //Point Light
+        else if (l[i].lightType == 1)
+        {
+            float3 pointlightDirection = normalize(l[i].position.xyz - v.worldPos.xyz);
+            float pointlightMagnitude = saturate(dot(pointlightDirection, v.normals));
     
-    return texelColor * dirFinal + emissiveColor;
+            float atten = 1.0 - saturate(length(l[i].position.xyz - v.worldPos.xyz) / l[i].lightRadius);
+    
+            pointlightMagnitude *= atten;
+    
+            float4 pointLight = pointlightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
+            
+            pointFinal += pointLight;
+        }
+        //Not supported
+        else
+        {
+            
+        }
+    }
+    
+    //Point Light
+    //float3 pointlightDirection = normalize(float3(-2,0,-30) - v.worldPos.xyz);
+    //float pointlightMagnitude = saturate(dot(pointlightDirection, normalMap.xyz));
+    
+    //float atten = 1.0 - saturate(length(float3(-2,0,-30) - v.worldPos.xyz) / 100.0f);
+    
+    //pointlightMagnitude *= atten;
+    
+    //float4 pointFinal = pointlightMagnitude * float4(1, 1, 1, 1);
+    
+    //float4 viewDir = normalize(CameraPosition - v.worldPos);
+    //float3 reflection = reflect(lightDirection, v.norm.xyz);
+    //float Intensity = max(pow(saturate(dot(viewDir.xyz, reflection)), 10), 0);
+    //float4 specularFinal = float4(1, 1, 1, 1) * Intensity;
+    
+    //Multiply the sum of the Additional Modifications
+    return texelColor * (dirFinal + pointFinal) + emissiveColor;
 }

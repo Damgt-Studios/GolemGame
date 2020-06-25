@@ -77,4 +77,6 @@ private:
 
 	// Temp
 	int lightdir = 1;
+public:
+	BigCloudEmitter bigCloud;
 };

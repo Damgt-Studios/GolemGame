@@ -208,10 +208,23 @@ void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, Co
 	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sdesc.Filter = D3D11_FILTER_ANISOTROPIC;
+	sdesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+	sdesc.MipLODBias = 0.0f;
 	sdesc.MaxLOD = D3D11_FLOAT32_MAX;
 	sdesc.MinLOD = 0;
+
+	//D3D11_SAMPLER_DESC sdesc;
+	//ZeroMemory(&sdesc, sizeof(sdesc));
+	//sdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	//sdesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	//sdesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	//sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	//sdesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	////sdesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+	//sdesc.MipLODBias = 0.0f;
+	//sdesc.MaxLOD = D3D11_FLOAT32_MAX;
+	//sdesc.MinLOD = 0;
 
 	result = device->CreateSamplerState(&sdesc, &model.sampler);
 	assert(!FAILED(result));
@@ -409,25 +422,44 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 
 	std::string texture_Path = std::string(ADUtils::READ_PATH.begin(), ADUtils::READ_PATH.end()).append("files\\textures\\");
 
-	if (mats.size() > 1) 
+	if (mats.size() == 3) 
 	{
 		//Diffuse
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
 		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->albedo);
+		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, nullptr, &model->albedo);
 
 		//Emissive
 		textureName = std::string(texture_Path).append((char*)&mats[1]);
 		wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->emissive);
+		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, nullptr, &model->emissive);
 
 		//Normal
 		textureName = std::string(texture_Path).append((char*)&mats[2]);
 		wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-		CreateDDSTextureFromFile(device.Get(), wTextureName.c_str(), nullptr, &model->normal);
+		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, nullptr, &model->normal);
+	}
+	else if (mats.size() == 2)
+	{
+		//Diffuse
+		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
+		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
+
+		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, nullptr, &model->albedo);
+
+		//Diffuse
+		textureName = std::string(texture_Path).append((char*)&mats[1]);
+		wTextureName = std::wstring(textureName.begin(), textureName.end());
+
+		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, nullptr, &model->normal);
 	}
 	else
 	{
@@ -435,10 +467,8 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
 		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());
 
-		ComPtr<ID3D11Texture2D> texture = nullptr;
-
 		CreateDDSTextureFromFileEx(device.Get(), wTextureName.c_str(), D3D10_FLOAT32_MAX, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
-			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, (ID3D11Resource**)texture.Get(), &model->albedo);
+			0, D3D11_RESOURCE_MISC_GENERATE_MIPS, false, nullptr, &model->albedo);
 	}
 }
 
