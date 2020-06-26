@@ -194,7 +194,8 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 	_destructable->team = 0;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* charging = new ADAI::FlockingState();
-	charging->owner = _destructable;
+	idling->owner = temp;
+	charging->owner = temp;
 	temp->states.push_back(idling);
 	temp->states.push_back(charging);
 	temp->currentState = idling;
@@ -310,6 +311,8 @@ ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI:
 	_destructable->team = 1;
 	ADAI::IdleState* idling = new ADAI::IdleState();
 	ADAI::FlockingState* fleeing = new ADAI::FlockingState();
+	idling->owner = temp;
+	fleeing->owner = temp;
 	temp->states.push_back(idling);
 	temp->states.push_back(fleeing);
 	temp->currentState = idling;

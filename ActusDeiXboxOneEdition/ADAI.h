@@ -5,44 +5,40 @@
 
 namespace ADAI
 {
-
+	//Forward Declaration
+	class AIUnit;
+	
 	class State
 	{
+	protected:
+		
 	public:
+		AIUnit* owner = nullptr;
+		XMVECTOR personalTarget;
+		std::vector<ADResource::ADGameplay::GameObject*> objectsToApproach;
+		std::vector<ADResource::ADGameplay::GameObject*> objectsToAvoid;
 		virtual void Update(float _deltaTime) = 0;
 	};
 
 	class IdleState : public State
 	{
-		virtual void Update(float _deltaTime)
-		{
-
-		};
+		virtual void Update(float _deltaTime);
 	};
 
 	class WayPointState : public State
 	{
 		std::vector<XMFLOAT4> wayPoints;
 		//Current Pathfinding Path
-		virtual void Update(float _deltaTime)
-		{
-
-		};
+		virtual void Update(float _deltaTime);
 	};
 
 	class FlockingState : public State
 	{
 	public:
-		ADResource::ADGameplay::GameObject* owner = nullptr;
-		XMVECTOR personalTarget;
 		XMFLOAT4 VelocityWhenFlocking = { 0,0,0,0 };
 
 		//Current Pathfinding Path
-		void Update(float _deltaTime)
-		{
-			owner->Velocity = VelocityWhenFlocking;
-			owner->AddToPositionVector((XMFLOAT3&)owner->Velocity);
-		}
+		void Update(float _deltaTime);
 	};
 
 	class AIUnit
@@ -57,10 +53,7 @@ namespace ADAI
 			//currentState = ...
 		}
 
-		void Update(float _deltaTime)
-		{
-			currentState->Update(_deltaTime);
-		}
+		void Update(float _deltaTime);
 
 	};
 
@@ -309,14 +302,14 @@ namespace ADAI
 		return sqrt((xDist * xDist) + (yDist * yDist));
 	}
 
-	static ADResource::ADGameplay::GameObject* FindNearest(ADResource::ADGameplay::GameObject _gameObject, std::vector<ADResource::ADGameplay::GameObject*> _searchGroup, float desirabilityWeight)
+	static ADResource::ADGameplay::GameObject* FindNearest(ADResource::ADGameplay::GameObject* _gameObject, std::vector<ADResource::ADGameplay::GameObject*> _searchGroup, float distnaceLimit, float desirabilityWeight)
 	{
 		float currentTargetDistance = 9999999;
 		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
 		for (int i = 0; i < _searchGroup.size(); i++)
 		{
-			float distance = DistanceCalculation(_gameObject.GetPosition(), _searchGroup[i]->GetPosition());
-			if ((distance * (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
+			float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
+			if ((distance < distnaceLimit) && (distance * (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
 			{
 				currentTarget = _searchGroup[i];
 			}

@@ -173,19 +173,20 @@ namespace ADGameplay
 
 			villageFlock1.groupTarget = &golem->transform;
 			villageFlock1.alignmentDirectionalStrength = 0.2f;
-			villageFlock1.cohesionStrength = 0.2f;
+			villageFlock1.cohesionStrength = 0.1f;
 			villageFlock1.commandDestination;
 			villageFlock1.commandDirectionalStrength = 0;
-			villageFlock1.moveSpeed = 1.f;
-			villageFlock1.maxSpeed = 1.0f;
+			villageFlock1.moveSpeed = 0.5f;
+			villageFlock1.maxSpeed = 0.8f;
 			villageFlock1.returnDirectionalStrength = -0.9f;
-			villageFlock1.separationStrength = 0.4f;
+			villageFlock1.separationStrength = 0.6f;
 			villageFlock1.targetCohesionStrength = 0;
 
 			for (int i = 0; i < 10; i++)
 			{
-				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 0, -45), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 0, -245), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
+				villagerAI[i]->states[0]->objectsToAvoid.push_back(golem);
 				GameUtilities::AddGameObject(villagers[i]);
 			}
 		}
@@ -402,6 +403,10 @@ namespace ADGameplay
 			for (int i = 0; i < stoneMinionsAI.size(); i++)
 			{
 				woodMinionsAI[i]->Update(_delta_time);
+			}
+			for (int i = 0; i < stoneMinionsAI.size(); i++)
+			{
+				villagerAI[i]->Update(_delta_time);
 			}
 		}
 

@@ -437,8 +437,7 @@ namespace ADResource
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
 							{
 								XMFLOAT3 hbpos = hitbox->GetPosition();
-								XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
-								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)&hbpos2);
+								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)&hbpos);
 								eventFired[i] = true;
 							}
 						}
