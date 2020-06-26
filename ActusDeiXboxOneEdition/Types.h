@@ -11,6 +11,7 @@
 #include "ADQuadTree.h"
 #include "ADQuadTree.h"
 #include "MeshLoader.h"
+#include "ADEventSystem.h"
 
 #ifndef AD_MEMORY_DEFAULT
 #include "ADMemoryManager.h"
@@ -22,10 +23,10 @@ using namespace Microsoft::WRL;
 // Global type definitions
 typedef unsigned long long AD_ULONG;
 
-enum class ENGINE_STATE {
+enum ENGINE_STATE {
 	GAMEPLAY = 0,
 	PAUSED,
-	MENUSCREEN
+	CLOSE
 };
 
 enum class ADResourceType {
@@ -164,7 +165,7 @@ namespace ADResource
 #else
 			ADVector<SimpleVertexAnim> vertices;
 			ADVector<int> indices;
-			ADVector<bones> skeleton;
+			//ADVector<bones> skeleton;
 			ADVector<XMMATRIX> inverse_transforms;
 			ADVector<anim_clip> animations;
 #endif
@@ -282,12 +283,30 @@ namespace ADResource
 		};
 
 
-		struct Stat
+		class Stat
 		{
-			int currentValue;
-			int maxValue;
-			int minValue;
-			int failValue;
+			//friend class StatSheet;
+
+		public:
+			std::string eventName = "";
+			int currentValue = 0;
+			int maxValue = 0;
+			int minValue = 0;
+			int eventValue = 0;
+
+			void Set(int _val)
+			{
+				currentValue = _val;
+				
+				if (eventName != "")
+				{
+					if (eventValue == -1 || currentValue == eventValue)
+					{
+						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)(currentValue));
+					}
+				}
+			}
+			
 		};
 
 		class StatSheet
@@ -298,7 +317,7 @@ namespace ADResource
 			~StatSheet() {};
 			void AddStat(std::string _name)
 			{
-				Stat stat = { 0,0,0,0 };
+				Stat stat; 
 				stats[_name] = stat;
 			};
 			void SetMin(std::string _name, int _val)
@@ -313,9 +332,13 @@ namespace ADResource
 			{
 				stats[_name].currentValue = _val;
 			};
-			void SetEvent(std::string _name, int _val)
+			void SetEvent(std::string _name, std::string _eventName)
 			{
-				stats[_name].failValue = _val;
+				stats[_name].eventName = _eventName;
+			};
+			void SetEventVal(std::string _name, int _val)
+			{
+				stats[_name].eventValue = _val;
 			};
 			Stat* RequestStats(std::string _name)
 			{
@@ -332,6 +355,7 @@ namespace ADResource
 		protected:
 
 		public:
+			std::string name;
 			std::vector<Stat*> targetedStats;
 			float tickDuration;
 			float currentTick;
@@ -342,7 +366,6 @@ namespace ADResource
 			UINT tickCount;
 			UINT sourceID;
 			UINT instanceID;
-
 
 			virtual UINT OnApply(StatSheet* _targetsStatSheet) { return 0; };
 
@@ -566,13 +589,15 @@ namespace ADResource
 		public:
 			bool active = true;
 			float safeRadius = 5.0f;
+			float desirability = 0;
+
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
 			//int GemCount;
 			AD_ULONG meshID;
 			//OBJECT_DEFENSE defenseType;
-			XMFLOAT4 Velocity;
+			XMFLOAT4 Velocity = { 0,0,0,0 };
 			XMMATRIX transform;
 			XMMATRIX postTransform;
 

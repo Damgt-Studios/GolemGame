@@ -2,7 +2,9 @@ StatSheet=GreatGolem:
 AddStat=Health
 StatMin=0
 StatMax=20000
-StatCurrent= 100
+StatCurrent=20000
+SetEventVal=-1
+SetEvent=ChangedHealth
 
 AddStat=Token
 StatMin=0
@@ -18,6 +20,8 @@ AddStat=Essence
 StatMin=0
 StatMax=99999
 StatCurrent=200
+SetEventVal=-1
+SetEvent=ChangeEssence
 
 AddStat=MovementSpeed
 StatMin=1
@@ -73,8 +77,8 @@ TickDuration=0.2
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
-MinValue=20
-MaxValue=20
+MinValue=200
+MaxValue=200
 ;
 
 

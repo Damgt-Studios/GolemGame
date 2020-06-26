@@ -29,8 +29,12 @@ namespace
 	std::vector<ADResource::ADRenderer::SimpleModel*> fbxmodels;
 	std::vector<ADResource::ADRenderer::SimpleModel*> colliders;
 
-	std::vector<ADResource::ADGameplay::GameObject> passables;
-	std::vector<ADResource::ADGameplay::GameObject> collidables;
+	std::vector<ADResource::ADGameplay::GameObject*> minionPool;
+
+	std::vector<XMFLOAT4X4> stoneMinionTransforms;
+	std::vector<XMFLOAT4X4> waterMinionTransforms;
+	std::vector<XMFLOAT4X4> fireMinionTransforms;
+	std::vector<XMFLOAT4X4> woodMinionTransforms;
 
 	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
 

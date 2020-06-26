@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GameplayBaseClasses.h"
 #include "GameObjectClasses.h"
 #include "ADUserInterface.h"
@@ -6,6 +7,7 @@
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
+//#include "MinionManager.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -20,33 +22,17 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
-		enum SoundIds
-		{
-			GemCollectSound = 0,
-			DestructableBreakSound,
-			EnemyDeathSound,
-			PlayerChargeSound,
-			PlayerDeathSound,
-			FireBrathSound,
-			GlideSound,
-			HurtSound,
-			JumpSound,
-			LandSound,
-			ObjectHitSound,
-			RunningJumpSound,
-			WalkingSound,
-			WaterSplashSound
-		};
 
 		class Golem : public Renderable
 		{
-			ADResource::ADGameplay::StatSheet* stats;
 			int playerElement = 0;
 			AnimationStateMachine* anim_controller;
+
 		public:
 			Golem();
 			~Golem();
 
+			ADResource::ADGameplay::StatSheet* stats;
 			Action* golemPunch;
 			Action* golemKick;
 			Action* golemSlam;
@@ -55,8 +41,12 @@ namespace ADResource
 			Action* golemFireball;
 			Action* golemTaunt;
 			Action* golemRoot;
+
+
 			GameObject* targetMarker;
 			ADAI::FlockingGroup** flockingGroups;
+
+
 			virtual void Update(float time_delta);
 
 			void ProcessEffects(float _deltaTime);
@@ -76,15 +66,16 @@ namespace ADResource
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 			bool jumping = false;
 			int commandTargetGroup = 0;
-			int totalMinionCount = 0;
-			int stoneMinionCount = 0;
-			int waterMinionCount = 0;
-			int fireMinionCount = 0;
-			int woodMinionCount = 0;
+			//int totalMinionCount = 0;
+			//int stoneMinionCount = 0;
+			//int waterMinionCount = 0;
+			//int fireMinionCount = 0;
+			//int woodMinionCount = 0;
 
 			//void SetAudio(AudioManager* _audioManager);
 
-			void GetAnimationController(AnimationStateMachine& controller);
+			//void GetAnimationController(AnimationStateMachine& controller);
+			void InitializeController();
 
 			XMMATRIX GetColliderInfo();
 
@@ -122,6 +113,7 @@ namespace ADResource
 			bool gliding = false;
 			bool charging = false;
 			bool fire = false;
+
 
 
 			float floatiness = 0.25f;
