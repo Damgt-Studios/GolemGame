@@ -100,6 +100,7 @@ public:
 public:
 	// Game object shit
 	static int AddGameObject(ADResource::ADGameplay::GameObject* OBJ);
+	static void RemoveGameObject(ADResource::ADGameplay::GameObject* OBJ);
 
 public:
 	// Getters/ setters

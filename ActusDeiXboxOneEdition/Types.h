@@ -627,9 +627,12 @@ namespace ADResource
 			while (!collisionQueue.empty()) {
 				CollisionPacket current = collisionQueue.front();
 				collisionQueue.pop();
+
+				if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::TRIGGER && current.B->physicsType == (int)OBJECT_PHYSICS_TYPE::TRIGGER)
+					continue;
 				//If the object is of the object type STATIC it will only apply a velocty change to the other objects.
 				//Mainly will be used for Spyro against Ground, Enemies against Ground, Chests and Gems against Spyro, etc.
-				if (current.B->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC)
+				if (current.B->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC || current.B->physicsType == (int)OBJECT_PHYSICS_TYPE::TRIGGER)
 				{
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
@@ -643,7 +646,7 @@ namespace ADResource
 
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.A->transform.r[3]), current.A->pmat, current.m);
 				}
-				else if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC) 
+				else if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC || current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::TRIGGER) 
 				{
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
