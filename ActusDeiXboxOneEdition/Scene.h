@@ -182,10 +182,12 @@ namespace ADGameplay
 			villageFlock1.returnDirectionalStrength = -0.f;
 			villageFlock1.separationStrength = 0.6f;
 			villageFlock1.targetCohesionStrength = -0.8f;
+			std::vector<std::string> bucketheadAnimations;
+			bucketheadAnimations.push_back("files/models/Bucket_Idle.animfile");
 
 			for (int i = 0; i < 10; i++)
 			{
-				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 0, -245), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3((i - 5) * 10, 0, -245), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
 				villagerAI[i]->states[0]->objectsToAvoid.push_back(golem);
 				villagerAI[i]->states[1]->objectsToAvoid.push_back(golem);
