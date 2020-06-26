@@ -673,7 +673,7 @@ public:
 
 			for (unsigned int i = 0; i < OBJ_COUNT; i++)
 			{
-				if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
+				if (OBJS[i]->colliderPtr) 
 				{
 					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
 					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
