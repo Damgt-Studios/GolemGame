@@ -88,31 +88,31 @@ namespace ADPhysics
 			type = ColliderType::Aabb;
 		};
 
-		virtual bool isCollision(Sphere* other, Manifold& m) {
+		virtual bool isCollision(Sphere* other, Manifold& m) override {
 			return SphereToAabbCollision(*other, *this, m);
 		}
 
-		virtual bool isCollision(AABB* other, Manifold& m) {
+		virtual bool isCollision(AABB* other, Manifold& m) override {
 			return AabbToAabbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(OBB* other, Manifold& m) {
+		virtual bool isCollision(OBB* other, Manifold& m) override {
 			return AabbToObbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) {
+		virtual bool isCollision(Plane* other, Manifold& m) override {
 			return AabbToPlaneCollision(*this, *other, m);
 		}
 
-		virtual float GetWidth() {
+		virtual float GetWidth() override {
 			return HalfSize.x * 2;
 		}
 
-		virtual float GetHeight() {
+		virtual float GetHeight() override {
 			return HalfSize.y * 2;
 		}
 
-		virtual float GetLength() {
+		virtual float GetLength() override {
 			return HalfSize.z * 2;
 		}
 	};
@@ -139,31 +139,31 @@ namespace ADPhysics
 			type = ColliderType::Obb;
 		}
 
-		virtual bool isCollision(Sphere* other, Manifold& m) {
+		virtual bool isCollision(Sphere* other, Manifold& m) override {
 			return SphereToObbCollision(*other, *this, m);
 		}
 
-		virtual bool isCollision(AABB* other, Manifold& m) {
+		virtual bool isCollision(AABB* other, Manifold& m) override {
 			return AabbToObbCollision(*other, *this, m);
 		}
 
-		virtual bool isCollision(OBB* other, Manifold& m) {
+		virtual bool isCollision(OBB* other, Manifold& m) override {
 			return ObbToObbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) {
+		virtual bool isCollision(Plane* other, Manifold& m) override {
 			return ObbToPlaneCollision(*this, *other, m);
 		}
 
-		virtual float GetWidth() {
+		virtual float GetWidth() override {
 			return HalfSize.x * 2;
 		}
 
-		virtual float GetHeight() {
+		virtual float GetHeight() override {
 			return HalfSize.y * 2;
 		}
 
-		virtual float GetLength() {
+		virtual float GetLength() override {
 			return HalfSize.z * 2;
 		}
 
@@ -883,8 +883,11 @@ namespace ADPhysics
 		//Manifold Setup
 		m.Normal = Axises[AxisOfMinimumCollision];
 
-		if (VectorDot((XMVECTOR&)box2.Pos - (XMVECTOR&)box1.Pos, (XMVECTOR&)m.Normal) < 0)
+
+		if (VectorDot(XMLoadFloat3(&box2.Pos) - XMLoadFloat3(&box1.Pos), (XMVECTOR&)m.Normal) < 0)
 			m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
+		//if (VectorDot((XMVECTOR&)box2.Pos - (XMVECTOR&)box1.Pos, (XMVECTOR&)m.Normal) < 0)
+		//	m.Normal = XMFLOAT3(-m.Normal.x, -m.Normal.y, -m.Normal.z);
 
 		m.PenetrationDepth = MinOverlap;
 

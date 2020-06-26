@@ -4,19 +4,25 @@
 // Public Methods
 //Constructor and Destructor
 ADResource::ADGameplay::Golem::Golem() {
+
+	anim_controller = new AnimationStateMachine();
+
 	collider = OBB(transform * translateToMiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
-	stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
-	InitAnims();
-	InitActions();
+	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
-	flockingGroups = new ADAI::FlockingGroup * [5];
+	InitAnims();
+	//InitActions();
+
+	flockingGroups = new ADAI::FlockingGroup*[5];
 	for (int i = 0; i < 5; ++i)
 	{
 		flockingGroups[i] = new ADAI::FlockingGroup();
 		flockingGroups[i]->groupTarget = &transform;
 	}
+	
+	desirability = 0.2f;
 }
 
 ADResource::ADGameplay::Golem::~Golem()
@@ -67,6 +73,8 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 			//defenseType = OBJECT_DEFENSE::NONE;
 		}
 	}
+
+	anim_controller->SetModel_To_CurrentAnimation();
 }
 
 void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
@@ -74,9 +82,6 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 	for (int i = 0; i < effects.size(); ++i)
 	{
 		effects[i].get()->Update(_deltaTime);
-
-		std::string msg = std::to_string(effects[i].get()->tickTimer);
-		ADUI::MessageReceiver::Log(msg);
 
 		if (effects[i].get()->isFinished)
 		{
@@ -159,9 +164,19 @@ XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
 	temp.r[3] = Float3ToVector(collider.Pos);
 	temp.r[3].m128_f32[3] = 1;
 
-	temp = XMMatrixScaling(collider.GetWidth() / 2, collider.GetHeight() / 2, collider.GetWidth() / 2) * temp;
+	temp = XMMatrixScaling(collider.GetWidth() / 2, collider.GetHeight() / 2, collider.GetLength() / 2) * temp;
 
 	return temp;
+}
+
+//void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
+//{
+//	anim_controller = &controller;
+//}
+
+void ADResource::ADGameplay::Golem::InitializeController()
+{
+	anim_controller->Initialize(this);
 }
 
 StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
@@ -178,7 +193,7 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 // Private Methods
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
-	playerElement = 3;
+	playerElement = 1;
 	// Idle Animation
 	if (!isActing)
 	{
@@ -193,6 +208,9 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 
 	responseTimer -= delta_time;
 	currentAnimTime -= delta_time;
+
+	if (currentAnimTime < -1000000 || currentAnimTime > 1000000)
+		currentAnimTime = 0.0;
 
 	if (currentAnimTime <= 0.0)
 		isActing = false;
@@ -511,7 +529,7 @@ void ADResource::ADGameplay::Golem::SummonMinions()
 	idleTime = 0.0;
 }
 
-void ADResource::ADGameplay::Golem::InitActions()
+/*void ADResource::ADGameplay::Golem::InitActions(Golem& golem)
 {
 	consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
 
@@ -543,7 +561,7 @@ void ADResource::ADGameplay::Golem::InitActions()
 		gActions[i].slam->active = false;
 		gActions[i].special->active = false;
 	}
-}
+}*/
 
 void ADResource::ADGameplay::Golem::FlinchFromFront()
 {

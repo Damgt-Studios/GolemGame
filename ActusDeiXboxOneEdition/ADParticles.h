@@ -641,6 +641,7 @@ public:
 		lifeSpan = newLife;
 		emitterPos = newPosition;
 		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
+
 	}
 	XMFLOAT4 GetPosition()
 	{

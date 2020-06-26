@@ -29,7 +29,6 @@
     <ClCompile Include="pchgame.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="Spyro.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
@@ -38,6 +37,7 @@
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="TheGreatGolem.cpp" />
+    <ClCompile Include="MinionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -190,18 +190,49 @@
     <Image Include="Assets\BadgeLogo.scale-400.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\LargeTile.scale-125.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-150.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-100.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-200.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-400.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BadgeLogo.scale-100.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BadgeLogo.scale-125.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BadgeLogo.scale-150.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BadgeLogo.scale-200.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\BadgeLogo.scale-400.jpg">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Package.StoreAssociation.xml" />
+    <None Include="Game_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pchgame.h" />
     <ClInclude Include="XTime.h" />
     <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="Spyro.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
@@ -211,5 +242,6 @@
     <ClInclude Include="Golem.h" />
     <ClInclude Include="Listeners.h" />
     <ClInclude Include="TheGreatGolem.h" />
+    <ClInclude Include="MinionManager.h" />
   </ItemGroup>
 </Project>

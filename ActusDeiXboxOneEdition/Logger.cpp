@@ -1,17 +1,19 @@
 #include "pch.h"
 #include "Logger.h"	
-
-string Logger::buffer = "";
-string Logger::newMessage = "";
-
-time_t Logger::current_time = time(NULL);
-time_t Logger::message_time = time(NULL) -10;
-
-time_t Logger::prev_time = time(NULL) -60 ;
-bool sent = false;
-void Logger::log(string message = "")
-{
-	Logger::current_time = time(NULL);
+//
+//string Logger::buffer = "";
+//string Logger::newMessage = "";
+//
+//time_t Logger::current_time = time(NULL);
+//time_t Logger::message_time = time(NULL) -10;
+//
+//time_t Logger::prev_time = time(NULL) -60 ;
+//bool sent = false;
+//void Logger::log(std::string message)
+//{
+	// Create sample file; replace if exists.
+	
+	/*Logger::current_time = time(NULL);
 
 	Logger::newMessage = "";
 	char str_time[26];
@@ -46,10 +48,5 @@ void Logger::log(string message = "")
 
 
 
-	}
-
-
-
-};
-
-
+	}*/
+//};

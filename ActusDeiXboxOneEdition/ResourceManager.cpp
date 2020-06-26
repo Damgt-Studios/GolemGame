@@ -6,26 +6,6 @@
 AD_ULONG ResourceManager::current_id = 0;
 AD_ULONG ResourceManager::effect_id = 0;
 
-AD_ULONG ResourceManager::AddPBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe)
-{
-	ADUtils::SHADER shader = { 0 };
-
-	if (!wireframe)
-	{
-		strcpy_s(shader.vshader, "files\\shaders\\base_vs.hlsl");
-		strcpy_s(shader.pshader, "files\\shaders\\base_ps.hlsl");
-	}
-	else
-	{
-		strcpy_s(shader.vshader, "files\\shaders\\debug_vs.hlsl");
-		strcpy_s(shader.pshader, "files\\shaders\\debug_ps.hlsl");
-	}
-
-	shader.wireframe = wireframe;
-
-	return InitializePBRModel(modelname, position, scale, rotation, shader);
-}
-
 AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
 	ADUtils::SHADER shader = { 0 };
 
@@ -64,18 +44,6 @@ AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::string ma
 	return InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 }
 
-AD_ULONG ResourceManager::AddColliderBox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe /*= false*/)
-{
-	ADUtils::SHADER shader = { 0 };
-
-	strcpy_s(shader.vshader, "files\\shaders\\pink_vs.hlsl");
-	strcpy_s(shader.pshader, "files\\shaders\\pink_ps.hlsl");
-
-	shader.wireframe = wireframe;
-
-	return InitializePBRModel(modelname, position, scale, rotation, shader);
-}
-
 AD_ULONG ResourceManager::AddRenderableCollider(XMFLOAT3 pos, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADUtils::SHADER shader = { 0 };
@@ -104,17 +72,6 @@ AD_ULONG ResourceManager::AddLight(ADResource::ADRenderer::Light& light)
 	return id;
 }
 
-
-AD_ULONG ResourceManager::AddSpyro(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-{
-	ADUtils::SHADER shader = { 0 };
-	strcpy_s(shader.vshader, "files\\shaders\\spyro_vs.hlsl");
-	strcpy_s(shader.pshader, "files\\shaders\\spyro_ps.hlsl");
-
-	return InitializePBRModel(modelname, position, scale, rotation, shader);
-}
-
-
 void ResourceManager::AddSkybox(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADUtils::SHADER shader = { 0 };
@@ -137,45 +94,6 @@ AD_ULONG ResourceManager::GenerateUniqueID()
 AD_ULONG ResourceManager::GenerateEffectID()
 {
 	return ResourceManager::effect_id++;
-}
-
-
-AD_ULONG ResourceManager::InitializePBRModel(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
-{
-	ADResource::ADRenderer::Model temp;
-	ADUtils::LoadWobjectMesh(modelname.c_str(), temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
-	temp.position = position;
-	temp.scale = scale;
-	temp.rotation = rotation;
-
-	// Eh
-	// Add the stuff to the PBR vertex data
-	int pre_resize_vertex_end_index = pbrVertexData.size();
-	pbrVertexData.resize(pbrVertexData.size() + temp.vertices.size());
-	memcpy((char*)&pbrVertexData[pre_resize_vertex_end_index], temp.vertices.data(), sizeof(Vertex) * temp.vertices.size());
-
-	// Add stuff into the PBR index data
-	int pre_resize_index_end = pbrIndxData.size();
-	pbrIndxData.resize(pbrIndxData.size() + temp.indices.size());
-	memcpy((char*)&pbrIndxData[pre_resize_index_end], temp.indices.data(), sizeof(unsigned int) * temp.indices.size());
-
-	ADResource::ADRenderer::PBRVertexBufferDesc desc = { 0 };
-	desc.base_vertex_location = pre_resize_vertex_end_index;
-	desc.index_count = pbrIndxData.size() - pre_resize_index_end;
-	desc.vertex_count = pbrVertexData.size() - pre_resize_vertex_end_index;
-	desc.index_start = pre_resize_index_end;
-
-	temp.desc = desc;
-	temp.desc.wireframe_mode = shader.wireframe;
-	// Eh
-
-	// grab id and add stuff
-	AD_ULONG id = GenerateUniqueID();
-	unsigned int index = pbrmodels.size();
-	pbrmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
-	pbrmodels.push_back(temp);
-
-	return id;
 }
 
 AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
@@ -344,6 +262,14 @@ int ResourceManager::AddGameObject(ADResource::ADGameplay::GameObject* OBJ)
 	return temp;
 }
 
+void ResourceManager::RemoveGameObject(ADResource::ADGameplay::GameObject* OBJ)
+{
+	int temp = gameobjects.size();
+
+	gameobjects.erase(std::remove(gameobjects.begin(), gameobjects.end(), OBJ));
+
+}
+
 int ResourceManager::GetLightCount()
 {
 	return lights.size();
@@ -352,17 +278,6 @@ int ResourceManager::GetLightCount()
 char* ResourceManager::GetLightDataPtr()
 {
 	return (char*)lights.data();
-}
-
-char* ResourceManager::GetPBRDataPtr()
-{
-	return (char*)pbrmodels.data();
-}
-
-
-ADResource::ADRenderer::Model* ResourceManager::GetPBRPtr()
-{
-	return pbrmodels.data();
 }
 
 ADResource::ADRenderer::SimpleStaticModel* ResourceManager::GetSkybox()
@@ -375,23 +290,6 @@ ADResource::ADRenderer::Light* ResourceManager::GetLightPtr()
 	return lights.data();
 }
 
-int ResourceManager::GetPBRModelCount()
-{
-	return pbrmodels.size();
-}
-
-int ResourceManager::GetPBRVertexCount()
-{
-	int count = 0;
-
-	for (int i = 0; i < pbrmodels.size(); i++)
-	{
-		count += pbrmodels[i].vertices.size();
-	}
-
-	return count;
-}
-
 int ResourceManager::GetGameObjectCount()
 {
 	return gameobjects.size();
@@ -400,20 +298,6 @@ int ResourceManager::GetGameObjectCount()
 ADResource::ADGameplay::GameObject** ResourceManager::GetGameObjectPtr()
 {
 	return gameobjects.data();
-}
-
-ADResource::ADRenderer::Model* ResourceManager::GetModelPtrFromMeshId(AD_ULONG mesh_id)
-{
-	Model* temp = nullptr;
-	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = pbrmodel_map.find(mesh_id);
-
-	if (iter != pbrmodel_map.end())
-	{
-		// Found
-		temp = &pbrmodels[iter->second];
-	}
-
-	return temp;
 }
 
 ADResource::ADRenderer::SimpleModel** ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)

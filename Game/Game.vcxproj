@@ -45,7 +45,7 @@
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
-    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -128,13 +128,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <AppInstallerUri>C:\Users\josep\Documents\fullsail\finalproject\builds</AppInstallerUri>
+    <AppInstallerUri>C:\Documents\fullsail\finalproject\builds</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <PackageCertificateThumbprint>D857E4535AD6E7E8DD14A960D7E1EFB6C1A7D540</PackageCertificateThumbprint>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
@@ -257,18 +259,50 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Image Include="Assets\BadgeLogo.scale-100.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\BadgeLogo.scale-100.png" />
+    <Image Include="Assets\BadgeLogo.scale-125.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\BadgeLogo.scale-125.png" />
+    <Image Include="Assets\BadgeLogo.scale-150.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\BadgeLogo.scale-150.png" />
+    <Image Include="Assets\BadgeLogo.scale-200.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\BadgeLogo.scale-200.png" />
+    <Image Include="Assets\BadgeLogo.scale-400.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\BadgeLogo.scale-400.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+    <Image Include="Assets\LargeTile.scale-100.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\LargeTile.scale-100.png" />
+    <Image Include="Assets\LargeTile.scale-125.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\LargeTile.scale-125.png" />
+    <Image Include="Assets\LargeTile.scale-150.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\LargeTile.scale-150.png" />
+    <Image Include="Assets\LargeTile.scale-200.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\LargeTile.scale-200.png" />
-    <Image Include="Assets\LargeTile.scale-400.png" />
+    <Image Include="Assets\LargeTile.scale-400.jpg">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+    <Image Include="Assets\LargeTile.scale-400.png">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
     <Image Include="Assets\SmallTile.scale-100.png" />
     <Image Include="Assets\SmallTile.scale-125.png" />
@@ -328,8 +362,8 @@
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="Listeners.h" />
+    <ClInclude Include="MinionManager.h" />
     <ClInclude Include="pchgame.h" />
-    <ClInclude Include="Spyro.h" />
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
@@ -343,6 +377,7 @@
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MinionManager.cpp" />
     <ClCompile Include="pchgame.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -353,7 +388,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Spyro.cpp" />
     <ClCompile Include="TheGreatGolem.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
@@ -363,7 +397,11 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Game_TemporaryKey.pfx" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

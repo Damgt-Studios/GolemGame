@@ -27,10 +27,10 @@ struct ADQuad
 	template <typename T>
 	bool ContainsPoint(ADQuadTreePoint<T> point) 
 	{
-		return (x - width < point.x &&
-			x + width > point.x &&
-			y - height < point.y &&
-			y + height > point.y);
+		return (x - width <= point.x &&
+			x + width >= point.x &&
+			y - height <= point.y &&
+			y + height >= point.y);
 	};
 
 	bool Intersects(ADQuad other) 
@@ -148,4 +148,22 @@ public:
 		SouthEast = new QuadTree(se);
 		this->divided = true;
 	};
+
+	void Shutdown()
+	{
+		if (divided)
+		{
+			NorthEast->Shutdown();
+			NorthWest->Shutdown();
+			SouthWest->Shutdown();
+			SouthEast->Shutdown();
+		}
+
+		for (unsigned int i = 0; i < points.size(); i++)
+		{
+			delete points[i].data;
+		}
+
+		delete this;
+	}
 };

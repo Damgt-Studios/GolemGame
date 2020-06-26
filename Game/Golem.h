@@ -1,4 +1,5 @@
 #pragma once
+
 #include "GameplayBaseClasses.h"
 #include "GameObjectClasses.h"
 #include "ADUserInterface.h"
@@ -6,6 +7,7 @@
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
+//#include "MinionManager.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -20,36 +22,25 @@ namespace ADResource
 {
 	namespace ADGameplay
 	{
-		enum SoundIds
-		{
-			GemCollectSound = 0,
-			DestructableBreakSound,
-			EnemyDeathSound,
-			PlayerChargeSound,
-			PlayerDeathSound,
-			FireBrathSound,
-			GlideSound,
-			HurtSound,
-			JumpSound,
-			LandSound,
-			ObjectHitSound,
-			RunningJumpSound,
-			WalkingSound,
-			WaterSplashSound
-		};
 
 		class Golem : public Renderable
 		{
+			int playerElement = 0;
+			AnimationStateMachine* anim_controller;
+
 		public:
 			// Public Methods
 			// Constructor and Destructor
 			Golem();
 			~Golem();
+
+
 			virtual void Update(float time_delta);
 			void ProcessEffects(float _deltaTime);
 			void CheckCollision(GameObject* obj);
 			virtual void OnCollision(GameObject* other, Manifold& m);
 			void Remove();
+			void InitializeController();
 
 
 			// Accessors
@@ -67,16 +58,26 @@ namespace ADResource
 			GameObject* targetMarker;
 			ADAI::FlockingGroup** flockingGroups;
 			int commandTargetGroup = 0;
-			int totalMinionCount = 0;
-			int stoneMinionCount = 0;
-			int waterMinionCount = 0;
-			int fireMinionCount = 0;
-			int woodMinionCount = 0;
+			//int totalMinionCount = 0;
+			//int stoneMinionCount = 0;
+			//int waterMinionCount = 0;
+			//int fireMinionCount = 0;
+			//int woodMinionCount = 0;
 
 
 			// Physics
 			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
+
+			ADResource::ADGameplay::StatSheet* stats;
+			struct GolemActions
+			{
+				Action* punch;
+				Action* kick;
+				Action* slam;
+				Action* special;
+			} gActions[4];
+			Action* consume;
 
 		private:
 			// Private Methods
@@ -93,7 +94,7 @@ namespace ADResource
 			void ChangeMinionGroup(bool nextElement);
 			void ConsumeMinion();
 			void SummonMinions();
-			void InitActions();
+			//void InitActions();
 			void FlinchFromFront();
 			void FlinchFromBack();
 			void FlinchFromLeft();
@@ -103,17 +104,10 @@ namespace ADResource
 
 			// Private Data Members
 			// Golem Stats
-			ADResource::ADGameplay::StatSheet* stats;
+			
 			int health;
-			int playerElement = 0;
-			struct GolemActions
-			{
-				Action* punch;
-				Action* kick;
-				Action* slam;
-				Action* special;
-			} gActions[4];
-			Action* consume;
+			//int playerElement = 0;
+			
 
 
 			// Audio Stuff
@@ -140,7 +134,7 @@ namespace ADResource
 			bool isActing = false;
 			double currentAnimTime = 0.0;
 			double idleTime = 0.0;
-			AnimationStateMachine* anim_controller;
+			//AnimationStateMachine* anim_controller;
 			struct GolemAnimations
 			{
 				std::string born;

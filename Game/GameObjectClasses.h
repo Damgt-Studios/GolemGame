@@ -1,8 +1,9 @@
 #pragma once
+#include <Types.h>
 #include "ADUserInterface.h"
 #include "GameplayBaseClasses.h"
 #include "ADEventSystem.h"
-#include <Types.h>
+#include <ADAI.h>
 
 namespace ADResource
 {
@@ -11,6 +12,7 @@ namespace ADResource
 		enum OBJECT_TAG
 		{
 			PLAYER = 0,
+			UNTYPED_MINION,
 			WOOD_MINION,
 			WATER_MINION,
 			FIRE_MINION,
@@ -53,6 +55,7 @@ namespace ADResource
 		public:
 			XMFLOAT3 colScale;
 			ADPhysics::AABB collider;
+			std::string deathEvent;
 
 			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; }
 			~Destructable() override
@@ -62,15 +65,24 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				ProcessEffects(_deltaTime);
+				if (active)
+				{
+					ProcessEffects(_deltaTime);
+					collider = ADPhysics::AABB(VectorToFloat3(transform.r[3]), colScale);
+					colliderPtr = &collider;
+					physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
-				// Physics
-				XMFLOAT3 dang;
-				XMStoreFloat3(&dang, transform.r[3]);
-				collider = ADPhysics::AABB(dang, colScale);
-				colliderPtr = &collider;
-
+				}
 			};
+
+			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
+			{
+				if (active)
+				{
+					effects.push_back(_effect->clone());
+					effects[effects.size() - 1].get()->OnApply(GetStatSheet());
+				}
+			}
 
 			virtual StatSheet* GetStatSheet() override
 			{
@@ -87,7 +99,10 @@ namespace ADResource
 				if (active && obj->active)
 				{
 					ADPhysics::Manifold m;
-					obj->colliderPtr->isCollision(&collider, m);
+					if (obj->colliderPtr->isCollision(&collider, m))
+					{
+						collisionQueue.push(CollisionPacket(this, obj, m));
+					}
 				}
 			}
 
@@ -106,11 +121,6 @@ namespace ADResource
 						effects.erase(effects.begin() + i);
 						i--;
 					}
-					//AD_UI::UIMessage updateHudDeleteMeOneDay;
-					//updateHudDeleteMeOneDay.messageType = ADUI::UIMessageTypes::ExternalMsg;
-					//updateHudDeleteMeOneDay.controllerID = 0;
-					//updateHudDeleteMeOneDay.number = 1;
-					//ADUI::MessageReceiver::SendMessage(&updateHudDeleteMeOneDay);
 				}
 				if (stats->RequestStats("Health")->currentValue <= 0)
 				{
@@ -120,6 +130,7 @@ namespace ADResource
 
 			void Death()
 			{
+				ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
 				//Death Time
 				DropLoot();
 				Remove();
@@ -406,6 +417,7 @@ namespace ADResource
 				if (cooldownTimer > 0)
 				{
 					cooldownTimer -= _deltaTime;
+
 				}
 				if (active)
 				{
@@ -459,48 +471,112 @@ namespace ADResource
 			}
 		};
 
+		class Building : public GameObject
+		{
+			StatSheet* stats;
+			std::string deathEvent;
+		public:
+			Building()
+			{
+				//stats = new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]);
+			}
+			~Building() { delete stats; };
+			Building(Building&) = delete;
+			Building(const Building&) = delete;
+			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3))
+			{
+				pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
+				models = Generator(position, rotation);
 
-		//class Enemy : public Renderable
-		//{
-		//	/*ADResource::AD_AI::AI ai;
-		//	int health;
-		//	void Update()
-		//	{
-		//		ai.Update();
-		//	}
-		//	void Damage(ADResource::ADGameplay::DAMAGE_TYPE damageType) override
-		//	{
-		//		if (defenseType != ADResource::ADGameplay::INVULNERABLE && defenseType != damageType)
-		//		{
-		//			health--;
-		//			if (health < 1)
-		//			{
-		//				Remove();
-		//			}
-		//		}
-		//	};*/
+				for (size_t i = 0; i < models.size(); i++)
+				{
+					models[i]->colliderPtr = nullptr;
+				}
 
-		////public:
-		////	ADPhysics::AABB collider;
+				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+				colliderPtr = &collider;
+			}
 
-		////	Enemy() { colliderPtr = &collider; type = OBJECT_TYPE::ENEMY; };
+			virtual void Update(float delta_time)
+			{
+				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				collider.Pos = VectorToFloat3(XMVector3Transform(Float3ToVector(collider.Pos), XMMatrixScaling(25, 25, 25)));
 
-		////	virtual void CheckCollision(GameObject* obj)
-		////	{
-		////		if (this->active)
-		////		{
-		////			ADPhysics::Manifold m;
-		////			obj->colliderPtr->isCollision(&collider, m);
-		////		}
-		////	}
+				physicsType = COLLIDABLE;
+				colliderPtr = &collider;
 
-		////	void Damage(DAMAGE_TYPE damageType)
-		////	{
-		////		if (defenseType != INVULNERABLE && defenseType != damageType)
-		////		{
-		////			Remove();
-		////		}
-		////	};
-		//};
+				if (active)
+				{
+					//ProcessEffects(delta_time);
+				}
+			}
+
+			XMMATRIX GetColliderInfo()
+			{
+				XMMATRIX temp;
+				temp.r[0] = XMVector3Normalize(Float3ToVector(collider.AxisX));
+				temp.r[1] = XMVector3Normalize(Float3ToVector(collider.AxisY));
+				temp.r[2] = XMVector3Normalize(Float3ToVector(collider.AxisZ));
+				temp.r[3] = Float3ToVector(collider.Pos);
+				temp.r[3].m128_f32[3] = 1;
+
+				temp = XMMatrixScaling(collider.GetWidth() + 10, collider.GetHeight() + 10, collider.GetLength() + 10) * temp;;
+
+				temp.r[3].m128_f32[0] += off.x;
+				temp.r[3].m128_f32[1] += off.y;
+				temp.r[3].m128_f32[2] += off.z;
+
+				temp.r[3].m128_f32[3] = 1;
+
+				return temp;
+			}
+
+			void ApplyEffect(ADResource::ADGameplay::Effect* _effect)
+			{
+				if (active)
+				{
+					effects.push_back(_effect->clone());
+					effects[effects.size() - 1].get()->OnApply(GetStatSheet());
+				}
+			}
+
+			virtual StatSheet* GetStatSheet() override
+			{
+				return stats;
+			};
+
+			void SetStatSheet(StatSheet* statSheet)
+			{
+				stats = statSheet;
+			};
+
+			void ProcessEffects(float _deltaTime)
+			{
+				for (int i = 0; i < effects.size(); ++i)
+				{
+					effects[i].get()->Update(_deltaTime);
+
+					if (effects[i].get()->isFinished)
+					{
+						effects[i].get()->OnExit();
+						effects.erase(effects.begin() + i);
+						i--;
+					}
+				}
+				if (stats->RequestStats("Health")->currentValue <= 0)
+				{
+					ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
+					active = false;
+				}
+			}
+
+
+		private:
+			XMFLOAT3 pos, rot, off, colliderScale;
+			std::vector<Renderable*> models;
+			ADPhysics::OBB collider;
+		};
 	}
 }
+

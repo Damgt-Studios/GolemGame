@@ -62,7 +62,7 @@ Collider_Width=10
 Collider_Height=10
 Collider_Length=30
 SingleHit=false
-Team=0
+Team=1
 ;
 
 Action=WoodGolemKick:
@@ -122,6 +122,7 @@ Collider_Height=20
 Collider_Length=35
 Team=0
 SingleHit=false
+SetEvent=StateStunned
 ;
 
 Action=GolemRooting:

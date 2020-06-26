@@ -17,5 +17,6 @@ namespace ADResource
 					ResourceManager::AddModelToRenderQueue(dynamic_cast<GameObject*>(this));
 			}
 		};
+
 	}
 }

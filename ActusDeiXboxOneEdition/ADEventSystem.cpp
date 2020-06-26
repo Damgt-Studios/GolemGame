@@ -40,6 +40,15 @@ ADEvents::ADEventSystem* ADEvents::ADEventSystem::Instance()
 	return &instance;
 }
 
+void ADEvents::ADEventSystem::PrintData()
+{
+	for (std::multimap<std::string, Listener*>::iterator iter = listeners.begin(); iter != listeners.end(); iter++)
+	{
+		//Logger::log(iter->first);
+		//Logger::log(iter->second->ToString());
+	}
+}
+
 void ADEvents::ADEventSystem::RegisterClient(std::string _eventId, Listener* _client)
 {
 	if (!_client || AlreadyRegistered(_eventId, _client))

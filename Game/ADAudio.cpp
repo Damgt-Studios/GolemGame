@@ -125,6 +125,7 @@ namespace AD_AUDIO
         if (tFoundIt == audioImp->channelsID_map.end())
             return;
 
+        ADAudio::AudioErrorCheck(tFoundIt->second->stop());
         audioImp->channelsID_map.erase(tFoundIt);
     }
 
@@ -321,6 +322,18 @@ namespace AD_AUDIO
             }
         }
     }
+
+	void AudioSource::Stop()
+	{
+        if (isEvent)
+        {
+            engine->StopEvent(soundName, true);
+        }
+        else
+        {
+            engine->StopChannel(currentChannel);
+        }
+	}
 
     void AudioSource::RefreshVolume()
     {

@@ -44,8 +44,8 @@ public:
 	void RotateCamera(float yaw, float pitch);
 	ADUI::ADUI* GetUI();
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();
+	float GetEngineDeltaTime();
 
-private:
 
 private:
 	Model m_model;
@@ -61,6 +61,8 @@ private:
 	
 	FPSCamera* camera;
 	OrbitCamera* ocamera;
+
+
 
 private:
 	// New shit

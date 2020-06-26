@@ -151,7 +151,7 @@ namespace ADUI
 
         virtual void Enable() { visible = true; active = true; };
         virtual void Disable() { visible = false; active = false; };
-        virtual void Focus() { controlFocus = true; };
+        virtual void Focus(bool _focus = true) { controlFocus = _focus; };
         virtual void Unfocus() { controlFocus = false; };
         virtual bool IsFocus() { return controlFocus; };
 
@@ -194,10 +194,10 @@ namespace ADUI
 
         ~Overlay2D()
         {
-            for (int i = 0; i < components.size(); ++i)
-            {
-                delete components[i];
-            }
+            //for (int i = 0; i < components.size(); ++i)
+            //{
+            //    delete components[i];
+            //}
             components.clear();
         };
 
@@ -223,32 +223,22 @@ namespace ADUI
     class OverlayController
     {
     protected:
+        std::vector<Overlay2D*> overlays;
+        std::vector<OverlayController*> controllers;
+
+    public:
         std::map<std::string, UINT> overlaysNameToID;
         std::map<std::string, UINT> controllersNameToID;
         std::map<std::string, UINT> componentsNameToID;
-        std::vector<Overlay2D*> overlays;
-        std::vector<OverlayController*> controllers;
         std::map<UINT, UIComponent*> componentTypeMap;
 
-    public:
         bool active;
+        float delayInputTimer = 0;
         std::string name;
         ~OverlayController()
         {
-            for (int i = 0; i < overlays.size(); ++i)
-            {
-                delete overlays[i];
-            }
             overlays.clear();
-            for (int i = 0; i < overlays.size(); ++i)
-            {
-                delete controllers[i];
-            }
             controllers.clear();
-            for (int i = 0; i < overlays.size(); ++i)
-            {
-                delete componentTypeMap[i];
-            }
             componentTypeMap.clear();
         };
         virtual bool ProcessInput(float delta_time, float& quick);
@@ -404,7 +394,7 @@ namespace ADUI
         virtual void SetCorners(XMFLOAT4 _pos) override;
         void SetText(std::string _message);
         virtual Label2D* GetText();
-        virtual void Focus() override;
+        virtual void Focus(bool _focus = true) override;
         virtual void Unfocus() override;
 
 
@@ -618,13 +608,13 @@ namespace ADUI
         UINT fontCount;
         Text2D* spriteFonts;
         UINT uiState = 1;
-        UILog uiLog;
+        UILog* uiLog;
 
     public:
         std::vector<UIComponent*> uiComponents;
         std::vector<Overlay2D*> overlays;
         std::vector<OverlayController*> uiControllers;
-
+        std::vector<AnimationData*> animations;
 
         std::unique_ptr<SpriteBatch> spriteBatch;
         UIRendererResources uiResources;
@@ -641,7 +631,7 @@ namespace ADUI
 
         void Update(float delta_time);
         void Render();
-        void ShutDown();
+        void Shutdown();
 
         void RecieveMessage(UIMessage* _message);
         UINT* GetUIState();

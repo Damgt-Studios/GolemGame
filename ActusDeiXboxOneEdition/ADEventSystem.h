@@ -2,6 +2,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include "Logger.h"
 
 namespace ADEvents
 {
@@ -28,6 +29,7 @@ namespace ADEvents
 		Listener() {}
 		virtual ~Listener() {}
 		virtual void HandleEvent(ADEvent* _event) = 0;
+		virtual std::string ToString() { return ""; };
 	};
 
 	class ADEventSystem {
@@ -45,6 +47,7 @@ namespace ADEvents
 	public:
 		static ADEventSystem* Instance();
 
+		void PrintData();
 		void RegisterClient(std::string _eventId, Listener* _client);
 		void UnregisterClient(std::string _eventId, Listener* _client);
 		void UnregisterAll(Listener* _client);
