@@ -5,6 +5,8 @@ ADResource::ADGameplay::Golem::Golem() {
 	collider = OBB(transform * translatetomiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
 
+	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
+
 	chargeCollider = OBB(transform * translatetofront, XMFLOAT3(2, 2, 2));
 	chargeCollider.trigger = true;
 	chargeCPtr = &chargeCollider;

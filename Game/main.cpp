@@ -296,6 +296,12 @@ public:
 		GolemAnimController.Initialize(golem);
 		golem->GetAnimationController(GolemAnimController);
 
+		std::vector<std::string> bucketheadanims;
+		bucketheadanims.push_back("files/models/Bucket_Idle.animfile");
+
+		Renderable* buckethead = GameUtilities::AddSimpleAnimAsset("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadanims, XMFLOAT3(0, 0, 30), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
+		GameUtilities::AddGameObject(buckethead);
+
 		// Orbit camera
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
@@ -667,7 +673,7 @@ public:
 
 			for (unsigned int i = 0; i < OBJ_COUNT; i++)
 			{
-				if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
+				if (OBJS[i]->colliderPtr) 
 				{
 					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
 					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
