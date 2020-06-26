@@ -126,6 +126,38 @@ HitBox* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLO
 	return temp;
 }
 
+Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
+
+
+	// Transform data
+	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
+
+	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
+	//temp->SetMeshID(id);
+
+	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation);
+	temp->SetMeshID(id);
+	temp->team = 0;
+
+	scale.x *= 100.0f;
+	scale.y *= 100.0f;
+	scale.z *= 100.0f;
+	//scale.x *= 0.5f;
+	//scale.y *= 0.5f;
+	//scale.z *= 0.5f;
+	temp->colScale = scale;
+	temp->collider = ADPhysics::AABB(position, temp->colScale);
+	temp->colliderPtr = &temp->collider;
+	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
+
+
+	return temp;
+}
+
 Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
