@@ -18,34 +18,61 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 	golem->SetRotation(rotation);
 	golem->SetPosition(position);
 	std::vector<std::string> animations;
-	animations.push_back("files/models/Golem_1_Idle.animfile");
-	animations.push_back("files/models/Golem_1_Born.animfile");
-	animations.push_back("files/models/Golem_1_Run.animfile");
-	animations.push_back("files/models/Golem_1_Death.animfile");
-	animations.push_back("files/models/Golem_1_Kick.animfile");
+	animations.push_back("files/models/Golem_4_Idle.animfile");
+	animations.push_back("files/models/Golem_4_Born.animfile");
+	animations.push_back("files/models/Golem_4_Run.animfile");
+	animations.push_back("files/models/Golem_4_Command.animfile");
+	animations.push_back("files/models/Golem_4_Death.animfile");
+	animations.push_back("files/models/Golem_4_Eat.animfile");
+	animations.push_back("files/models/Golem_4_GroundSlam.animfile");
+	animations.push_back("files/models/Golem_4_Heavy_Hit_Back.animfile");
+	animations.push_back("files/models/Golem_4_Heavy_Hit_Front.animfile");
+	animations.push_back("files/models/Golem_4_Heavy_Hit_Left.animfile");
+	animations.push_back("files/models/Golem_4_Heavy_Hit_Right.animfile");
+	animations.push_back("files/models/Golem_4_Idle.animfile");
+	animations.push_back("files/models/Golem_4_IdleLook.animfile");
+	animations.push_back("files/models/Golem_4_Kick.animfile");
+	animations.push_back("files/models/Golem_4_Run.animfile");
+	animations.push_back("files/models/Golem_4_Special.animfile");
+	animations.push_back("files/models/Golem_4_SummonMinions.animfile");
+	animations.push_back("files/models/Golem_4_TowerPunch.animfile");
 	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
 	golem->SetMeshID(id);
 
 
 	//Get Data Driven Components
 	golem->stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
-	golem->golemPunch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
-	golem->golemKick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
-	golem->golemSlam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
-	golem->golemConsume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
-	golem->golemWaterWave = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
-	golem->golemFireball = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
-	golem->golemTaunt = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
-	golem->golemRoot = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
 
-	golem->golemPunch->active = false;
-	golem->golemKick->active = false;
-	golem->golemSlam->active = false;
-	golem->golemConsume->active = false;
-	golem->golemWaterWave->active = false;
-	golem->golemFireball->active = false;
-	golem->golemTaunt->active = false;
-	golem->golemRoot->active = false;
+	golem->consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+
+	golem->gActions[STONE].kick = DefinitionDatabase::Instance()->actionDatabase["StoneGolemKick"];
+	golem->gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
+	golem->gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
+	golem->gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+
+	golem->gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
+	golem->gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
+	golem->gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
+	golem->gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+
+	golem->gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
+	golem->gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
+	golem->gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
+	golem->gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+
+	golem->gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golem->gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golem->gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golem->gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+
+	golem->consume->active = false;
+	for (int i = 0; i < 4; ++i)
+	{
+		golem->gActions[i].kick->active = false;
+		golem->gActions[i].punch->active = false;
+		golem->gActions[i].slam->active = false;
+		golem->gActions[i].special->active = false;
+	}
 
 	golem->InitializeController();
 

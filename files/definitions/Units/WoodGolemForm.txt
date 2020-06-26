@@ -26,7 +26,7 @@ OffsetX=-0
 OffsetY=20
 OffsetZ=20
 Collider_Width=10
-Collider_Height=20
+Collider_Height=10
 Collider_Length=10
 Team=0
 SingleHit=false
@@ -34,10 +34,13 @@ SingleHit=false
 
 Action=WoodGolemPunch:
 Cooldown=1
-Duration=0.5
+Duration=1.0
 AddHitBox=WoodGolemPunchHB
 AddEvent=Sfx_GolemPunch
 SetEventsDelay=0
+SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=WoodGolemKick:StatChange
@@ -53,21 +56,24 @@ MaxValue=-200
 Hitbox=WoodGolemKickHB:
 AddEffect=WoodGolemKick
 OffsetX=-0
-OffsetY=0
-OffsetZ=0
-Collider_Width=15
+OffsetY=5
+OffsetZ=5
+Collider_Width=10
 Collider_Height=10
-Collider_Length=40
+Collider_Length=30
 SingleHit=false
 Team=1
 ;
 
 Action=WoodGolemKick:
 Cooldown=1
-Duration=0.5
+Duration=1.0
 AddHitBox=WoodGolemKickHB
 AddEvent=Sfx_GolemKick
 SetEventsDelay=0
+SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=WoodGolemSlam:StatChange
@@ -83,9 +89,9 @@ MaxValue=-200
 Hitbox=WoodGolemSlamHB:
 AddEffect=WoodGolemSlam
 OffsetX=-0
-OffsetY=0
-OffsetZ=15
-Collider_Width=10
+OffsetY=5
+OffsetZ=20
+Collider_Width=25
 Collider_Height=10
 Collider_Length=25
 Team=0
@@ -94,10 +100,13 @@ SingleHit=false
 
 Action=WoodGolemSlam:
 Cooldown=1
-Duration=0.5
+Duration=1.0
 AddHitBox=WoodGolemSlamHB
 AddEvent=Sfx_GolemSlam
 SetEventsDelay=0
+SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=GolemRooting:Stun
@@ -118,10 +127,13 @@ SetEvent=StateStunned
 
 Action=GolemRooting:
 Cooldown=1
-Duration=0.5
+Duration=1.0
 AddHitBox=GolemRootingHB
 AddEvent=Sfx_GolemRooting
 SetEventsDelay=0
+SetHitboxDelay=0.75
+AddEvent=SmallGolemParticles
+SetEventsDelay=0.75
 Persist_After_Attack=true
 ;
 

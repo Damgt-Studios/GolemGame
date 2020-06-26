@@ -222,7 +222,7 @@ namespace ADResource
 						obj->effects.push_back(effects[i].get()->clone());
 						obj->effects[obj->effects.size() - 1].get()->OnApply(obj->GetStatSheet());
 						XMFLOAT3 hbpos = GetPosition();
-
+						//XMFLOAT4 hbpos2 = XMFLOAT4(1, 1, 1, 1);
 						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)&hbpos);
 						if (isDeactivateOnFirstApplication)
 						{
@@ -338,14 +338,13 @@ namespace ADResource
 			std::vector<float> eventDelay;
 			std::vector<std::string> eventName;
 
-
 			XMFLOAT3* hbpos = nullptr;
 
 			//If the attack doesn't own the hitbox this needs to change.
 			~Action()
 			{
 				delete hitbox;
-				if (hbpos != nullptr)
+				if (hbpos)
 				{
 					delete hbpos;
 				}
@@ -436,8 +435,12 @@ namespace ADResource
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
 							{
-								XMFLOAT3 hbpos = hitbox->GetPosition();
-								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)&hbpos);
+								if (hbpos != nullptr)
+								{
+									delete hbpos;
+								}
+								hbpos = new XMFLOAT3(hitbox->GetPosition());
+								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)hbpos);
 								eventFired[i] = true;
 							}
 						}

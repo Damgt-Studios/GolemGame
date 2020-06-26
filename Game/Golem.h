@@ -29,42 +29,34 @@ namespace ADResource
 			AnimationStateMachine* anim_controller;
 
 		public:
+			// Public Methods
+			// Constructor and Destructor
 			Golem();
 			~Golem();
 
-			ADResource::ADGameplay::StatSheet* stats;
-			Action* golemPunch;
-			Action* golemKick;
-			Action* golemSlam;
-			Action* golemConsume;
-			Action* golemWaterWave;
-			Action* golemFireball;
-			Action* golemTaunt;
-			Action* golemRoot;
-
-
-			GameObject* targetMarker;
-			ADAI::FlockingGroup** flockingGroups;
-
 
 			virtual void Update(float time_delta);
-
 			void ProcessEffects(float _deltaTime);
-			//void Damage(DAMAGE_TYPE d_type);
-
-			void Remove();
-
 			void CheckCollision(GameObject* obj);
+			virtual void OnCollision(GameObject* other, Manifold& m);
+			void Remove();
+			void InitializeController();
 
-			virtual void OnCollision(GameObject* other);
-			void OnTriggerCharge(GameObject* other);
-			void OnTriggerFire(GameObject* other);
-			//virtual void OnTrigger(GameObject* other);
 
+			// Accessors
 			void GetView(XMMATRIX& view);
-			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
-			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
-			bool jumping = false;
+			void GetAnimationController(AnimationStateMachine& controller);
+			XMMATRIX GetColliderInfo();
+			virtual StatSheet* GetStatSheet() override;
+			int GetCurrentElement();
+
+
+
+
+			// Public Data Members
+			// AI
+			GameObject* targetMarker;
+			ADAI::FlockingGroup** flockingGroups;
 			int commandTargetGroup = 0;
 			//int totalMinionCount = 0;
 			//int stoneMinionCount = 0;
@@ -72,59 +64,100 @@ namespace ADResource
 			//int fireMinionCount = 0;
 			//int woodMinionCount = 0;
 
-			//void SetAudio(AudioManager* _audioManager);
 
-			//void GetAnimationController(AnimationStateMachine& controller);
-			void InitializeController();
+			// Physics
+			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
+			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 
-			XMMATRIX GetColliderInfo();
-
-			virtual StatSheet* GetStatSheet() override;
-			int GetCurrentElement();
+			ADResource::ADGameplay::StatSheet* stats;
+			struct GolemActions
+			{
+				Action* punch;
+				Action* kick;
+				Action* slam;
+				Action* special;
+			} gActions[4];
+			Action* consume;
 
 		private:
+			// Private Methods
 			void HandleInput(float delta_time);
+			void InitAnims();
+			void MoveGolem(XMFLOAT4& forward, float delta_time);
+			void PerformSpecial();
+			void TowerPunch();
+			void GroundSlam();
+			void Kick();
+			void CommandMinions();
+			void RecallMinions();
+			void ChangeElement(bool nextElement);
+			void ChangeMinionGroup(bool nextElement);
+			void ConsumeMinion();
+			void SummonMinions();
+			//void InitActions();
+			void FlinchFromFront();
+			void FlinchFromBack();
+			void FlinchFromLeft();
+			void FlinchFromRight();
 
-		private:
+
+
+			// Private Data Members
+			// Golem Stats
+			
 			int health;
+			//int playerElement = 0;
+			
 
+
+			// Audio Stuff
 			bool playingSound = false;
 			UINT collectionNoiseID;
-			//AudioManager* audioManager;
 
-			XMFLOAT3 spryo_movement_deltas = XMFLOAT3(0, 0, 0);
 
-			OBB chargeCollider = OBB(transform, XMFLOAT3(2, 2, 2));
-			Collider* chargeCPtr = nullptr;
-			OBB fireCollider = OBB(transform, XMFLOAT3(2, 2, 2));
-			Collider* fireCPtr = nullptr;
+			// Collider Translations
+			XMMATRIX translateToFront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
+			XMMATRIX translateToMiddle = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1] + 15, transform.r[3].m128_f32[2]);
+
 
 			// Gameplay
-			const float invulnerable_peroid = 1.6f;
-			float invulnerable_timer = 0;
-
-			float jump_time_up = .4;
-			float jump_time_length = 1;
-			float jump_count_down = 0;
-			float jump_height = 15;
-			float og_y_pos = 0;
-			float gravity = 50;
+			const float invulnerablePeriod = 1.6f;
+			float invulnerableTimer = 0;
 			float responseTimer = 0;
-			bool gliding = false;
-			bool charging = false;
-			bool fire = false;
 
 
+			// Movement
+			XMFLOAT3 golemMovementDeltas = XMFLOAT3(0, 0, 0);
 
-			float floatiness = 0.25f;
-			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
-			XMMATRIX translatetomiddle = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1] + 15, transform.r[3].m128_f32[2]);
 
-			bool buttonup = false;
+			// Animation
+			bool isActing = false;
+			double currentAnimTime = 0.0;
+			double idleTime = 0.0;
+			//AnimationStateMachine* anim_controller;
+			struct GolemAnimations
+			{
+				std::string born;
+				std::string command;
+				std::string death;
+				std::string eat;
+				std::string groundSlam;
+				std::string heavyHitBack;
+				std::string heavyHitFront;
+				std::string heavyHitLeft;
+				std::string heavyHitRight;
+				std::string idle;
+				std::string idleLook;
+				std::string kick;
+				std::string run;
+				std::string special;
+				std::string summonMinions;
+				std::string towerPunch;
+			} anims[4];
+
+
+			// Camera
 			XMMATRIX camera;
-			// Turning
-			float spyro_turn_speed = 5;
-			float spyro_move_speed = 50;
 		};
 	}
 }

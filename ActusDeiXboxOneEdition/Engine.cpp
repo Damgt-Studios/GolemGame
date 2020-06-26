@@ -26,7 +26,16 @@ bool Engine::Initialize()
 	engine_time.Restart();
 
 	userInterface.Initialize(pbr.GetRendererResources()->device, pbr.GetRendererResources()->context, pbr.GetRendererResources()->render_target_view, &pbr.GetRendererResources()->viewport);
-	bigCloud.Initialize(pbr.renderer_resources.device.Get(), 100, { 0, 25, 25, 1 }, L"files/textures/Particle_Blood_Sheet.dds");
+	bigCloud.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Dust.dds");
+	recoveryEmitter.Initialize(pbr.renderer_resources.device.Get(), 300, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Health.dds");
+	smallCloud.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Dust.dds");
+	waterWave.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Water.dds");
+	ironSkin.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Stone.dds");
+	fireball.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Fireball.dds");
+	bigWoodPuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.06f, 0.57f, 0.18f, 1.0f });
+	bigFirePuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.9f, 0.45f, 0.2f, 1.0f });
+	bigWaterPuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.07f, 0.48f, 0.73f, 1.0f });
+	bigStonePuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.5f, 0.52f, 0.53f, 1.0f });
 
 	return true;
 }
@@ -75,6 +84,19 @@ bool Engine::Update()
 		lightdir *= -1;*/
 
 	userInterface.Update(delta_time_sf);
+	/*Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
+	XMFLOAT4X4 view;
+	XMFLOAT4X4 proj;
+	XMFLOAT4 camPos;
+	XMMATRIX temp;
+	ocamera->GetViewMatrix(temp);
+	XMStoreFloat4x4(&view, temp);
+	temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+	XMStoreFloat4x4(&proj, temp);
+	camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
+	bigCloud.UpdateParticles(engine_time.SmoothDelta(), view, proj, camPos);*/
+
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
 	XMFLOAT4X4 view;
@@ -86,7 +108,16 @@ bool Engine::Update()
 	temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
 	XMStoreFloat4x4(&proj, temp);
 	camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
-	bigCloud.UpdateParticles(engine_time.SmoothDelta(), view, proj, camPos);
+	bigCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
+	recoveryEmitter.UpdateParticles(delta_time_sf, view, proj, camPos);
+	smallCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
+	waterWave.UpdateParticles(delta_time_sf, view, proj, camPos);
+	ironSkin.UpdateParticles(delta_time_sf, view, proj, camPos);
+	fireball.UpdateParticles(delta_time_sf, view, proj, camPos);
+	bigWoodPuff.UpdateParticles(delta_time_sf, view, proj, camPos);
+	bigFirePuff.UpdateParticles(delta_time_sf, view, proj, camPos);
+	bigWaterPuff.UpdateParticles(delta_time_sf, view, proj, camPos);
+	bigStonePuff.UpdateParticles(delta_time_sf, view, proj, camPos);
 
 	return true;
 }
@@ -103,6 +134,15 @@ bool Engine::Render()
 
 	pbr.Render(camera, ocamera, delta_time_sf);
 	bigCloud.RenderParticles(pbr.renderer_resources.context.Get());
+	recoveryEmitter.RenderParticles(pbr.renderer_resources.context.Get());
+	smallCloud.RenderParticles(pbr.renderer_resources.context.Get());
+	waterWave.RenderParticles(pbr.renderer_resources.context.Get());
+	ironSkin.RenderParticles(pbr.renderer_resources.context.Get());
+	fireball.RenderParticles(pbr.renderer_resources.context.Get());
+	bigWoodPuff.RenderParticles(pbr.renderer_resources.context.Get());
+	bigFirePuff.RenderParticles(pbr.renderer_resources.context.Get());
+	bigWaterPuff.RenderParticles(pbr.renderer_resources.context.Get());
+	bigStonePuff.RenderParticles(pbr.renderer_resources.context.Get());
 	userInterface.Render();
 	pbr.Frame();
 

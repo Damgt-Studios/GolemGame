@@ -177,8 +177,8 @@ namespace ADGameplay
 			villageFlock1.cohesionStrength = 0.1f;
 			villageFlock1.commandDestination;
 			villageFlock1.commandDirectionalStrength = 0;
-			villageFlock1.moveSpeed = 0.5f;
-			villageFlock1.maxSpeed = 0.8f;
+			villageFlock1.moveSpeed = 0.1f;
+			villageFlock1.maxSpeed = 0.5f;
 			villageFlock1.returnDirectionalStrength = -0.f;
 			villageFlock1.separationStrength = 0.6f;
 			villageFlock1.targetCohesionStrength = -0.8f;
@@ -327,7 +327,7 @@ namespace ADGameplay
 			Plane = GameUtilities::AddSimpleAsset(PlaneArguments.Model.data(), PlaneArguments.Texture.data(), PlaneArguments.position, PlaneArguments.scale, PlaneArguments.rotation);
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
 
-			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(), GolemArguments.Texture.data(), GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
+			golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_4.AnimMesh", "files/textures/Golem_4.mat", GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 			//golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(),GolemArguments.Texture.data(), animations, GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
 			for (int i = 0; i < 10; i++)

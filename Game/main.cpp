@@ -80,7 +80,6 @@ private:
 	ADPhysics::Plane test_plane;
 
 
-
 public:
 	// some functions called by Windows
 	virtual void Initialize(CoreApplicationView^ AppView)
@@ -137,7 +136,114 @@ public:
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
 
 
-		// Orbit camera
+		//AudioSourceListener playTitleEvent(titleMusic);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
+
+		//AD_AUDIO::AudioSource golemPunchSound;
+		//golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemPunchSound.engine = audioEngine;
+		//golemPunchSound.personalVolume = 0.5f;
+		//golemPunchSound.restartOnRepeat = false;
+		//golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
+		//AudioSourceListener golemPunchEvent(golemPunchSound);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
+
+		//AD_AUDIO::AudioSource golemKickSound;
+		//golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemKickSound.engine = audioEngine;
+		//golemKickSound.personalVolume = 0.5f;
+		//golemKickSound.restartOnRepeat = false;
+		//golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
+		//AudioSourceListener golemKickEvent(golemKickSound);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
+
+		//AD_AUDIO::AudioSource golemSlamSound;
+		//golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemSlamSound.engine = audioEngine;
+		//golemSlamSound.personalVolume = 0.5f;
+		//golemSlamSound.restartOnRepeat = false;
+		//golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
+		//AudioSourceListener golemSlamEvent(golemSlamSound);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
+
+		//AD_AUDIO::AudioSource golemWaveSound;
+		//golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemWaveSound.engine = audioEngine;
+		//golemWaveSound.personalVolume = 0.5f;
+		//golemWaveSound.restartOnRepeat = false;
+		//golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
+		//AudioSourceListener golemWaveEvent(golemWaveSound);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
+
+		//AD_AUDIO::AudioSource golemFireball;
+		//golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemFireball.engine = audioEngine;
+		//golemFireball.personalVolume = 0.5f;
+		//golemFireball.restartOnRepeat = false;
+		//golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
+		//AudioSourceListener golemFireballEvent(golemFireball);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
+
+		//AD_AUDIO::AudioSource golemIronHide;
+		//golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemIronHide.engine = audioEngine;
+		//golemIronHide.personalVolume = 0.5f;
+		//golemIronHide.restartOnRepeat = false;
+		//golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
+		//AudioSourceListener golemTauntEvent(golemIronHide);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
+
+
+
+		//AD_AUDIO::AudioSource golemRootingSpell;
+		//golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemRootingSpell.engine = audioEngine;
+		//golemRootingSpell.personalVolume = 0.5f;
+		//golemRootingSpell.restartOnRepeat = false;
+		//golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
+		//AudioSourceListener golemRootEvent(golemRootingSpell);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
+
+		//AD_AUDIO::AudioSource golemEatMinion;
+		//golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemEatMinion.engine = audioEngine;
+		//golemEatMinion.personalVolume = 0.5f;
+		//golemEatMinion.restartOnRepeat = false;
+		//golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
+		//AudioSourceListener golemEatMinionEvent(golemEatMinion);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
+
+		//DefinitionReader df;
+		//df.ReadMasterFile();
+
+		//ApplyEffectListener golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
+
+		ParticleEmitterListener bigGolemDustParticles(engine->bigCloud);
+		bigGolemDustParticles.lifespan = 0.5f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
+
+		RecoveryEmitterEvent golemRecoveryParticles(engine->recoveryEmitter);
+		golemRecoveryParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
+
+		SmallCloudEmitterEvent smallGolemDustParticles(engine->smallCloud);
+		smallGolemDustParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
+
+		WaterWaveEmitterEvent waveParticles(engine->waterWave);
+		waveParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
+
+		IronSkinEmitterEvent ironSkinParticles(engine->ironSkin);
+		ironSkinParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
+
+		FireballEmitterEvent fireballParticles(engine->fireball);
+		fireballParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
+
+		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 		currentScene.LoadScene("files/scenes/TestScene.scenery");
 		golem = currentScene.GetGolem();
@@ -674,6 +780,12 @@ public:
 	{
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 		Window->Activate();
+		SystemNavigationManager::GetForCurrentView()->BackRequested += ref new EventHandler<BackRequestedEventArgs^>(this, &App::OnBackRequested);
+	}
+
+	void OnBackRequested(Platform::Object^ sender, Windows::UI::Core::BackRequestedEventArgs^ e)
+	{
+		e->Handled = true;
 	}
 
 	void ProcessInput()

@@ -26,7 +26,7 @@ SetEvent=ChangeEssence
 AddStat=MovementSpeed
 StatMin=1
 StatMax=100
-StatCurrent=35
+StatCurrent=50
 
 AddStat=Armor
 StatMin=1
@@ -65,10 +65,13 @@ SingleHit=true
 
 Action=GolemConsume:
 Cooldown=0.5
-Duration=0.5
+Duration=1.0
 AddHitBox=GolemConsumeHB
 AddEvent=Sfx_GolemEat
 SetEventsDelay=0
+SetHitboxDelay=0.75
+AddEvent=GolemRecoveryParticles
+SetEventsDelay=0.75
 ;
 
 Effect=GolemEat:StatChange

@@ -29,7 +29,7 @@ namespace ADEvents
 		Listener() {}
 		virtual ~Listener() {}
 		virtual void HandleEvent(ADEvent* _event) = 0;
-		virtual std::string ToString() = 0;
+		virtual std::string ToString() { return ""; };
 	};
 
 	class ADEventSystem {

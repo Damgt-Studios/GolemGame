@@ -79,4 +79,13 @@ private:
 	int lightdir = 1;
 public:
 	BigCloudEmitter bigCloud;
+	HealthEmitter recoveryEmitter;
+	SmallCloudEmitter smallCloud;
+	WaveEmitter waterWave;
+	IronSkinEmitter ironSkin;
+	FireballEmitter fireball;
+	BigElementalPuffEmitter bigWoodPuff;
+	BigElementalPuffEmitter bigFirePuff;
+	BigElementalPuffEmitter bigWaterPuff;
+	BigElementalPuffEmitter bigStonePuff;
 };
