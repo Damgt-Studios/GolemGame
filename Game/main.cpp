@@ -297,7 +297,7 @@ public:
 		golem->GetAnimationController(GolemAnimController);
 
 		std::vector<std::string> bucketheadanims;
-		bucketheadanims.push_back("files/models/Bucket_Idle.animfile");
+		bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
 
 		Renderable* buckethead = GameUtilities::AddSimpleAnimAsset("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadanims, XMFLOAT3(0, 0, 30), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0));
 		GameUtilities::AddGameObject(buckethead);
