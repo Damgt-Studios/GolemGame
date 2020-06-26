@@ -135,7 +135,7 @@
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUri>C:\Documents\fullsail\finalproject\builds</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>5C116CF8998B3E4C94DA0DB3D407D5B46C396110</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>D857E4535AD6E7E8DD14A960D7E1EFB6C1A7D540</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -397,6 +397,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Game_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
