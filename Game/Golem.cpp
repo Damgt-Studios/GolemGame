@@ -26,6 +26,8 @@ ADResource::ADGameplay::Golem::Golem() {
 		flockingGroups[i] = new ADAI::FlockingGroup();
 		flockingGroups[i]->groupTarget = &transform;
 	}
+	
+	desirability = 0.2f;
 }
 
 ADResource::ADGameplay::Golem::~Golem()

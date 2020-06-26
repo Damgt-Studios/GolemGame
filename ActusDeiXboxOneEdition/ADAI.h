@@ -15,6 +15,7 @@ namespace ADAI
 	public:
 		AIUnit* owner = nullptr;
 		XMVECTOR personalTarget;
+		
 		std::vector<ADResource::ADGameplay::GameObject*> objectsToApproach;
 		std::vector<ADResource::ADGameplay::GameObject*> objectsToAvoid;
 		virtual void Update(float _deltaTime) = 0;
@@ -186,6 +187,30 @@ namespace ADAI
 			return velocity;
 		}
 
+		XMVECTOR CalculateTargetAcceleration(AIUnit* _object)
+		{
+			//XMFLOAT3 sigh = _object->GetPosition();
+			//XMVECTOR objectPos = XMLoadFloat3(&sigh);
+			//XMFLOAT4X4 f4x4;
+			//XMStoreFloat4x4(&f4x4, *groupTarget);
+			//XMVECTOR f4 = { f4x4.m[3][0], f4x4.m[3][1], f4x4.m[3][2],f4x4.m[3][3]};
+			//XMVECTOR velocity = { 0,0,0,0 };// = f4 - objectPos;
+
+			//velocity = XMVector4Normalize(velocity);
+
+			//velocity *= returnDirectionalStrength;
+			//return velocity;
+
+
+			XMFLOAT3 sigh = _object->owner->GetPosition();
+			XMVECTOR objectPos = XMLoadFloat3(&sigh);
+			XMVECTOR velocity = _object->currentState->personalTarget - objectPos;
+
+			velocity = XMVector4Normalize(velocity);
+
+			velocity *= targetCohesionStrength;
+			return velocity;
+		}
 
 		XMVECTOR CalculateCohesionAcceleration(ADResource::ADGameplay::GameObject* _object)
 		{
@@ -273,7 +298,7 @@ namespace ADAI
 				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
 				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
 
-				velocity = CalculateAlignmentAcceleration(flockers[i]->owner) + CalculateCohesionAcceleration(flockers[i]->owner) + CalculateSeparationAcceleration(flockers[i]->owner) +CalculateDirectionalAcceleration(flockers[i]->owner) + CalculateReturnAcceleration(flockers[i]->owner);
+				velocity = CalculateAlignmentAcceleration(flockers[i]->owner) + CalculateCohesionAcceleration(flockers[i]->owner) + CalculateSeparationAcceleration(flockers[i]->owner) +CalculateDirectionalAcceleration(flockers[i]->owner) + CalculateReturnAcceleration(flockers[i]->owner) + CalculateTargetAcceleration(flockers[i]);
 				velocity *= (maxSpeed * _deltaTime);
 				velocity += XMLoadFloat4(&flockers[i]->owner->Velocity);
 

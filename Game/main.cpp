@@ -245,21 +245,27 @@ public:
 
 		Building* house1 = new Building(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
 		GameUtilities::AddGameObject(house1);
+		currentScene.AddBuilding(house1);
 
 		Building* house2 = new Building(XMFLOAT3(-5, 0, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
 		GameUtilities::AddGameObject(house2);
+		currentScene.AddBuilding(house2);
 		//
 		Building* house3 = new Building(XMFLOAT3(-5, 0, 6), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
 		GameUtilities::AddGameObject(house3);
+		currentScene.AddBuilding(house3);
 
 		Building* house4 = new Building(XMFLOAT3(-5, 0, 9), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
 		GameUtilities::AddGameObject(house4);
+		currentScene.AddBuilding(house4);
 
 		Building* barn1 = new Building(XMFLOAT3(-5, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
 		GameUtilities::AddGameObject(barn1);
+		currentScene.AddBuilding(barn1);
 
 		Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
 		GameUtilities::AddGameObject(barn2);
+		currentScene.AddBuilding(barn2);
 
 		Building* tower = new Building(XMFLOAT3(1.125, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower = new Building(XMFLOAT3(-24.475, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
@@ -268,6 +274,7 @@ public:
 		//Building* tower4 = new Building(XMFLOAT3(0.5, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower5 = new Building(XMFLOAT3(13.875, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		GameUtilities::AddGameObject(tower);
+		currentScene.AddBuilding(tower);
 		//GameUtilities::AddGameObject(tower2);
 		//GameUtilities::AddGameObject(tower3);
 		//GameUtilities::AddGameObject(tower4);
@@ -324,6 +331,7 @@ public:
 
 		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
 		GameUtilities::AddGameObject(tavern);
+		currentScene.AddBuilding(tavern);
 
 		Building* lamp = new Building(XMFLOAT3(-5, 0, 7.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
 		GameUtilities::AddGameObject(lamp);
@@ -335,6 +343,7 @@ public:
 
 		Building* meeting_hall = new Building(XMFLOAT3(10, 0, 10), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall);
 		GameUtilities::AddGameObject(meeting_hall);
+		currentScene.AddBuilding(meeting_hall);
 
 		Building* cart = new Building(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart);
 		GameUtilities::AddGameObject(cart);
@@ -510,7 +519,35 @@ public:
 
 
 
+			for (int i = 0; i < OBJ_COUNT; i++)
+			{
 
+				if (OBJS[i]->colliderPtr)
+				{
+					int* index = new int(i);
+					if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
+					{
+						int somethingswrong = 0;
+						somethingswrong++;
+					}
+				}
+			}
+
+			for (unsigned int i = 0; i < OBJ_COUNT; i++)
+			{
+				if (OBJS[i]->colliderPtr)
+				{
+					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+
+					for (unsigned int j = 0; j < collisionVector.size(); j++)
+					{
+						if (OBJS[*collisionVector[j].data]->colliderPtr)
+							OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+					}
+				}
+			}
+			//----------------------------------------------------------------------------------------------------
 			//for (unsigned int i = 0; i < OBJ_COUNT; i++)
 			//{
 			//	if (OBJS[i]->colliderPtr)
@@ -525,7 +562,8 @@ public:
 			//		}
 			//	}
 			//}
-			for (int i = 0; i < OBJ_COUNT; i++)
+			//--------------------------------------------------------------------------------------------------------
+	/*		for (int i = 0; i < OBJ_COUNT; i++)
 			{
 				for (unsigned int j = 0; j < OBJ_COUNT; j++)
 				{
@@ -546,7 +584,7 @@ public:
 						}
 					}
 				}
-			}
+			}*/
 			//----------------------------------New Physics system does not operate with properly with triggers-------------------------------
 			/*for (int i = 0; i < OBJ_COUNT; i++)
 			{

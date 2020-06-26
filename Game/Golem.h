@@ -115,6 +115,7 @@ namespace ADResource
 			bool fire = false;
 
 
+
 			float floatiness = 0.25f;
 			XMMATRIX translatetofront = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1], transform.r[3].m128_f32[2] + 3);
 			XMMATRIX translatetomiddle = XMMatrixTranslation(transform.r[3].m128_f32[0], transform.r[3].m128_f32[1] + 15, transform.r[3].m128_f32[2]);

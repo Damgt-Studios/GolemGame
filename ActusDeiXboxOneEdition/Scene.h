@@ -55,6 +55,7 @@ namespace ADGameplay
 		std::vector<Destructable*> woodMinions;
 
 		std::vector<Destructable*> villagers;
+		std::vector<Building*> buildings;
 
 		//Minion AI
 		std::vector<ADAI::AIUnit*> stoneMinionsAI;
@@ -178,16 +179,37 @@ namespace ADGameplay
 			villageFlock1.commandDirectionalStrength = 0;
 			villageFlock1.moveSpeed = 0.5f;
 			villageFlock1.maxSpeed = 0.8f;
-			villageFlock1.returnDirectionalStrength = -0.9f;
+			villageFlock1.returnDirectionalStrength = -0.f;
 			villageFlock1.separationStrength = 0.6f;
-			villageFlock1.targetCohesionStrength = 0;
+			villageFlock1.targetCohesionStrength = -0.8f;
 
 			for (int i = 0; i < 10; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 0, -245), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
 				villagerAI[i]->states[0]->objectsToAvoid.push_back(golem);
+				villagerAI[i]->states[1]->objectsToAvoid.push_back(golem);
+				for (int j = 0; j < 10; ++j)
+				{
+					villagerAI[i]->states[0]->objectsToAvoid.push_back(stoneMinions[j]);
+					villagerAI[i]->states[0]->objectsToAvoid.push_back(waterMinions[j]);
+					 villagerAI[i]->states[0]->objectsToAvoid.push_back(fireMinions[j]);
+					 villagerAI[i]->states[0]->objectsToAvoid.push_back(woodMinions[j]);
+					villagerAI[i]->states[1]->objectsToAvoid.push_back(stoneMinions[j]);
+					villagerAI[i]->states[1]->objectsToAvoid.push_back(waterMinions[j]);
+					villagerAI[i]->states[1]->objectsToAvoid.push_back(fireMinions[j]);
+					villagerAI[i]->states[1]->objectsToAvoid.push_back(woodMinions[j]);
+				}
 				GameUtilities::AddGameObject(villagers[i]);
+			}
+
+
+			for (int i = 0; i < 10; i++)
+			{
+				stoneMinionsAI[i]->states[1]->objectsToAvoid.push_back(villagers[i]);
+				waterMinionsAI[i]->states[1]->objectsToAvoid.push_back(villagers[i]);
+				fireMinionsAI[i]->states[1]->objectsToAvoid.push_back(villagers[i]);
+				woodMinionsAI[i]->states[1]->objectsToAvoid.push_back(villagers[i]);
 			}
 		}
 
@@ -472,6 +494,14 @@ namespace ADGameplay
 			ADEvents::ADEventSystem::Instance()->SendEvent("MinionCountChanged", static_cast<void*>(allMinionCountstr));
 		}
 
+
+
+
+		//REplace me!
+		void AddBuilding(Building* _building)
+		{
+			buildings.push_back(_building);
+		}
 	};
 }
 
