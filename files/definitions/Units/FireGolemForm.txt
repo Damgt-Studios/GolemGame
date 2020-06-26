@@ -33,6 +33,8 @@ AddHitBox=FireGolemPunchHB
 AddEvent=Sfx_GolemPunch
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=FireGolemKick:StatChange
@@ -64,6 +66,8 @@ AddHitBox=WoodGolemKickHB
 AddEvent=Sfx_GolemKick
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=FireGolemSlam:StatChange
@@ -95,6 +99,8 @@ AddHitBox=FireGolemSlamHB
 AddEvent=Sfx_GolemSlam
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=GolemFireball:StatChange
@@ -125,6 +131,8 @@ Cooldown=1.2
 Duration=0.5
 AddHitBox=GolemFireballHB
 AddEvent=Sfx_GolemFireball
+SetEventsDelay=0
+AddEvent=GolemFireballParticles
 SetEventsDelay=0
 Persist_After_Attack=true
 ;

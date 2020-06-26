@@ -5,14 +5,69 @@
 
 
 
-class ParticleEmitterEvent : public ADEvents::Listener
+class BigCloudEmitterEvent : public ADEvents::Listener
 {
 private:
     BigCloudEmitter& emitter;
     XMFLOAT4 position;
 public:
     float lifespan;
-    ParticleEmitterEvent(BigCloudEmitter& _emitter) : emitter(_emitter) {};
+    BigCloudEmitterEvent(BigCloudEmitter& _emitter) : emitter(_emitter) {};
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+};
+
+class RecoveryEmitterEvent : public ADEvents::Listener
+{
+private:
+    HealthEmitter& emitter;
+    XMFLOAT4 position;
+public:
+    float lifespan;
+    RecoveryEmitterEvent(HealthEmitter& _emitter) : emitter(_emitter) {};
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+};
+
+class SmallCloudEmitterEvent : public ADEvents::Listener
+{
+private:
+    SmallCloudEmitter& emitter;
+    XMFLOAT4 position;
+public:
+    float lifespan;
+    SmallCloudEmitterEvent(SmallCloudEmitter& _emitter) : emitter(_emitter) {};
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+};
+
+class WaterWaveEmitterEvent : public ADEvents::Listener
+{
+private:
+    WaveEmitter& emitter;
+    XMFLOAT4 position;
+public:
+    float lifespan;
+    WaterWaveEmitterEvent(WaveEmitter& _emitter) : emitter(_emitter) {};
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+};
+
+class IronSkinEmitterEvent : public ADEvents::Listener
+{
+private:
+    IronSkinEmitter& emitter;
+    XMFLOAT4 position;
+public:
+    float lifespan;
+    IronSkinEmitterEvent(IronSkinEmitter& _emitter) : emitter(_emitter) {};
+    void HandleEvent(ADEvents::ADEvent* _event) override;
+};
+
+class FireballEmitterEvent : public ADEvents::Listener
+{
+private:
+    FireballEmitter& emitter;
+    XMFLOAT4 position;
+public:
+    float lifespan;
+    FireballEmitterEvent(FireballEmitter& _emitter) : emitter(_emitter) {};
     void HandleEvent(ADEvents::ADEvent* _event) override;
 };
 

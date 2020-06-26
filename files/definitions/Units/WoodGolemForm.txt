@@ -39,6 +39,8 @@ AddHitBox=WoodGolemPunchHB
 AddEvent=Sfx_GolemPunch
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=WoodGolemKick:StatChange
@@ -70,6 +72,8 @@ AddHitBox=WoodGolemKickHB
 AddEvent=Sfx_GolemKick
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=WoodGolemSlam:StatChange
@@ -101,6 +105,8 @@ AddHitBox=WoodGolemSlamHB
 AddEvent=Sfx_GolemSlam
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=GolemRooting:Stun
@@ -125,6 +131,8 @@ AddHitBox=GolemRootingHB
 AddEvent=Sfx_GolemRooting
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=SmallGolemParticles
+SetEventsDelay=0.75
 Persist_After_Attack=true
 ;
 

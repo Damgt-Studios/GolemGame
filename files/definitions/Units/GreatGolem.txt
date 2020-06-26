@@ -66,6 +66,8 @@ AddHitBox=GolemConsumeHB
 AddEvent=Sfx_GolemEat
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=GolemRecoveryParticles
+SetEventsDelay=0.75
 ;
 
 Effect=GolemEat:StatChange

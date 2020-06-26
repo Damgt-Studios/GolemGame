@@ -230,10 +230,29 @@ public:
 		ApplyEffectEvent golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
 
-		ParticleEmitterEvent golemPunchParticles(engine->bigCloud);
-		golemPunchParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+		BigCloudEmitterEvent bigGolemDustParticles(engine->bigCloud);
+		bigGolemDustParticles.lifespan = 0.5f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
 
+		RecoveryEmitterEvent golemRecoveryParticles(engine->recoveryEmitter);
+		golemRecoveryParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
+
+		SmallCloudEmitterEvent smallGolemDustParticles(engine->smallCloud);
+		smallGolemDustParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
+
+		WaterWaveEmitterEvent waveParticles(engine->waterWave);
+		waveParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
+
+		IronSkinEmitterEvent ironSkinParticles(engine->ironSkin);
+		ironSkinParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
+
+		FireballEmitterEvent fireballParticles(engine->fireball);
+		fireballParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);

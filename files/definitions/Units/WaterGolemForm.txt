@@ -39,6 +39,8 @@ AddHitBox=WaterGolemPunchHB
 AddEvent=Sfx_GolemPunch
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=WaterGolemKick:StatChange
@@ -70,6 +72,8 @@ AddHitBox=WaterGolemKickHB
 AddEvent=Sfx_GolemKick
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=WaterGolemSlam:StatChange
@@ -101,6 +105,8 @@ AddHitBox=WaterGolemSlamHB
 AddEvent=Sfx_GolemSlam
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=GolemWaterWave:StatChange
@@ -130,5 +136,7 @@ Cooldown=1
 Duration=0.5
 AddHitBox=GolemWaterWaveHB
 AddEvent=Sfx_GolemWaterWave
+SetEventsDelay=0
+AddEvent=GolemWaveParticles
 SetEventsDelay=0
 ;

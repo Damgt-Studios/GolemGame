@@ -45,6 +45,8 @@ AddHitBox=StoneGolemPunchHB
 AddEvent=Sfx_GolemPunch
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=StoneGolemKick:StatChange
@@ -76,6 +78,8 @@ AddHitBox=StoneGolemKickHB
 AddEvent=Sfx_GolemKick
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Effect=StoneGolemSlam:StatChange
@@ -107,6 +111,8 @@ AddHitBox=StoneGolemSlamHB
 AddEvent=Sfx_GolemSlam
 SetEventsDelay=0
 SetHitboxDelay=0.75
+AddEvent=BigGolemParticles
+SetEventsDelay=0.75
 ;
 
 Hitbox=GolemTauntHB:
@@ -127,6 +133,8 @@ Cooldown=1.2
 Duration=0.5
 AddHitBox=GolemTauntHB
 AddEvent=Sfx_GolemTaunt
+SetEventsDelay=0
+AddEvent=GolemIronSkinParticles
 SetEventsDelay=0
 ;
 

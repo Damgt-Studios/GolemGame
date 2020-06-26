@@ -938,7 +938,7 @@ public:
 		renderer.CreateShadersAndInputLayout(Device, shader);
 		renderer.CreateTexture(Device, textureName);
 		renderer.worldMatrix = XMMatrixTranslation(Pos.x, Pos.y, Pos.z);
-		renderer.worldMatrix = XMMatrixMultiply(XMMatrixRotationX(0.785398f), renderer.worldMatrix);
+		renderer.worldMatrix = XMMatrixMultiply(XMMatrixRotationX(1.0472f), renderer.worldMatrix);
 	}
 	void UpdateParticles(float time, XMFLOAT4X4& view, XMFLOAT4X4& projection, XMFLOAT4& camPos)
 	{
@@ -982,7 +982,7 @@ public:
 		lifeSpan = newLife;
 		emitterPos = newPosition;
 		renderer.worldMatrix = XMMatrixTranslation(emitterPos.x, emitterPos.y, emitterPos.z);
-		renderer.worldMatrix = XMMatrixMultiply(XMMatrixRotationX(0.785398f), renderer.worldMatrix);
+		renderer.worldMatrix = XMMatrixMultiply(XMMatrixRotationX(1.0472f), renderer.worldMatrix);
 	}
 	XMFLOAT4 GetPosition()
 	{
@@ -1047,14 +1047,17 @@ public:
 				}
 				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
 			}
+		else
+			isActive = false;
 	}
 	void RenderParticles(ID3D11DeviceContext* deviceContext)
 	{
-		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f))
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
 			renderer.RenderParticle(deviceContext, size);
 	}
 	void Activate(float newLife, XMFLOAT4 newPosition)
 	{
+		isActive = true;
 		for (int i = 0; i < size; ++i)
 		{
 			particles[i].Reset();
@@ -1078,7 +1081,7 @@ private:
 	float elaspedTime = 0.0f;
 	float lifeSpan;
 	float totalElaspedTime = 0.0f;
-	//bool isActive;
+	bool isActive;
 };
 
 class AnimSpreadEmitter
@@ -1259,7 +1262,7 @@ public:
 		{
 			float x = emitterRadius * cos(i * theta);
 			float z = emitterRadius * sin(i * theta);
-			cylinderPoints[i] = XMFLOAT4(emitterPos.x + x, emitterPos.y, emitterPos.z + z, 1.0f);
+			cylinderPoints[i] = XMFLOAT4(x, emitterPos.y, z, 1.0f);
 		}
 		for (int i = 0; i < size; ++i)
 		{
@@ -1455,8 +1458,9 @@ private:
 class BigElementalPuffEmitter
 {
 public:
-	void Initialize(ID3D11Device* Device, XMFLOAT4 Pos, const wchar_t* textureName)
+	void Initialize(ID3D11Device* Device, XMFLOAT4 Pos, const wchar_t* textureName, XMFLOAT4 Color)
 	{
+		color = Color;
 		uCoord = 0.0f;
 		vCoord = 0.0f;
 		coordTime = 0.0f;
@@ -1514,14 +1518,14 @@ public:
 		if (isActive)
 			renderer.RenderParticle(deviceContext, 1, uCoord, vCoord);
 	}
-	void Activate(XMFLOAT4 newPosition, XMFLOAT4 newColor)
+	void Activate(XMFLOAT4 newPosition)
 	{
 		isActive = true;
 		particle.Reset();
 		particle.SetGravityEffect(0);
 		particle.SetHeight(10);
 		particle.SetWidth(10);
-		particle.SetColor(newColor);
+		particle.SetColor(color);
 		particle.SetLifeSpan(-1.0f);
 		uCoord = vCoord = 0;
 		renderer.particlePositions.positions[0] = particle.GetPosition();
@@ -1542,6 +1546,7 @@ private:
 	float coordTime;
 	float uCoord;
 	float vCoord;
+	XMFLOAT4 color;
 };
 
 class SmallElementalPuffEmitter
@@ -1766,14 +1771,17 @@ public:
 				particles[i].Update(time, velocity);
 				renderer.particlePositions.positions[i % numParticles] = particles[i].GetPosition();
 			}
+		else
+			isActive = false;
 	}
 	void RenderParticles(ID3D11DeviceContext* deviceContext)
 	{
-		if (elaspedTime < lifeSpan || lifeSpan <= 0.0f)
+		if ((elaspedTime < lifeSpan || lifeSpan <= 0.0f) && isActive)
 			renderer.RenderParticle(deviceContext, size);
 	}
 	void Activate(float newLife, XMFLOAT4 newPosition)
 	{
+		isActive = true;
 		for (int i = 0; i < size; ++i)
 		{
 			particles[i].Reset();
@@ -1798,4 +1806,5 @@ private:
 	XMFLOAT4 emitterPos;
 	float elaspedTime = 0.0f;
 	float lifeSpan;
+	bool isActive;
 };
