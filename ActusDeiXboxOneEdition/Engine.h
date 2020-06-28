@@ -48,7 +48,7 @@ public:
 
 
 private:
-	Model m_model;
+	//Model m_model;
 	WVP WORLD;
 	std::string write_path;
 	std::string read_path;

@@ -80,38 +80,43 @@ namespace ADResource
 			bool wireframe_mode;
 		};
 
-		struct Model
+//		struct Model
+//		{
+//#ifdef AD_MEMORY_DEFAULT
+//			std::vector<Vertex> vertices;
+//			std::vector<int> indices;
+//#else
+//			ADVector<Vertex> vertices;
+//			ADVector<int> indices;
+//#endif
+//
+//			XMFLOAT3 position;
+//			XMFLOAT3 rotation;
+//			XMFLOAT3 scale;
+//
+//			PBRVertexBufferDesc desc;
+//
+//			ComPtr<ID3D11Buffer> vertexBuffer;
+//			ComPtr<ID3D11Buffer> indexBuffer;
+//
+//			ComPtr<ID3D11VertexShader> vertexShader;
+//			ComPtr<ID3D11PixelShader> pixelShader;
+//
+//			ComPtr<ID3D11InputLayout> vertexBufferLayout;
+//
+//			// Texture stuff
+//			ComPtr<ID3D11SamplerState> sampler;
+//
+//			ComPtr<ID3D11ShaderResourceView> albedo;
+//			ComPtr<ID3D11ShaderResourceView> normal;
+//			ComPtr<ID3D11ShaderResourceView> roughness;
+//			ComPtr<ID3D11ShaderResourceView> metallic;
+//			ComPtr<ID3D11ShaderResourceView> ambient_occlusion;
+//		};
+
+		struct ADTexture
 		{
-#ifdef AD_MEMORY_DEFAULT
-			std::vector<Vertex> vertices;
-			std::vector<int> indices;
-#else
-			ADVector<Vertex> vertices;
-			ADVector<int> indices;
-#endif
-
-			XMFLOAT3 position;
-			XMFLOAT3 rotation;
-			XMFLOAT3 scale;
-
-			PBRVertexBufferDesc desc;
-
-			ComPtr<ID3D11Buffer> vertexBuffer;
-			ComPtr<ID3D11Buffer> indexBuffer;
-
-			ComPtr<ID3D11VertexShader> vertexShader;
-			ComPtr<ID3D11PixelShader> pixelShader;
-
-			ComPtr<ID3D11InputLayout> vertexBufferLayout;
-
-			// Texture stuff
-			ComPtr<ID3D11SamplerState> sampler;
-
-			ComPtr<ID3D11ShaderResourceView> albedo;
-			ComPtr<ID3D11ShaderResourceView> normal;
-			ComPtr<ID3D11ShaderResourceView> roughness;
-			ComPtr<ID3D11ShaderResourceView> metallic;
-			ComPtr<ID3D11ShaderResourceView> ambient_occlusion;
+			ComPtr<ID3D11ShaderResourceView> texture;
 		};
 
 		struct SimpleModel
@@ -133,9 +138,9 @@ namespace ADResource
 			// Texture stuff
 			ComPtr<ID3D11SamplerState> sampler;
 
-			ComPtr<ID3D11ShaderResourceView> albedo;
-			ComPtr<ID3D11ShaderResourceView> normal;
-			ComPtr<ID3D11ShaderResourceView> emissive;
+			ADTexture* albedo;
+			ADTexture* normal;
+			ADTexture* emissive;
 		};
 
 		struct SimpleStaticModel : public SimpleModel

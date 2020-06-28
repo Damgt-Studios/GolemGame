@@ -20,6 +20,8 @@ namespace
 	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
 	std::unordered_map<AD_ULONG, unsigned int> collider_map;
 
+	std::unordered_map<std::string, ADTexture> texturesBank;
+
 #ifdef AD_MEMORY_DEFAULT
 	std::vector<ADResource::ADRenderer::Vertex> pbrVertexData;
 	std::vector<unsigned int> pbrIndxData;
@@ -83,7 +85,7 @@ public:
 
 	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 	static AD_ULONG InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
-	static AD_ULONG InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader);
+	//static AD_ULONG InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader);
 
 public:
 	// Rendering init shit
@@ -114,7 +116,7 @@ public:
 	static ADResource::ADGameplay::GameObject** GetGameObjectPtr();
 
 	static ADResource::ADRenderer::SimpleModel** GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id);
-	static ADResource::ADRenderer::SimpleModel** GetColliderPtrFromMeshId(AD_ULONG mesh_id);
+	//static ADResource::ADRenderer::SimpleModel** GetColliderPtrFromMeshId(AD_ULONG mesh_id);
 
 private:
 	static AD_ULONG current_id;
