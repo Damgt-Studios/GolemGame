@@ -79,7 +79,10 @@ void ResourceManager::AddSkybox(std::string modelname, std::string materials, XM
 	strcpy_s(shader.pshader, "files\\shaders\\skybox_ps.hlsl");
 
 	//ADUtils::LoadWobjectMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
-	ADUtils::LoadStaticMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+	//ADUtils::LoadStaticMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+
+	ADUtils::LoadStaticMesh(modelname.c_str(), skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+	ADUtils::LoadTextures(materials, &skybox, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, texturesBank);
 
 	skybox.position = position;
 	skybox.scale = scale;
@@ -104,10 +107,18 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 	temp->scale = scale;
 	temp->rotation = rotation;
 
-	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+	//ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+	ADUtils::LoadTextures(materials, temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, texturesBank);
 
 	if (temp->albedo) {
-		ADResource::ADRenderer::PBRRenderer::GetRendererResources()->context->GenerateMips(temp->albedo.Get());
+		ADResource::ADRenderer::PBRRenderer::GetRendererResources()->context->GenerateMips(temp->albedo->texture.Get());
+	}
+	else
+	{
+		temp->albedo = new ADTexture();
+		temp->emissive = new ADTexture();
+		temp->normal = new ADTexture();
 	}
 
 	// grab id and add stuff
@@ -127,7 +138,9 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 	temp->scale = scale;
 	temp->rotation = rotation;
 
-	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+	//ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
+	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+	ADUtils::LoadTextures(materials, temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, texturesBank);
 
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();
@@ -138,44 +151,47 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 	return id;
 }
 
-AD_ULONG ResourceManager::InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader)
-{
-	if (modelname == "")
-		return -1;
-
-	SimpleStaticModel* temp = new SimpleStaticModel();
-
-	temp->position = collider->Pos;
-
-	if (collider->type == ADPhysics::ColliderType::Sphere)
-	{
-		ADPhysics::Sphere* sphere = static_cast<ADPhysics::Sphere*>(collider);
-		temp->scale = XMFLOAT3(sphere->Radius, sphere->Radius, sphere->Radius);
-		temp->rotation = XMFLOAT3(0, 0, 0);
-	}
-	else if (collider->type == ADPhysics::ColliderType::Aabb) 
-	{
-		ADPhysics::AABB* aabb = static_cast<ADPhysics::AABB*>(collider);
-		temp->scale = aabb->HalfSize;
-		temp->rotation = XMFLOAT3(0, 0, 0);
-	}
-	else if (collider->type == ADPhysics::ColliderType::Obb) 
-	{
-		ADPhysics::OBB* obb = static_cast<ADPhysics::OBB*>(collider);
-		temp->scale = obb->HalfSize;
-		temp->rotation = XMFLOAT3(0, 0, 0);
-	}
-
-	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
-
-	// grab id and add stuff
-	AD_ULONG id = GenerateUniqueID();
-	unsigned int index = collider_map.size();
-	collider_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
-	colliders.push_back(temp);
-
-	return id;
-}
+//AD_ULONG ResourceManager::InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader)
+//{
+//	if (modelname == "")
+//		return -1;
+//
+//	SimpleStaticModel* temp = new SimpleStaticModel();
+//
+//	temp->position = collider->Pos;
+//
+//	if (collider->type == ADPhysics::ColliderType::Sphere)
+//	{
+//		ADPhysics::Sphere* sphere = static_cast<ADPhysics::Sphere*>(collider);
+//		temp->scale = XMFLOAT3(sphere->Radius, sphere->Radius, sphere->Radius);
+//		temp->rotation = XMFLOAT3(0, 0, 0);
+//	}
+//	else if (collider->type == ADPhysics::ColliderType::Aabb) 
+//	{
+//		ADPhysics::AABB* aabb = static_cast<ADPhysics::AABB*>(collider);
+//		temp->scale = aabb->HalfSize;
+//		temp->rotation = XMFLOAT3(0, 0, 0);
+//	}
+//	else if (collider->type == ADPhysics::ColliderType::Obb) 
+//	{
+//		ADPhysics::OBB* obb = static_cast<ADPhysics::OBB*>(collider);
+//		temp->scale = obb->HalfSize;
+//		temp->rotation = XMFLOAT3(0, 0, 0);
+//	}
+//
+//	ADUtils::LoadStaticMesh(modelname.c_str(), *temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
+//	ADUtils::LoadTextures("", temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, texturesBank);
+//	temp->emissive = new ADTexture();
+//	temp->normal = new ADTexture();
+//
+//	// grab id and add stuff
+//	AD_ULONG id = GenerateUniqueID();
+//	unsigned int index = collider_map.size();
+//	collider_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+//	colliders.push_back(temp);
+//
+//	return id;
+//}
 
 void ResourceManager::ConfigureUnifiedBuffers(ComPtr<ID3D11Device1> device)
 {
@@ -314,15 +330,15 @@ ADResource::ADRenderer::SimpleModel** ResourceManager::GetSimpleModelPtrFromMesh
 	return temp;
 }
 
-ADResource::ADRenderer::SimpleModel** ResourceManager::GetColliderPtrFromMeshId(AD_ULONG mesh_id) 
-{
-	SimpleModel** temp = nullptr;
-	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = collider_map.find(mesh_id);
-
-	if (iter != collider_map.end()) 
-	{
-		temp = &colliders[iter->second];
-	}
-
-	return temp;
-}
+//ADResource::ADRenderer::SimpleModel** ResourceManager::GetColliderPtrFromMeshId(AD_ULONG mesh_id) 
+//{
+//	SimpleModel** temp = nullptr;
+//	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = collider_map.find(mesh_id);
+//
+//	if (iter != collider_map.end()) 
+//	{
+//		temp = &colliders[iter->second];
+//	}
+//
+//	return temp;
+//}

@@ -258,7 +258,7 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	ID3D11ShaderResourceView* resource_views[] = {
-		ResourceManager::GetSkybox()->albedo.Get(),
+		ResourceManager::GetSkybox()->albedo->texture.Get(),
 	};
 
 	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
@@ -427,7 +427,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	ID3D11ShaderResourceView* resource_views[] = {
-		ResourceManager::GetSkybox()->albedo.Get(),
+		ResourceManager::GetSkybox()->albedo->texture.Get(),
 	};
 
 	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
@@ -503,14 +503,14 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// Set sampler
 
 			ID3D11ShaderResourceView* resource_views[] = {
-				current_animated_model->albedo.Get(),
-				current_animated_model->emissive.Get(),
-				current_animated_model->normal.Get(),
+				current_animated_model->albedo->texture.Get(),
+				current_animated_model->emissive->texture.Get(),
+				current_animated_model->normal->texture.Get(),
 			};
 
 			renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
-			renderer_resources.context->VSSetShaderResources(0, 1, current_animated_model->normal.GetAddressOf());
+			renderer_resources.context->VSSetShaderResources(0, 1, current_animated_model->normal->texture.GetAddressOf());
 
 			renderer_resources.context->VSSetShader(current_animated_model->vertexShader.Get(), 0, 0);
 			renderer_resources.context->PSSetShader(current_animated_model->pixelShader.Get(), 0, 0);
@@ -561,8 +561,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			renderer_resources.context->PSSetSamplers(0, 1, samplers);
 
 			ID3D11ShaderResourceView* resource_views[] = {
-				current_static_model->albedo.Get(),
-				current_static_model->normal.Get()
+				current_static_model->albedo->texture.Get(),
+				current_static_model->normal->texture.Get()
 			};
 
 			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
@@ -570,7 +570,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			renderer_resources.context->PSSetShaderResources(0, 2, resource_views);
 			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
 
-			renderer_resources.context->VSSetShaderResources(0, 1, current_static_model->normal.GetAddressOf());
+			renderer_resources.context->VSSetShaderResources(0, 1, current_static_model->normal->texture.GetAddressOf());
 
 			renderer_resources.context->VSSetShader(current_static_model->vertexShader.Get(), 0, 0);
 			renderer_resources.context->PSSetShader(current_static_model->pixelShader.Get(), 0, 0);

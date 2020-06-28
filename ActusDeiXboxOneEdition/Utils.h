@@ -29,13 +29,13 @@ namespace ADUtils
 	void InitializeFileSystem();
 
 	// Model data
-	void LoadWobjectMesh(const char* meshname, Model& model, ComPtr<ID3D11Device1> device, SHADER& shader);
-	void LoadStaticMesh(const char* meshname, SimpleStaticModel& model, ComPtr<ID3D11Device1> device, SHADER& shader, std::string materials = "");
-	void LoadAnimatedMesh(const char* meshname, SimpleAnimModel& model, std::vector<std::string> animations, ComPtr<ID3D11Device1> device, SHADER& shader, std::string materials = "");
+	//void LoadWobjectMesh(const char* meshname, Model& model, ComPtr<ID3D11Device1> device, SHADER& shader);
+	void LoadStaticMesh(const char* meshname, SimpleStaticModel& model, ComPtr<ID3D11Device1> device, SHADER& shader);
+	void LoadAnimatedMesh(const char* meshname, SimpleAnimModel& model, std::vector<std::string> animations, ComPtr<ID3D11Device1> device, SHADER& shader);
 
-	void LoadTextures(Header& header, Model& model, ComPtr<ID3D11Device1> device);
-  
-	void LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D11Device1> device);
+	//void LoadTextures(Header& header, Model& model, ComPtr<ID3D11Device1> device);
+
+	void LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D11Device1> device, std::unordered_map<std::string, ADTexture>& textures);
 	void LoadUITextures(std::string _fileName, ID3D11ShaderResourceView** _srv, ComPtr<ID3D11Device1> _dev);
 	std::wstring GetTexturePath(const char* textName);
 };
