@@ -435,7 +435,39 @@ public:
 		//GameUtilities::AddGameObject(wall16);
 		//GameUtilities::AddGameObject(wall17);
 		//GameUtilities::AddGameObject(wall18);
-
+		/*for (int i = 0; i < 200; ++i)
+		{
+			Building* realtree = new Building(XMFLOAT3(-1., 0, -0.5 * i), XMFLOAT3(0, i, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree);
+			Building* realtree2 = new Building(XMFLOAT3(-2., 0, -0.5 * i), XMFLOAT3(0, i * 2, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree2);
+			Building* realtree3 = new Building(XMFLOAT3(-3., 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree3);
+			Building* realtree4 = new Building(XMFLOAT3(-4, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree4);
+			Building* realtree5 = new Building(XMFLOAT3(-5, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree5);
+			Building* realtree11 = new Building(XMFLOAT3(-6., 0, -0.5 * i), XMFLOAT3(0, i, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree11);
+			Building* realtree12 = new Building(XMFLOAT3(-7., 0, -0.5 * i), XMFLOAT3(0, i * 2, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree12);
+			Building* realtree13 = new Building(XMFLOAT3(-8., 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree13);
+			Building* realtree14 = new Building(XMFLOAT3(-9, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree14);
+			Building* realtree15 = new Building(XMFLOAT3(-10, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree15);
+			Building* realtree20 = new Building(XMFLOAT3(-11., 0, -0.5 * i), XMFLOAT3(0, i, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree20);
+			Building* realtree22 = new Building(XMFLOAT3(-12., 0, -0.5 * i), XMFLOAT3(0, i * 2, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree22);
+			Building* realtree23 = new Building(XMFLOAT3(-13., 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree23);
+			Building* realtree24 = new Building(XMFLOAT3(-14, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree24);
+			Building* realtree25 = new Building(XMFLOAT3(-15, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree25);
+		}*/
 
 		Building* well = new Building(XMFLOAT3(0, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
 		GameUtilities::AddGameObject(well);

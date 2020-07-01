@@ -379,10 +379,14 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
 	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
+	FPSCamera* shadowPositionCamera = new FPSCamera(XMFLOAT3(0, 500, 1000), 0, 3.141592f / 2.0f);
+
 	//XMFLOAT3 campos = camera->GetPosition();
 	XMFLOAT3 campos = ocamera->GetPosition();
+	//XMFLOAT3 campos = shadowPositionCamera->GetPosition();
 	XMFLOAT3 pos, rot, scale;
 	XMMATRIX temp;
+
 
 	// Skybox
 	// disable depth buffer
@@ -404,10 +408,12 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 	// View
 	ocamera->GetViewMatrix(temp);
+	//shadowPositionCamera->GetViewMatrix(temp);
 	XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
 	// Projection
 	//temp = XMMatrixPerspectiveFovLH(camera->GetFOV(), aspectRatio, 0.1f, 1000);
 	temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, ocamera->GetNear(), ocamera->GetFar());
+	//temp = XMMatrixPerspectiveFovLH(shadowPositionCamera->GetFOV(), aspectRatio, shadowPositionCamera->GetNear(), shadowPositionCamera->GetFar());
 	XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
 
 	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
@@ -589,6 +595,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//	pbr_renderer_resources.context->RSSetState(pbr_renderer_resources.defaultRasterizerState.Get());
 		//}
 	}
+
+	delete shadowPositionCamera;
 
 	return true;
 }
