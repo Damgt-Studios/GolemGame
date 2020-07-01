@@ -17,7 +17,9 @@ namespace
 
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
-	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
+	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;							
+	std::unordered_map<std::string, SimpleStaticModel*> fbxmodel_map_static_instancing;		
+
 	std::unordered_map<AD_ULONG, unsigned int> collider_map;
 
 	std::unordered_map<std::string, ADTexture> texturesBank;
@@ -70,7 +72,7 @@ namespace
 class ResourceManager
 {
 public:
-	static AD_ULONG AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+	static AD_ULONG AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool instanced = false, bool wireframe = false);
 	static AD_ULONG AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
@@ -83,9 +85,10 @@ public:
 	static AD_ULONG GenerateUniqueID();
 	static AD_ULONG GenerateEffectID();
 
-	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader, bool instanced = false);
 	static AD_ULONG InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 	//static AD_ULONG InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader);
+	static void FinalizedStatics();
 
 public:
 	// Rendering init shit

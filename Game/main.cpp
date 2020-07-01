@@ -354,31 +354,31 @@ public:
 
 		GameUtilities::AddGameObject(tempPlane);
 
-		Building* house1 = new Building(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
+		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
 		GameUtilities::AddGameObject(house1);
 		currentScene.AddBuilding(house1);
 
-		Building* house2 = new Building(XMFLOAT3(-5, 0, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
+		Building* house2 = new Building(XMFLOAT3(-500, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
 		GameUtilities::AddGameObject(house2);
 		currentScene.AddBuilding(house2);
 		//
-		Building* house3 = new Building(XMFLOAT3(-5, 0, 6), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
+		Building* house3 = new Building(XMFLOAT3(-500, 0, -160), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
 		GameUtilities::AddGameObject(house3);
 		currentScene.AddBuilding(house3);
 
-		Building* house4 = new Building(XMFLOAT3(-5, 0, 9), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
+		Building* house4 = new Building(XMFLOAT3(-500, 0, -70), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
 		GameUtilities::AddGameObject(house4);
 		currentScene.AddBuilding(house4);
 
-		Building* barn1 = new Building(XMFLOAT3(-5, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
+		Building* barn1 = new Building(XMFLOAT3(-500, 0, 250), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
 		GameUtilities::AddGameObject(barn1);
 		currentScene.AddBuilding(barn1);
 
-		Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
+		Building* barn2 = new Building(XMFLOAT3(-500, 0, -370), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
 		GameUtilities::AddGameObject(barn2);
 		currentScene.AddBuilding(barn2);
 
-		Building* tower = new Building(XMFLOAT3(1.125, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
+		Building* tower = new Building(XMFLOAT3(115, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower = new Building(XMFLOAT3(-24.475, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower2 = new Building(XMFLOAT3(-6.75, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower3 = new Building(XMFLOAT3(-6.75, 0, -3.125), XMFLOAT3(0, 90, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
@@ -437,40 +437,56 @@ public:
 		//GameUtilities::AddGameObject(wall18);
 
 
-		Building* well = new Building(XMFLOAT3(0, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
+		Building* well = new Building(XMFLOAT3(500, 0, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
 		GameUtilities::AddGameObject(well);
 
-		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
+		Building* tavern = new Building(XMFLOAT3(-100, 0, 100), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
 		GameUtilities::AddGameObject(tavern);
 		currentScene.AddBuilding(tavern);
 
-		Building* lamp = new Building(XMFLOAT3(-5, 0, 7.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		Building* lamp = new Building(XMFLOAT3(-350, 0, 75), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
 		GameUtilities::AddGameObject(lamp);
-		Building* lamp2 = new Building(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		Building* lamp2 = new Building(XMFLOAT3(425, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
 		GameUtilities::AddGameObject(lamp2);
 
-		Building* rock = new Building(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1);
+		Building* rock = new Building(XMFLOAT3(-20, 0, 220), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1);
 		GameUtilities::AddGameObject(rock);
 
-		Building* meeting_hall = new Building(XMFLOAT3(10, 0, 10), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall);
+		Building* meeting_hall = new Building(XMFLOAT3(100, 0, 360), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall);
 		GameUtilities::AddGameObject(meeting_hall);
 		currentScene.AddBuilding(meeting_hall);
 
-		Building* cart = new Building(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart);
+		Building* cart = new Building(XMFLOAT3(-125, 0, 310), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart);
 		GameUtilities::AddGameObject(cart);
 
-		Building* realtree = new Building(XMFLOAT3(-2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
-		GameUtilities::AddGameObject(realtree);
+		for (int i = 0; i < 1000; ++i)
+		{
+			Building* realtree = new Building(XMFLOAT3(RandFloat(i-1000, i+1000), 0, RandFloat(i - 1000, i + 1000)), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree);
+		}
 
-		Building* rubble1 = new Building(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1);
+
+		Building* rubble1 = new Building(XMFLOAT3(130, 0, 150), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1);
 		GameUtilities::AddGameObject(rubble1);
 
-		Building* rubble2 = new Building(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
+		Building* rubble2 = new Building(XMFLOAT3(-220, 0, 330), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
 		GameUtilities::AddGameObject(rubble2);
 
-		Building* rubble3 = new Building(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
+		Building* rubble3 = new Building(XMFLOAT3(210, 0, 180), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
 		GameUtilities::AddGameObject(rubble3);
 
+
+		Building* rubble4 = new Building(XMFLOAT3(130, 0, 650), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1);
+		GameUtilities::AddGameObject(rubble4);
+
+		Building* rubble5 = new Building(XMFLOAT3(-220, 0, 630), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
+		GameUtilities::AddGameObject(rubble5);
+
+		Building* rubble6 = new Building(XMFLOAT3(210, 0, 680), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
+		GameUtilities::AddGameObject(rubble6);
+
+
+		ResourceManager::FinalizedStatics();
 
 
 		float minionWidth = 10;

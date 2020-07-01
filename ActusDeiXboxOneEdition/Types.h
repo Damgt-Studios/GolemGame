@@ -116,11 +116,23 @@ namespace ADResource
 
 		struct ADTexture
 		{
+			bool shared = true;
 			ComPtr<ID3D11ShaderResourceView> texture;
 		};
 
-		struct SimpleModel
+		class SimpleModel
 		{
+		public:
+			~SimpleModel()
+			{
+				if (!albedo->shared)
+					delete albedo;
+				if (!normal->shared)
+					delete normal;
+				if (!emissive->shared)
+					delete emissive;
+			}
+
 			bool animated = false;
 
 			XMFLOAT3 position;
@@ -148,6 +160,9 @@ namespace ADResource
 #ifdef AD_MEMORY_DEFAULT
 			std::vector<SimpleVertex> vertices;
 			std::vector<int> indices;
+			UINT instanceCount;
+			std::vector<XMFLOAT3> positions;
+			ComPtr<ID3D11Buffer> instanceBuffer;
 #else
 			ADVector<SimpleVertex> vertices;
 			ADVector<int> indices;
