@@ -62,7 +62,7 @@ private:
 	float timer = 0;
 	float delta_time = 0;
 
-	const float physics_rate = 0.2f;
+	const float physics_rate = 0.05f;
 	float physics_timer = 0;
 
 	// Rotation
@@ -459,7 +459,7 @@ public:
 		Building* cart = new Building(XMFLOAT3(-125, 0, 310), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart);
 		GameUtilities::AddGameObject(cart);
 
-		for (int i = 0; i < 1000; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
 			Building* realtree = new Building(XMFLOAT3(RandFloat(i-1000, i+1000), 0, RandFloat(i - 1000, i + 1000)), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
 			GameUtilities::AddGameObject(realtree);
@@ -646,34 +646,38 @@ public:
 
 
 
-			for (int i = 0; i < OBJ_COUNT; i++)
+			physics_timer += delta_time;
+			if (physics_timer > physics_rate)
 			{
-
-				if (OBJS[i]->colliderPtr)
+				physics_timer = 0;
+				for (int i = 0; i < OBJ_COUNT; i++)
 				{
-					int* index = new int(i);
-					if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
+
+					if (OBJS[i]->colliderPtr)
 					{
-						int somethingswrong = 0;
-						somethingswrong++;
+						int* index = new int(i);
+						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
+						{
+							int somethingswrong = 0;
+							somethingswrong++;
+						}
 					}
 				}
-			}
 
-			for (unsigned int i = 0; i < OBJ_COUNT; i++)
-			{
-				if (OBJS[i]->colliderPtr)
+				for (unsigned int i = 0; i < OBJ_COUNT; i++)
 				{
-					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
-
-					for (unsigned int j = 0; j < collisionVector.size(); j++)
+					if (OBJS[i]->colliderPtr)
 					{
-						if (OBJS[*collisionVector[j].data]->colliderPtr)
-							OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+
+						for (unsigned int j = 0; j < collisionVector.size(); j++)
+						{
+							if (OBJS[*collisionVector[j].data]->colliderPtr)
+								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+						}
 					}
 				}
-			}
 			//----------------------------------------------------------------------------------------------------
 			//for (unsigned int i = 0; i < OBJ_COUNT; i++)
 			//{
@@ -743,12 +747,8 @@ public:
 			//---------------------------------------------End New Physics System------------------------------------------
 
 			//Resolve all collisions that occurred this frame
-			ADResource::ADGameplay::ResolveCollisions();
+				ADResource::ADGameplay::ResolveCollisions();
 
-			physics_timer += delta_time;
-			if (physics_timer > physics_rate)
-			{
-				physics_timer = 0;
 				/*for (int i = 0; i < 10; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);

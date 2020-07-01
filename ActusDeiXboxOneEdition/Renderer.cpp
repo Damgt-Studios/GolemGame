@@ -524,6 +524,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			//int ibase = current_model->desc.base_vertex_location;
 			//int icount = current_model->desc.index_count;
 			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+	
 			renderer_resources.context->DrawIndexed(current_animated_model->indices.size(), 0, 0);
 		}
 
