@@ -3,10 +3,10 @@
 #include "Renderer.h"
 
 // Static private members
-AD_ULONG ResourceManager::current_id = 0;
+AD_ULONG ResourceManager::current_id = 1;
 AD_ULONG ResourceManager::effect_id = 0;
 
-AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool instanced, bool wireframe) {
 	ADUtils::SHADER shader = { 0 };
 
 	if (!wireframe)
@@ -22,7 +22,7 @@ AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string mate
 
 	shader.wireframe = wireframe;
 
-	return InitializeSimpleModel(modelname, materials, position, scale, rotation, shader);
+	return InitializeSimpleModel(modelname, materials, position, scale, rotation, shader, instanced);
 }
 
 AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
@@ -99,10 +99,26 @@ AD_ULONG ResourceManager::GenerateEffectID()
 	return ResourceManager::effect_id++;
 }
 
-AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
+AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader, bool instanced)
 {
-	SimpleStaticModel* temp = new SimpleStaticModel();
+	AD_ULONG id = 0;
+	//Check to see if the model already exists in the map and if it is destructable.  This has a RETURN to exit the function.
+	if (instanced)
+	{
+		auto tFoundIt = fbxmodel_map_static_instancing.find(modelname);
+		if (tFoundIt != fbxmodel_map_static_instancing.end())
+		{
+			tFoundIt->second->positions.push_back(position);
+			tFoundIt->second->instanceCount++;
+			//If so just add position to positions otherwise do whole process
+			//id = tFoundIt->second.Value;
+			return id;
+		}
+	}
 
+	SimpleStaticModel* temp = new SimpleStaticModel();
+	temp->positions.push_back(position);
+	temp->instanceCount = 1;
 	temp->position = position;
 	temp->scale = scale;
 	temp->rotation = rotation;
@@ -117,14 +133,18 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 	else
 	{
 		temp->albedo = new ADTexture();
+		temp->albedo->shared = false;
 		temp->emissive = new ADTexture();
+		temp->emissive->shared = false;
 		temp->normal = new ADTexture();
+		temp->normal->shared = false;
 	}
 
 	// grab id and add stuff
-	AD_ULONG id = GenerateUniqueID();
+	id = GenerateUniqueID();
 	unsigned int index = fbxmodels.size();
 	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	fbxmodel_map_static_instancing.insert(std::pair<std::string, SimpleStaticModel*>(modelname, temp));
 	fbxmodels.push_back(temp);
 
 	return id;
@@ -134,9 +154,9 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 {
 	SimpleAnimModel* temp = new SimpleAnimModel();
 	
-	temp->position = position;
 	temp->scale = scale;
 	temp->rotation = rotation;
+	temp->position = position;
 
 	//ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
 	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
@@ -149,6 +169,33 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 	fbxmodels.push_back(temp);
 
 	return id;
+}
+
+void ResourceManager::FinalizedStatics()
+{
+	//loop over the statics objects map and build their instancing buffers.
+	for (auto itFound = fbxmodel_map_static_instancing.begin(); itFound != fbxmodel_map_static_instancing.end(); itFound++)
+	{
+		//----------------------------------------Dan's Instancing Insert--------------------------------------------
+
+		D3D11_BUFFER_DESC bdesc;
+		D3D11_SUBRESOURCE_DATA subData;
+		ZeroMemory(&bdesc, sizeof(bdesc));
+		ZeroMemory(&subData, sizeof(subData));
+
+		bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bdesc.ByteWidth = sizeof(XMFLOAT3) * itFound->second->positions.size();
+		bdesc.CPUAccessFlags = 0;
+		bdesc.MiscFlags = 0;
+		bdesc.StructureByteStride = 0;
+		bdesc.Usage = D3D11_USAGE_DEFAULT;
+
+		subData.pSysMem = itFound->second->positions.data();
+		subData.SysMemPitch = 0;
+		subData.SysMemSlicePitch = 0;
+		HRESULT hr = ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device->CreateBuffer(&bdesc, &subData, &itFound->second->instanceBuffer);
+		//-----------------------------------------------------------------------------------------------------------
+	}
 }
 
 //AD_ULONG ResourceManager::InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader)
