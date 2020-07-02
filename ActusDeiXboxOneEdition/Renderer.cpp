@@ -181,6 +181,89 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateSamplerState(&sdesc, &renderer_resources.normal_sampler);
 	assert(!FAILED(result));
 
+#pragma region Shadow Initialization
+
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+	depthStencilDesc.Width = scd.Width;
+	depthStencilDesc.Height = scd.Height;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsv_desc;
+	ZeroMemory(&dsv_desc, sizeof(dsv_desc));
+
+	dsv_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsv_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC sr_desc;
+	ZeroMemory(&sr_desc, sizeof(sr_desc));
+
+	sr_desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	sr_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	sr_desc.Texture2D.MostDetailedMip = 0;
+	sr_desc.Texture2D.MipLevels = -1;
+
+	result = renderer_resources.device->CreateTexture2D(&depthStencilDesc, 0, renderer_resources.shadowTexture.GetAddressOf());
+	assert(!FAILED(result));
+
+	result = renderer_resources.device->CreateDepthStencilView(renderer_resources.shadowTexture.Get(), &dsv_desc, renderer_resources.shadowDepth.GetAddressOf());
+	assert(!FAILED(result));
+	
+	result = renderer_resources.device->CreateShaderResourceView(renderer_resources.shadowTexture.Get(), &sr_desc, renderer_resources.shadowView.GetAddressOf());
+	assert(!FAILED(result));
+
+	D3D11_SAMPLER_DESC shadowSamp;
+	ZeroMemory(&shadowSamp, sizeof(shadowSamp));
+	shadowSamp.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSamp.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSamp.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSamp.BorderColor[0] = 1.0f;
+	shadowSamp.BorderColor[1] = 1.0f;
+	shadowSamp.BorderColor[2] = 1.0f;
+	shadowSamp.BorderColor[3] = 1.0f;
+	
+	result = renderer_resources.device->CreateSamplerState(&shadowSamp, renderer_resources.shadowSampler.GetAddressOf());
+	assert(!FAILED(result));
+
+	ADUtils::SHADER shader = { 0 };
+
+	strcpy_s(shader.vshader, "files\\shaders\\shadows_vs.hlsl");
+	strcpy_s(shader.pshader, "files\\shaders\\shadows_ps.hlsl");
+
+	// Load shaders // Thanks Whittington
+	ComPtr<ID3D10Blob> vertexblob;
+	ComPtr<ID3D10Blob> pixelblob;
+
+	Platform::String^ appInstallFolder = Windows::ApplicationModel::Package::Current->InstalledLocation->Path;
+	std::string READ_PATH = std::string(appInstallFolder->Begin(), appInstallFolder->End()).append("\\");
+
+	std::string vname(shader.vshader);
+	std::string pname(shader.pshader);
+
+	std::string v = std::string(READ_PATH.begin(), READ_PATH.end()).append(vname);
+	std::string p = std::string(READ_PATH.begin(), READ_PATH.end()).append(pname);
+
+	std::wstring vshadername(v.begin(), v.end());
+	std::wstring pshadername(p.begin(), p.end());
+
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	assert(!FAILED(result));
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+	assert(!FAILED(result));
+
+	result = renderer_resources.device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, renderer_resources.shadowVertex.GetAddressOf());
+	assert(!FAILED(result));
+	result = renderer_resources.device->CreatePixelShader(pixelblob->GetBufferPointer(), pixelblob->GetBufferSize(), nullptr, renderer_resources.shadowPixel.GetAddressOf());
+	assert(!FAILED(result));
+#pragma endregion
+
 	return true;
 }
 
@@ -379,20 +462,88 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
 	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
-	FPSCamera* shadowPositionCamera = new FPSCamera(XMFLOAT3(0, 500, 1000), 0, 3.141592f / 2.0f);
+	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 500, 1000), 0, 3.141592f / 2.0f);
 
-	//XMFLOAT3 campos = camera->GetPosition();
 	XMFLOAT3 campos = ocamera->GetPosition();
-	//XMFLOAT3 campos = shadowPositionCamera->GetPosition();
+
+	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+
 	XMFLOAT3 pos, rot, scale;
 	XMMATRIX temp;
 
+	ADResource::ADGameplay::GameObject* current_obj = nullptr;
+	SimpleModel** current_model = nullptr;
+	SimpleStaticModel* current_static_model = nullptr;
+	SimpleAnimModel* current_animated_model = nullptr;
 
-	// Skybox
-	// disable depth buffer
+	ComPtr<IDXGIFactory> factory;
+
+	renderer_resources.context->OMSetRenderTargets(0, nullptr, renderer_resources.shadowDepth.Get());
+
+	while (!ResourceManager::ShadowQueueEmpty())
+	{
+		current_obj = ResourceManager::PopFromShadowQueue();
+		current_model = ResourceManager::GetSimpleModelPtrFromMeshId(current_obj->GetMeshId());
+
+		if (current_model == nullptr)
+			continue;
+
+		if ((*current_model)->animated)
+		{
+			continue;
+		}
+		else
+		{
+			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
+
+			current_obj->GetWorldMatrix(temp);
+			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+
+			shadowCamera->GetViewMatrix(temp);
+			XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+
+			temp = XMMatrixPerspectiveFovLH(shadowCamera->GetFOV(), aspectRatio, shadowCamera->GetNear(), shadowCamera->GetFar());
+			XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
+
+			XMFLOAT3 shadowCameraPosition = shadowCamera->GetPosition();
+			XMFLOAT4 shadowTemp = XMFLOAT4(shadowCameraPosition.x, shadowCameraPosition.y, shadowCameraPosition.z, 1);
+			XMStoreFloat4(&WORLD.CameraPosition, Float4ToVector(shadowTemp));
+
+			D3D11_MAPPED_SUBRESOURCE gpuBuffer;
+			result = renderer_resources.context->Map(renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
+			memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
+			renderer_resources.context->Unmap(renderer_resources.constantBuffer.Get(), 0);
+
+			UINT strides[] = { sizeof(SimpleVertex) };
+			UINT offsets[] = { 0 };
+			ID3D11Buffer* modelVertexBuffers[] = { current_static_model->vertexBuffer.Get() };
+			renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
+			renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+			renderer_resources.context->IASetIndexBuffer(current_static_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+			ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get() };
+			renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
+
+			renderer_resources.context->VSSetShader(renderer_resources.shadowVertex.Get(), 0, 0);
+			renderer_resources.context->PSSetShader(renderer_resources.shadowPixel.Get(), 0, 0);
+
+			renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
+		}
+	}
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC sr_desc;
+	sr_desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	sr_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	sr_desc.Texture2D.MostDetailedMip = 0;
+	sr_desc.Texture2D.MipLevels = -1;
+	renderer_resources.device->CreateShaderResourceView(renderer_resources.shadowTexture.Get(), &sr_desc, renderer_resources.shadowView.GetAddressOf());
+
+#pragma region Skybox
+
+	//Disable Z buffer
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
 
-	// sET THE PIPELINE
+	//Set up Skybox
 	UINT skystrices[] = { sizeof(SimpleVertex) };
 	UINT skyoffsets[] = { 0 };
 	ID3D11Buffer* skyVertexBuffers[] = { ResourceManager::GetSkybox()->vertexBuffer.Get() };
@@ -406,61 +557,56 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	temp = XMMatrixScaling(10, 10, 10);
 	temp = XMMatrixMultiply(temp, XMMatrixTranslation(campos.x, campos.y, campos.z));
 	XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
+
 	// View
 	ocamera->GetViewMatrix(temp);
-	//shadowPositionCamera->GetViewMatrix(temp);
 	XMStoreFloat4x4(&WORLD.ViewMatrix, temp);
+
 	// Projection
-	//temp = XMMatrixPerspectiveFovLH(camera->GetFOV(), aspectRatio, 0.1f, 1000);
 	temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, ocamera->GetNear(), ocamera->GetFar());
-	//temp = XMMatrixPerspectiveFovLH(shadowPositionCamera->GetFOV(), aspectRatio, shadowPositionCamera->GetNear(), shadowPositionCamera->GetFar());
 	XMStoreFloat4x4(&WORLD.ProjectionMatrix, temp);
 
-	WORLD.CameraPosition = XMFLOAT4(campos.x, campos.y, campos.z, 1);
+	// Model stuff
+
+	// Render stuff
+	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->inputLayout.Get());
+
+	renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
 
 	// Send the matrix to constant buffer
 	D3D11_MAPPED_SUBRESOURCE gpuBuffer;
 	result = renderer_resources.context->Map(renderer_resources.constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &gpuBuffer);
 	memcpy(gpuBuffer.pData, &WORLD, sizeof(WORLD));
 	renderer_resources.context->Unmap(renderer_resources.constantBuffer.Get(), 0);
+
 	// Connect constant buffer to the pipeline
 	ID3D11Buffer* modelCBuffers[] = { renderer_resources.constantBuffer.Get() };
 	renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
-	// Model stuff
-
-	// Render stuff
-	// Set sampler
-	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	ID3D11ShaderResourceView* resource_views[] = {
-		ResourceManager::GetSkybox()->albedo->texture.Get(),
+	ResourceManager::GetSkybox()->albedo->texture.Get(),
 	};
 
-	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
-
-	renderer_resources.context->VSSetShader(ResourceManager::GetSkybox()->vertexShader.Get(), 0, 0);
 	renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
-	renderer_resources.context->IASetInputLayout(ResourceManager::GetSkybox()->inputLayout.Get());
+
+	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
+	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
-	// Skybox
 
-	// Set depth buffer
+	// Enable Z buffer
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
 
-	//// sET THE PIPELINE
-	//UINT strides[] = { sizeof(Vertex) };
-	//UINT offsets[] = { 0 };
-	//ID3D11Buffer* moelVertexBuffers[] = { ResourceManager::GetVertexBuffer().Get() };
-	//pbr_renderer_resources.context->IASetVertexBuffers(0, 1, moelVertexBuffers, strides, offsets);
-	//pbr_renderer_resources.context->IASetIndexBuffer(ResourceManager::GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+#pragma endregion
 
-	//renderer_resources.context->UpdateSubresource(renderer_resources.lightBuffer.Get(), NULL, nullptr, lights.data(), 0, 0);
 
-	ADResource::ADGameplay::GameObject* current_obj = nullptr;
-	SimpleModel** current_model = nullptr;
-	SimpleStaticModel* current_static_model = nullptr;
-	SimpleAnimModel* current_animated_model = nullptr;
+	//Render Loop
+
+	current_obj = nullptr;
+	current_model = nullptr;
+	current_static_model = nullptr;
+	current_animated_model = nullptr;
+
 	while (!ResourceManager::RenderQueueEmpty())
 	{
 		current_obj = ResourceManager::PopFromRenderQueue();
@@ -562,18 +708,16 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			// Model stuff
 			renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 			// Render stuff
-			// Set sampler
-			ID3D11SamplerState* samplers[] = { current_static_model->sampler.Get() };
-			renderer_resources.context->PSSetSamplers(0, 1, samplers);
 
 			ID3D11ShaderResourceView* resource_views[] = {
 				current_static_model->albedo->texture.Get(),
-				current_static_model->normal->texture.Get()
+				current_static_model->normal->texture.Get(),
+				renderer_resources.shadowView.Get(),
 			};
 
 			ID3D11SamplerState* current_samplers[] = { current_static_model->sampler.Get() };
 
-			renderer_resources.context->PSSetShaderResources(0, 2, resource_views);
+			renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
 			renderer_resources.context->PSSetSamplers(0, 1, current_samplers);
 
 			renderer_resources.context->VSSetShaderResources(0, 1, current_static_model->normal->texture.GetAddressOf());
@@ -596,7 +740,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		//}
 	}
 
-	delete shadowPositionCamera;
+	delete shadowCamera;
 
 	return true;
 }

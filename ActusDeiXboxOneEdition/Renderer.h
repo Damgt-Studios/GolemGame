@@ -42,6 +42,15 @@ namespace ADResource
 				// Samplers
 				ComPtr<ID3D11SamplerState> normal_sampler;
 
+				//Shadows
+				ComPtr<ID3D11Texture2D> shadowTexture;
+				ComPtr<ID3D11ShaderResourceView> shadowView;
+				ComPtr<ID3D11DepthStencilView> shadowDepth;
+				ComPtr<ID3D11SamplerState> shadowSampler;
+
+				ComPtr<ID3D11VertexShader> shadowVertex;
+				ComPtr<ID3D11PixelShader> shadowPixel;
+
 				RendererResources()
 				{
 					device = nullptr;
@@ -54,6 +63,14 @@ namespace ADResource
 					depthStencil = nullptr;
 					constantBuffer = nullptr;
 					lightBuffer = nullptr;
+
+					shadowTexture = nullptr;
+					shadowView = nullptr;
+					shadowDepth = nullptr;
+					shadowSampler = nullptr;
+
+					shadowVertex = nullptr;
+					shadowPixel = nullptr;
 				};
 			};
 			

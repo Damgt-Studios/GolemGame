@@ -7,8 +7,6 @@ struct InputVertex
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    //int4 joints : JOINTS;
-    //float4 weights : WEIGHTS;
 };
 
 struct OutputVertex

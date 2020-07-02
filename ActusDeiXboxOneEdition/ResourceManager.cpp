@@ -243,6 +243,16 @@ bool ResourceManager::RenderQueueEmpty()
 	return render_queue.empty();
 }
 
+void ResourceManager::AddModelToShadowQueue(ADResource::ADGameplay::GameObject* obj)
+{
+	shadow_queue.push(obj);
+}
+
+bool ResourceManager::ShadowQueueEmpty()
+{
+	return shadow_queue.empty();
+}
+
 void ResourceManager::AddModelToColliderQueue(AD_ULONG key)
 {
 	collider_queue.push(key);
@@ -257,6 +267,14 @@ ADResource::ADGameplay::GameObject* ResourceManager::PopFromRenderQueue()
 {
 	ADResource::ADGameplay::GameObject* temp = render_queue.front();
 	render_queue.pop();
+
+	return temp;
+}
+
+ADResource::ADGameplay::GameObject* ResourceManager::PopFromShadowQueue()
+{
+	ADResource::ADGameplay::GameObject* temp = shadow_queue.front();
+	shadow_queue.pop();
 
 	return temp;
 }
