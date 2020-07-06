@@ -1,12 +1,13 @@
 #pragma once
-
-#include "GameplayBaseClasses.h"
-#include "GameObjectClasses.h"
-#include "ADUserInterface.h"
-#include "AudioManager.h"
+//
+//#include "GameplayBaseClasses.h"
+//#include "GameObjectClasses.h"
+//#include "ADUserInterface.h"
+//#include "AudioManager.h"
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
+#include <ADCombat.h>
 //#include "MinionManager.h"
 
 using namespace ADResource::ADGameplay;
@@ -56,6 +57,7 @@ namespace ADResource
 			// Public Data Members
 			// AI
 			GameObject* targetMarker;
+			float commandDistanceTimer = 0;
 			ADAI::FlockingGroup** flockingGroups;
 			int commandTargetGroup = 0;
 			//int totalMinionCount = 0;
@@ -88,6 +90,7 @@ namespace ADResource
 			void TowerPunch();
 			void GroundSlam();
 			void Kick();
+			void CastCommandTarget(float delta_time);
 			void CommandMinions();
 			void RecallMinions();
 			void ChangeElement(bool nextElement);
@@ -104,10 +107,10 @@ namespace ADResource
 
 			// Private Data Members
 			// Golem Stats
-			
+
 			int health;
 			//int playerElement = 0;
-			
+
 
 
 			// Audio Stuff

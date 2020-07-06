@@ -1,12 +1,5 @@
 #pragma once
 
-#include "Camera.h"
-#include "Renderer.h"
-#include "Input.h"
-#include "ResourceManager.h"
-#include "XTime.h"
-#include "ADUserInterface.h"
-
 #include <wrl/client.h>
 #include <d3d11_1.h>
 #include <DirectXMath.h>
@@ -14,7 +7,14 @@
 #include <string>
 #include <fstream>
 
-#include "Types.h"
+#include "Camera.h"
+#include "Renderer.h"
+#include "Input.h"
+#include "ResourceManager.h"
+//#include "XTime.h"
+
+//#include "Types.h"
+#include "ADUserInterface.h"
 #include "ADParticles.h"
 
 using namespace DirectX;
@@ -58,7 +58,7 @@ private:
 #else
 	ADVector<Light> lights;
 #endif
-	
+
 	FPSCamera* camera;
 	OrbitCamera* ocamera;
 

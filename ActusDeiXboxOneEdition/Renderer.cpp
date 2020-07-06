@@ -676,6 +676,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			//int ibase = current_model->desc.base_vertex_location;
 			//int icount = current_model->desc.index_count;
 			//pbr_renderer_resources.context->DrawIndexed(icount, istart, ibase);
+	
 			renderer_resources.context->DrawIndexed(current_animated_model->indices.size(), 0, 0);
 		}
 
@@ -684,10 +685,10 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		{
 			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
 
-			UINT strides[] = { sizeof(SimpleVertex) };
-			UINT offsets[] = { 0 };
-			ID3D11Buffer* modelVertexBuffers[] = { current_static_model->vertexBuffer.Get() };
-			renderer_resources.context->IASetVertexBuffers(0, 1, modelVertexBuffers, strides, offsets);
+			UINT strides[2] = { sizeof(SimpleVertex), sizeof(XMFLOAT3) };
+			UINT offsets[2] = { 0, 0 };
+			ID3D11Buffer* modelVertexBuffers[2] = { current_static_model->vertexBuffer.Get(), current_static_model->instanceBuffer.Get() };
+			renderer_resources.context->IASetVertexBuffers(0, 2, modelVertexBuffers, strides, offsets);
 			renderer_resources.context->IASetIndexBuffer(current_static_model->indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 			// Model stuff
@@ -726,7 +727,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			renderer_resources.context->PSSetShader(current_static_model->pixelShader.Get(), 0, 0);
 			renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
 
-			renderer_resources.context->DrawIndexed(current_static_model->indices.size(), 0, 0);
+			renderer_resources.context->DrawIndexedInstanced(current_static_model->indices.size(), current_static_model->instanceCount, 0, 0, 0);
 		}
 
 		//bool bruh = current_model->desc.wireframe_mode;

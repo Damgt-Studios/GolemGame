@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Types.h"
+//#include "Types.h"
 #include "Utils.h"
 #include <d3dcompiler.h>
 #include "DDSTextureLoader.h"
@@ -10,7 +10,7 @@
 #include <vector>
 #include <queue>
 
-namespace 
+namespace
 {
 	// Maps
 	std::unordered_map<AD_ULONG, unsigned int> light_map;
@@ -18,6 +18,8 @@ namespace
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
 	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
+	std::unordered_map<std::string, SimpleStaticModel*> fbxmodel_map_static_instancing;
+
 	std::unordered_map<AD_ULONG, unsigned int> collider_map;
 
 	std::unordered_map<std::string, ADTexture> texturesBank;
@@ -66,12 +68,13 @@ namespace
 	ComPtr<ID3D11Buffer> indexBuffer;
 }
 
+
 // Note: Update the resource manager to load models and store mesh data in same draw call in contiguous memory
 
 class ResourceManager
 {
 public:
-	static AD_ULONG AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
+	static AD_ULONG AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool instanced = false, bool wireframe = false);
 	static AD_ULONG AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe = false);
 
 	static AD_ULONG AddLight(ADResource::ADRenderer::Light& light);
@@ -84,9 +87,10 @@ public:
 	static AD_ULONG GenerateUniqueID();
 	static AD_ULONG GenerateEffectID();
 
-	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
+	static AD_ULONG InitializeSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader, bool instanced = false);
 	static AD_ULONG InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader);
 	//static AD_ULONG InitializeColliderModel(std::string modelname, ADPhysics::Collider* collider, ADUtils::SHADER& shader);
+	static void FinalizedStatics();
 
 public:
 	// Rendering init shit
@@ -112,7 +116,7 @@ public:
 	// Getters/ setters
 	static int GetLightCount();
 	static char* GetLightDataPtr();
-	
+
 	static ADResource::ADRenderer::SimpleStaticModel* GetSkybox();
 	static ADResource::ADRenderer::Light* GetLightPtr();
 

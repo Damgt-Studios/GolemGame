@@ -1,12 +1,12 @@
 #pragma once
-#include "ADAudio.h"
-#include "ADEventSystem.h"
-#include "Listeners.h"
+//#include "ADAudio.h"
+//#include "ADEventSystem.h"
+//#include "Listeners.h"
 #include <Types.h>
 #include "GameEffects.h"
-#include "GameObjectClasses.h"
+//#include "GameObjectClasses.h"
 #include "GameUtilities.h"
-#include "ADUserInterface.h"
+//#include "ADUserInterface.h"
 #include "GameUserInterface.h"
 ////#include "AudioManager.h"
 //#include "MeshLoader.h"
@@ -525,8 +525,38 @@ class TheGreatGolem
 
 	GolemGameUISetup::GameUserInterface gameUI;
 
-	bool LoadGameEmitters()
+
+
+	bool LoadGameEmitterListeners()
 	{
+		/*	ParticleEmitterListener golemPunchParticles(engine->bigCloud);
+			golemPunchParticles.lifespan = 20.0f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
+
+			ParticleEmitterListener bigGolemDustParticles(engine->bigCloud);
+			bigGolemDustParticles.lifespan = 0.5f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
+
+			RecoveryEmitterEvent golemRecoveryParticles(engine->recoveryEmitter);
+			golemRecoveryParticles.lifespan = 1.0f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
+
+			SmallCloudEmitterEvent smallGolemDustParticles(engine->smallCloud);
+			smallGolemDustParticles.lifespan = 1.0f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
+
+			WaterWaveEmitterEvent waveParticles(engine->waterWave);
+			waveParticles.lifespan = 1.0f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
+
+			IronSkinEmitterEvent ironSkinParticles(engine->ironSkin);
+			ironSkinParticles.lifespan = 1.0f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
+
+			FireballEmitterEvent fireballParticles(engine->fireball);
+			fireballParticles.lifespan = 1.0f;
+			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);*/
+
 		return true;
 	};
 
@@ -535,7 +565,7 @@ class TheGreatGolem
 
 		return true;
 	};
-	
+
 	bool LoadCoreListeners()
 	{
 
@@ -723,9 +753,9 @@ public:
 		return true;
 	};
 
-	bool LoadGameUserInterface(ADUI::ADUI* _userInterface, AD_AUDIO::ADAudio* _audioEngine)
+	bool LoadGameUserInterface(ADUI::ADUI* _userInterface, AD_AUDIO::ADAudio* _audioEngine, ADAI::PathingGrid* _grid)
 	{
-		gameUI.SetupUI(_userInterface, _audioEngine);
+		gameUI.SetupUI(_userInterface, _audioEngine, _grid);
 
 		return true;
 	};
@@ -742,7 +772,7 @@ public:
 
 	bool Initialize()
 	{
-		LoadGameEmitters();
+		LoadGameEmitterListeners();
 		LoadCoreListeners();
 		LoadGameData();
 		LoadGameProfiles();

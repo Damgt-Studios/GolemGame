@@ -1,3 +1,17 @@
+StatSheet=Rubble:
+AddStat=Health
+StatMin=1
+StatMax=1000
+StatFail=0
+StatCurrent= 1000
+
+AddStat=Armor
+StatMin=500
+StatMax=500
+StatFail=0
+StatCurrent=500
+;
+
 StatSheet=House1:
 AddStat=Health
 StatMin=0
@@ -110,7 +124,63 @@ StatFail=0
 StatCurrent=10
 ;
 
-StatSheet=EmptyTower:
+StatSheet=Tower:
+AddStat=Health
+StatMin=0
+StatMax=15000
+StatFail=0
+StatCurrent= 15000
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=8
+;
+
+StatSheet=Gate:
+AddStat=Health
+StatMin=0
+StatMax=15000
+StatFail=0
+StatCurrent= 15000
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=8
+;
+
+StatSheet=Scaffolding:
+AddStat=Health
+StatMin=0
+StatMax=15000
+StatFail=0
+StatCurrent= 15000
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=8
+;
+
+StatSheet=Wall:
+AddStat=Health
+StatMin=0
+StatMax=15000
+StatFail=0
+StatCurrent= 15000
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=8
+;
+
+StatSheet=Cart:
 AddStat=Health
 StatMin=0
 StatMax=15000

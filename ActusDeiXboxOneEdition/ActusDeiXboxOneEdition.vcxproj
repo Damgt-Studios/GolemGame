@@ -277,6 +277,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADAI.h" />
+    <ClInclude Include="ADCombat.h" />
     <ClInclude Include="ADEventSystem.h" />
     <ClInclude Include="ADMath.h" />
     <ClInclude Include="ADMemoryManager.h" />
@@ -292,6 +293,7 @@
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MeshLoader.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Renderable.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />

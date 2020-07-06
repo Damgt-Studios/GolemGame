@@ -130,6 +130,7 @@ void ADUtils::InitializeFileSystem()
 //	assert(!FAILED(result));
 //}
 
+
 void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, ComPtr<ID3D11Device1> device, SHADER& shader)
 {
 	SimpleMesh mesh;
@@ -197,6 +198,7 @@ void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, Co
 		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD",	1, DXGI_FORMAT_R32G32B32_FLOAT,		1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		/*{ "JOINTS",		0, DXGI_FORMAT_R32G32B32A32_SINT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{ "WEIGHTS",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 64, D3D11_INPUT_PER_VERTEX_DATA, 0},*/
 	};
@@ -230,7 +232,6 @@ void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, Co
 	result = device->CreateSamplerState(&sdesc, &model.sampler);
 	assert(!FAILED(result));
 
-	//LoadTextures(materials, &model, device);
 }
 
 void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, std::vector<std::string> animations, ComPtr<ID3D11Device1> device, SHADER& shader)
@@ -335,7 +336,6 @@ void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, st
 	result = device->CreateSamplerState(&sdesc, &model.sampler);
 	assert(!FAILED(result));
 
-	//LoadTextures(materials, &model, device);
 }
 
 //void ADUtils::LoadTextures(Header& header, Model& _model, ComPtr<ID3D11Device1> dev)
@@ -423,7 +423,7 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 
 	std::string texture_Path = std::string(ADUtils::READ_PATH.begin(), ADUtils::READ_PATH.end()).append("files\\textures\\");
 
-	if (mats.size() == 3) 
+	if (mats.size() == 3)
 	{
 		//Diffuse
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
@@ -486,6 +486,7 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 	else if (mats.size() == 2)
 	{
 		model->emissive = new ADTexture();
+		model->emissive->shared = false;
 
 		//Diffuse
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
@@ -528,7 +529,9 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 	else
 	{
 		model->emissive = new ADTexture();
+		model->emissive->shared = false;
 		model->normal = new ADTexture();
+		model->normal->shared = false;
 		//Diffuse
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);
 		std::wstring wTextureName = std::wstring(textureName.begin(), textureName.end());

@@ -62,7 +62,7 @@ private:
 	float timer = 0;
 	float delta_time = 0;
 
-	const float physics_rate = 0.2f;
+	const float physics_rate = 0.05f;
 	float physics_timer = 0;
 
 	// Rotation
@@ -135,90 +135,6 @@ public:
 		golemPunchParticles.lifespan = 20.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
 
-
-		//AudioSourceListener playTitleEvent(titleMusic);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
-
-		//AD_AUDIO::AudioSource golemPunchSound;
-		//golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemPunchSound.engine = audioEngine;
-		//golemPunchSound.personalVolume = 0.5f;
-		//golemPunchSound.restartOnRepeat = false;
-		//golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
-		//AudioSourceListener golemPunchEvent(golemPunchSound);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
-
-		//AD_AUDIO::AudioSource golemKickSound;
-		//golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemKickSound.engine = audioEngine;
-		//golemKickSound.personalVolume = 0.5f;
-		//golemKickSound.restartOnRepeat = false;
-		//golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
-		//AudioSourceListener golemKickEvent(golemKickSound);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
-
-		//AD_AUDIO::AudioSource golemSlamSound;
-		//golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemSlamSound.engine = audioEngine;
-		//golemSlamSound.personalVolume = 0.5f;
-		//golemSlamSound.restartOnRepeat = false;
-		//golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
-		//AudioSourceListener golemSlamEvent(golemSlamSound);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
-
-		//AD_AUDIO::AudioSource golemWaveSound;
-		//golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemWaveSound.engine = audioEngine;
-		//golemWaveSound.personalVolume = 0.5f;
-		//golemWaveSound.restartOnRepeat = false;
-		//golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
-		//AudioSourceListener golemWaveEvent(golemWaveSound);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
-
-		//AD_AUDIO::AudioSource golemFireball;
-		//golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemFireball.engine = audioEngine;
-		//golemFireball.personalVolume = 0.5f;
-		//golemFireball.restartOnRepeat = false;
-		//golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
-		//AudioSourceListener golemFireballEvent(golemFireball);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
-
-		//AD_AUDIO::AudioSource golemIronHide;
-		//golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemIronHide.engine = audioEngine;
-		//golemIronHide.personalVolume = 0.5f;
-		//golemIronHide.restartOnRepeat = false;
-		//golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
-		//AudioSourceListener golemTauntEvent(golemIronHide);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
-
-
-
-		//AD_AUDIO::AudioSource golemRootingSpell;
-		//golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemRootingSpell.engine = audioEngine;
-		//golemRootingSpell.personalVolume = 0.5f;
-		//golemRootingSpell.restartOnRepeat = false;
-		//golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
-		//AudioSourceListener golemRootEvent(golemRootingSpell);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
-
-		//AD_AUDIO::AudioSource golemEatMinion;
-		//golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		//golemEatMinion.engine = audioEngine;
-		//golemEatMinion.personalVolume = 0.5f;
-		//golemEatMinion.restartOnRepeat = false;
-		//golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
-		//AudioSourceListener golemEatMinionEvent(golemEatMinion);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
-
-		//DefinitionReader df;
-		//df.ReadMasterFile();
-
-		//ApplyEffectListener golemEatingEvent(*DefinitionDatabase::Instance()->effectsDatabase["GolemEat"]);
-		//ADEvents::ADEventSystem::Instance()->RegisterClient("Apply_GolemEat", &golemEatingEvent);
-
 		ParticleEmitterListener bigGolemDustParticles(engine->bigCloud);
 		bigGolemDustParticles.lifespan = 0.5f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
@@ -243,6 +159,7 @@ public:
 		fireballParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
 
+
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 		currentScene.LoadScene("files/scenes/TestScene.scenery");
@@ -254,29 +171,14 @@ public:
 
 
 
-
-		if (!engine->Initialize())
-		{
-			return;
-		}
-		game->LoadGameUserInterface(engine->GetUI(), audioEngine);
-
-		LoadGameEmitters();
-		//minionManager stuff
-		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
-
-
-		//std::vector<std::string> stoneMinionAnimations;
-		//stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
-
 		std::vector<std::string> bucketheadanims;
 		bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
 
-		//GolemAnimController.Initialize(golem);
-		//golem->GetAnimationController(GolemAnimController);
 
 
 #ifdef _DEBUG
+		Renderable* minionCollider = GameUtilities::AddRenderableCollider();
+
 		Renderable* golemCollider = GameUtilities::AddRenderableCollider();
 		Renderable* house1Collider = GameUtilities::AddRenderableCollider();
 		Renderable* house2Collider = GameUtilities::AddRenderableCollider();
@@ -299,6 +201,8 @@ public:
 		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
 
 #ifdef ShowColliders
+		GameUtilities::AddGameObject(minionCollider);
+
 		GameUtilities::AddGameObject(golemCollider);
 		GameUtilities::AddGameObject(house1Collider);
 		GameUtilities::AddGameObject(house2Collider);
@@ -333,9 +237,6 @@ public:
 
 		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
 
-
-		Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(0, 5, 0), XMFLOAT3(5, 5, 5), XMFLOAT3(0, 0, 0));
-
 		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
 		//Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
@@ -347,38 +248,104 @@ public:
 		//m1->colliderPtr = nullptr;
 
 		//animationFiles[0] = "files/models/BattleMage.animfile";
-		float mapWidth = 1000;
-		float mapHeight = 1000;
+
+
 
 		Renderable* tempPlane = currentScene.GetPlane();
-
 		GameUtilities::AddGameObject(tempPlane);
 
-		Building* house1 = new Building(XMFLOAT3(-5, 0, 0), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1);
+#pragma region PhysicsSetup
+
+		//Physics Setup--------------------------------
+		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
+		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
+		std::vector<ADPhysics::Triangle> ground;
+		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
+		XMMATRIX groundWorld = XMMatrixIdentity();
+		tempPlane->GetWorldMatrix(groundWorld);
+		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
+		{
+			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
+			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
+			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
+
+			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
+			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
+			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
+
+			ADPhysics::Triangle* tri = new Triangle(A, B, C);
+
+			ground.push_back(*tri);
+
+			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
+			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
+			treePoints.push_back(point);
+		}
+
+		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
+		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
+
+		for (unsigned int i = 0; i < treePoints.size(); i++)
+		{
+			tree->Insert(treePoints[i]);
+		}
+
+
+		// Construct physics stuff
+		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
+		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
+
+		//Needed to add this to the colliders for the collision queue
+
+		/*c2->colliderPtr = &test_colider1;
+		c2->type = OBJECT_TYPE::STATIC;*/
+
+#pragma endregion
+
+
+		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 		GameUtilities::AddGameObject(house1);
 		currentScene.AddBuilding(house1);
 
-		Building* house2 = new Building(XMFLOAT3(-5, 0, 3), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
-		GameUtilities::AddGameObject(house2);
-		currentScene.AddBuilding(house2);
+		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
+		GameUtilities::AddGameObject(rubble1);
+		house1->SetRubble(rubble1);
+
+
+		for (int i = 0; i < 10; i++)
+		{
+			Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
+			GameUtilities::AddGameObject(housey);
+			currentScene.AddBuilding(housey);
+
+			Building* rubble2 = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2, "Rubble");
+			GameUtilities::AddGameObject(rubble2);
+			housey->SetRubble(rubble2);
+
+		}
+
+
+		//Building* house2 = new Building(XMFLOAT3(-500, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
+		//GameUtilities::AddGameObject(house2);
+		//currentScene.AddBuilding(house2);
 		//
-		Building* house3 = new Building(XMFLOAT3(-5, 0, 6), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
-		GameUtilities::AddGameObject(house3);
-		currentScene.AddBuilding(house3);
+		//Building* house3 = new Building(XMFLOAT3(-500, 0, -160), XMFLOAT3(0, 45, 0), XMFLOAT3(25, 35, 30), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse3);
+		//GameUtilities::AddGameObject(house3);
+		//currentScene.AddBuilding(house3);
 
-		Building* house4 = new Building(XMFLOAT3(-5, 0, 9), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
-		GameUtilities::AddGameObject(house4);
-		currentScene.AddBuilding(house4);
+		//Building* house4 = new Building(XMFLOAT3(-500, 0, -70), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse4);
+		//GameUtilities::AddGameObject(house4);
+		//currentScene.AddBuilding(house4);
 
-		Building* barn1 = new Building(XMFLOAT3(-5, 0, -5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
-		GameUtilities::AddGameObject(barn1);
-		currentScene.AddBuilding(barn1);
+		//Building* barn1 = new Building(XMFLOAT3(-500, 0, 250), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 37.5), XMFLOAT3(0.25f, 0.5f, 0), GameUtilities::GenerateBarn1);
+		//GameUtilities::AddGameObject(barn1);
+		//currentScene.AddBuilding(barn1);
 
-		Building* barn2 = new Building(XMFLOAT3(-5, 0, -7), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
-		GameUtilities::AddGameObject(barn2);
-		currentScene.AddBuilding(barn2);
+		//Building* barn2 = new Building(XMFLOAT3(-500, 0, -370), XMFLOAT3(0, 0, 0), XMFLOAT3(20, 20, 20), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateBarn2);
+		//GameUtilities::AddGameObject(barn2);
+		//currentScene.AddBuilding(barn2);
 
-		Building* tower = new Building(XMFLOAT3(1.125, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
+		Building* tower = new Building(XMFLOAT3(115, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower, "Tower");
 		//Building* tower = new Building(XMFLOAT3(-24.475, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower2 = new Building(XMFLOAT3(-6.75, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
 		//Building* tower3 = new Building(XMFLOAT3(-6.75, 0, -3.125), XMFLOAT3(0, 90, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower);
@@ -391,32 +358,32 @@ public:
 		//GameUtilities::AddGameObject(tower4);
 		//GameUtilities::AddGameObject(tower5);
 
-		//Building* gateway = new Building(XMFLOAT3(-1.625, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway);
-		//GameUtilities::AddGameObject(gateway);
-		//
-		//Building* scaffolding = new Building(XMFLOAT3(-13.75, 0, -1), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX);
-		//GameUtilities::AddGameObject(scaffolding);
+		Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
+		GameUtilities::AddGameObject(gateway);
+
+		Building* scaffolding = new Building(XMFLOAT3(410, 0, -400), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX, "Scaffolding");
+		GameUtilities::AddGameObject(scaffolding);
 
 		//1.625 difference
-		Building* wall = new Building(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		Building* wall = new Building(XMFLOAT3(700, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall, "Wall");
 		//Building* wall = new Building(XMFLOAT3(-23.475, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		/*Building* wall2 = new Building(XMFLOAT3(-20.25, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall3 = new Building(XMFLOAT3(-18.625, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall4 = new Building(XMFLOAT3(-17, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall5 = new Building(XMFLOAT3(-15.375, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall6 = new Building(XMFLOAT3(-12.125, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall7 = new Building(XMFLOAT3(-10.5, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall8 = new Building(XMFLOAT3(-8.875, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall9 = new Building(XMFLOAT3(-7.25, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall10 = new Building(XMFLOAT3(-6.75, 0, -2.125), XMFLOAT3(0, 90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall11 = new Building(XMFLOAT3(1.5, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall12 = new Building(XMFLOAT3(3.125, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall13 = new Building(XMFLOAT3(4.75, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall14 = new Building(XMFLOAT3(6.375, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall15 = new Building(XMFLOAT3(8, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall16 = new Building(XMFLOAT3(9.625, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall17 = new Building(XMFLOAT3(11.25, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
-		Building* wall18 = new Building(XMFLOAT3(12.875, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);*/
+		///*Building* wall2 = new Building(XMFLOAT3(-20.25, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall3 = new Building(XMFLOAT3(-18.625, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall4 = new Building(XMFLOAT3(-17, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall5 = new Building(XMFLOAT3(-15.375, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall6 = new Building(XMFLOAT3(-12.125, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall7 = new Building(XMFLOAT3(-10.5, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall8 = new Building(XMFLOAT3(-8.875, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall9 = new Building(XMFLOAT3(-7.25, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall10 = new Building(XMFLOAT3(-6.75, 0, -2.125), XMFLOAT3(0, 90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall11 = new Building(XMFLOAT3(1.5, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall12 = new Building(XMFLOAT3(3.125, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall13 = new Building(XMFLOAT3(4.75, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall14 = new Building(XMFLOAT3(6.375, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall15 = new Building(XMFLOAT3(8, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall16 = new Building(XMFLOAT3(9.625, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall17 = new Building(XMFLOAT3(11.25, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);
+		//Building* wall18 = new Building(XMFLOAT3(12.875, 0, 29), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall);*/
 		GameUtilities::AddGameObject(wall);
 		//GameUtilities::AddGameObject(wall2);
 		//GameUtilities::AddGameObject(wall3);
@@ -469,94 +436,72 @@ public:
 			GameUtilities::AddGameObject(realtree25);
 		}*/
 
-		Building* well = new Building(XMFLOAT3(0, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell);
+		Building* well = new Building(XMFLOAT3(1500, 0, 1500), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Rubble");
 		GameUtilities::AddGameObject(well);
 
-		Building* tavern = new Building(XMFLOAT3(-10, 0, 10), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern);
+		Building* tavern = new Building(XMFLOAT3(-100, 0, 100), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 		GameUtilities::AddGameObject(tavern);
 		currentScene.AddBuilding(tavern);
 
-		Building* lamp = new Building(XMFLOAT3(-5, 0, 7.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		Building* lamp = new Building(XMFLOAT3(-350, 0, 75), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
 		GameUtilities::AddGameObject(lamp);
-		Building* lamp2 = new Building(XMFLOAT3(2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp);
+		Building* lamp2 = new Building(XMFLOAT3(425, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
 		GameUtilities::AddGameObject(lamp2);
 
-		Building* rock = new Building(XMFLOAT3(-2, 0, 2), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1);
+		Building* rock = new Building(XMFLOAT3(-20, 0, 220), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1, "Rubble");
 		GameUtilities::AddGameObject(rock);
 
-		Building* meeting_hall = new Building(XMFLOAT3(10, 0, 10), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall);
+		Building* meeting_hall = new Building(XMFLOAT3(100, 0, 360), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "House4");
 		GameUtilities::AddGameObject(meeting_hall);
 		currentScene.AddBuilding(meeting_hall);
 
-		Building* cart = new Building(XMFLOAT3(-2.5, 0, 1), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart);
+		Building* cart = new Building(XMFLOAT3(-125, 0, 310), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart, "Cart");
 		GameUtilities::AddGameObject(cart);
 
-		Building* realtree = new Building(XMFLOAT3(-2.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
-		GameUtilities::AddGameObject(realtree);
-
-		Building* rubble1 = new Building(XMFLOAT3(0, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1);
-		GameUtilities::AddGameObject(rubble1);
-
-		Building* rubble2 = new Building(XMFLOAT3(-2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
-		GameUtilities::AddGameObject(rubble2);
-
-		Building* rubble3 = new Building(XMFLOAT3(2, 0, 5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
-		GameUtilities::AddGameObject(rubble3);
+		for (int i = 0; i < 10; ++i)
+		{
+			Building* realtree = new Building(XMFLOAT3(RandFloat(i - 1000, i + 1000), 0, RandFloat(i - 1000, i + 1000)), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Rubble");
+			GameUtilities::AddGameObject(realtree);
+		}
 
 
 
+		//Building* rubble2 = new Building(XMFLOAT3(-220, 0, 330), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
+		//GameUtilities::AddGameObject(rubble2);
+
+		//Building* rubble3 = new Building(XMFLOAT3(210, 0, 180), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
+		//GameUtilities::AddGameObject(rubble3);
+
+		//Building* rubble4 = new Building(XMFLOAT3(130, 0, 650), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1);
+		//GameUtilities::AddGameObject(rubble4); 
+
+		//Building* rubble5 = new Building(XMFLOAT3(-220, 0, 630), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
+		//GameUtilities::AddGameObject(rubble5);
+
+		//Building* rubble6 = new Building(XMFLOAT3(210, 0, 680), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
+		//GameUtilities::AddGameObject(rubble6);
+
+
+		ResourceManager::FinalizedStatics();
+
+
+
+		XMFLOAT2 mapDimensions = { 3000 , 3000 };
 		float minionWidth = 10;
 		ADAI::ADPathfinding pathfinder;
-		//pathfinder.Initialize(&planeModel->vertices, XMFLOAT2(mapWidth, mapLength), minionWidth, 20.f);
+		pathfinder.Initialize(&planeModel->vertices, mapDimensions, minionWidth, 20.f);
 
-#pragma region PhysicsSetup
-
-		//Physics Setup--------------------------------
-		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
-		std::vector<ADPhysics::Triangle> ground;
-		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
-		XMMATRIX groundWorld = XMMatrixIdentity();
-		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
-		tempPlane->GetWorldMatrix(groundWorld);
-		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
+		if (!engine->Initialize())
 		{
-			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
-			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
-			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
-
-			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
-			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
-			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
-
-			ADPhysics::Triangle* tri = new Triangle(A, B, C);
-
-			ground.push_back(*tri);
-
-			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
-			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
-			treePoints.push_back(point);
+			return;
 		}
-
-		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
-		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
-
-		for (unsigned int i = 0; i < treePoints.size(); i++)
-		{
-			tree->Insert(treePoints[i]);
-		}
+		game->LoadGameUserInterface(engine->GetUI(), audioEngine, &pathfinder.tileMap);
 
 
-		// Construct physics stuff
-		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
 
-		//Needed to add this to the colliders for the collision queue
+		//rubble1->Remove();
+		//rubble1->RemoveFromScene();
 
-		/*c2->colliderPtr = &test_colider1;
-		c2->type = OBJECT_TYPE::STATIC;*/
-
-#pragma endregion
-		//femitter.Activate(999999999, { 250,1,250,0 });
 		//---Run		
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
@@ -573,20 +518,22 @@ public:
 
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
-
 				//minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
-				//pathfinder.clearDebug();
-				//UINT row;
-				//UINT column;
-				//pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), column, row);
-				//pathfinder.enter(0, 0, column, row);
+				//pathfinder.ClearDebug();
+				UINT srow;
+				UINT scolumn;
+				UINT drow;
+				UINT dcolumn;
+				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), scolumn, srow);
+				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->targetMarker->GetPosition().x, golem->targetMarker->GetPosition().z), dcolumn, drow);
+				pathfinder.enter(scolumn, srow, dcolumn, drow);
 			}
 			if (!pathfinder.isDone())
 			{
-				pathfinder.update(0.00001f);
+				pathfinder.update(0.001f);
 			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, mapWidth, mapHeight);
-
+			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
+			//golem->flockingGroups[commandTargetGroup
 
 			// Debug draw
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
@@ -614,7 +561,10 @@ public:
 
 
 #ifdef _DEBUG
-			golemCollider->transform = golem->GetColliderInfo();
+			minionCollider->transform = XMMatrixScaling(20, 5, 20);
+			minionCollider->transform.r[3] = { 20,10,20, 1 };
+
+			//golemCollider->transform = golem->GetColliderInfo();
 
 			/*house1Collider->transform = house1->GetColliderInfo();
 			house2Collider->transform = house2->GetColliderInfo();
@@ -631,140 +581,138 @@ public:
 
 			//scaffoldingCollider->transform = scaffolding->GetColliderInfo();
 
-	/*		wallCollider->transform = wall->GetColliderInfo();
+			//wallCollider->transform = wall->GetColliderInfo();
 
-			wellCollider->transform = well->GetColliderInfo();
+			//wellCollider->transform = well->GetColliderInfo();
 
-			tavernCollider->transform = tavern->GetColliderInfo();
+			//tavernCollider->transform = tavern->GetColliderInfo();
 
-			rockCollider->transform = rock->GetColliderInfo();
+			//rockCollider->transform = rock->GetColliderInfo();
 
-			meeting_hallCollider->transform = meeting_hall->GetColliderInfo();
+			//meeting_hallCollider->transform = meeting_hall->GetColliderInfo();
 
-			cartCollider->transform = cart->GetColliderInfo();
+			//cartCollider->transform = cart->GetColliderInfo();
 
 			rubbleCollider1->transform = rubble1->GetColliderInfo();
-			rubbleCollider2->transform = rubble2->GetColliderInfo();
-			rubbleCollider3->transform = rubble3->GetColliderInfo();*/
+			//rubbleCollider2->transform = rubble2->GetColliderInfo();
+			//rubbleCollider3->transform = rubble3->GetColliderInfo();
 #endif
 
 
 			//Did this to represent layers, Triggers won't collider with other triggers so there is no need to test them
 			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
 
-		//	Works the exact same as the commented code above
-			ADQuad collisionBoundary(0, 0, mapWidth * 2, mapHeight * 2);
+			//	Works the exact same as the commented code above
+			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
 			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
 
 			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
 			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 
 
-
-
-			for (int i = 0; i < OBJ_COUNT; i++)
+			physics_timer += delta_time;
+			if (physics_timer > physics_rate)
 			{
-
-				if (OBJS[i]->colliderPtr)
+				physics_timer = 0;
+				/*for (int i = 0; i < OBJ_COUNT; i++)
 				{
-					int* index = new int(i);
-					if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
-					{
-						int somethingswrong = 0;
-						somethingswrong++;
-					}
-				}
-			}
 
-			for (unsigned int i = 0; i < OBJ_COUNT; i++)
-			{
-				if (OBJS[i]->colliderPtr)
-				{
-					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
-
-					for (unsigned int j = 0; j < collisionVector.size(); j++)
+					if (OBJS[i]->colliderPtr)
 					{
-						if (OBJS[*collisionVector[j].data]->colliderPtr)
-							OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-					}
-				}
-			}
-			//----------------------------------------------------------------------------------------------------
-			//for (unsigned int i = 0; i < OBJ_COUNT; i++)
-			//{
-			//	if (OBJS[i]->colliderPtr)
-			//	{
-			//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-			//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
-
-			//		for (unsigned int j = 0; j < collisionVector.size(); j++)
-			//		{
-			//			if (OBJS[*collisionVector[j].data]->colliderPtr)
-			//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-			//		}
-			//	}
-			//}
-			//--------------------------------------------------------------------------------------------------------
-	/*		for (int i = 0; i < OBJ_COUNT; i++)
-			{
-				for (unsigned int j = 0; j < OBJ_COUNT; j++)
-				{
-					if (i != j)
-					{
-						if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+						int* index = new int(i);
+						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
 						{
-							if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+							int somethingswrong = 0;
+							somethingswrong++;
+						}
+					}
+				}
+
+				for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				{
+					if (OBJS[i]->colliderPtr)
+					{
+						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, OBJS[i]->colliderPtr->GetWidth()+2, OBJS[i]->colliderPtr->GetWidth()+2));
+
+						for (unsigned int j = 0; j < collisionVector.size(); j++)
+						{
+							if (OBJS[*collisionVector[j].data]->colliderPtr)
+								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+						}
+					}
+				}*/
+				//----------------------------------------------------------------------------------------------------
+				//for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				//{
+				//	if (OBJS[i]->colliderPtr)
+				//	{
+				//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+				//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+
+				//		for (unsigned int j = 0; j < collisionVector.size(); j++)
+				//		{
+				//			if (OBJS[*collisionVector[j].data]->colliderPtr)
+				//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+				//		}
+				//	}
+				//}
+				//--------------------------------------------------------------------------------------------------------
+				for (int i = 0; i < OBJ_COUNT; i++)
+				{
+					for (unsigned int j = 0; j < OBJ_COUNT; j++)
+					{
+						if (i != j)
+						{
+							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
 							{
-								if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
+								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
 								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
 									{
-										OBJS[i]->CheckCollision(OBJS[j]);
+										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+										{
+											OBJS[i]->CheckCollision(OBJS[j]);
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-			}*/
-			//----------------------------------New Physics system does not operate with properly with triggers-------------------------------
-			/*for (int i = 0; i < OBJ_COUNT; i++)
-			{
-				if (OBJS[i]->colliderPtr)
-				{
-					int* index = new int(i);
-					if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index))) 
-					{
-						int somethingswrong = 0;
-						somethingswrong++;
-					}
-				}
-			}
+				//----------------------------------New Physics system does not operate with properly with triggers-------------------------------
+				//for (int i = 0; i < OBJ_COUNT; i++)
+				//{
+				//	if (OBJS[i]->colliderPtr)
+				//	{
+				//		int* index = new int(i);
+				//		if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index))) 
+				//		{
+				//			int somethingswrong = 0;
+				//			somethingswrong++;
+				//		}
+				//	}
+				//}
 
-			for (unsigned int i = 0; i < OBJ_COUNT; i++)
-			{
-				if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
-				{
-					XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-					std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+				//for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				//{
+				//	if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
+				//	{
+				//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+				//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
 
-					for (unsigned int j = 0; j < collisionVector.size(); j++)
-					{
-						if (OBJS[*collisionVector[j].data]->colliderPtr)
-							OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-					}
-				}
-			}*/
-			//---------------------------------------------End New Physics System------------------------------------------
+				//		for (unsigned int j = 0; j < collisionVector.size(); j++)
+				//		{
+				//			if (OBJS[*collisionVector[j].data]->colliderPtr)
+				//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+				//		}
+				//	}
+				//}
+				//---------------------------------------------End New Physics System------------------------------------------
 
-			//Resolve all collisions that occurred this frame
-			ADResource::ADGameplay::ResolveCollisions();
+				//Resolve all collisions that occurred this frame
+				ADResource::ADGameplay::ResolveCollisions();
 
-			physics_timer += delta_time;
-			if (physics_timer > physics_rate)
-			{
-				physics_timer = 0;
 				/*for (int i = 0; i < 10; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
@@ -786,7 +734,6 @@ public:
 			if (!engine->Update()) break;
 			currentScene.Update(engine->GetEngineDeltaTime());
 			if (!engine->Render()) break;
-			//femitter.RenderParticles(engine->GetPBRRenderer()->GetRendererResources()->context.Get());
 
 			collisionTree->Shutdown();
 

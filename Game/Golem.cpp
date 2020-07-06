@@ -15,13 +15,13 @@ ADResource::ADGameplay::Golem::Golem() {
 	InitAnims();
 	//InitActions();
 
-	flockingGroups = new ADAI::FlockingGroup*[5];
+	flockingGroups = new ADAI::FlockingGroup * [5];
 	for (int i = 0; i < 5; ++i)
 	{
 		flockingGroups[i] = new ADAI::FlockingGroup();
 		flockingGroups[i]->groupTarget = &transform;
 	}
-	
+
 	desirability = 0.2f;
 }
 
@@ -284,8 +284,17 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	// Send Minions Ahead
 	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
 	{
-		CommandMinions();
+		commandDistanceTimer += delta_time;
+		CastCommandTarget(commandDistanceTimer * 500);
 	}
+	else if (commandDistanceTimer > 0)
+	{
+		CommandMinions();
+		commandDistanceTimer = 0;
+	}
+
+
+
 
 	// Golem Movement
 	XMFLOAT4 forward;
@@ -403,6 +412,7 @@ void ADResource::ADGameplay::Golem::PerformSpecial()
 	{
 		stats->RequestStats("Token")->currentValue = 0;
 	}
+	ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
 }
 
 void ADResource::ADGameplay::Golem::TowerPunch()
@@ -435,24 +445,31 @@ void ADResource::ADGameplay::Golem::Kick()
 	gActions[playerElement].kick->StartAction(&transform);
 }
 
+void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
+{
+	if (commandTargetGroup == 4)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			flockingGroups[i]->SetCommandDirection(camera, delta_time);
+		}
+		targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera, delta_time));
+	}
+	else
+	{
+		targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
+	}
+}
+
+
+
 void ADResource::ADGameplay::Golem::CommandMinions()
 {
 	anim_controller->PlayAnimationByName(anims[playerElement].command.c_str());
 	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].command.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
-	if (commandTargetGroup == 4)
-	{
-		for (int i = 0; i < 3; ++i)
-		{
-			flockingGroups[i]->SetCommandDirection(camera);
-		}
-		targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera));
-	}
-	else
-	{
-		targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera));
-	}
+
 }
 
 void ADResource::ADGameplay::Golem::RecallMinions()
@@ -489,6 +506,7 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 		if (playerElement < 0)
 			playerElement = 3;
 	}
+	ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementForm", (void*)playerElement);
 }
 
 void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
@@ -509,6 +527,7 @@ void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
 		if (commandTargetGroup < 0)
 			commandTargetGroup = 0;
 	}
+	ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementalGroup", (void*)commandTargetGroup);
 }
 
 void ADResource::ADGameplay::Golem::ConsumeMinion()

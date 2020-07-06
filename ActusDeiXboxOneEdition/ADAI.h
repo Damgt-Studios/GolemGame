@@ -7,15 +7,15 @@ namespace ADAI
 {
 	//Forward Declaration
 	class AIUnit;
-	
+
 	class State
 	{
 	protected:
-		
+
 	public:
 		AIUnit* owner = nullptr;
 		XMVECTOR personalTarget;
-		
+
 		std::vector<ADResource::ADGameplay::GameObject*> objectsToApproach;
 		std::vector<ADResource::ADGameplay::GameObject*> objectsToAvoid;
 		virtual void Update(float _deltaTime) = 0;
@@ -66,7 +66,7 @@ namespace ADAI
 		float commandDirectionalStrength = 0.00f;
 		float returnDirectionalStrength = 0.00f;
 		float alignmentDirectionalStrength = 0.00f;
-		float targetCohesionStrength  = 1.0f;
+		float targetCohesionStrength = 1.0f;
 		float cohesionStrength = 0.7f;
 		float separationStrength = 1.0f;
 		float flockRadius = 10.0;
@@ -78,7 +78,7 @@ namespace ADAI
 		XMMATRIX* groupTarget; //Player
 		XMVECTOR commandDestination;
 
-		XMFLOAT3 SetCommandDirection(XMMATRIX _camera)
+		XMFLOAT3 SetCommandDirection(XMMATRIX _camera, float _distance)
 		{
 			for (int i = 0; i < flockers.size(); ++i)
 			{
@@ -100,9 +100,9 @@ namespace ADAI
 			XMFLOAT3 targetP;
 			XMStoreFloat3(&targetP, targetPosition);
 
-			targetP.x += camFN.x*1000;
-			targetP.y += camFN.y*1000;
-			targetP.z += camFN.z*1000;
+			targetP.x += camFN.x * _distance;
+			targetP.y = 0;
+			targetP.z += camFN.z * _distance;
 
 			commandDestination = XMLoadFloat3(&targetP);
 
@@ -114,7 +114,8 @@ namespace ADAI
 			for (int i = 0; i < flockers.size(); ++i)
 			{
 				flockers[i]->currentState = flockers[i]->states[1];
-;			}
+				;
+			}
 			commandDirectionalStrength = 0.f;
 			returnDirectionalStrength = 1.2f;
 		};
@@ -127,8 +128,8 @@ namespace ADAI
 
 		void CalculateAverages()
 		{
-			averagePosition = {0,0,0};
-			averageForward = {0,0,0};
+			averagePosition = { 0,0,0 };
+			averageForward = { 0,0,0 };
 			int count = flockers.size();
 			for (int i = 0; i < count; ++i)
 			{
@@ -216,7 +217,7 @@ namespace ADAI
 		{
 			XMFLOAT3 sigh = _object->GetPosition();
 			XMVECTOR ap = XMLoadFloat3(&sigh);
-			ap  = averagePosition - ap;
+			ap = averagePosition - ap;
 
 			XMFLOAT4 length;
 			XMStoreFloat4(&length, XMVector4Length(ap));
@@ -298,7 +299,7 @@ namespace ADAI
 				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
 				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
 
-				velocity = CalculateAlignmentAcceleration(flockers[i]->owner) + CalculateCohesionAcceleration(flockers[i]->owner) + CalculateSeparationAcceleration(flockers[i]->owner) +CalculateDirectionalAcceleration(flockers[i]->owner) + CalculateReturnAcceleration(flockers[i]->owner) + CalculateTargetAcceleration(flockers[i]);
+				velocity = CalculateAlignmentAcceleration(flockers[i]->owner) + CalculateCohesionAcceleration(flockers[i]->owner) + CalculateSeparationAcceleration(flockers[i]->owner) + CalculateDirectionalAcceleration(flockers[i]->owner) + CalculateReturnAcceleration(flockers[i]->owner) + CalculateTargetAcceleration(flockers[i]);
 				velocity *= (maxSpeed * _deltaTime);
 				velocity += XMLoadFloat4(&flockers[i]->owner->Velocity);
 
@@ -310,7 +311,7 @@ namespace ADAI
 				XMFLOAT4 length;
 				XMStoreFloat4(&length, XMVector4Length(velocity));
 
-				if(length.x > maxSpeed)
+				if (length.x > maxSpeed)
 				{
 					velocity = ShortenLength(velocity, maxSpeed);
 				}

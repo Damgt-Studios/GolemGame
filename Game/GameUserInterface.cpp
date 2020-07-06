@@ -94,8 +94,8 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
-			//overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
+			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
 		return buttonPressed;
@@ -164,7 +164,7 @@ namespace GolemGameUISetup
 				{
 					ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
 				}
-				
+
 			}
 		}
 		return buttonPressed;
@@ -278,7 +278,7 @@ namespace GolemGameUISetup
 					{
 						ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
 					}
-					
+
 				}
 			}
 		}
@@ -360,7 +360,7 @@ namespace GolemGameUISetup
 								break;
 							default:
 								break;
-								}
+							}
 
 						}
 						else
@@ -612,7 +612,7 @@ namespace GolemGameUISetup
 		/////*ADUI::Image2D* optionsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 1550, 400, 3070, 1560 });
 		////optionsImage->BuildAnimation({ 0, 4320, 2299, 5280 }, 1, 1, emptyAnimation);
 		////myUI->AddUIComponent("OptionsBox", optionsImage);
-		////myUI->overlays[optionsID]->AddComponent(optionsImage);*/
+		////myUI->overlays[optionsID]->AddComponent(optionsImage);
 
 			//Option Menu Buttons
 		ADUI::ComponentGrid* buttonList3 = new ADUI::ComponentGrid();
@@ -645,7 +645,7 @@ namespace GolemGameUISetup
 		sliderImage->BuildAnimation({ 3070, 975, 3150, 1055 }, 1, 1, buttonAnimation);
 		sliderImage->active = true;
 		sliderImage->controlFocusAnimation = 0;
-		XMFLOAT2 sliderPosition = {1800, 635};
+		XMFLOAT2 sliderPosition = { 1800, 635 };
 		XMFLOAT2 sliderMinPosition = { 1540, 635 };
 		XMFLOAT2 sliderMaxPosition = { 2238, 635 };
 		ADUI::Slider* slider = new ADUI::Slider(sliderImage, sliderPosition, sliderMaxPosition, sliderMinPosition);
@@ -691,7 +691,7 @@ namespace GolemGameUISetup
 		sliderLabel2->SetText("Sound FX", { 1920, 780 });// XMFLOAT2(1920, 1080));
 		sliderLabel2->active = true;
 		sliderLabel2->visible = true;
-		ADUI::SliderBar* sliderBar2= new ADUI::SliderBar(slideImage2, slider2, leftCapImage2, rightCapImage2, sliderLabel2);
+		ADUI::SliderBar* sliderBar2 = new ADUI::SliderBar(slideImage2, slider2, leftCapImage2, rightCapImage2, sliderLabel2);
 		sliderBar2->Enable();
 
 		ADUI::Image2D* slideImage3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1614, 1035, 1692, 1115 });
@@ -788,7 +788,7 @@ namespace GolemGameUISetup
 		//sliderLabel2.SetText({ true, {1450, 900}, "Sound Effects" });
 		//ADUI::SliderBar* sliderBar2 = new ADUI::SliderBar(slideImage2, slider2, leftCap2, rightCap2, sliderLabel2);
 		//sliderBar2->Enable();
-		
+
 		//ADUI::ButtonList* sliderList = new ADUI::ButtonList();
 		//sliderList->x = 1819; 
 		//sliderList->y = 499;
@@ -879,7 +879,7 @@ namespace GolemGameUISetup
 		faceAnimation[0] = { 0, 4, 0 };
 		ADUI::AnimationData* essenceAnimation = new ADUI::AnimationData[3];
 		essenceAnimation[0] = { 0, 12, 24 };
-		essenceAnimation[1] = {19, 22, 24 };
+		essenceAnimation[1] = { 19, 22, 24 };
 		essenceAnimation[2] = { 40, 48, 24 };
 
 		//HUD
@@ -1108,7 +1108,7 @@ namespace GolemGameUISetup
 		rightButtonList->SetCorners({ 97, 331, 197, 431 });
 		rightButtonList->positions = new RECT[4];
 		rightButtonList->positions[0] = { 97, 331, 197, 431 };
-		rightButtonList->spacing = {2};
+		rightButtonList->spacing = { 2 };
 		rightButtonList->columns = 1;
 
 		rightButtonList->AddComponent(minionFacesRightAll);
@@ -1222,14 +1222,14 @@ namespace GolemGameUISetup
 		return 0;
 	}
 
-	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight)
+	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid) //std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
-		emptyAnimation[0] = { 0, 3, 0 };
+		emptyAnimation[0] = { 0, 5, 0 };
 
 		//UI Log
 		UINT pathingID = myUI->AddNewOverlay("PathingMap", false, true);
-		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 300, 300, 3540, 1816 });
+		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 100, 100, 3540, 1816 });
 		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 1, emptyAnimation);
 		consoleBox->active = true;
 		consoleBox->visible = true;
@@ -1239,35 +1239,29 @@ namespace GolemGameUISetup
 
 
 
-		//for (int i = 0; i < planeNodes->size(); ++i)
+
+		//_debugController->planeNodes = &_grid->nodeGrid;
+		//for (int i = 0; i < _grid->nodeGrid.size(); i++)
 		//{
-			//int column = round(int((*planeNodes)[i].x * 100.f));
-			//int row = round(int((*planeNodes)[i].z * 100.f));
-			//int index = column + (row * columnCount);
 
-			_debugController->planeNodes = planeNodes;
-			for (int i = 0; i < planeNodes->size(); i++)
-			{
+		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (_grid->nodeGrid[i]->position.x + 300.f) , 2160 - _grid->nodeGrid[i]->position.z, 3840.f - (_grid->nodeGrid[i]->position.x + 300.f),  2160 - _grid->nodeGrid[i]->position.z });
+		//	long heightValue = int((_grid->nodeGrid)[i]->position.y * 100.f);
+		//	if (heightValue < -4)
+		//	{
+		//		heightValue = -4;
+		//	}
+		//	if (heightValue > 4)
+		//	{
+		//		heightValue = 4;
+		//	}
 
-				ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { ((*planeNodes)[i]->position.x)+1600.f , ((*planeNodes)[i]->position.z)+ 500.f, ((*planeNodes)[i]->position.x) +1616.f,  ((*planeNodes)[i]->position.z)  +516.f });
-				long heightValue = int((*planeNodes)[i]->position.y * 100.f);
-				if (heightValue < -4)
-				{
-					heightValue = -4;
-				}
-				if (heightValue > 4)
-				{
-					heightValue = 4;
-				}
-
-				tempImage->BuildAnimation({ 2299, 184 + (heightValue*16), 2315, 200 + (heightValue * 16) }, 3, 1, emptyAnimation);
-				tempImage->active = true;
-				tempImage->visible = true;
-				tempImage->Focus();
-				myUI->AddUIComponent("genericImage", tempImage);
-				myUI->overlays[pathingID]->AddComponent(tempImage);
-				_debugController->node_image_map[(*planeNodes)[i]] = tempImage;
-			}
+		//	tempImage->BuildAnimation({ 2299, 184 + (heightValue * 16), 2315, 200 + (heightValue * 16) }, 5, 1, emptyAnimation);
+		//	tempImage->active = true;
+		//	tempImage->visible = true;
+		//	tempImage->Focus();
+		//	myUI->AddUIComponent("genericImage", tempImage);
+		//	myUI->overlays[pathingID]->AddComponent(tempImage);
+		//	_debugController->node_image_map[(_grid->nodeGrid)[i]] = tempImage;
 		//}
 
 		return pathingID;
@@ -1306,7 +1300,7 @@ namespace GolemGameUISetup
 	}
 
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid)
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
@@ -1373,8 +1367,10 @@ namespace GolemGameUISetup
 		DebugController* debugController = new DebugController(myUI->GetUIState());
 		myUI->AddUIController("DebugController", debugController);
 		debugController->Enable();
-		//UINT pathingID = SetupPathingMap(myUI, debugController, _planeNodes, columnCount, mapWidth, mapHeight);
-		
+
+
+		UINT pathingID = SetupPathingMap(myUI, debugController, _grid);
+
 
 		titleScreenController->AddOverlay(myUI->overlays[hudid]);
 		titleScreenController->AddController(hudController);
@@ -1386,20 +1382,20 @@ namespace GolemGameUISetup
 		PauseScreenController->AddOverlay(myUI->overlays[optionsID]);
 		PauseScreenController->AddController(optionScreenController);
 
-		gameplayMessageController->AddOverlay(myUI->overlays[logID]);
+		//gameplayMessageController->AddOverlay(myUI->overlays[logID]);
 		gameplayMessageController->AddController(hudController);
 		gameplayMessageController->AddOverlay(myUI->overlays[hudid]);
 		gameplayMessageController->AddController(titleScreenController);
 		gameplayMessageController->AddOverlay(myUI->overlays[titleID]);
 		gameplayMessageController->AddController(PauseScreenController);
 		gameplayMessageController->AddOverlay(myUI->overlays[pauseID]);
-		gameplayMessageController->AddController(optionScreenController); 
+		gameplayMessageController->AddController(optionScreenController);
 
 		gameplayMessageController->AddOverlay(myUI->overlays[endgameID]);
 
 		//gameplayMessageController
 
-		//gameplayMessageController->AddOverlay(myUI->overlays[pathingID]);
+		gameplayMessageController->AddOverlay(myUI->overlays[pathingID]);
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);

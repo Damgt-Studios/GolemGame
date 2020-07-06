@@ -1,9 +1,8 @@
 #pragma once
 #include "ADUserInterface.h"
-#include "Types.h"
+//#include "Types.h"
 #include "GameObjectClasses.h"
 #include "ADAudio.h"
-#include "ADPathfinding.h"
 #include "Golem.h"
 #include <unordered_map>
 #include "Listeners.h"
@@ -21,7 +20,7 @@ namespace GolemGameUISetup
 
     class DebugController : public ADUI::OverlayController
     {
-        UINT& uiState; 
+        UINT& uiState;
     public:
         std::vector<ADAI::PathingNode*>* planeNodes;
         std::unordered_map<ADAI::PathingNode*, ADUI::Image2D*> node_image_map;
@@ -92,17 +91,17 @@ namespace GolemGameUISetup
     };
 
     class GameUserInterface
-    {     
+    {
         UINT SetupTitleScreen(ADUI::ADUI* myUI, StartMenuUIController* _titleScreenController);
         UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
         UINT SetupEngGameScreen(ADUI::ADUI* myUI);
         UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController);
         UINT SetupDebugMenu(ADUI::ADUI* myUI);
-        UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
+        UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid); // std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
         UINT SetupLog(ADUI::ADUI* myUI);
     public:
-        void SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem);
+        void SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid);
     };
 
 }

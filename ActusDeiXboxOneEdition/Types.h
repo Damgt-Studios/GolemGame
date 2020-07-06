@@ -9,9 +9,9 @@
 #include <unordered_map>
 #include "ADPhysics.h"
 #include "ADQuadTree.h"
-#include "ADQuadTree.h"
 #include "MeshLoader.h"
 #include "ADEventSystem.h"
+#include "XTime.h"
 
 #ifndef AD_MEMORY_DEFAULT
 #include "ADMemoryManager.h"
@@ -80,47 +80,59 @@ namespace ADResource
 			bool wireframe_mode;
 		};
 
-//		struct Model
-//		{
-//#ifdef AD_MEMORY_DEFAULT
-//			std::vector<Vertex> vertices;
-//			std::vector<int> indices;
-//#else
-//			ADVector<Vertex> vertices;
-//			ADVector<int> indices;
-//#endif
-//
-//			XMFLOAT3 position;
-//			XMFLOAT3 rotation;
-//			XMFLOAT3 scale;
-//
-//			PBRVertexBufferDesc desc;
-//
-//			ComPtr<ID3D11Buffer> vertexBuffer;
-//			ComPtr<ID3D11Buffer> indexBuffer;
-//
-//			ComPtr<ID3D11VertexShader> vertexShader;
-//			ComPtr<ID3D11PixelShader> pixelShader;
-//
-//			ComPtr<ID3D11InputLayout> vertexBufferLayout;
-//
-//			// Texture stuff
-//			ComPtr<ID3D11SamplerState> sampler;
-//
-//			ComPtr<ID3D11ShaderResourceView> albedo;
-//			ComPtr<ID3D11ShaderResourceView> normal;
-//			ComPtr<ID3D11ShaderResourceView> roughness;
-//			ComPtr<ID3D11ShaderResourceView> metallic;
-//			ComPtr<ID3D11ShaderResourceView> ambient_occlusion;
-//		};
+		//		struct Model
+		//		{
+		//#ifdef AD_MEMORY_DEFAULT
+		//			std::vector<Vertex> vertices;
+		//			std::vector<int> indices;
+		//#else
+		//			ADVector<Vertex> vertices;
+		//			ADVector<int> indices;
+		//#endif
+		//
+		//			XMFLOAT3 position;
+		//			XMFLOAT3 rotation;
+		//			XMFLOAT3 scale;
+		//
+		//			PBRVertexBufferDesc desc;
+		//
+		//			ComPtr<ID3D11Buffer> vertexBuffer;
+		//			ComPtr<ID3D11Buffer> indexBuffer;
+		//
+		//			ComPtr<ID3D11VertexShader> vertexShader;
+		//			ComPtr<ID3D11PixelShader> pixelShader;
+		//
+		//			ComPtr<ID3D11InputLayout> vertexBufferLayout;
+		//
+		//			// Texture stuff
+		//			ComPtr<ID3D11SamplerState> sampler;
+		//
+		//			ComPtr<ID3D11ShaderResourceView> albedo;
+		//			ComPtr<ID3D11ShaderResourceView> normal;
+		//			ComPtr<ID3D11ShaderResourceView> roughness;
+		//			ComPtr<ID3D11ShaderResourceView> metallic;
+		//			ComPtr<ID3D11ShaderResourceView> ambient_occlusion;
+		//		};
 
 		struct ADTexture
 		{
+			bool shared = true;
 			ComPtr<ID3D11ShaderResourceView> texture;
 		};
 
-		struct SimpleModel
+		class SimpleModel
 		{
+		public:
+			~SimpleModel()
+			{
+				if (!albedo->shared)
+					delete albedo;
+				if (!normal->shared)
+					delete normal;
+				if (!emissive->shared)
+					delete emissive;
+			}
+
 			bool animated = false;
 
 			XMFLOAT3 position;
@@ -141,6 +153,7 @@ namespace ADResource
 			ADTexture* albedo;
 			ADTexture* normal;
 			ADTexture* emissive;
+
 		};
 
 		struct SimpleStaticModel : public SimpleModel
@@ -148,6 +161,9 @@ namespace ADResource
 #ifdef AD_MEMORY_DEFAULT
 			std::vector<SimpleVertex> vertices;
 			std::vector<int> indices;
+			UINT instanceCount;
+			std::vector<XMFLOAT3> positions;
+			ComPtr<ID3D11Buffer> instanceBuffer;
 #else
 			ADVector<SimpleVertex> vertices;
 			ADVector<int> indices;
@@ -188,8 +204,8 @@ namespace ADResource
 					animationNewIndex = index;
 					animationChange = true;
 				}
-
 			}
+
 			std::vector<XMMATRIX> UpdateAnimation(float delta_time)
 			{
 				std::vector<XMMATRIX> positions;
@@ -287,11 +303,8 @@ namespace ADResource
 			TRIGGER, COLLIDABLE, STATIC
 		};
 
-
 		class Stat
 		{
-			//friend class StatSheet;
-
 		public:
 			std::string eventName = "";
 			int currentValue = 0;
@@ -302,7 +315,7 @@ namespace ADResource
 			void Set(int _val)
 			{
 				currentValue = _val;
-				
+
 				if (eventName != "")
 				{
 					if (eventValue == -1 || currentValue == eventValue)
@@ -311,7 +324,7 @@ namespace ADResource
 					}
 				}
 			}
-			
+
 		};
 
 		class StatSheet
@@ -322,7 +335,7 @@ namespace ADResource
 			~StatSheet() {};
 			void AddStat(std::string _name)
 			{
-				Stat stat; 
+				Stat stat;
 				stats[_name] = stat;
 			};
 			void SetMin(std::string _name, int _val)
@@ -410,6 +423,7 @@ namespace ADResource
 		protected:
 			virtual Effect* clone_impl() const { return nullptr; };
 		};
+
 
 		class GameObject
 		{
@@ -599,7 +613,6 @@ namespace ADResource
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
-			//int GemCount;
 			AD_ULONG meshID;
 			//OBJECT_DEFENSE defenseType;
 			XMFLOAT4 Velocity = { 0,0,0,0 };
@@ -622,6 +635,7 @@ namespace ADResource
 			CollisionPacket() = delete;
 			CollisionPacket(GameObject* a, GameObject* b, ADPhysics::Manifold& manifold) : A(a), B(b), m(manifold) {};
 		};
+
 
 		//If multiple instances will select one out of all of them and use only that one. 
 		//Not sure if extra ones still take up memory. Don't think they do
@@ -651,7 +665,7 @@ namespace ADResource
 
 					PositionalCorrection(tempV, temp, (XMFLOAT4&)(current.A->transform.r[3]), current.A->pmat, current.m);
 				}
-				else if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC || current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::TRIGGER) 
+				else if (current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC || current.A->physicsType == (int)OBJECT_PHYSICS_TYPE::TRIGGER)
 				{
 					XMFLOAT4 tempV = XMFLOAT4(0, 0, 0, 0);
 					const ADPhysics::PhysicsMaterial temp = ADPhysics::PhysicsMaterial(0, 0, 0);
@@ -679,7 +693,7 @@ namespace ADResource
 		}
 
 
-		static bool GroundClamping(GameObject* obj, QuadTree<ADPhysics::Triangle>* tree, float delta_time) 
+		static bool GroundClamping(GameObject* obj, QuadTree<ADPhysics::Triangle>* tree, float delta_time)
 		{
 			std::vector<ADQuadTreePoint<ADPhysics::Triangle>> ground = tree->Query(ADQuad(obj->transform.r[3].m128_f32[0], obj->transform.r[3].m128_f32[2], 50, 50));
 

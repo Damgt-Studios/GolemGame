@@ -1,7 +1,8 @@
 #pragma once
 #include "pch.h"
-#include "MeshLoader.h"
-#include "../Game/GameplayBaseClasses.h"
+//#include "MeshLoader.h"
+#include "Renderable.h"
+//#include "../Game/GameplayBaseClasses.h"
 using namespace std;
 class AnimationStateMachine
 {
@@ -49,10 +50,10 @@ public:
 
 	void Initialize(ADResource::ADGameplay::GameObject* obj);
 
-	
-	void CreateAnimationState(string name, double duration, int index,bool truefalseCondition = false, float valueCondition = 0 );
+
+	void CreateAnimationState(string name, double duration, int index, bool truefalseCondition = false, float valueCondition = 0);
 	void GenerationAnimationStates(vector<anim_clip> animations);
-	void PlayAnimationByName( string name);
+	void PlayAnimationByName(string name);
 	void PlayAnimationByNameBasedOnBoolCondition(string name, bool condition);
 	void PlayAnimationByNameBasedOnValueCondition(string name, float value);
 	void PlayAnimationByNameBasedOnAllCondition(string name, bool condition, float value);
