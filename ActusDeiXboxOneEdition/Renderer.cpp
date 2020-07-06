@@ -531,13 +531,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		}
 	}
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC sr_desc;
-	sr_desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	sr_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	sr_desc.Texture2D.MostDetailedMip = 0;
-	sr_desc.Texture2D.MipLevels = -1;
-	renderer_resources.device->CreateShaderResourceView(renderer_resources.shadowTexture.Get(), &sr_desc, renderer_resources.shadowView.GetAddressOf());
-
 #pragma region Skybox
 
 	//Disable Z buffer
