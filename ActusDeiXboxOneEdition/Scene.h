@@ -329,8 +329,7 @@ namespace ADGameplay
 			Plane = GameUtilities::AddSimpleAsset(PlaneArguments.Model.data(), PlaneArguments.Texture.data(), PlaneArguments.position, PlaneArguments.scale, PlaneArguments.rotation);
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
 
-			golem = GameUtilities::LoadGolemFromModelFile("files/models/Golem_4.AnimMesh", "files/textures/Golem_4.mat", GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
-			//golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.Model.data(),GolemArguments.Texture.data(), animations, GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
+			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
 			for (int i = 0; i < 10; i++)
 			{

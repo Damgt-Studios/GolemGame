@@ -4,7 +4,7 @@
 
 ADUtils::SHADER GameUtilities::shader;
 
-ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
 	ADResource::ADGameplay::Golem* golem = new ADResource::ADGameplay::Golem;
 
@@ -18,26 +18,94 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(std::string
 	golem->SetRotation(rotation);
 	golem->SetPosition(position);
 	std::vector<std::string> animations;
-	animations.push_back("files/models/Golem_4_Idle.animfile");
-	animations.push_back("files/models/Golem_4_Born.animfile");
-	animations.push_back("files/models/Golem_4_Run.animfile");
-	animations.push_back("files/models/Golem_4_Command.animfile");
-	animations.push_back("files/models/Golem_4_Death.animfile");
-	animations.push_back("files/models/Golem_4_Eat.animfile");
-	animations.push_back("files/models/Golem_4_GroundSlam.animfile");
-	animations.push_back("files/models/Golem_4_Heavy_Hit_Back.animfile");
-	animations.push_back("files/models/Golem_4_Heavy_Hit_Front.animfile");
-	animations.push_back("files/models/Golem_4_Heavy_Hit_Left.animfile");
-	animations.push_back("files/models/Golem_4_Heavy_Hit_Right.animfile");
-	animations.push_back("files/models/Golem_4_Idle.animfile");
-	animations.push_back("files/models/Golem_4_IdleLook.animfile");
-	animations.push_back("files/models/Golem_4_Kick.animfile");
-	animations.push_back("files/models/Golem_4_Run.animfile");
-	animations.push_back("files/models/Golem_4_Special.animfile");
-	animations.push_back("files/models/Golem_4_SummonMinions.animfile");
-	animations.push_back("files/models/Golem_4_TowerPunch.animfile");
-	AD_ULONG id = ResourceManager::InitializeAnimatedModel(modelname, materials, animations, position, scale, rotation, shader);
-	golem->SetMeshID(id);
+	animations.push_back("files/models/Golem_3_Idle.animfile");
+	animations.push_back("files/models/Golem_3_Born.animfile");
+	animations.push_back("files/models/Golem_3_Run.animfile");
+	animations.push_back("files/models/Golem_3_Command.animfile");
+	animations.push_back("files/models/Golem_3_Death.animfile");
+	animations.push_back("files/models/Golem_3_Eat.animfile");
+	animations.push_back("files/models/Golem_3_GroundSlam.animfile");
+	animations.push_back("files/models/Golem_3_Heavy_Hit_Back.animfile");
+	animations.push_back("files/models/Golem_3_Heavy_Hit_Front.animfile");
+	animations.push_back("files/models/Golem_3_Heavy_Hit_Left.animfile");
+	animations.push_back("files/models/Golem_3_Heavy_Hit_Right.animfile");
+	animations.push_back("files/models/Golem_3_Idle.animfile");
+	animations.push_back("files/models/Golem_3_IdleLook.animfile");
+	animations.push_back("files/models/Golem_3_Kick.animfile");
+	animations.push_back("files/models/Golem_3_Run.animfile");
+	animations.push_back("files/models/Golem_3_Special.animfile");
+	animations.push_back("files/models/Golem_3_SummonMinions.animfile");
+	animations.push_back("files/models/Golem_3_TowerPunch.animfile");
+	AD_ULONG id = ResourceManager::InitializeAnimatedModel("files/models/Golem_3.AnimMesh", "files/textures/Golem_3.mat", animations, position, scale, rotation, shader);
+	golem->meshIDs[STONE] = id;
+
+	std::vector<std::string> animations2;
+	animations2.push_back("files/models/Golem_4_Idle.animfile");
+	animations2.push_back("files/models/Golem_4_Born.animfile");
+	animations2.push_back("files/models/Golem_4_Run.animfile");
+	animations2.push_back("files/models/Golem_4_Command.animfile");
+	animations2.push_back("files/models/Golem_4_Death.animfile");
+	animations2.push_back("files/models/Golem_4_Eat.animfile");
+	animations2.push_back("files/models/Golem_4_GroundSlam.animfile");
+	animations2.push_back("files/models/Golem_4_Heavy_Hit_Back.animfile");
+	animations2.push_back("files/models/Golem_4_Heavy_Hit_Front.animfile");
+	animations2.push_back("files/models/Golem_4_Heavy_Hit_Left.animfile");
+	animations2.push_back("files/models/Golem_4_Heavy_Hit_Right.animfile");
+	animations2.push_back("files/models/Golem_4_Idle.animfile");
+	animations2.push_back("files/models/Golem_4_IdleLook.animfile");
+	animations2.push_back("files/models/Golem_4_Kick.animfile");
+	animations2.push_back("files/models/Golem_4_Run.animfile");
+	animations2.push_back("files/models/Golem_4_Special.animfile");
+	animations2.push_back("files/models/Golem_4_SummonMinions.animfile");
+	animations2.push_back("files/models/Golem_4_TowerPunch.animfile");
+	id = ResourceManager::InitializeAnimatedModel("files/models/Golem_4.AnimMesh", "files/textures/Golem_4.mat", animations2, position, scale, rotation, shader);
+	golem->meshIDs[WATER] = id;
+
+	std::vector<std::string> animations3;
+	animations3.push_back("files/models/Golem_2_Idle.animfile");
+	animations3.push_back("files/models/Golem_2_Born.animfile");
+	animations3.push_back("files/models/Golem_2_Run.animfile");
+	animations3.push_back("files/models/Golem_2_Command.animfile");
+	animations3.push_back("files/models/Golem_2_Death.animfile");
+	animations3.push_back("files/models/Golem_2_Eat.animfile");
+	animations3.push_back("files/models/Golem_2_GroundSlam.animfile");
+	animations3.push_back("files/models/Golem_2_Heavy_Hit_Back.animfile");
+	animations3.push_back("files/models/Golem_2_Heavy_Hit_Front.animfile");
+	animations3.push_back("files/models/Golem_2_Heavy_Hit_Left.animfile");
+	animations3.push_back("files/models/Golem_2_Heavy_Hit_Right.animfile");
+	animations3.push_back("files/models/Golem_2_Idle.animfile");
+	animations3.push_back("files/models/Golem_2_IdleLook.animfile");
+	animations3.push_back("files/models/Golem_2_Kick.animfile");
+	animations3.push_back("files/models/Golem_2_Run.animfile");
+	animations3.push_back("files/models/Golem_2_Special.animfile");
+	animations3.push_back("files/models/Golem_2_SummonMinions.animfile");
+	animations3.push_back("files/models/Golem_2_TowerPunch.animfile");
+	id = ResourceManager::InitializeAnimatedModel("files/models/Golem_2.AnimMesh", "files/textures/Golem_2.mat", animations3, position, scale, rotation, shader);
+	golem->meshIDs[FIRE] = id;
+
+	std::vector<std::string> animations4;
+	animations4.push_back("files/models/Golem_1_Idle.animfile");
+	animations4.push_back("files/models/Golem_1_Born.animfile");
+	animations4.push_back("files/models/Golem_1_Run.animfile");
+	animations4.push_back("files/models/Golem_1_Command.animfile");
+	animations4.push_back("files/models/Golem_1_Death.animfile");
+	animations4.push_back("files/models/Golem_1_Eat.animfile");
+	animations4.push_back("files/models/Golem_1_GroundSlam.animfile");
+	animations4.push_back("files/models/Golem_1_Heavy_Hit_Back.animfile");
+	animations4.push_back("files/models/Golem_1_Heavy_Hit_Front.animfile");
+	animations4.push_back("files/models/Golem_1_Heavy_Hit_Left.animfile");
+	animations4.push_back("files/models/Golem_1_Heavy_Hit_Right.animfile");
+	animations4.push_back("files/models/Golem_1_Idle.animfile");
+	animations4.push_back("files/models/Golem_1_IdleLook.animfile");
+	animations4.push_back("files/models/Golem_1_Kick.animfile");
+	animations4.push_back("files/models/Golem_1_Run.animfile");
+	animations4.push_back("files/models/Golem_1_Special.animfile");
+	animations4.push_back("files/models/Golem_1_SummonMinions.animfile");
+	animations4.push_back("files/models/Golem_1_TowerPunch.animfile");
+	id = ResourceManager::InitializeAnimatedModel("files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", animations4, position, scale, rotation, shader);
+	golem->meshIDs[WOOD] = id;
+
+	golem->SetMeshID(golem->meshIDs[STONE]);
 
 
 	//Get Data Driven Components

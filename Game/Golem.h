@@ -1,14 +1,8 @@
 #pragma once
-//
-//#include "GameplayBaseClasses.h"
-//#include "GameObjectClasses.h"
-//#include "ADUserInterface.h"
-//#include "AudioManager.h"
 #include "ADAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
 #include <ADCombat.h>
-//#include "MinionManager.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -27,7 +21,7 @@ namespace ADResource
 		class Golem : public Renderable
 		{
 			int playerElement = 0;
-			AnimationStateMachine* anim_controller;
+			AnimationStateMachine* anim_controller[4];
 
 		public:
 			// Public Methods
@@ -46,7 +40,6 @@ namespace ADResource
 
 			// Accessors
 			void GetView(XMMATRIX& view);
-			void GetAnimationController(AnimationStateMachine& controller);
 			XMMATRIX GetColliderInfo();
 			virtual StatSheet* GetStatSheet() override;
 			int GetCurrentElement();
@@ -60,11 +53,6 @@ namespace ADResource
 			float commandDistanceTimer = 0;
 			ADAI::FlockingGroup** flockingGroups;
 			int commandTargetGroup = 0;
-			//int totalMinionCount = 0;
-			//int stoneMinionCount = 0;
-			//int waterMinionCount = 0;
-			//int fireMinionCount = 0;
-			//int woodMinionCount = 0;
 
 
 			// Physics
@@ -80,6 +68,8 @@ namespace ADResource
 				Action* special;
 			} gActions[4];
 			Action* consume;
+
+			AD_ULONG meshIDs[4];
 
 		private:
 			// Private Methods
@@ -97,7 +87,6 @@ namespace ADResource
 			void ChangeMinionGroup(bool nextElement);
 			void ConsumeMinion();
 			void SummonMinions();
-			//void InitActions();
 			void FlinchFromFront();
 			void FlinchFromBack();
 			void FlinchFromLeft();
@@ -109,7 +98,6 @@ namespace ADResource
 			// Golem Stats
 
 			int health;
-			//int playerElement = 0;
 
 
 
@@ -137,7 +125,6 @@ namespace ADResource
 			bool isActing = false;
 			double currentAnimTime = 0.0;
 			double idleTime = 0.0;
-			//AnimationStateMachine* anim_controller;
 			struct GolemAnimations
 			{
 				std::string born;
