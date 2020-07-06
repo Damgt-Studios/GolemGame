@@ -11,8 +11,11 @@ namespace ADResource
 		public:
 			void Render()
 			{
-				if (this->active)
+				if (this->active) 
+				{
 					ResourceManager::AddModelToRenderQueue(dynamic_cast<GameObject*>(this));
+					ResourceManager::AddModelToShadowQueue(dynamic_cast<GameObject*>(this));
+				}
 			}
 		};
 
