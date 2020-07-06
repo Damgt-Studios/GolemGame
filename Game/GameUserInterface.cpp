@@ -1239,36 +1239,29 @@ namespace GolemGameUISetup
 
 
 
-		//for (int i = 0; i < _grid->.size(); ++i)
-		//{
-		//	int column = round(int(_grid->nodeGrid[i]->column * 100.f));
-		//	int row = round(int(_grid->nodeGrid[i]->row * 100.f));
-		//	int index = column + (row * _grid->columns);
 
-		_debugController->planeNodes = &_grid->nodeGrid;
+		//_debugController->planeNodes = &_grid->nodeGrid;
 		//for (int i = 0; i < _grid->nodeGrid.size(); i++)
-		for (int i = 0; i < _grid->nodeGrid.size(); i++)
-		{
+		//{
 
-			ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (_grid->nodeGrid[i]->position.x + 300.f) , 2160 - _grid->nodeGrid[i]->position.z, 3840.f - (_grid->nodeGrid[i]->position.x + 300.f),  2160 - _grid->nodeGrid[i]->position.z });
-			long heightValue = int((_grid->nodeGrid)[i]->position.y * 100.f);
-			if (heightValue < -4)
-			{
-				heightValue = -4;
-			}
-			if (heightValue > 4)
-			{
-				heightValue = 4;
-			}
+		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (_grid->nodeGrid[i]->position.x + 300.f) , 2160 - _grid->nodeGrid[i]->position.z, 3840.f - (_grid->nodeGrid[i]->position.x + 300.f),  2160 - _grid->nodeGrid[i]->position.z });
+		//	long heightValue = int((_grid->nodeGrid)[i]->position.y * 100.f);
+		//	if (heightValue < -4)
+		//	{
+		//		heightValue = -4;
+		//	}
+		//	if (heightValue > 4)
+		//	{
+		//		heightValue = 4;
+		//	}
 
-			tempImage->BuildAnimation({ 2299, 184 + (heightValue * 16), 2315, 200 + (heightValue * 16) }, 5, 1, emptyAnimation);
-			tempImage->active = true;
-			tempImage->visible = true;
-			tempImage->Focus();
-			myUI->AddUIComponent("genericImage", tempImage);
-			myUI->overlays[pathingID]->AddComponent(tempImage);
-			_debugController->node_image_map[(_grid->nodeGrid)[i]] = tempImage;
-		}
+		//	tempImage->BuildAnimation({ 2299, 184 + (heightValue * 16), 2315, 200 + (heightValue * 16) }, 5, 1, emptyAnimation);
+		//	tempImage->active = true;
+		//	tempImage->visible = true;
+		//	tempImage->Focus();
+		//	myUI->AddUIComponent("genericImage", tempImage);
+		//	myUI->overlays[pathingID]->AddComponent(tempImage);
+		//	_debugController->node_image_map[(_grid->nodeGrid)[i]] = tempImage;
 		//}
 
 		return pathingID;

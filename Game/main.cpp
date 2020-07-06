@@ -358,10 +358,10 @@ public:
 		//GameUtilities::AddGameObject(tower4);
 		//GameUtilities::AddGameObject(tower5);
 
-		Building* gateway = new Building(XMFLOAT3(-1.625, 0, -1), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
+		Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
 		GameUtilities::AddGameObject(gateway);
 
-		Building* scaffolding = new Building(XMFLOAT3(-13.75, 0, -1), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX, "Scaffolding");
+		Building* scaffolding = new Building(XMFLOAT3(410, 0, -400), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX, "Scaffolding");
 		GameUtilities::AddGameObject(scaffolding);
 
 		//1.625 difference
