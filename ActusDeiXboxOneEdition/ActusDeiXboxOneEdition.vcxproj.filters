@@ -69,6 +69,8 @@
     <ClInclude Include="ADParticles.h" />
     <ClInclude Include="AnimationStateMachine.h" />
     <ClInclude Include="ADEventSystem.h" />
+    <ClInclude Include="ADCombat.h" />
+    <ClInclude Include="Renderable.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

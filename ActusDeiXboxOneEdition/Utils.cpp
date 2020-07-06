@@ -130,6 +130,7 @@ void ADUtils::InitializeFileSystem()
 //	assert(!FAILED(result));
 //}
 
+
 void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, ComPtr<ID3D11Device1> device, SHADER& shader)
 {
 	SimpleMesh mesh;
@@ -231,7 +232,6 @@ void ADUtils::LoadStaticMesh(const char* modelname, SimpleStaticModel& model, Co
 	result = device->CreateSamplerState(&sdesc, &model.sampler);
 	assert(!FAILED(result));
 
-	//LoadTextures(materials, &model, device);
 }
 
 void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, std::vector<std::string> animations, ComPtr<ID3D11Device1> device, SHADER& shader)
@@ -336,7 +336,6 @@ void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, st
 	result = device->CreateSamplerState(&sdesc, &model.sampler);
 	assert(!FAILED(result));
 
-	//LoadTextures(materials, &model, device);
 }
 
 //void ADUtils::LoadTextures(Header& header, Model& _model, ComPtr<ID3D11Device1> dev)
@@ -424,7 +423,7 @@ void ADUtils::LoadTextures(std::string filepath, SimpleModel* model, ComPtr<ID3D
 
 	std::string texture_Path = std::string(ADUtils::READ_PATH.begin(), ADUtils::READ_PATH.end()).append("files\\textures\\");
 
-	if (mats.size() == 3) 
+	if (mats.size() == 3)
 	{
 		//Diffuse
 		std::string textureName = std::string(texture_Path).append((char*)&mats[0]);

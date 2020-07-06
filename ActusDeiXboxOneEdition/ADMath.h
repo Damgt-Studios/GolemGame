@@ -3,6 +3,8 @@
 #include <DirectXMath.h>
 #pragma comment(lib, "d3d11.lib")
 
+#define WMATH_PI 3.1415926
+
 using namespace DirectX;
 
 inline namespace ADMath

@@ -195,8 +195,8 @@ namespace ADGameplay
 				{
 					villagerAI[i]->states[0]->objectsToAvoid.push_back(stoneMinions[j]);
 					villagerAI[i]->states[0]->objectsToAvoid.push_back(waterMinions[j]);
-					 villagerAI[i]->states[0]->objectsToAvoid.push_back(fireMinions[j]);
-					 villagerAI[i]->states[0]->objectsToAvoid.push_back(woodMinions[j]);
+					villagerAI[i]->states[0]->objectsToAvoid.push_back(fireMinions[j]);
+					villagerAI[i]->states[0]->objectsToAvoid.push_back(woodMinions[j]);
 					villagerAI[i]->states[1]->objectsToAvoid.push_back(stoneMinions[j]);
 					villagerAI[i]->states[1]->objectsToAvoid.push_back(waterMinions[j]);
 					villagerAI[i]->states[1]->objectsToAvoid.push_back(fireMinions[j]);
@@ -365,7 +365,9 @@ namespace ADGameplay
 
 
 			//Dan added this:
-			m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-145, 5, -145), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
+			m1 = GameUtilities::AddDestructableFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(-145, 5, -145), XMFLOAT3(3, 3, 3), XMFLOAT3(0, 0, 0));
+
+			//m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-145, 5, -145), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 			golem->targetMarker = m1;
 			GameUtilities::AddGameObject(m1);
 

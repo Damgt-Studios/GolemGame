@@ -116,10 +116,18 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 		}
 	}
 
+
 	SimpleStaticModel* temp = new SimpleStaticModel();
-	temp->positions.push_back(position);
 	temp->instanceCount = 1;
-	temp->position = position;
+	if (instanced)
+	{
+		temp->positions.push_back(position);
+	}
+	else
+	{
+		temp->positions.push_back({ 0,0,0 });
+	}
+	temp->position = { 0,0,0 };
 	temp->scale = scale;
 	temp->rotation = rotation;
 
@@ -144,6 +152,7 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 	id = GenerateUniqueID();
 	unsigned int index = fbxmodels.size();
 	fbxmodel_map.insert(std::pair<AD_ULONG, unsigned int>(id, index));
+	modelname.append(to_string(id));
 	fbxmodel_map_static_instancing.insert(std::pair<std::string, SimpleStaticModel*>(modelname, temp));
 	fbxmodels.push_back(temp);
 
@@ -153,7 +162,7 @@ AD_ULONG ResourceManager::InitializeSimpleModel(std::string modelname, std::stri
 AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, ADUtils::SHADER& shader)
 {
 	SimpleAnimModel* temp = new SimpleAnimModel();
-	
+
 	temp->scale = scale;
 	temp->rotation = rotation;
 	temp->position = position;
@@ -184,7 +193,10 @@ void ResourceManager::FinalizedStatics()
 		ZeroMemory(&subData, sizeof(subData));
 
 		bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bdesc.ByteWidth = sizeof(XMFLOAT3) * itFound->second->positions.size();
+		if (itFound->second->instanceCount > 1)
+			bdesc.ByteWidth = sizeof(XMFLOAT3) * itFound->second->positions.size();
+		else
+			bdesc.ByteWidth = sizeof(XMFLOAT3);
 		bdesc.CPUAccessFlags = 0;
 		bdesc.MiscFlags = 0;
 		bdesc.StructureByteStride = 0;
@@ -308,7 +320,7 @@ ADResource::ADGameplay::GameObject* ResourceManager::PopFromRenderQueue()
 	return temp;
 }
 
-AD_ULONG ResourceManager::PopFromColliderQueue() 
+AD_ULONG ResourceManager::PopFromColliderQueue()
 {
 	AD_ULONG temp = collider_queue.front();
 	collider_queue.pop();

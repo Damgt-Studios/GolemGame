@@ -184,9 +184,9 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->SetMeshID(id);
 	temp->team = 0;
 
-	scale.x *= 100.0f;
-	scale.y *= 100.0f;
-	scale.z *= 100.0f;
+	//scale.x *= 100.0f;
+	//scale.y *= 100.0f;
+	//scale.z *= 100.0f;
 	//scale.x *= 0.5f;
 	//scale.y *= 0.5f;
 	//scale.z *= 0.5f;
@@ -374,7 +374,7 @@ ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI:
 	ADAI::FlockingState* chasingFleeing = new ADAI::FlockingState();
 	idling->owner = temp;
 	fleeing->owner = temp;
-	
+
 	temp->states.push_back(idling);
 	temp->states.push_back(fleeing);
 	temp->currentState = idling;
@@ -391,7 +391,14 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 
 	temp->SetScale(scale);
 	temp->SetRotation(rotation, type);
-	temp->SetPosition(position);
+	if (instanced)
+	{
+		temp->SetPosition({ 0,0,0 });
+	}
+	else
+	{
+		temp->SetPosition(position);
+	}
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation, instanced);
 	temp->SetMeshID(id);
@@ -423,6 +430,7 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddRenderableCollider()
 
 	return temp;
 }
+
 
 //Template
 /*
@@ -541,7 +549,7 @@ std::vector<Renderable*> GameUtilities::GenerateBarn2(XMFLOAT3 pos, XMFLOAT3 rot
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Barn_02_WoodenFrame.mesh", "files/textures/Wood_01.mat",  pos, XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Barn_02_WoodenFrame.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation));
 	temp.push_back(AddSimpleAsset("files/models/Barn_02_Structure.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 	temp.push_back(AddSimpleAsset("files/models/Barn_02_Roof.mesh", "files/textures/Roof_03.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 	temp.push_back(AddSimpleAsset("files/models/Barn_02_StoneDetails.mesh", "files/textures/Stones2A.mat", pos, XMFLOAT3(25, 25, 25), rotation));
@@ -846,14 +854,14 @@ std::vector<Renderable*> GameUtilities::GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 r
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
-	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Wood.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y - 6.5, pos.z-4.2), XMFLOAT3(50, 50, 50), XMFLOAT3(14.030, 0.585 + rotation.y, 7.898), true));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_01_Wood.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y - 6.5, pos.z - 4.2), XMFLOAT3(50, 50, 50), XMFLOAT3(14.030, 0.585 + rotation.y, 7.898)));
 	//temp.push_back(AddSimpleAsset("files/models/Rubble_01_Wood.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y - 0.15, pos.z / 2 - 0.1f), XMFLOAT3(50, 50, 50), XMFLOAT3(14.030, 0.585 + rotation.y, 7.898)));
 
-	for (size_t i = 0; i < temp.size(); i++)
-	{
-		AddGameObject(temp[i]);
-	}
+	//for (size_t i = 0; i < temp.size(); i++)
+	//{
+	//	AddGameObject(temp[i]);
+	//}
 
 	return temp;
 }
@@ -864,13 +872,13 @@ std::vector<Renderable*> GameUtilities::GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 r
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Stone.mesh", "files/textures/Debris.mat",  pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
-	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Wood.mesh", "files/textures/Wood_01.mat",  pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_02_Wood.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 
-	for (size_t i = 0; i < temp.size(); i++)
-	{
-		AddGameObject(temp[i]);
-	}
+	//for (size_t i = 0; i < temp.size(); i++)
+	//{
+	//	AddGameObject(temp[i]);
+	//}
 
 	return temp;
 }
@@ -881,8 +889,8 @@ std::vector<Renderable*> GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 r
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Debris.mat",  pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
-	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Wood_01.mat",  pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{

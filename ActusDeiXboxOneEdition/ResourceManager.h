@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Types.h"
+//#include "Types.h"
 #include "Utils.h"
 #include <d3dcompiler.h>
 #include "DDSTextureLoader.h"
@@ -10,15 +10,15 @@
 #include <vector>
 #include <queue>
 
-namespace 
+namespace
 {
 	// Maps
 	std::unordered_map<AD_ULONG, unsigned int> light_map;
 
 	std::unordered_map<AD_ULONG, unsigned int> gameObject;
 
-	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;							
-	std::unordered_map<std::string, SimpleStaticModel*> fbxmodel_map_static_instancing;		
+	std::unordered_map<AD_ULONG, unsigned int> fbxmodel_map;
+	std::unordered_map<std::string, SimpleStaticModel*> fbxmodel_map_static_instancing;
 
 	std::unordered_map<AD_ULONG, unsigned int> collider_map;
 
@@ -67,6 +67,7 @@ namespace
 	ComPtr<ID3D11Buffer> indexBuffer;
 }
 
+
 // Note: Update the resource manager to load models and store mesh data in same draw call in contiguous memory
 
 class ResourceManager
@@ -111,7 +112,7 @@ public:
 	// Getters/ setters
 	static int GetLightCount();
 	static char* GetLightDataPtr();
-	
+
 	static ADResource::ADRenderer::SimpleStaticModel* GetSkybox();
 	static ADResource::ADRenderer::Light* GetLightPtr();
 

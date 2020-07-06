@@ -32,7 +32,7 @@ cbuffer SHADER_VARIABLES : register(b0)
 
 
 
-OutputVertex main( InputVertex vertex )
+OutputVertex main(InputVertex vertex)
 {
     OutputVertex output = (OutputVertex) 0;
     output.tex = vertex.tex;
@@ -40,9 +40,9 @@ OutputVertex main( InputVertex vertex )
     output.tangent = vertex.tangent;
     
     float4x4 wm = worldMatrix;
-    wm[3].x = vertex.instancePosition.x;
-    wm[3].y = vertex.instancePosition.y;
-    wm[3].z = vertex.instancePosition.z;
+    wm[3].x += vertex.instancePosition.x;
+    wm[3].y += vertex.instancePosition.y;
+    wm[3].z += vertex.instancePosition.z;
     
     
     output.localPos = vertex.pos;

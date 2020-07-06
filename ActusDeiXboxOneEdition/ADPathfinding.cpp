@@ -14,17 +14,19 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 	//Get Heighmap for visuals
 	for (int i = 0; i < _planeVertices->size(); i++)
 	{
-		UINT pointColumn = (((*_planeVertices)[i].Position.x - tileMap.planeLows.x) * tileMap.mapSize.x) / tileMap.cellSize.x;
-		UINT pointRow = (((*_planeVertices)[i].Position.z - tileMap.planeLows.y) * tileMap.mapSize.y) / tileMap.cellSize.y;
+		//UINT pointColumn = (((*_planeVertices)[i].Position.x - (tileMap.mapSize.x / 2.f)) * tileMap.mapSize.x) / tileMap.cellSize.x;
+		//UINT pointRow = (((*_planeVertices)[i].Position.z - tileMap.planeLows.y) * tileMap.mapSize.y) / tileMap.cellSize.y;
+		UINT pointColumn = ((*_planeVertices)[i].Position.x + (tileMap.mapSize.x / 2.f)) / tileMap.cellSize.x;
+		UINT pointRow = ((*_planeVertices)[i].Position.y + (tileMap.mapSize.y / 2.f)) / tileMap.cellSize.y;
 		if (pointColumn < tileMap.xDivisions && pointRow < tileMap.yDivisions)
 		{
-			if (std::fmodf((((*_planeVertices)[i].Position.x - tileMap.planeLows.x) * tileMap.mapSize.x), tileMap.cellSize.x) > (tileMap.cellSize.x / 2.f))
+			if (std::fmodf((((*_planeVertices)[i].Position.x + (tileMap.mapSize.x / 2)) * tileMap.mapSize.x), tileMap.cellSize.x) > (tileMap.cellSize.x / 2.f))
 			{
 				if (pointColumn < tileMap.columns)
 					++pointColumn;
 			}
 
-			if (std::fmodf((((*_planeVertices)[i].Position.z - tileMap.planeLows.y) * tileMap.mapSize.y), tileMap.cellSize.y) > (tileMap.cellSize.y / 2.f))
+			if (std::fmodf((((*_planeVertices)[i].Position.z + (tileMap.mapSize.y / 2)) * tileMap.mapSize.y), tileMap.cellSize.y) > (tileMap.cellSize.y / 2.f))
 			{
 				if (pointRow < tileMap.rows)
 					++pointRow;
@@ -45,10 +47,10 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 			{
 				if (OBJS[i]->colliderPtr->type != ADPhysics::ColliderType::Plane)
 				{
-					XMFLOAT4 colliderQuad((OBJS[i]->colliderPtr->Pos.x - (tileMap.planeLows.x * tileMap.mapSize.x)) - OBJS[i]->colliderPtr->GetWidth() * 100,
-						(OBJS[i]->colliderPtr->Pos.z - (tileMap.planeLows.y * tileMap.mapSize.y)) - OBJS[i]->colliderPtr->GetLength() * 100,
-						(OBJS[i]->colliderPtr->Pos.x - (tileMap.planeLows.x * tileMap.mapSize.x)) + OBJS[i]->colliderPtr->GetWidth() * 100,
-						(OBJS[i]->colliderPtr->Pos.z - (tileMap.planeLows.y * tileMap.mapSize.y)) + OBJS[i]->colliderPtr->GetLength() * 100);
+					XMFLOAT4 colliderQuad(((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) - OBJS[i]->colliderPtr->GetWidth() / 2.f),
+						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) - OBJS[i]->colliderPtr->GetLength() / 2.f),
+						((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + OBJS[i]->colliderPtr->GetWidth() / 2.f),
+						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + OBJS[i]->colliderPtr->GetLength() / 2.f));
 
 					for (int r = 0; r < tileMap.yDivisions; r++)
 					{
@@ -82,58 +84,82 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 	SearchNode* targetDestination = GetTile(pathNode->column - 1, pathNode->row - 1);
 	if (targetDestination != nullptr && searchNode->tile->directions[0])
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 	//Up
 	targetDestination = GetTile(pathNode->column, pathNode->row - 1);
 	if (targetDestination != nullptr && searchNode->tile->directions[1] && targetDestination->tile->walkable)
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 	//Up Right
 	targetDestination = GetTile(pathNode->column + 1, pathNode->row - 1);
 	if (targetDestination != nullptr && searchNode->tile->directions[2])
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 	//left
 	targetDestination = GetTile(pathNode->column - 1, pathNode->row);
 	if (targetDestination != nullptr && searchNode->tile->directions[3] && targetDestination->tile->walkable)
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 	//right
 	targetDestination = GetTile(pathNode->column + 1, pathNode->row);
 	if (targetDestination != nullptr && searchNode->tile->directions[4] && targetDestination->tile->walkable)
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 	//down left
 	targetDestination = GetTile(pathNode->column - 1, pathNode->row + 1);
 	if (targetDestination != nullptr && searchNode->tile->directions[5])
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 	//down
 	targetDestination = GetTile(pathNode->column, pathNode->row + 1);
 	if (targetDestination != nullptr && searchNode->tile->directions[6] && targetDestination->tile->walkable)
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 
 	//down right
 	targetDestination = GetTile(pathNode->column + 1, pathNode->row + 1);
 	if (targetDestination != nullptr && searchNode->tile->directions[7])
 	{
-		searchNode->neighbors.push_back(targetDestination);
-		searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		if (targetDestination->tile->walkable)
+		{
+			searchNode->neighbors.push_back(targetDestination);
+			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+		}
 	}
 }
 
@@ -170,17 +196,20 @@ ADAI::ADPathfinding::~ADPathfinding()
 
 void ADAI::ADPathfinding::UpdatePlayerNode(float _x, float _z, float _mapWidth, float _mapHeight)
 {
-	float x = _x - (tileMap.planeLows.x * _mapWidth);
-	float z = _z - (tileMap.planeLows.y * _mapHeight);
-	int column = int(x/ tileMap.cellSize.x);
-	int row = int(z/ tileMap.cellSize.y);
+	//float x = _x + ((tileMap.mapSize.x / 2) * _mapWidth);
+	//float z = _z + ((tileMap.mapSize.y / 2) * _mapHeight);
+	//int column = int(x/ tileMap.cellSize.x);
+	//int row = int(z/ tileMap.cellSize.y);
+
+	UINT column = (_x + (tileMap.mapSize.x / 2.f)) / tileMap.cellSize.x;
+	UINT row = (_z + (tileMap.mapSize.y / 2.f)) / tileMap.cellSize.y;
 
 	if (tileMap.nodeGrid.size() > ((row * tileMap.columns) + column))
 	{
-		tileMap.nodeGrid[((row * tileMap.columns) + column)]->displayState = 1;
+		tileMap.nodeGrid[((row * tileMap.columns) + column)]->displayState = 2;
 		for (int i = 0; i < searching_map[tileMap.nodeGrid[((row * tileMap.columns) + column)]]->neighbors.size(); i++)
 		{
-			searching_map[tileMap.nodeGrid[((row * tileMap.columns) + column)]]->neighbors[i]->tile->displayState = 2;
+			searching_map[tileMap.nodeGrid[((row * tileMap.columns) + column)]]->neighbors[i]->tile->displayState = 3;
 		}
 	}
 
@@ -203,10 +232,10 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 		for (int c = 0; c < tileMap.columns; c++)
 		{
 			PathingNode* mapNode = new PathingNode();
-			mapNode->position = XMFLOAT3(pointGrid[(r *  (tileMap.xDivisions)) + c].position.x + (tileMap.cellSize.x / 2.f),
-										((pointGrid[(r * (tileMap.xDivisions)) + c].position.y + pointGrid[((r + 1) * (tileMap.xDivisions)) + c].position.y +
-										pointGrid[(r *   (tileMap.xDivisions)) + (c + 1)].position.y + pointGrid[((r + 1) * (tileMap.xDivisions)) + (c + 1)].position.y)/4),
-										pointGrid[(r *   (tileMap.xDivisions)) + c].position.z + (tileMap.cellSize.y / 2.f));
+			mapNode->position = XMFLOAT3(pointGrid[(r * (tileMap.xDivisions)) + c].position.x + (tileMap.cellSize.x / 2.f),
+				((pointGrid[(r * (tileMap.xDivisions)) + c].position.y + pointGrid[((r + 1) * (tileMap.xDivisions)) + c].position.y +
+					pointGrid[(r * (tileMap.xDivisions)) + (c + 1)].position.y + pointGrid[((r + 1) * (tileMap.xDivisions)) + (c + 1)].position.y) / 4),
+				pointGrid[(r * (tileMap.xDivisions)) + c].position.z + (tileMap.cellSize.y / 2.f));
 			mapNode->column = c;
 			mapNode->row = r;
 
@@ -219,9 +248,9 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 			if (r > 0 && c > 0)
 			{
 				if (pointGrid[(r * (tileMap.xDivisions)) + c].walkable) //((r-1) * (dividersX)) + (c-1)].walkable)
-				{ 
+				{
 					mapNode->directions[0] = true;
-					sideCount++; 
+					sideCount++;
 				}
 				else
 				{
@@ -233,10 +262,10 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 				mapNode->directions[0] = false;
 			}
 
-			if (r > 0 && c < tileMap.columns-1)
+			if (r > 0 && c < tileMap.columns - 1)
 			{
 				if (pointGrid[(r * (tileMap.xDivisions)) + (c + 1)].walkable)
-				{ 
+				{
 					sideCount++;
 					mapNode->directions[2] = true;
 				}
@@ -250,12 +279,12 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 				mapNode->directions[2] = false;
 			}
 
-			if (r < tileMap.rows-1 && c > 0)
+			if (r < tileMap.rows - 1 && c > 0)
 			{
 				if (pointGrid[((r + 1) * (tileMap.xDivisions)) + (c)].walkable)
-				{ 
+				{
 					mapNode->directions[5] = true;
-					sideCount++; 
+					sideCount++;
 				}
 				else
 				{
@@ -267,10 +296,10 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 				mapNode->directions[5] = false;
 			}
 
-			if (r < tileMap.rows-1 && c < tileMap.columns-1)
+			if (r < tileMap.rows - 1 && c < tileMap.columns - 1)
 			{
 				if (pointGrid[((r + 1) * (tileMap.xDivisions)) + (c + 1)].walkable)
-				{ 
+				{
 					mapNode->directions[7] = true;
 					sideCount++;
 				}
@@ -301,11 +330,11 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 			{
 				if (tileMap.nodeGrid[(r * (tileMap.columns)) + c]->directions[0] == false)
 				{
-					if (!tileMap.nodeGrid[((r-1) * (tileMap.columns)) + c]->walkable)
+					if (!tileMap.nodeGrid[((r - 1) * (tileMap.columns)) + c]->walkable)
 					{
 						tileMap.nodeGrid[(r * (tileMap.columns)) + c]->directions[1] = false;
 					}
-					if (!tileMap.nodeGrid[(r * (tileMap.columns)) + (c-1)]->walkable)
+					if (!tileMap.nodeGrid[(r * (tileMap.columns)) + (c - 1)]->walkable)
 					{
 						tileMap.nodeGrid[(r * (tileMap.columns)) + c]->directions[3] = false;
 					}
@@ -327,7 +356,7 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 					{
 						tileMap.nodeGrid[(r * (tileMap.columns)) + c]->directions[3] = false;
 					}
-					if (!tileMap.nodeGrid[((r+1) * (tileMap.columns)) + c]->walkable)
+					if (!tileMap.nodeGrid[((r + 1) * (tileMap.columns)) + c]->walkable)
 					{
 						tileMap.nodeGrid[(r * (tileMap.columns)) + c]->directions[6] = false;
 					}
@@ -357,28 +386,33 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 void ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, int goalRow)
 {
 	//Setup the search process
-	//ClearDebug();
-	//done = false;
-	//solution.clear();
-	//visited_map.clear();
-	//pHeap.clear();
-	//target = GetTile(goalColumn, goalRow)->tile;
-	//PlannerNode* first = new PlannerNode();
-	//first->parent = NULL;
-	//first->searchNode = GetTile(startColumn, startRow);
-	//first->givenCost = 0;
-	//first->heuristicCost = DistanceCalculation(first->searchNode->tile);
-	//first->finalCost = first->givenCost + first->heuristicCost * hWeight;
-	////pQueue.(first);
-	//std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
-	//pHeap.push_back(first);
-	//visited_map[GetTile(startColumn, startRow)] = first;
+	ClearDebug();
+	done = false;
+	solution.clear();
+	visited_map.clear();
+	pHeap.clear();
+	if (GetTile(goalColumn, goalRow))
+		target = GetTile(goalColumn, goalRow)->tile;
+	PlannerNode* first = new PlannerNode();
+	first->parent = NULL;
+	first->searchNode = GetTile(startColumn, startRow);
+	first->givenCost = 0;
+	first->heuristicCost = DistanceCalculation(first->searchNode->tile);
+	first->finalCost = first->givenCost + first->heuristicCost * hWeight;
+	//pQueue.(first);
+	std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
+	pHeap.push_back(first);
+	visited_map[GetTile(startColumn, startRow)] = first;
 }
 
-void ADAI::ADPathfinding::update(long timeslice)
+void ADAI::ADPathfinding::update(float timeslice)
 {
+	throttle_time.Restart();
 	do
 	{
+		throttle_time.Signal();
+		timeslice -= static_cast<float>(throttle_time.SmoothDelta());
+
 		if (pHeap.size() == 0)
 		{
 			done = true;
@@ -418,6 +452,7 @@ void ADAI::ADPathfinding::update(long timeslice)
 		//	//}
 		//	previousTrace.push_back(retracer->searchNode->tile);
 		//}
+
 
 		int neighborIndex = 0;
 		auto end = current->searchNode->neighbors.end();
@@ -469,7 +504,7 @@ void ADAI::ADPathfinding::exit()
 			for (int y = 0; y < tileMap.rows; ++y)
 			{
 				SearchNode* tl = GetTile(x, y);
-				if(visited_map[tl] != nullptr)
+				if (visited_map[tl] != nullptr)
 					delete visited_map[tl];
 			}
 		}
