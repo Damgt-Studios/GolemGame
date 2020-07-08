@@ -88,4 +88,8 @@ public:
 	BigElementalPuffEmitter bigFirePuff;
 	BigElementalPuffEmitter bigWaterPuff;
 	BigElementalPuffEmitter bigStonePuff;
+	CylinderEmitter woodCylinder;
+	CylinderEmitter fireCylinder;
+	CylinderEmitter waterCylinder;
+	CylinderEmitter stoneCylinder;
 };
