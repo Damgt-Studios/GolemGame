@@ -146,6 +146,7 @@ float4 main(OutputVertex v) : SV_TARGET
     //float4 specularFinal = float4(1, 1, 1, 1) * Intensity;
     
     //Multiply the sum of the Additional Modifications
+    texelColor = float4(CalcHemisphericAmbient(v.normals, texelColor.xyz), 1);
     dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.3f, 1);
-    return float4(CalcHemisphericAmbient(v.normals, texelColor.xyz), 1) * (dirFinal + pointFinal) + emissiveColor;
+    return texelColor * (dirFinal + pointFinal) + emissiveColor;
 }
