@@ -38,18 +38,26 @@ namespace ADResource
 				// Cbuffers
 				ComPtr<ID3D11Buffer> constantBuffer;
 				ComPtr<ID3D11Buffer> lightBuffer;
+				ComPtr<ID3D11Buffer> lightViewProjBuffer;
 
 				// Samplers
 				ComPtr<ID3D11SamplerState> normal_sampler;
 
 				//Shadows
-				ComPtr<ID3D11Texture2D> shadowTexture;
+				D3D11_VIEWPORT shadow_port;
+				ComPtr<ID3D11RenderTargetView> renderedTarget;
+				ComPtr<ID3D11Texture2D> renderedTexture;
+				ComPtr<ID3D11ShaderResourceView> renderedView;
+
+				ComPtr<ID3D11Texture2D> shadowMap;
 				ComPtr<ID3D11ShaderResourceView> shadowView;
 				ComPtr<ID3D11DepthStencilView> shadowDepth;
 				ComPtr<ID3D11SamplerState> shadowSampler;
 
 				ComPtr<ID3D11VertexShader> shadowVertex;
 				ComPtr<ID3D11PixelShader> shadowPixel;
+				ComPtr<ID3D11VertexShader> animShadowVertex;
+				ComPtr<ID3D11PixelShader> animShadowPixel;
 
 				RendererResources()
 				{
@@ -64,13 +72,18 @@ namespace ADResource
 					constantBuffer = nullptr;
 					lightBuffer = nullptr;
 
-					shadowTexture = nullptr;
+					renderedTarget = nullptr;
+					renderedTexture = nullptr;
+					renderedView = nullptr;
+
+					shadowMap = nullptr;
 					shadowView = nullptr;
 					shadowDepth = nullptr;
-					shadowSampler = nullptr;
 
 					shadowVertex = nullptr;
 					shadowPixel = nullptr;
+					animShadowVertex = nullptr;
+					animShadowPixel = nullptr;
 				};
 			};
 			
@@ -94,6 +107,7 @@ namespace ADResource
 			// Temp
 		private:
 			WVP WORLD;
+			LVP LIGHTSPACE;
 
 			// Temp
 			ComPtr<IDXGIDevice1> dxgiDevice;

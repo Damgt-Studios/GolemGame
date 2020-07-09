@@ -12,6 +12,17 @@ void Camera::GetViewMatrix(XMMATRIX& viewMatrix)
 	viewMatrix = XMMatrixLookAtLH(position, targetPosition, up);
 }
 
+void Camera::GetViewMatrixRH(XMMATRIX& viewMatrix)
+{
+	XMVECTOR position, targetPosition, up;
+
+	position = XMLoadFloat3(&m_position);
+	targetPosition = XMLoadFloat3(&m_targetPosition);
+	up = XMLoadFloat3(&m_up);
+
+	viewMatrix = XMMatrixLookAtRH(position, targetPosition, up);
+}
+
 DirectX::XMFLOAT3& Camera::GetRight()
 {
 	return m_right;

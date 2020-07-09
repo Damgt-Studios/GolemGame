@@ -1,9 +1,10 @@
 Texture2D diffuse : register(t0);
 Texture2D normal : register(t1);
 
-Texture2D shadows : register(t2);
+Texture2D shadowMap : register(t2);
 
 SamplerState textureSampler : register(s0);
+SamplerComparisonState shadowSampler : register(s1);
 
 struct OutputVertex
 {
@@ -12,13 +13,15 @@ struct OutputVertex
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float3 localPos : LOCALPOS;
-    float3 worldPos : WORLDPOS;
+    float4 worldPos : WORLDPOS;
+    float4 lightSpaceCoords : LSCOORD;
 };
 
 struct Light
 {
     float4 position, lightDirection, diffuse, ambient;
-    unsigned int lightType;  float lightRadius;
+    unsigned int lightType;
+    float lightRadius;
     float diffuseIntensity, ambientIntensity;
 };
 
@@ -27,86 +30,146 @@ cbuffer LightBuffer : register(b0)
     Light l[10];
 };
 
+float3 CalcHemisphericAmbient(float3 normal, float3 color)
+{
+    float3 AmbientUp = float3(1, 1, 1);
+    float3 AmbientDown = float3(0, 0, 0);
+    
+    float up = normal.y * 0.5f + 0.5f;
+    float3 Ambient = AmbientDown + up * AmbientUp;
+    
+    return Ambient * color;
+}
+
+#define PCF_RANGE 2
+
+float CalcShadowAmount(float4 initialShadowMapCoords)
+{
+    float shadowLevel = 0.0f;
+    float3 spos = initialShadowMapCoords.xyz / initialShadowMapCoords.w;
+    
+    if (spos.z > 1.0f || spos.z < 0.0f)
+    {
+        shadowLevel = 1.0f;
+    }
+    else
+    {
+        [unroll]
+        for (int x = -PCF_RANGE; x <= PCF_RANGE; x++)
+        {
+            [unroll]
+            for (int y = -PCF_RANGE; y <= PCF_RANGE; y++)
+            {
+                shadowLevel += shadowMap.SampleCmpLevelZero(shadowSampler, spos.xy, spos.z - 0.005f, float2(x, y));
+            }
+        }
+        
+        shadowLevel /= ((PCF_RANGE * 2 + 1) * (PCF_RANGE * 2 + 1));
+
+    }
+    
+    return shadowLevel;
+    
+    //if (spos.z > 1.0f || spos.z < 0.0f)
+    //    return 1.0f;
+    
+    //float bias = max(0.05f * (-1.0f - dotLightNormal), 0.0005f);
+    
+    //float depth = shadowMap.Sample(shadowSampler, spos.xy).r;
+    
+    //return (depth + bias) < spos.z ? 0.0f : 1.0f;
+}
+
 float4 main(OutputVertex v) : SV_TARGET
 {
-    //float4 texelColor = diffuse.Sample(textureSampler, v.tex.xy);
+    float4 texelColor = diffuse.Sample(textureSampler, v.tex.xy);
     
-    //clip(texelColor.a < 0.1 ? -1 : 1);
+    clip(texelColor.a < 0.1 ? -1 : 1);
     
-    ////Load normal from normal map
-    //float3 normalMap = normal.Sample(textureSampler, v.tex.xy);
+    //Load normal from normal map
+    float3 normalMap = normal.Sample(textureSampler, v.tex.xy);
     
-    //if (all(normalMap != float3(0, 0, 0)))
-    //{
-    //    //Change normal map range from [0, 1] to [-1, 1]
-    //    normalMap = (2.0f * normalMap) - 1.0f;
-    //    normalMap.z = -normalMap.z;
+    if (all(normalMap != float3(0, 0, 0)))
+    {
+        //Change normal map range from [0, 1] to [-1, 1]
+        normalMap = (2.0f * normalMap) - 1.0f;
+        normalMap.z = -normalMap.z;
     
-    //    float3 bitangent = cross(v.tangent, v.normal);
+        float3 bitangent = cross(v.tangent, v.normal);
 
-    //    //Create the "Texture Space"
-    //    float3x3 TBN = float3x3(v.tangent, bitangent, v.normal);
-    //    //texSpace = transpose(texSpace);
+        //Create the "Texture Space"
+        float3x3 TBN = float3x3(v.tangent, bitangent, v.normal);
+        //texSpace = transpose(texSpace);
     
-    //    //Convert normal from normal map to texture space and store in input.normal
-    //    v.normal = mul(normalMap, TBN);
-    //}
+        //Convert normal from normal map to texture space and store in input.normal
+        v.normal = mul(normalMap, TBN);
+    }
     
-    //float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
+    float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
+    float dotLightNormal = 0;
     
-    //for (int i = 0; i < 10; i++)
-    //{
-    //    //Directional
-    //    if (l[i].lightType == 0)
-    //    {
-    //        float3 lightDirection = -l[i].lightDirection;
-    //        float lightMagnitude = saturate(dot(lightDirection, v.normal)) + (l[i].ambient * l[i].ambientIntensity);
-    //        float4 dirLight = lightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
-    //        dirFinal += dirLight;
-    //    }
-    //    //Point Light
-    //    else if (l[i].lightType == 1)
-    //    {
-    //        //Point Light
-    //        float3 pointlightDirection = normalize(l[i].position.xyz - v.worldPos);
-    //        float pointlightMagnitude = saturate(dot(pointlightDirection, v.normal));
+    for (int i = 0; i < 10; i++)
+    {
+        //Directional
+        if (l[i].lightType == 0)
+        {
+            float3 lightDirection = -l[i].lightDirection;
+            dotLightNormal = saturate(dot(lightDirection, v.normal));
+            float lightMagnitude = dotLightNormal + (l[i].ambient * l[i].ambientIntensity);
+            float4 dirLight = lightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
+            dirFinal += dirLight;
+        }
+        //Point Light
+        else if (l[i].lightType == 1)
+        {
+            //Point Light
+            float3 pointlightDirection = normalize(l[i].position.xyz - v.worldPos.xyz);
+            float pointlightMagnitude = saturate(dot(pointlightDirection, v.normal));
     
-    //        float atten = 1.0 - saturate(length(l[i].position.xyz - v.worldPos) / l[i].lightRadius);
-    //        atten *= atten;
+            float atten = 1.0 - saturate(length(l[i].position.xyz - v.worldPos.xyz) / l[i].lightRadius);
+            atten *= atten;
     
-    //        pointlightMagnitude *= atten;
+            pointlightMagnitude *= atten;
     
-    //        pointFinal += pointlightMagnitude * l[i].diffuse * l[i].diffuseIntensity;
-    //    }
-    //    //Not supported
-    //    else
-    //    {
-            
-    //    }
-    //}
+            pointFinal += pointlightMagnitude * l[i].diffuse * l[i].diffuseIntensity;
+        }
+    }
+ 
+    //Sample Shadow Map
+    //float near = 0.01f;
+    //float far = 3000;
+    //float depth = shadowMap.Sample(textureSampler, v.tex.xy);
+    //float lineardepth = (2.0f * near) / (far + near - depth * (far - near));
     
-    ////Create the Directional Lighting on the Normal Map
-    ////float3 lightDirection = float3(0, -0.5f, -1);
-    ////float lightMagnitude = saturate(dot(-lightDirection, v.normal)) + (float4(0.156f, 0.003f, 0.215f, 1) * 3);
-    ////float4 dirFinal = lightMagnitude * float4(0.5f, 0.5f, 0.5f, 1);
+    //return float4(lineardepth, lineardepth, lineardepth, 1);
     
-    ////Point Light
-    ////float3 pointlightDirection = normalize(float3(-2,0,-30) - v.worldPos.xyz);
-    ////float pointlightMagnitude = saturate(dot(pointlightDirection, normalMap.xyz));
-    
-    ////float atten = 1.0 - saturate(length(float3(-2,0,-30) - v.worldPos.xyz) / 100.0f);
-    
-    ////pointlightMagnitude *= atten;
-    
-    ////float4 pointFinal = pointlightMagnitude * float4(1, 1, 1, 1);
-    
-    ////float4 viewDir = normalize(CameraPosition - v.worldPos);
-    ////float3 reflection = reflect(lightDirection, v.norm.xyz);
-    ////float Intensity = max(pow(saturate(dot(viewDir.xyz, reflection)), 10), 0);
-    ////float4 specularFinal = float4(1, 1, 1, 1) * Intensity;
-    
-    ////Multiply the sum of the Additional Modifications
-    //return texelColor * (dirFinal + pointFinal);
-    
-    return shadows.Sample(textureSampler, v.tex.xy);
+    //Multiply the sum of the Additional Modifications
+    dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.25f, 1);
+    return float4(CalcHemisphericAmbient(v.normal, texelColor.xyz), 1) * (dirFinal + pointFinal);
 }
+
+
+
+
+
+
+//Directional Lighting
+    //float3 lightDirection = float3(0, -0.5f, -1);
+    //float lightMagnitude = saturate(dot(-lightDirection, v.normal)) + (float4(0.156f, 0.003f, 0.215f, 1) * 3);
+    //float4 dirFinal = lightMagnitude * float4(0.5f, 0.5f, 0.5f, 1);
+    
+//Point Lighting
+    //float3 pointlightDirection = normalize(float3(-2, 0, -30) - v.worldPos.xyz);
+    //float pointlightMagnitude = saturate(dot(pointlightDirection, normalMap.xyz));
+    
+    //float atten = 1.0 - saturate(length(float3(-2, 0, -30) - v.worldPos.xyz) / 100.0f);
+    
+    //pointlightMagnitude *= atten;
+    
+    //float4 pointFinal = pointlightMagnitude * float4(1, 1, 1, 1);
+    
+//Specular Lighting
+    //float4 viewDir = normalize(CameraPosition - v.worldPos);
+    //float3 reflection = reflect(lightDirection, v.norm.xyz);
+    //float Intensity = max(pow(saturate(dot(viewDir.xyz, reflection)), 10), 0);
+    //float4 specularFinal = float4(1, 1, 1, 1) * Intensity;

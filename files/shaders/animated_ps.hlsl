@@ -2,8 +2,10 @@
 Texture2D diffuse : register(t0);
 Texture2D emissive : register(t1);
 Texture2D normal : register(t2);
+Texture2D shadowMap : register(t3);
 
 SamplerState textureSampler : register(s0);
+SamplerComparisonState shadowSampler : register(s1);
 
 struct OutputVertex
 {
@@ -15,6 +17,7 @@ struct OutputVertex
     float4 weights : WEIGHTS;
     float4 localPos : LocalPos;
     float4 worldPos : WorldPos;
+    float4 lightSpaceCoords : LSCOORDS;
 };
 
 struct Light
@@ -28,6 +31,7 @@ cbuffer LightBuffer : register(b0)
 {
     Light l[10];
 };
+
 float3 CalcHemisphericAmbient(float3 normal, float3 color)
 {
     float3 AmbientUp = float3(1,1,1);
@@ -39,13 +43,43 @@ float3 CalcHemisphericAmbient(float3 normal, float3 color)
     return Ambient * color;
 }
 
-float3 CalcDirectional(float3 direction, float3 normal, float4 diffuse)
+#define PCF_RANGE 2
+
+float CalcShadowAmount(float4 initialShadowMapCoords)
 {
-   // Phong diffuse
-    float NDotL = dot(normalize(float3(1, 0.5f, 1)), normal);
-    float3 finalColor = float3(1,1,1) * saturate(NDotL);
-   
-    return finalColor * diffuse.xyz;
+    float shadowLevel = 0.0f;
+    float3 spos = initialShadowMapCoords.xyz / initialShadowMapCoords.w;
+    
+    if (spos.z > 1.0f || spos.z < 0.0f)
+    {
+        shadowLevel = 1.0f;
+    }
+    else
+    {
+        [unroll]
+        for (int x = -PCF_RANGE; x <= PCF_RANGE; x++)
+        {
+            [unroll]
+            for (int y = -PCF_RANGE; y <= PCF_RANGE; y++)
+            {
+                shadowLevel += shadowMap.SampleCmpLevelZero(shadowSampler, spos.xy, spos.z - 0.005f, float2(x, y));
+            }
+        }
+        
+        shadowLevel /= ((PCF_RANGE * 2 + 1) * (PCF_RANGE * 2 + 1));
+
+    }
+    
+    return shadowLevel;
+    
+    //if (spos.z > 1.0f || spos.z < 0.0f)
+    //    return 1.0f;
+    
+    //float bias = max(0.05f * (-1.0f - dotLightNormal), 0.0005f);
+    
+    //float depth = shadowMap.Sample(shadowSampler, spos.xy).r;
+    
+    //return (depth + bias) < spos.z ? 0.0f : 1.0f;
 }
 
 float4 main(OutputVertex v) : SV_TARGET
@@ -103,11 +137,6 @@ float4 main(OutputVertex v) : SV_TARGET
             
             pointFinal += pointLight;
         }
-        //Not supported
-        else
-        {
-            
-        }
     }
     
     //Point Light
@@ -126,5 +155,6 @@ float4 main(OutputVertex v) : SV_TARGET
     //float4 specularFinal = float4(1, 1, 1, 1) * Intensity;
     
     //Multiply the sum of the Additional Modifications
-    return texelColor * (dirFinal + pointFinal) + emissiveColor;
+    dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.25f, 1);
+    return float4(CalcHemisphericAmbient(v.normals, texelColor.xyz), 1) * (dirFinal + pointFinal) + emissiveColor;
 }

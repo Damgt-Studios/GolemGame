@@ -8,6 +8,12 @@ struct InputVertex
     float3 tangent : TANGENT;
 };
 
+struct OutputVertex
+{
+    float4 position : SV_Position;
+    float2 tex : TEXCOORD;
+};
+
 cbuffer ShaderVars : register(b0)
 {
     float4x4 World;
@@ -16,10 +22,13 @@ cbuffer ShaderVars : register(b0)
     float4 Camera;
 }
 
-float4 main( InputVertex v ) : SV_POSITION
+OutputVertex main( InputVertex v )
 {
-    float4 position = mul(float4(v.pos, 1), World);
-    position = mul(position, View);
-    position = mul(position, Proj);
-    return position;
+    OutputVertex o = (OutputVertex) 0;
+    o.position = mul(float4(v.pos, 1), World);
+    o.position = mul(o.position, View);
+    o.position = mul(o.position, Proj);
+    o.tex = v.tex.xy;
+
+    return o;
 }

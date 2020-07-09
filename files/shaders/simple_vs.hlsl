@@ -19,7 +19,8 @@ struct OutputVertex
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
     float3 localPos : LOCALPOS;
-    float3 worldPos : WORLDPOS;
+    float4 worldPos : WORLDPOS;
+    float4 lightSpaceCoords : LSCOORD;
 };
 
 cbuffer SHADER_VARIABLES : register(b0)
@@ -30,6 +31,11 @@ cbuffer SHADER_VARIABLES : register(b0)
     float4 cameraPosition;
 };
 
+cbuffer LightSpace : register(b1)
+{
+    float4x4 LightView;
+    float4x4 LightProjection;
+}
 
 
 OutputVertex main(InputVertex vertex)
@@ -47,12 +53,16 @@ OutputVertex main(InputVertex vertex)
     
     output.localPos = vertex.pos;
     output.pos = mul(float4(vertex.pos, 1), wm);
-    output.worldPos = output.pos.xyz;
+    output.worldPos = output.pos;
     output.pos = mul(output.pos, viewMatrix);
     output.pos = mul(output.pos, projectionMatrix);
     
     output.normal = normalize(mul(float4(vertex.normal.xyz, 0), wm));
     output.tangent = normalize(mul(float4(vertex.tangent.xyz, 0), wm));
+    
+    float4 shadowHomo = mul(output.worldPos, LightView);
+    shadowHomo = mul(shadowHomo, LightProjection);
+    output.lightSpaceCoords = shadowHomo * float4(0.5f, -0.5f, 1.0f, 1.0f) + float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w;
     return output;
 
 }

@@ -1,4 +1,13 @@
-float4 main(float4 position : SV_Position) : SV_TARGET
+Texture2D diffuse : register(t0);
+SamplerState s : register(s0);
+
+struct OutputVertex
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 position : SV_Position;
+    float2 tex : TEXCOORD;
+};
+
+float4 main(OutputVertex o) : SV_TARGET
+{
+    return diffuse.Sample(s, o.tex);
 }

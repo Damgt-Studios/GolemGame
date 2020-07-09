@@ -22,6 +22,7 @@ struct OutputVertex
     float4 weights : WEIGHTS;
     float4 localPos : LocalPos;
     float4 worldPos : WorldPos;
+    float4 lightSpaceCoords : LSCOORD;
 };
 
 cbuffer ShaderVars : register(b0)
@@ -29,10 +30,16 @@ cbuffer ShaderVars : register(b0)
     float4x4 World;
     float4x4 View;
     float4x4 Per;
-    float4 timer;
+    float4 Camera;
 }
 
-cbuffer AnimVars : register(b1)
+cbuffer LightSpace : register(b1)
+{
+    float4x4 LightView;
+    float4x4 LightProjection;
+}
+
+cbuffer AnimVars : register(b2)
 {
     float4x4 m[50];
 }
@@ -69,6 +76,10 @@ OutputVertex main(Vertex v)
     
     output.joints = v.joints;
     output.weights = v.weights;
+    
+    float4 shadowHomo = mul(output.worldPos, LightView);
+    shadowHomo = mul(shadowHomo, LightProjection);
+    output.lightSpaceCoords = shadowHomo * float4(0.5f, -0.5f, 1.0f, 1.0f) + float4(0.5f, 0.5f, 0.0f, 0.0f) * shadowHomo.w;
     
     return output;
     
