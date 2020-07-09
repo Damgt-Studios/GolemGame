@@ -137,5 +137,31 @@ SetEventsDelay=0.75
 Persist_After_Attack=true
 ;
 
+Hitbox=WoodTransformHB:
+OffsetX=0
+OffsetY=0
+OffsetZ=0
+Collider_Width=5
+Collider_Height=5
+Collider_Length=5
+Team=1
+SingleHit=true
+;
 
+Action=WoodNextForm:
+Cooldown=1.0
+Duration=0.5
+AddHitBox=WoodTransformHB
+AddEvent=GolemStoneCylinderParticles
+SetEventsDelay=0
+SetHitboxDelay=0
+;
 
+Action=WoodPreviousForm:
+Cooldown=1.0
+Duration=0.5
+AddHitBox=WoodTransformHB
+AddEvent=GolemFireCylinderParticles
+SetEventsDelay=0
+SetHitboxDelay=0
+;

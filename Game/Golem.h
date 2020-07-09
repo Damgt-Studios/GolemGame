@@ -66,6 +66,8 @@ namespace ADResource
 				Action* kick;
 				Action* slam;
 				Action* special;
+				Action* nextForm;
+				Action* prevForm;
 			} gActions[4];
 			Action* consume;
 

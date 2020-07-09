@@ -50,6 +50,8 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 		gActions[i].punch->Update(delta_time);
 		gActions[i].slam->Update(delta_time);
 		gActions[i].special->Update(delta_time);
+		gActions[i].nextForm->Update(delta_time);
+		gActions[i].prevForm->Update(delta_time);
 	}
 	ProcessEffects(delta_time);
 
@@ -555,6 +557,7 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 {
 	if (nextElement)
 	{
+		gActions[playerElement].nextForm->StartAction(&transform);
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		++playerElement;
@@ -563,12 +566,16 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 	}
 	else
 	{
+		gActions[playerElement].prevForm->StartAction(&transform);
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		--playerElement;
 		if (playerElement < 0)
 			playerElement = 3;
 	}
+	currentAnimTime = 1.0f;
+	isActing = true;
+	idleTime = 0.0;
 	this->SetMeshID(meshIDs[playerElement]);
 	ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementForm", (void*)playerElement);
 }

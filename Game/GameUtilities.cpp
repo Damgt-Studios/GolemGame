@@ -117,21 +117,29 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 	golem->gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
 	golem->gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
 	golem->gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golem->gActions[STONE].nextForm = DefinitionDatabase::Instance()->actionDatabase["StoneNextForm"];
+	golem->gActions[STONE].prevForm = DefinitionDatabase::Instance()->actionDatabase["StonePreviousForm"];
 
 	golem->gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
 	golem->gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
 	golem->gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
 	golem->gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golem->gActions[WATER].nextForm = DefinitionDatabase::Instance()->actionDatabase["WaterNextForm"];
+	golem->gActions[WATER].prevForm = DefinitionDatabase::Instance()->actionDatabase["WaterPreviousForm"];
 
 	golem->gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
 	golem->gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
 	golem->gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
 	golem->gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golem->gActions[FIRE].nextForm = DefinitionDatabase::Instance()->actionDatabase["FireNextForm"];
+	golem->gActions[FIRE].prevForm = DefinitionDatabase::Instance()->actionDatabase["FirePreviousForm"];
 
 	golem->gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
 	golem->gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
 	golem->gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
 	golem->gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+	golem->gActions[WOOD].nextForm = DefinitionDatabase::Instance()->actionDatabase["WoodNextForm"];
+	golem->gActions[WOOD].prevForm = DefinitionDatabase::Instance()->actionDatabase["WoodPreviousForm"];
 
 	golem->consume->active = false;
 	for (int i = 0; i < 4; ++i)
@@ -140,6 +148,8 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 		golem->gActions[i].punch->active = false;
 		golem->gActions[i].slam->active = false;
 		golem->gActions[i].special->active = false;
+		golem->gActions[i].nextForm->active = false;
+		golem->gActions[i].prevForm->active = false;
 	}
 
 	golem->InitializeController();

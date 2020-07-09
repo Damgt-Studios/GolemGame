@@ -36,10 +36,15 @@ bool Engine::Initialize()
 	bigFirePuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.9f, 0.45f, 0.2f, 1.0f });
 	bigWaterPuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.07f, 0.48f, 0.73f, 1.0f });
 	bigStonePuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.5f, 0.52f, 0.53f, 1.0f });
-	woodCylinder.Initialize(pbr.renderer_resources.device.Get(), 1000, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Grass.dds");
-	fireCylinder.Initialize(pbr.renderer_resources.device.Get(), 1000, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Fire_Cylinder.dds");
-	waterCylinder.Initialize(pbr.renderer_resources.device.Get(), 1000, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Water.dds");
-	stoneCylinder.Initialize(pbr.renderer_resources.device.Get(), 1000, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Stone.dds");
+	woodCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Grass.dds");
+	fireCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Fire_Cylinder.dds");
+	waterCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Water.dds");
+	stoneCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Stone.dds");
+	woodCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	fireCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	waterCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	stoneCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	recoveryEmitter.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
 
 	return true;
 }
