@@ -4,6 +4,7 @@ Texture2D normal : register(t1);
 Texture2D shadowMap : register(t2);
 
 SamplerState textureSampler : register(s0);
+//SamplerState shadowSampler : register(s1);
 SamplerComparisonState shadowSampler : register(s1);
 
 struct OutputVertex
@@ -49,35 +50,26 @@ float CalcShadowAmount(float4 initialShadowMapCoords)
     float3 spos = initialShadowMapCoords.xyz / initialShadowMapCoords.w;
     
     if (spos.z > 1.0f || spos.z < 0.0f)
-    {
         shadowLevel = 1.0f;
-    }
     else
     {
+        //float bias = max(0.01 * (1.0f - dotLightNormal), 0.00125f);
+        float bias = 0.00125f;
+        
         [unroll]
         for (int x = -PCF_RANGE; x <= PCF_RANGE; x++)
         {
             [unroll]
             for (int y = -PCF_RANGE; y <= PCF_RANGE; y++)
-            {
-                shadowLevel += shadowMap.SampleCmpLevelZero(shadowSampler, spos.xy, spos.z - 0.005f, float2(x, y));
+            {   
+                shadowLevel += shadowMap.SampleCmpLevelZero(shadowSampler, spos.xy, spos.z - bias, int2(x,y)).r;
             }
         }
         
         shadowLevel /= ((PCF_RANGE * 2 + 1) * (PCF_RANGE * 2 + 1));
-
     }
     
     return shadowLevel;
-    
-    //if (spos.z > 1.0f || spos.z < 0.0f)
-    //    return 1.0f;
-    
-    //float bias = max(0.05f * (-1.0f - dotLightNormal), 0.0005f);
-    
-    //float depth = shadowMap.Sample(shadowSampler, spos.xy).r;
-    
-    //return (depth + bias) < spos.z ? 0.0f : 1.0f;
 }
 
 float4 main(OutputVertex v) : SV_TARGET
@@ -106,7 +98,6 @@ float4 main(OutputVertex v) : SV_TARGET
     }
     
     float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
-    float dotLightNormal = 0;
     
     for (int i = 0; i < 10; i++)
     {
@@ -114,8 +105,7 @@ float4 main(OutputVertex v) : SV_TARGET
         if (l[i].lightType == 0)
         {
             float3 lightDirection = -l[i].lightDirection;
-            dotLightNormal = saturate(dot(lightDirection, v.normal));
-            float lightMagnitude = dotLightNormal + (l[i].ambient * l[i].ambientIntensity);
+            float lightMagnitude = saturate(dot(lightDirection, v.normal)) + (l[i].ambient * l[i].ambientIntensity);
             float4 dirLight = lightMagnitude * (l[i].diffuse * l[i].diffuseIntensity);
             dirFinal += dirLight;
         }
@@ -144,7 +134,7 @@ float4 main(OutputVertex v) : SV_TARGET
     //return float4(lineardepth, lineardepth, lineardepth, 1);
     
     //Multiply the sum of the Additional Modifications
-    dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.25f, 1);
+    dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.3f, 1);
     return float4(CalcHemisphericAmbient(v.normal, texelColor.xyz), 1) * (dirFinal + pointFinal);
 }
 

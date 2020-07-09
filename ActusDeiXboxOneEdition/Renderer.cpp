@@ -78,6 +78,9 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	assert(!FAILED(result));
 
 	// Setup viewport
+	renderer_resources.width = scd.Width;
+	renderer_resources.height = scd.Height;
+
 	renderer_resources.viewport.Width = scd.Width;
 	renderer_resources.viewport.Height = scd.Height;
 	renderer_resources.viewport.TopLeftY = renderer_resources.viewport.TopLeftX = 0;
@@ -188,8 +191,8 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 
 #pragma region Shadow Initialization
 
-	renderer_resources.shadow_port.Width = scd.Width;
-	renderer_resources.shadow_port.Height = scd.Height;
+	renderer_resources.shadow_port.Width = scd.Width * 4;
+	renderer_resources.shadow_port.Height = scd.Height * 4;
 	renderer_resources.shadow_port.TopLeftY = renderer_resources.viewport.TopLeftX = 0;
 	renderer_resources.shadow_port.MinDepth = 0;
 	renderer_resources.shadow_port.MaxDepth = 1;
@@ -197,8 +200,8 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	D3D11_TEXTURE2D_DESC tDesc;
 	ZeroMemory(&tDesc, sizeof(tDesc));
 
-	tDesc.Width = scd.Width;
-	tDesc.Height = scd.Height;
+	tDesc.Width = scd.Width * 4;
+	tDesc.Height = scd.Height * 4;
 	tDesc.ArraySize = 1;
 	tDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	tDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
@@ -230,12 +233,20 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateShaderResourceView(renderer_resources.renderedTexture.Get(), &srvDesc, renderer_resources.renderedView.GetAddressOf());
 	assert(!FAILED(result));
 
+	D3D11_RASTERIZER_DESC srDesc;
+	ZeroMemory(&srDesc, sizeof(srDesc));
+	srDesc = CD3D11_RASTERIZER_DESC(CD3D11_RASTERIZER_DESC{});
+	srDesc.CullMode = D3D11_CULL_FRONT;
+
+	result = renderer_resources.device->CreateRasterizerState(&srDesc, renderer_resources.renderedShadowState.GetAddressOf());
+	assert(!FAILED(result));
+
 	D3D11_TEXTURE2D_DESC zBufferDesc;
 	ZeroMemory(&zBufferDesc, sizeof(zBufferDesc));
 	zBufferDesc.ArraySize = 1;
 	zBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-	zBufferDesc.Width = scd.Width;
-	zBufferDesc.Height = scd.Height;
+	zBufferDesc.Width = scd.Width * 4;
+	zBufferDesc.Height = scd.Height * 4;
 	zBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	zBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	zBufferDesc.SampleDesc.Count = 1;
@@ -269,9 +280,13 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	ssdesc = CD3D11_SAMPLER_DESC{ CD3D11_DEFAULT{} };
 	ssdesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	ssdesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	//ssdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	ssdesc.Filter = D3D11_FILTER_COMPARISON_ANISOTROPIC;
 	ssdesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
 	ssdesc.BorderColor[0] = 1.0f;
+	ssdesc.BorderColor[1] = 1.0f;
+	ssdesc.BorderColor[2] = 1.0f;
+	ssdesc.BorderColor[3] = 1.0f;
 
 	result = renderer_resources.device->CreateSamplerState(&ssdesc, renderer_resources.shadowSampler.GetAddressOf());
 	assert(!FAILED(result));
@@ -513,19 +528,19 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	//Shadow Target
 	renderer_resources.context->OMSetRenderTargets(1, shadowRTV, renderer_resources.shadowDepth.Get());
-	renderer_resources.context->ClearDepthStencilView(renderer_resources.shadowDepth.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+	renderer_resources.context->RSSetState(renderer_resources.renderedShadowState.Get());
+	renderer_resources.context->RSSetViewports(1, &renderer_resources.shadow_port);
 
 	renderer_resources.context->ClearRenderTargetView(renderer_resources.renderedTarget.Get(), color);
-	renderer_resources.context->RSSetViewports(1, &renderer_resources.shadow_port);
-	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->ClearDepthStencilView(renderer_resources.shadowDepth.Get(), D3D11_CLEAR_DEPTH, 1, 0);
 
 	//Main Target
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
-	renderer_resources.context->ClearDepthStencilView(renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
 
 	renderer_resources.context->ClearRenderTargetView(renderer_resources.render_target_view.Get(), color);
-	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
-	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->ClearDepthStencilView(renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
 
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
@@ -540,7 +555,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
 	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
-	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 500, 600), 0, 0);
+	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 250, 300), 0, 0);
 
 	XMFLOAT3 campos;
 	XMFLOAT3 pos, rot, scale;
@@ -553,8 +568,9 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	SimpleAnimModel* current_animated_model = nullptr;
 
 	renderer_resources.context->OMSetRenderTargets(1, shadowRTV, renderer_resources.shadowDepth.Get());
+	renderer_resources.context->RSSetState(renderer_resources.renderedShadowState.Get());
+	//renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 	renderer_resources.context->RSSetViewports(1, &renderer_resources.shadow_port);
-	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 
 	while (!ResourceManager::ShadowQueueEmpty())
 	{
@@ -643,6 +659,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 			// Model stuff
 			current_obj->GetWorldMatrix(temp);
+			temp = XMMatrixScaling(1.01, 1.01, 1.01) * temp;
 			XMStoreFloat4x4(&WORLD.WorldMatrix, temp);
 
 			shadowCamera->GetViewMatrix(temp);
@@ -704,6 +721,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	//Disable Z buffer
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, nullptr);
+	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
 
 	//Set up Skybox
@@ -764,8 +782,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	// Enable Z buffer
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
-	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
 	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
 
 	//Render Loop
 	current_obj = nullptr;

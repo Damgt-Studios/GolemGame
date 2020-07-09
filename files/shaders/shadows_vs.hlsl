@@ -6,6 +6,7 @@ struct InputVertex
     float3 tex : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
+    float3 instancePosition : TEXCOORD1;
 };
 
 struct OutputVertex
@@ -25,7 +26,13 @@ cbuffer ShaderVars : register(b0)
 OutputVertex main( InputVertex v )
 {
     OutputVertex o = (OutputVertex) 0;
-    o.position = mul(float4(v.pos, 1), World);
+    
+    float4x4 wm = World;
+    wm[3].x += v.instancePosition.x;
+    wm[3].y += v.instancePosition.y;
+    wm[3].z += v.instancePosition.z;
+    
+    o.position = mul(float4(v.pos, 1), wm);
     o.position = mul(o.position, View);
     o.position = mul(o.position, Proj);
     o.tex = v.tex.xy;

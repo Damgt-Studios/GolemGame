@@ -19,7 +19,7 @@ namespace ADResource
 		public:
 			struct RendererResources
 			{
-
+				unsigned int width, height;
 				ComPtr<ID3D11Device1> device;
 				ComPtr<ID3D11DeviceContext1> context;
 				ComPtr<IDXGISwapChain1> chain;
@@ -49,6 +49,8 @@ namespace ADResource
 				ComPtr<ID3D11Texture2D> renderedTexture;
 				ComPtr<ID3D11ShaderResourceView> renderedView;
 
+				ComPtr<ID3D11RasterizerState> renderedShadowState;
+
 				ComPtr<ID3D11Texture2D> shadowMap;
 				ComPtr<ID3D11ShaderResourceView> shadowView;
 				ComPtr<ID3D11DepthStencilView> shadowDepth;
@@ -61,6 +63,7 @@ namespace ADResource
 
 				RendererResources()
 				{
+					width = height = 0;
 					device = nullptr;
 					context = nullptr;
 					chain = nullptr;
@@ -76,9 +79,12 @@ namespace ADResource
 					renderedTexture = nullptr;
 					renderedView = nullptr;
 
+					renderedShadowState = nullptr;
+
 					shadowMap = nullptr;
 					shadowView = nullptr;
 					shadowDepth = nullptr;
+					shadowSampler = nullptr;
 
 					shadowVertex = nullptr;
 					shadowPixel = nullptr;
