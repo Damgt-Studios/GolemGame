@@ -92,4 +92,6 @@ public:
 	CylinderEmitter fireCylinder;
 	CylinderEmitter waterCylinder;
 	CylinderEmitter stoneCylinder;
+	UpwardCloudEmitter destructionCloud;
+	UpwardCloudEmitter destructionCloud2;
 };

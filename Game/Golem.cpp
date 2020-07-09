@@ -142,67 +142,73 @@ void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 			collider.Pos.y - other->colliderPtr->Pos.y,
 			collider.Pos.z - other->colliderPtr->Pos.z), XMFLOAT3(0, 1, 0));
 	}
-	if (fabsf(m.Normal.z) > fabsf(m.Normal.x))
+	if (false)
 	{
-		XMVECTOR forwardCross = XMVector3Cross(direction, transform.r[2]);
-		XMFLOAT3 forwardCrs;
-		XMStoreFloat3(&forwardCrs, forwardCross);
-		if (forwardCrs.z == 0) // Front or Back Flinch
+		if (fabsf(m.Normal.z) > fabsf(m.Normal.x))
 		{
-			if (forward.z > 0)
+			XMVECTOR forwardCross = XMVector3Cross(direction, transform.r[2]);
+			XMFLOAT3 forwardCrs;
+			XMStoreFloat3(&forwardCrs, forwardCross);
+			if (forwardCrs.z == 0) // Front or Back Flinch
 			{
-				if (m.Normal.z > 0)
+				if (forward.z > 0)
 				{
-					FlinchFromBack();
+					if (m.Normal.z > 0)
+					{
+						FlinchFromBack();
+					}
+					else if (m.Normal.z < 0)
+					{
+						FlinchFromFront();
+					}
 				}
-				else if (m.Normal.z < 0)
+				else if (forward.z < 0)
 				{
-					FlinchFromFront();
-				}
-			}
-			else if (forward.z < 0)
-			{
-				if (m.Normal.z > 0)
-				{
-					FlinchFromFront();
-				}
-				else if (m.Normal.z < 0)
-				{
-					FlinchFromBack();
+					if (m.Normal.z > 0)
+					{
+						FlinchFromFront();
+					}
+					else if (m.Normal.z < 0)
+					{
+						FlinchFromBack();
+					}
 				}
 			}
 		}
-	}
-	else if (fabsf(m.Normal.z) < fabsf(m.Normal.x))
-	{
-		XMVECTOR rightCross = XMVector3Cross(direction, transform.r[0]);
-		XMFLOAT3 rightCrs;
-		XMStoreFloat3(&rightCrs, rightCross);
-		if (rightCrs.x == 0) // Right or Left Flinch
+		else if (fabsf(m.Normal.z) < fabsf(m.Normal.x))
 		{
-			if (right.x > 0)
+			XMVECTOR rightCross = XMVector3Cross(direction, transform.r[0]);
+			XMFLOAT3 rightCrs;
+			XMStoreFloat3(&rightCrs, rightCross);
+			if (rightCrs.x == 0) // Right or Left Flinch
 			{
-				if (m.Normal.x > 0)
+				if (right.x > 0)
 				{
-					FlinchFromRight();
+					if (m.Normal.x > 0)
+					{
+						FlinchFromRight();
+					}
+					else if (m.Normal.x < 0)
+					{
+						FlinchFromLeft();
+					}
 				}
-				else if (m.Normal.x < 0)
+				else if (right.x < 0)
 				{
-					FlinchFromLeft();
-				}
-			}
-			else if (right.x < 0)
-			{
-				if (m.Normal.x > 0)
-				{
-					FlinchFromLeft();
-				}
-				else if (m.Normal.x < 0)
-				{
-					FlinchFromRight();
+					if (m.Normal.x > 0)
+					{
+						FlinchFromLeft();
+					}
+					else if (m.Normal.x < 0)
+					{
+						FlinchFromRight();
+					}
 				}
 			}
 		}
+		XMFLOAT4 pos;
+		XMStoreFloat4(&pos, transform.r[3]);
+		bigPuffs[playerElement]->Activate({pos.x, pos.y + 15, pos.z, pos.w});
 	}
 }
 

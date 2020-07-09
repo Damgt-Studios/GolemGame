@@ -178,6 +178,10 @@ public:
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+		golem->bigPuffs[STONE] = &engine->bigStonePuff;
+		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
+		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
+		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
 
 
 
@@ -316,6 +320,8 @@ public:
 		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 		GameUtilities::AddGameObject(house1);
 		currentScene.AddBuilding(house1);
+		house1->destructionEmitter = &engine->destructionCloud;
+		house1->destructionEmitter2 = &engine->destructionCloud2;
 
 		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
 		GameUtilities::AddGameObject(rubble1);
@@ -327,6 +333,8 @@ public:
 			Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(housey);
 			currentScene.AddBuilding(housey);
+			housey->destructionEmitter = &engine->destructionCloud;
+			housey->destructionEmitter2 = &engine->destructionCloud2;
 
 			Building* rubble2 = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2, "Rubble");
 			GameUtilities::AddGameObject(rubble2);
