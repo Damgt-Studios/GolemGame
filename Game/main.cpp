@@ -614,51 +614,8 @@ public:
 			if (physics_timer > physics_rate)
 			{
 				physics_timer = 0;
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-
-					if (OBJS[i]->colliderPtr)
-					{
-						int* index = new int(i);
-						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
-						{
-							int somethingswrong = 0;
-							somethingswrong++;
-						}
-					}
-				}
-
-				for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				{
-					if (OBJS[i]->colliderPtr)
-					{
-						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, OBJS[i]->colliderPtr->GetWidth()+2, OBJS[i]->colliderPtr->GetWidth()+2));
-
-						for (unsigned int j = 0; j < collisionVector.size(); j++)
-						{
-							if (OBJS[*collisionVector[j].data]->colliderPtr)
-								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-						}
-					}
-				}*/
-				//----------------------------------------------------------------------------------------------------
-				//for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				//{
-				//	if (OBJS[i]->colliderPtr)
-				//	{
-				//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-				//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
-
-				//		for (unsigned int j = 0; j < collisionVector.size(); j++)
-				//		{
-				//			if (OBJS[*collisionVector[j].data]->colliderPtr)
-				//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-				//		}
-				//	}
-				//}
 				//--------------------------------------------------------------------------------------------------------
-				for (int i = 0; i < OBJ_COUNT; i++)
+				/*for (int i = 0; i < OBJ_COUNT; i++)
 				{
 					for (unsigned int j = 0; j < OBJ_COUNT; j++)
 					{
@@ -679,35 +636,37 @@ public:
 							}
 						}
 					}
+				}*/
+				
+				//----------------------------------New Physics System-------------------------------
+				for (int i = 0; i < OBJ_COUNT; i++)
+				{
+
+					if (OBJS[i]->colliderPtr)
+					{
+						int* index = new int(i);
+						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
+						{
+							int somethingswrong = 0;
+							somethingswrong++;
+						}
+					}
 				}
-				//----------------------------------New Physics system does not operate with properly with triggers-------------------------------
-				//for (int i = 0; i < OBJ_COUNT; i++)
-				//{
-				//	if (OBJS[i]->colliderPtr)
-				//	{
-				//		int* index = new int(i);
-				//		if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index))) 
-				//		{
-				//			int somethingswrong = 0;
-				//			somethingswrong++;
-				//		}
-				//	}
-				//}
 
-				//for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				//{
-				//	if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
-				//	{
-				//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-				//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+				for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				{
+					if (OBJS[i]->colliderPtr)
+					{
+						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
 
-				//		for (unsigned int j = 0; j < collisionVector.size(); j++)
-				//		{
-				//			if (OBJS[*collisionVector[j].data]->colliderPtr)
-				//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-				//		}
-				//	}
-				//}
+						for (unsigned int j = 0; j < collisionVector.size(); j++)
+						{
+							if (OBJS[*collisionVector[j].data]->colliderPtr)
+								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+						}
+					}
+				}
 				//---------------------------------------------End New Physics System------------------------------------------
 
 				//Resolve all collisions that occurred this frame
