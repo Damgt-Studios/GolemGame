@@ -5,7 +5,10 @@
 //Constructor and Destructor
 ADResource::ADGameplay::Golem::Golem() {
 
-	anim_controller = new AnimationStateMachine();
+	anim_controller[STONE] = new AnimationStateMachine();
+	anim_controller[WATER] = new AnimationStateMachine();
+	anim_controller[FIRE] = new AnimationStateMachine();
+	anim_controller[WOOD] = new AnimationStateMachine();
 
 	collider = OBB(transform * translateToMiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
@@ -13,7 +16,6 @@ ADResource::ADGameplay::Golem::Golem() {
 	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
 	InitAnims();
-	//InitActions();
 
 	flockingGroups = new ADAI::FlockingGroup * [5];
 	for (int i = 0; i < 5; ++i)
@@ -23,6 +25,8 @@ ADResource::ADGameplay::Golem::Golem() {
 	}
 
 	desirability = 0.2f;
+
+	playerElement = 0;
 }
 
 ADResource::ADGameplay::Golem::~Golem()
@@ -46,6 +50,8 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 		gActions[i].punch->Update(delta_time);
 		gActions[i].slam->Update(delta_time);
 		gActions[i].special->Update(delta_time);
+		gActions[i].nextForm->Update(delta_time);
+		gActions[i].prevForm->Update(delta_time);
 	}
 	ProcessEffects(delta_time);
 
@@ -74,7 +80,7 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 		}
 	}
 
-	anim_controller->SetModel_To_CurrentAnimation();
+	anim_controller[playerElement]->SetModel_To_CurrentAnimation();
 }
 
 void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
@@ -136,6 +142,74 @@ void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 			collider.Pos.y - other->colliderPtr->Pos.y,
 			collider.Pos.z - other->colliderPtr->Pos.z), XMFLOAT3(0, 1, 0));
 	}
+	if (false)
+	{
+		if (fabsf(m.Normal.z) > fabsf(m.Normal.x))
+		{
+			XMVECTOR forwardCross = XMVector3Cross(direction, transform.r[2]);
+			XMFLOAT3 forwardCrs;
+			XMStoreFloat3(&forwardCrs, forwardCross);
+			if (forwardCrs.z == 0) // Front or Back Flinch
+			{
+				if (forward.z > 0)
+				{
+					if (m.Normal.z > 0)
+					{
+						FlinchFromBack();
+					}
+					else if (m.Normal.z < 0)
+					{
+						FlinchFromFront();
+					}
+				}
+				else if (forward.z < 0)
+				{
+					if (m.Normal.z > 0)
+					{
+						FlinchFromFront();
+					}
+					else if (m.Normal.z < 0)
+					{
+						FlinchFromBack();
+					}
+				}
+			}
+		}
+		else if (fabsf(m.Normal.z) < fabsf(m.Normal.x))
+		{
+			XMVECTOR rightCross = XMVector3Cross(direction, transform.r[0]);
+			XMFLOAT3 rightCrs;
+			XMStoreFloat3(&rightCrs, rightCross);
+			if (rightCrs.x == 0) // Right or Left Flinch
+			{
+				if (right.x > 0)
+				{
+					if (m.Normal.x > 0)
+					{
+						FlinchFromRight();
+					}
+					else if (m.Normal.x < 0)
+					{
+						FlinchFromLeft();
+					}
+				}
+				else if (right.x < 0)
+				{
+					if (m.Normal.x > 0)
+					{
+						FlinchFromLeft();
+					}
+					else if (m.Normal.x < 0)
+					{
+						FlinchFromRight();
+					}
+				}
+			}
+		}
+		XMFLOAT4 pos;
+		XMStoreFloat4(&pos, transform.r[3]);
+		bigPuffs[playerElement]->Activate({pos.x, pos.y + 15, pos.z, pos.w});
+	}
 }
 
 void ADResource::ADGameplay::Golem::Remove()
@@ -148,11 +222,6 @@ void ADResource::ADGameplay::Golem::Remove()
 void ADResource::ADGameplay::Golem::GetView(XMMATRIX& view)
 {
 	camera = view;
-}
-
-void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
-{
-	anim_controller = &controller;
 }
 
 XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
@@ -169,14 +238,17 @@ XMMATRIX ADResource::ADGameplay::Golem::GetColliderInfo()
 	return temp;
 }
 
-//void ADResource::ADGameplay::Golem::GetAnimationController(AnimationStateMachine& controller)
-//{
-//	anim_controller = &controller;
-//}
-
 void ADResource::ADGameplay::Golem::InitializeController()
 {
-	anim_controller->Initialize(this);
+	this->SetMeshID(meshIDs[STONE]);
+	anim_controller[STONE]->Initialize(this);
+	this->SetMeshID(meshIDs[WATER]);
+	anim_controller[WATER]->Initialize(this);
+	this->SetMeshID(meshIDs[FIRE]);
+	anim_controller[FIRE]->Initialize(this);
+	this->SetMeshID(meshIDs[WOOD]);
+	anim_controller[WOOD]->Initialize(this);
+	this->SetMeshID(meshIDs[STONE]);
 }
 
 StatSheet* ADResource::ADGameplay::Golem::GetStatSheet()
@@ -193,14 +265,13 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 // Private Methods
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
-	playerElement = 1;
 	// Idle Animation
 	if (!isActing)
 	{
 		if (idleTime > 10.0)
-			anim_controller->PlayAnimationByName(anims[playerElement].idleLook.c_str());
+			anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idleLook.c_str());
 		else
-			anim_controller->PlayAnimationByName(anims[playerElement].idle.c_str());
+			anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idle.c_str());
 		idleTime += delta_time;
 	}
 
@@ -240,13 +311,13 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	}
 
 	// Increment Player Element
-	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && responseTimer < 0)
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && !isActing && responseTimer < 0)
 	{
 		ChangeElement(true);
 	}
 
 	// Decrement Player Element
-	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && responseTimer < 0)
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && !isActing && responseTimer < 0)
 	{
 		ChangeElement(false);
 	}
@@ -388,7 +459,7 @@ void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_tim
 		Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));
 
 	Golem::RotationYBasedOnView(camera, angle, WMATH_PI);
-	anim_controller->PlayAnimationByName(anims[playerElement].run.c_str());
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].run.c_str());
 
 
 	Velocity.x += forward.x * delta_time * (stats->RequestStats("MovementSpeed")->currentValue * 10);
@@ -400,8 +471,8 @@ void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_tim
 
 void ADResource::ADGameplay::Golem::PerformSpecial()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].special.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].special.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
@@ -417,8 +488,8 @@ void ADResource::ADGameplay::Golem::PerformSpecial()
 
 void ADResource::ADGameplay::Golem::TowerPunch()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].towerPunch.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].towerPunch.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
@@ -427,8 +498,8 @@ void ADResource::ADGameplay::Golem::TowerPunch()
 
 void ADResource::ADGameplay::Golem::GroundSlam()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].groundSlam.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].groundSlam.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
@@ -437,8 +508,8 @@ void ADResource::ADGameplay::Golem::GroundSlam()
 
 void ADResource::ADGameplay::Golem::Kick()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].kick.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].kick.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
@@ -465,8 +536,8 @@ void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
 
 void ADResource::ADGameplay::Golem::CommandMinions()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].command.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].command.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].command.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].command.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 
@@ -492,6 +563,7 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 {
 	if (nextElement)
 	{
+		gActions[playerElement].nextForm->StartAction(&transform);
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		++playerElement;
@@ -500,12 +572,17 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 	}
 	else
 	{
+		gActions[playerElement].prevForm->StartAction(&transform);
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		--playerElement;
 		if (playerElement < 0)
 			playerElement = 3;
 	}
+	currentAnimTime = 1.0f;
+	isActing = true;
+	idleTime = 0.0;
+	this->SetMeshID(meshIDs[playerElement]);
 	ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementForm", (void*)playerElement);
 }
 
@@ -532,8 +609,8 @@ void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
 
 void ADResource::ADGameplay::Golem::ConsumeMinion()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].eat.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].eat.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].eat.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].eat.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
@@ -542,138 +619,40 @@ void ADResource::ADGameplay::Golem::ConsumeMinion()
 
 void ADResource::ADGameplay::Golem::SummonMinions()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].summonMinions.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].summonMinions.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].summonMinions.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].summonMinions.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }
 
-/*void ADResource::ADGameplay::Golem::InitActions(Golem& golem)
-{
-	consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
-
-	gActions[STONE].kick = DefinitionDatabase::Instance()->actionDatabase["StoneGolemKick"];
-	gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
-	gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
-	gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
-
-	gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
-	gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
-	gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
-	gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
-
-	gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
-	gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
-	gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
-	gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
-
-	gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
-	gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
-	gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
-	gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
-
-	consume->active = false;
-	for (int i = 0; i < 4; ++i)
-	{
-		gActions[i].kick->active = false;
-		gActions[i].punch->active = false;
-		gActions[i].slam->active = false;
-		gActions[i].special->active = false;
-	}
-}*/
-
 void ADResource::ADGameplay::Golem::FlinchFromFront()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitFront.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitFront.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].heavyHitFront.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].heavyHitFront.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }
 
 void ADResource::ADGameplay::Golem::FlinchFromBack()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitBack.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitBack.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].heavyHitBack.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].heavyHitBack.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }
 
 void ADResource::ADGameplay::Golem::FlinchFromLeft()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitLeft.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitLeft.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].heavyHitLeft.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].heavyHitLeft.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }
 
 void ADResource::ADGameplay::Golem::FlinchFromRight()
 {
-	anim_controller->PlayAnimationByName(anims[playerElement].heavyHitRight.c_str());
-	currentAnimTime = anim_controller->GetDurationByName(anims[playerElement].heavyHitRight.c_str()) / 2700.0;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].heavyHitRight.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].heavyHitRight.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }
-
-//void ADResource::ADGameplay::Golem::OnTrigger(GameObject* other)
-//{
-//	if (other->type == OBJECT_TYPE::GEM)
-//	{
-//		GemCount += other->GemCount;
-//		other->GemCount = 0;
-//
-//		ADResource::AD_UI::UIMessage message;
-//		message.controllerID = 1;
-//		message.messageType = 2;
-//		message.number = 1;
-//
-//		ADUI::MessageReceiver::SendMessage(&message);
-//
-//		if (audioManager)
-//		{
-//			playingSound = true;
-//			collectionNoiseID = audioManager->PlayEffect(0);
-//			//if (playingSound)
-//			//{
-//			//	audioManager->ResumeEffect(0, collectionNoiseID);
-//			//}
-//		}
-//		other->Remove();
-//	}
-//	if (other->type == OBJECT_TYPE::TRIGGER)
-//	{
-//		if (GemCount >= 10)
-//		{
-//			ADResource::AD_UI::UIMessage message;
-//			message.controllerID = 1;
-//			message.messageType = 2;
-//			message.number = 3;
-//
-//			ADUI::MessageReceiver::SendMessage(&message);
-//
-//		}
-//	}
-//}
-
-//void ADResource::ADGameplay::Golem::Damage(DAMAGE_TYPE d_type)
-//{
-//	--health;
-//
-//	ADResource::AD_UI::UIMessage message;
-//	message.controllerID = 1;
-//	message.messageType = 2;
-//	message.number = 2;
-//
-//	ADUI::MessageReceiver::SendMessage(&message);
-//	invulnerable_timer = invulnerable_peroid;
-//	defenseType = OBJECT_DEFENSE::INVULNERABLE;
-//
-//	if (audioManager)
-//	{
-//		playingSound = true;
-//		collectionNoiseID = audioManager->PlayEffect(HurtSound);
-//		if (playingSound)
-//		{
-//			audioManager->ResumeEffect(HurtSound, collectionNoiseID);
-//		}
-//	}
-//}

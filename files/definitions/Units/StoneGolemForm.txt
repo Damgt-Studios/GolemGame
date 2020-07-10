@@ -119,7 +119,7 @@ Hitbox=GolemTauntHB:
 AddEffect=IronHideBuffArmor
 AddEffect=IronHideBuffHate
 OffsetX=-0
-OffsetY=0
+OffsetY=15
 OffsetZ=0
 Collider_Width=2
 Collider_Height=2
@@ -138,4 +138,31 @@ AddEvent=GolemIronSkinParticles
 SetEventsDelay=0
 ;
 
+Hitbox=StoneTransformHB:
+OffsetX=0
+OffsetY=0
+OffsetZ=0
+Collider_Width=5
+Collider_Height=5
+Collider_Length=5
+Team=1
+SingleHit=true
+;
 
+Action=StoneNextForm:
+Cooldown=1.0
+Duration=0.5
+AddHitBox=StoneTransformHB
+AddEvent=GolemWaterCylinderParticles
+SetEventsDelay=0
+SetHitboxDelay=0
+;
+
+Action=StonePreviousForm:
+Cooldown=1.0
+Duration=0.5
+AddHitBox=StoneTransformHB
+AddEvent=GolemWoodCylinderParticles
+SetEventsDelay=0
+SetHitboxDelay=0
+;

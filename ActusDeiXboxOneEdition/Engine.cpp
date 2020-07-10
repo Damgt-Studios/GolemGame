@@ -36,6 +36,18 @@ bool Engine::Initialize()
 	bigFirePuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.9f, 0.45f, 0.2f, 1.0f });
 	bigWaterPuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.07f, 0.48f, 0.73f, 1.0f });
 	bigStonePuff.Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_ElementalPuff_Sheet.dds", { 0.5f, 0.52f, 0.53f, 1.0f });
+	woodCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Grass.dds");
+	fireCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Fire_Cylinder.dds");
+	waterCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Water.dds");
+	stoneCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Stone.dds");
+	destructionCloud.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Smoke.dds");
+	destructionCloud2.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Smoke.dds");
+
+	woodCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	fireCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	waterCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	stoneCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
+	recoveryEmitter.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
 
 	return true;
 }
@@ -118,6 +130,12 @@ bool Engine::Update()
 	bigFirePuff.UpdateParticles(delta_time_sf, view, proj, camPos);
 	bigWaterPuff.UpdateParticles(delta_time_sf, view, proj, camPos);
 	bigStonePuff.UpdateParticles(delta_time_sf, view, proj, camPos);
+	woodCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
+	fireCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
+	waterCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
+	stoneCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
+	destructionCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
+	destructionCloud2.UpdateParticles(delta_time_sf, view, proj, camPos);
 
 	return true;
 }
@@ -143,6 +161,12 @@ bool Engine::Render()
 	bigFirePuff.RenderParticles(pbr.renderer_resources.context.Get());
 	bigWaterPuff.RenderParticles(pbr.renderer_resources.context.Get());
 	bigStonePuff.RenderParticles(pbr.renderer_resources.context.Get());
+	woodCylinder.RenderParticles(pbr.renderer_resources.context.Get());
+	fireCylinder.RenderParticles(pbr.renderer_resources.context.Get());
+	waterCylinder.RenderParticles(pbr.renderer_resources.context.Get());
+	stoneCylinder.RenderParticles(pbr.renderer_resources.context.Get());
+	destructionCloud.RenderParticles(pbr.renderer_resources.context.Get());
+	destructionCloud2.RenderParticles(pbr.renderer_resources.context.Get());
 	userInterface.Render();
 	pbr.Frame();
 

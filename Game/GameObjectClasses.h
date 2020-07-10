@@ -7,6 +7,7 @@
 #include <ADCombat.h>
 #include <ADAI.h>
 #include "ADPathfinding.h"
+#include "ADParticles.h"
 
 namespace ADResource
 {
@@ -66,6 +67,13 @@ namespace ADResource
 				for (size_t i = 0; i < models.size(); i++)
 				{
 					ResourceManager::RemoveGameObject(models[i]);
+				}
+				if (destructionEmitter && destructionEmitter2)
+				{
+					if (!destructionEmitter->GetActive())
+						destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+					else
+						destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
 				}
 			};
 
@@ -159,7 +167,8 @@ namespace ADResource
 				}
 			}
 
-
+			UpwardCloudEmitter* destructionEmitter;
+			UpwardCloudEmitter* destructionEmitter2;
 		private:
 			XMFLOAT3 pos, rot, off, colliderScale;
 			std::vector<Renderable*> models;
