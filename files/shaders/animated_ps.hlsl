@@ -17,7 +17,7 @@ struct OutputVertex
     float4 weights : WEIGHTS;
     float4 localPos : LocalPos;
     float4 worldPos : WorldPos;
-    float4 lightSpaceCoords : LSCOORDS;
+    float4 lightSpaceCoords : LSCOORD;
 };
 
 struct Light
@@ -29,7 +29,7 @@ struct Light
 
 cbuffer LightBuffer : register(b0)
 {
-    Light l[10];
+    Light l[3];
 };
 
 float3 CalcHemisphericAmbient(float3 normal, float3 color)
@@ -104,7 +104,7 @@ float4 main(OutputVertex v) : SV_TARGET
     
     float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
     
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 3; i++)
     {
         //Directional
         if (l[i].lightType == 0)
