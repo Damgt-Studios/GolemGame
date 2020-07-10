@@ -19,7 +19,7 @@
 //#include "MinionManager.h"
 #include <Scene.h>
 
-//#define ShowColliders
+#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -342,6 +342,11 @@ public:
 
 		}
 
+		Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
+		GameUtilities::AddGameObject(attackTower);
+
+		Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
+		GameUtilities::AddGameObject(ballista);
 
 		//Building* house2 = new Building(XMFLOAT3(-500, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
 		//GameUtilities::AddGameObject(house2);
@@ -420,7 +425,39 @@ public:
 		//GameUtilities::AddGameObject(wall16);
 		//GameUtilities::AddGameObject(wall17);
 		//GameUtilities::AddGameObject(wall18);
-
+		/*for (int i = 0; i < 200; ++i)
+		{
+			Building* realtree = new Building(XMFLOAT3(-1., 0, -0.5 * i), XMFLOAT3(0, i, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree);
+			Building* realtree2 = new Building(XMFLOAT3(-2., 0, -0.5 * i), XMFLOAT3(0, i * 2, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree2);
+			Building* realtree3 = new Building(XMFLOAT3(-3., 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree3);
+			Building* realtree4 = new Building(XMFLOAT3(-4, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree4);
+			Building* realtree5 = new Building(XMFLOAT3(-5, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree5);
+			Building* realtree11 = new Building(XMFLOAT3(-6., 0, -0.5 * i), XMFLOAT3(0, i, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree11);
+			Building* realtree12 = new Building(XMFLOAT3(-7., 0, -0.5 * i), XMFLOAT3(0, i * 2, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree12);
+			Building* realtree13 = new Building(XMFLOAT3(-8., 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree13);
+			Building* realtree14 = new Building(XMFLOAT3(-9, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree14);
+			Building* realtree15 = new Building(XMFLOAT3(-10, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree15);
+			Building* realtree20 = new Building(XMFLOAT3(-11., 0, -0.5 * i), XMFLOAT3(0, i, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree20);
+			Building* realtree22 = new Building(XMFLOAT3(-12., 0, -0.5 * i), XMFLOAT3(0, i * 2, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree22);
+			Building* realtree23 = new Building(XMFLOAT3(-13., 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree23);
+			Building* realtree24 = new Building(XMFLOAT3(-14, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree24);
+			Building* realtree25 = new Building(XMFLOAT3(-15, 0, -0.5 * i), XMFLOAT3(0, i * 3, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree);
+			GameUtilities::AddGameObject(realtree25);
+		}*/
 
 		Building* well = new Building(XMFLOAT3(1500, 0, 1500), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Rubble");
 		GameUtilities::AddGameObject(well);
@@ -429,9 +466,9 @@ public:
 		GameUtilities::AddGameObject(tavern);
 		currentScene.AddBuilding(tavern);
 
-		Building* lamp = new Building(XMFLOAT3(-350, 0, 75), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
+		Building* lamp = new Building(XMFLOAT3(62.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
 		GameUtilities::AddGameObject(lamp);
-		Building* lamp2 = new Building(XMFLOAT3(425, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
+		Building* lamp2 = new Building(XMFLOAT3(-125, 0, 187.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
 		GameUtilities::AddGameObject(lamp2);
 
 		Building* rock = new Building(XMFLOAT3(-20, 0, 220), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1, "Rubble");
@@ -600,51 +637,8 @@ public:
 			if (physics_timer > physics_rate)
 			{
 				physics_timer = 0;
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-
-					if (OBJS[i]->colliderPtr)
-					{
-						int* index = new int(i);
-						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
-						{
-							int somethingswrong = 0;
-							somethingswrong++;
-						}
-					}
-				}
-
-				for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				{
-					if (OBJS[i]->colliderPtr)
-					{
-						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, OBJS[i]->colliderPtr->GetWidth()+2, OBJS[i]->colliderPtr->GetWidth()+2));
-
-						for (unsigned int j = 0; j < collisionVector.size(); j++)
-						{
-							if (OBJS[*collisionVector[j].data]->colliderPtr)
-								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-						}
-					}
-				}*/
-				//----------------------------------------------------------------------------------------------------
-				//for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				//{
-				//	if (OBJS[i]->colliderPtr)
-				//	{
-				//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-				//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
-
-				//		for (unsigned int j = 0; j < collisionVector.size(); j++)
-				//		{
-				//			if (OBJS[*collisionVector[j].data]->colliderPtr)
-				//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-				//		}
-				//	}
-				//}
 				//--------------------------------------------------------------------------------------------------------
-				for (int i = 0; i < OBJ_COUNT; i++)
+				/*for (int i = 0; i < OBJ_COUNT; i++)
 				{
 					for (unsigned int j = 0; j < OBJ_COUNT; j++)
 					{
@@ -665,35 +659,37 @@ public:
 							}
 						}
 					}
+				}*/
+				
+				//----------------------------------New Physics System-------------------------------
+				for (int i = 0; i < OBJ_COUNT; i++)
+				{
+
+					if (OBJS[i]->colliderPtr)
+					{
+						int* index = new int(i);
+						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
+						{
+							int somethingswrong = 0;
+							somethingswrong++;
+						}
+					}
 				}
-				//----------------------------------New Physics system does not operate with properly with triggers-------------------------------
-				//for (int i = 0; i < OBJ_COUNT; i++)
-				//{
-				//	if (OBJS[i]->colliderPtr)
-				//	{
-				//		int* index = new int(i);
-				//		if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index))) 
-				//		{
-				//			int somethingswrong = 0;
-				//			somethingswrong++;
-				//		}
-				//	}
-				//}
 
-				//for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				//{
-				//	if (OBJS[i]->colliderPtr && !OBJS[i]->colliderPtr->trigger) 
-				//	{
-				//		XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-				//		std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 50, 50));
+				for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				{
+					if (OBJS[i]->colliderPtr)
+					{
+						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
 
-				//		for (unsigned int j = 0; j < collisionVector.size(); j++)
-				//		{
-				//			if (OBJS[*collisionVector[j].data]->colliderPtr)
-				//				OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-				//		}
-				//	}
-				//}
+						for (unsigned int j = 0; j < collisionVector.size(); j++)
+						{
+							if (OBJS[*collisionVector[j].data]->colliderPtr)
+								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+						}
+					}
+				}
 				//---------------------------------------------End New Physics System------------------------------------------
 
 				//Resolve all collisions that occurred this frame

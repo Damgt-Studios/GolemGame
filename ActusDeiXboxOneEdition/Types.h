@@ -279,6 +279,12 @@ namespace ADResource
 			XMFLOAT4   CameraPosition;
 		};
 
+		struct LVP 
+		{
+			XMFLOAT4X4 ViewMatrix;
+			XMFLOAT4X4 ProjectionMatrix;
+		};
+
 		enum class LIGHTTYPE
 		{
 			DIRECTIONAL = 0,
