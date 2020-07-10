@@ -11,6 +11,8 @@ class Camera
 {
 public:
 	void GetViewMatrix(XMMATRIX& viewMatrix);
+	void GetViewMatrixRH(XMMATRIX& viewMatrix);
+
 
 	virtual void SetPosition(XMFLOAT3& position) {};
 	virtual void Rotate(float yaw, float pitch) {};

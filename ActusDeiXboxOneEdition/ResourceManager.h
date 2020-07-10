@@ -43,6 +43,7 @@ namespace
 	std::vector<ADResource::ADGameplay::GameObject*> gameobjects;
 
 	std::queue<ADResource::ADGameplay::GameObject*> render_queue;
+	std::queue<ADResource::ADGameplay::GameObject*> shadow_queue;
 	std::queue<AD_ULONG> collider_queue;
 #else
 	ADVector<ADResource::ADRenderer::Vertex> pbrVertexData;
@@ -98,9 +99,12 @@ public:
 	static ComPtr<ID3D11Buffer> GetIndexBuffer();
 	static void AddModelToRenderQueue(ADResource::ADGameplay::GameObject*);
 	static bool RenderQueueEmpty();
+	static void AddModelToShadowQueue(ADResource::ADGameplay::GameObject*);
+	static bool ShadowQueueEmpty();
 	static void AddModelToColliderQueue(AD_ULONG);
 	static bool ColliderQueueEmpty();
 	static ADResource::ADGameplay::GameObject* PopFromRenderQueue();
+	static ADResource::ADGameplay::GameObject* PopFromShadowQueue();
 	static AD_ULONG PopFromColliderQueue();
 
 public:
