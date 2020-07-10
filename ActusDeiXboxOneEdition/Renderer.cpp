@@ -518,20 +518,22 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ID3D11RenderTargetView* tempRTV[] = { renderer_resources.render_target_view.Get() };
 	ID3D11RenderTargetView* shadowRTV[] = { renderer_resources.renderedTarget.Get() };
 
+	renderer_resources.context->ClearRenderTargetView(renderer_resources.renderedTarget.Get(), color);
+	renderer_resources.context->ClearDepthStencilView(renderer_resources.shadowDepth.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+
 	//Shadow Target
 	renderer_resources.context->OMSetRenderTargets(1, shadowRTV, renderer_resources.shadowDepth.Get());
 	renderer_resources.context->RSSetViewports(1, &renderer_resources.shadow_port);
 
-	renderer_resources.context->ClearRenderTargetView(renderer_resources.renderedTarget.Get(), color);
-	renderer_resources.context->ClearDepthStencilView(renderer_resources.shadowDepth.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+	renderer_resources.context->ClearRenderTargetView(renderer_resources.render_target_view.Get(), color);
+	renderer_resources.context->ClearDepthStencilView(renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
 
 	//Main Target
 	renderer_resources.context->OMSetRenderTargets(1, tempRTV, renderer_resources.depthStencil.Get());
 	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 	renderer_resources.context->RSSetViewports(1, &renderer_resources.viewport);
 
-	renderer_resources.context->ClearRenderTargetView(renderer_resources.render_target_view.Get(), color);
-	renderer_resources.context->ClearDepthStencilView(renderer_resources.depthStencil.Get(), D3D11_CLEAR_DEPTH, 1, 0);
+
 
 	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
@@ -641,6 +643,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		{
 			current_static_model = static_cast<SimpleStaticModel*>(*current_model);
 
+			//continue;
+
 			UINT strides[2] = { sizeof(SimpleVertex), sizeof(XMFLOAT3) };
 			UINT offsets[2] = { 0, 0 };
 			ID3D11Buffer* modelVertexBuffers[2] = { current_static_model->vertexBuffer.Get(), current_static_model->instanceBuffer.Get() };
@@ -692,6 +696,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 			renderer_resources.context->IASetInputLayout(current_static_model->inputLayout.Get());
 
 			renderer_resources.context->DrawIndexedInstanced(current_static_model->indices.size(), current_static_model->instanceCount, 0, 0, 0);
+
+
 		}
 	}
 
@@ -758,12 +764,12 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	renderer_resources.context->VSSetConstantBuffers(0, 1, modelCBuffers);
 
 	ID3D11ShaderResourceView* resource_views[] = {
-	ResourceManager::GetSkybox()->albedo->texture.Get(),
+	ResourceManager::GetSkybox()->albedo->texture.Get(), nullptr, nullptr
 	};
 
 	renderer_resources.context->PSSetShader(ResourceManager::GetSkybox()->pixelShader.Get(), 0, 0);
 
-	renderer_resources.context->PSSetShaderResources(0, 1, resource_views);
+	renderer_resources.context->PSSetShaderResources(0, 3, resource_views);
 	renderer_resources.context->PSSetSamplers(0, 1, ResourceManager::GetSkybox()->sampler.GetAddressOf());
 
 	renderer_resources.context->DrawIndexed(ResourceManager::GetSkybox()->indices.size(), 0, 0);
@@ -793,6 +799,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		if ((*current_model)->animated)
 		{
 			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);
+
+			//continue;
 
 			UINT strides[] = { sizeof(SimpleVertexAnim) };
 			UINT offsets[] = { 0 };
