@@ -6,41 +6,41 @@ void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     audioSource.Play();
 }
-//
-//void ParticleEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
-//{
-//    XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
-//    emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
-//}
 
-void RecoveryEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
+void RecoveryEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
-    emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z - 10, 0 }, 15.0f);
+    emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 }, 15.0f);
 }
 
-void SmallCloudEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
+void SmallCloudEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
 }
 
-void WaterWaveEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
+void WaterWaveEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
 }
 
-void IronSkinEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
+void IronSkinEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
 }
 
-void FireballEmitterEvent::HandleEvent(ADEvents::ADEvent* _event)
+void FireballEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
+}
+
+void CylinderEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
+{
+    XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
+    emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 }, 15.0f);
 }
 
 void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
@@ -53,13 +53,13 @@ std::string AudioStopListener::ToString()
     return std::string();
 }
 
-void ParticleEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
+void BigCloudEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
     XMFLOAT3 float4Event = *(static_cast<XMFLOAT3*>(_event->Parameter()));
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 });
 }
 
-std::string ParticleEmitterListener::ToString()
+std::string BigCloudEmitterListener::ToString()
 {
     return "Fountain Emitter";
 }

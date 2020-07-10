@@ -3,6 +3,7 @@
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
 #include <ADCombat.h>
+#include "ADParticles.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
@@ -66,10 +67,14 @@ namespace ADResource
 				Action* kick;
 				Action* slam;
 				Action* special;
+				Action* nextForm;
+				Action* prevForm;
 			} gActions[4];
 			Action* consume;
 
 			AD_ULONG meshIDs[4];
+
+			BigElementalPuffEmitter* bigPuffs[4];
 
 		private:
 			// Private Methods

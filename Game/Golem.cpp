@@ -50,6 +50,8 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 		gActions[i].punch->Update(delta_time);
 		gActions[i].slam->Update(delta_time);
 		gActions[i].special->Update(delta_time);
+		gActions[i].nextForm->Update(delta_time);
+		gActions[i].prevForm->Update(delta_time);
 	}
 	ProcessEffects(delta_time);
 
@@ -139,6 +141,74 @@ void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 			collider.Pos.x - other->colliderPtr->Pos.x,
 			collider.Pos.y - other->colliderPtr->Pos.y,
 			collider.Pos.z - other->colliderPtr->Pos.z), XMFLOAT3(0, 1, 0));
+	}
+	if (false)
+	{
+		if (fabsf(m.Normal.z) > fabsf(m.Normal.x))
+		{
+			XMVECTOR forwardCross = XMVector3Cross(direction, transform.r[2]);
+			XMFLOAT3 forwardCrs;
+			XMStoreFloat3(&forwardCrs, forwardCross);
+			if (forwardCrs.z == 0) // Front or Back Flinch
+			{
+				if (forward.z > 0)
+				{
+					if (m.Normal.z > 0)
+					{
+						FlinchFromBack();
+					}
+					else if (m.Normal.z < 0)
+					{
+						FlinchFromFront();
+					}
+				}
+				else if (forward.z < 0)
+				{
+					if (m.Normal.z > 0)
+					{
+						FlinchFromFront();
+					}
+					else if (m.Normal.z < 0)
+					{
+						FlinchFromBack();
+					}
+				}
+			}
+		}
+		else if (fabsf(m.Normal.z) < fabsf(m.Normal.x))
+		{
+			XMVECTOR rightCross = XMVector3Cross(direction, transform.r[0]);
+			XMFLOAT3 rightCrs;
+			XMStoreFloat3(&rightCrs, rightCross);
+			if (rightCrs.x == 0) // Right or Left Flinch
+			{
+				if (right.x > 0)
+				{
+					if (m.Normal.x > 0)
+					{
+						FlinchFromRight();
+					}
+					else if (m.Normal.x < 0)
+					{
+						FlinchFromLeft();
+					}
+				}
+				else if (right.x < 0)
+				{
+					if (m.Normal.x > 0)
+					{
+						FlinchFromLeft();
+					}
+					else if (m.Normal.x < 0)
+					{
+						FlinchFromRight();
+					}
+				}
+			}
+		}
+		XMFLOAT4 pos;
+		XMStoreFloat4(&pos, transform.r[3]);
+		bigPuffs[playerElement]->Activate({pos.x, pos.y + 15, pos.z, pos.w});
 	}
 }
 
@@ -241,13 +311,13 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 	}
 
 	// Increment Player Element
-	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && responseTimer < 0)
+	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && !isActing && responseTimer < 0)
 	{
 		ChangeElement(true);
 	}
 
 	// Decrement Player Element
-	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && responseTimer < 0)
+	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && !isActing && responseTimer < 0)
 	{
 		ChangeElement(false);
 	}
@@ -493,6 +563,7 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 {
 	if (nextElement)
 	{
+		gActions[playerElement].nextForm->StartAction(&transform);
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		++playerElement;
@@ -501,12 +572,16 @@ void ADResource::ADGameplay::Golem::ChangeElement(bool nextElement)
 	}
 	else
 	{
+		gActions[playerElement].prevForm->StartAction(&transform);
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		--playerElement;
 		if (playerElement < 0)
 			playerElement = 3;
 	}
+	currentAnimTime = 1.0f;
+	isActing = true;
+	idleTime = 0.0;
 	this->SetMeshID(meshIDs[playerElement]);
 	ADEvents::ADEventSystem::Instance()->SendEvent("SelectElementForm", (void*)playerElement);
 }

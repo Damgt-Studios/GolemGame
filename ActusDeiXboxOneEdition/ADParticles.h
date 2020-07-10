@@ -48,8 +48,8 @@ public:
 		velocity = { 0, 0, 0, 1 };
 		gravityEffect = 0;
 		lifeSpan = RandFloat(0, 3);
-		width = 0.1f;
-		height = 0.1f;
+		width = 0.5f;
+		height = 0.5f;
 	}
 	void Update(double time, XMFLOAT4 newVelocity, XMFLOAT4 newPosition = { 0, 0, 0, 1 })
 	{
@@ -135,8 +135,8 @@ public:
 		velocity = { 0, 0, 0, 0 };
 		gravityEffect = 0;
 		lifeSpan = RandFloat(0, 3);
-		width = 0.1f;
-		height = 0.1f;
+		width = 0.5f;
+		height = 0.5f;
 	}
 private:
 	ParticleAttributes attributes;
@@ -795,9 +795,9 @@ public:
 				for (int i = 0; i < size; ++i)
 				{
 					XMFLOAT4 velocity;
-					velocity.x = RandFloat(-10, 10);
+					velocity.x = RandFloat(-20, 20);
 					velocity.y = RandFloat(0, 50);
-					velocity.z = RandFloat(-10, 10);
+					velocity.z = RandFloat(-20, 20);
 					particles[i].Update(time, velocity);
 					if (particles[i].GetElaspedTime() <= 0.0f)
 					{
@@ -831,6 +831,10 @@ public:
 	XMFLOAT4 GetPosition()
 	{
 		return emitterPos;
+	}
+	bool GetActive()
+	{
+		return isActive;
 	}
 private:
 	ParticleRenderer renderer;
@@ -884,9 +888,9 @@ public:
 				for (int i = 0; i < size; ++i)
 				{
 					XMFLOAT4 velocity;
-					velocity.x = RandFloat(-10, 10);
-					velocity.y = RandFloat(0, 10);
-					velocity.z = RandFloat(-10, 10);
+					velocity.x = RandFloat(-20, 20);
+					velocity.y = RandFloat(0, 20);
+					velocity.z = RandFloat(-20, 20);
 					particles[i].Update(time, velocity);
 					if (particles[i].GetElaspedTime() <= 0.0f)
 					{
@@ -1064,9 +1068,9 @@ public:
 				for (int i = 0; i < size; ++i)
 				{
 					XMFLOAT4 velocity;
-					velocity.x = RandFloat(-5, 5);
-					velocity.y = sinf(totalElaspedTime * 5) * 2;
-					velocity.z = RandFloat(-5, 5);
+					velocity.x = RandFloat(-50, 50);
+					velocity.y = sinf(totalElaspedTime * 10) * 20;
+					velocity.z = RandFloat(-50, 50);
 					particles[i].Update(time, velocity);
 					if (particles[i].GetElaspedTime() <= 0.0f)
 					{
@@ -1507,8 +1511,8 @@ public:
 		emitterPos = Pos;
 		Particle tempParticle;
 		tempParticle.SetGravityEffect(0);
-		tempParticle.SetHeight(1);
-		tempParticle.SetWidth(1);
+		tempParticle.SetHeight(20);
+		tempParticle.SetWidth(20);
 		particle = tempParticle;
 		renderer.CreateConstantBuffer(renderer.particleCBuff, Device, sizeof(ParticleConstantBuffer));
 		renderer.CreateConstantBuffer(renderer.particlePosCBuff, Device, sizeof(ParticlePositionConstantBuffer));
@@ -1566,8 +1570,8 @@ public:
 		isActive = true;
 		particle.Reset();
 		particle.SetGravityEffect(0);
-		particle.SetHeight(10);
-		particle.SetWidth(10);
+		particle.SetHeight(20);
+		particle.SetWidth(20);
 		particle.SetColor(color);
 		particle.SetLifeSpan(-1.0f);
 		uCoord = vCoord = 0;

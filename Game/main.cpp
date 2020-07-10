@@ -130,35 +130,45 @@ public:
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
 
-
-		ParticleEmitterListener golemPunchParticles(engine->bigCloud);
-		golemPunchParticles.lifespan = 20.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
-
-		ParticleEmitterListener bigGolemDustParticles(engine->bigCloud);
+		BigCloudEmitterListener bigGolemDustParticles(engine->bigCloud);
 		bigGolemDustParticles.lifespan = 0.5f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
 
-		RecoveryEmitterEvent golemRecoveryParticles(engine->recoveryEmitter);
+		RecoveryEmitterListener golemRecoveryParticles(engine->recoveryEmitter);
 		golemRecoveryParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
 
-		SmallCloudEmitterEvent smallGolemDustParticles(engine->smallCloud);
+		SmallCloudEmitterListener smallGolemDustParticles(engine->smallCloud);
 		smallGolemDustParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
 
-		WaterWaveEmitterEvent waveParticles(engine->waterWave);
+		WaterWaveEmitterListener waveParticles(engine->waterWave);
 		waveParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
 
-		IronSkinEmitterEvent ironSkinParticles(engine->ironSkin);
+		IronSkinEmitterListener ironSkinParticles(engine->ironSkin);
 		ironSkinParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
 
-		FireballEmitterEvent fireballParticles(engine->fireball);
+		FireballEmitterListener fireballParticles(engine->fireball);
 		fireballParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
 
+		CylinderEmitterListener woodCylinderParticles(engine->woodCylinder);
+		woodCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWoodCylinderParticles", &woodCylinderParticles);
+
+		CylinderEmitterListener fireCylinderParticles(engine->fireCylinder);
+		fireCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireCylinderParticles", &fireCylinderParticles);
+
+		CylinderEmitterListener waterCylinderParticles(engine->waterCylinder);
+		waterCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaterCylinderParticles", &waterCylinderParticles);
+
+		CylinderEmitterListener stoneCylinderParticles(engine->stoneCylinder);
+		stoneCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemStoneCylinderParticles", &stoneCylinderParticles);
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -168,6 +178,10 @@ public:
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
 		engine->GetOrbitCamera()->SetRadius(20);
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+		golem->bigPuffs[STONE] = &engine->bigStonePuff;
+		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
+		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
+		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
 
 
 
@@ -306,6 +320,8 @@ public:
 		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 		GameUtilities::AddGameObject(house1);
 		currentScene.AddBuilding(house1);
+		house1->destructionEmitter = &engine->destructionCloud;
+		house1->destructionEmitter2 = &engine->destructionCloud2;
 
 		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
 		GameUtilities::AddGameObject(rubble1);
@@ -317,6 +333,8 @@ public:
 			Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(housey);
 			currentScene.AddBuilding(housey);
+			housey->destructionEmitter = &engine->destructionCloud;
+			housey->destructionEmitter2 = &engine->destructionCloud2;
 
 			Building* rubble2 = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2, "Rubble");
 			GameUtilities::AddGameObject(rubble2);
