@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <future>
 
 #include "Camera.h"
 #include "Renderer.h"
@@ -45,7 +46,11 @@ public:
 	ADUI::ADUI* GetUI();
 	ADResource::ADRenderer::PBRRenderer* GetPBRRenderer();
 	float GetEngineDeltaTime();
-
+	struct AllArgs
+	{
+		Engine* engine;
+		std::promise<bool>* thePromise;
+	};
 
 private:
 	//Model m_model;

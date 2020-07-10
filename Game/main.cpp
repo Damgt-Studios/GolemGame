@@ -56,6 +56,13 @@ struct whateverargs
 	std::promise<int>* jobpromise;
 };
 
+struct PhysicsShiz
+{
+	int OBJ_COUNT;
+	GameObject** OBJS;
+	QuadTree<int>* collisionTree;
+};
+
 void dumbassMath(void* arg, int index)
 {
 	whateverargs* penis = static_cast<whateverargs*>(arg);
@@ -64,12 +71,53 @@ void dumbassMath(void* arg, int index)
 
 }
 
+void UpdateWrapper(void* args, int index)
+{
+	Engine::AllArgs* temp = static_cast<Engine::AllArgs*>(args);
+	temp->thePromise->set_value(temp->engine->Render());
+}
+
+void MainPhysics(void* args, int index)
+{
+	PhysicsShiz* temp = static_cast<PhysicsShiz*>(args);
+	for (int i = 0; i < temp->OBJ_COUNT; i++)
+	{
+
+		if (temp->OBJS[i]->colliderPtr)
+		{
+			int* index = new int(i);
+			if (!temp->collisionTree->Insert(ADQuadTreePoint<int>(temp->OBJS[i]->colliderPtr->Pos.x, temp->OBJS[i]->colliderPtr->Pos.z, *index)))
+			{
+				int somethingswrong = 0;
+				somethingswrong++;
+			}
+		}
+	}
+
+	for (unsigned int i = 0; i < temp->OBJ_COUNT; i++)
+	{
+		if (temp->OBJS[i]->colliderPtr)
+		{
+			XMFLOAT3 obj_pos = VectorToFloat3(temp->OBJS[i]->transform.r[3]);
+			std::vector<ADQuadTreePoint<int>> collisionVector = temp->collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
+
+			for (unsigned int j = 0; j < collisionVector.size(); j++)
+			{
+				if (temp->OBJS[*collisionVector[j].data]->colliderPtr)
+					temp->OBJS[i]->CheckCollision(temp->OBJS[*collisionVector[j].data]);
+			}
+		}
+	}
+}
+
 // the class definition for the core "framework" of our app
 ref class App sealed : public IFrameworkView
 {
 private:
 	Jobs::JobManager* jobManagerTest;
 	Engine* engine;
+	Engine::AllArgs* engineArgs;
+	PhysicsShiz* PhysicsArguments;
 	TheGreatGolem* game;
 	AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
@@ -149,13 +197,19 @@ public:
 		engine = new Engine;
 		audioEngine = new AD_AUDIO::ADAudio;
 		game = new TheGreatGolem();
-
+		engineArgs = new Engine::AllArgs();
 		//Initialize.  Order Matters.
 		audioEngine->Init();
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
 		jobManagerTest = Jobs::JobManager::GetInstance();
 		clampArgs = new ClampingArgs();
+		PhysicsArguments = new PhysicsShiz();
+
+		promise<bool> enginePromise;
+		future<bool> engineFuture = enginePromise.get_future();
+
+		engineArgs->thePromise = &enginePromise;
 
 		/*vector<promise<int>> promises;
 		vector<future<int>> futures;
@@ -582,8 +636,10 @@ public:
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 		game_time.Restart();
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
+		engineArgs->engine = engine;
 		while (!shutdown)
 		{
+			//jobManagerTest->AddJob(&UpdateWrapper, (void*)engineArgs, 0);
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
@@ -683,7 +739,9 @@ public:
 
 			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
 			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
-
+			PhysicsArguments->OBJ_COUNT = OBJ_COUNT;
+			PhysicsArguments->OBJS = OBJS;
+			PhysicsArguments->collisionTree = collisionTree;
 
 			physics_timer += delta_time;
 			if (physics_timer > physics_rate)
@@ -714,7 +772,7 @@ public:
 				}*/
 				
 				//----------------------------------New Physics System-------------------------------
-				for (int i = 0; i < OBJ_COUNT; i++)
+				/*for (int i = 0; i < OBJ_COUNT; i++)
 				{
 
 					if (OBJS[i]->colliderPtr)
@@ -741,7 +799,8 @@ public:
 								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
 						}
 					}
-				}
+				}*/
+				jobManagerTest->AddJob(&MainPhysics, (void*)PhysicsArguments, 0);
 				//---------------------------------------------End New Physics System------------------------------------------
 
 				//Resolve all collisions that occurred this frame
@@ -772,6 +831,8 @@ public:
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 			// D3d11 shit
+			//if (!engine->Update()) break;
+			//engineFuture.wait();
 			if (!engine->Update()) break;
 			currentScene.Update(engine->GetEngineDeltaTime());
 			if (!engine->Render()) break;
