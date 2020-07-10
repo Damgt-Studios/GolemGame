@@ -19,7 +19,7 @@
 //#include "MinionManager.h"
 #include <Scene.h>
 
-//#define ShowColliders
+#define ShowColliders
 
 // Use some common namespaces to simplify the code
 using namespace Windows::ApplicationModel;
@@ -158,7 +158,6 @@ public:
 		FireballEmitterEvent fireballParticles(engine->fireball);
 		fireballParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
-
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -324,6 +323,11 @@ public:
 
 		}
 
+		Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
+		GameUtilities::AddGameObject(attackTower);
+
+		Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
+		GameUtilities::AddGameObject(ballista);
 
 		//Building* house2 = new Building(XMFLOAT3(-500, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
 		//GameUtilities::AddGameObject(house2);

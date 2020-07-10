@@ -49,8 +49,6 @@ namespace ADResource
 				ComPtr<ID3D11Texture2D> renderedTexture;
 				ComPtr<ID3D11ShaderResourceView> renderedView;
 
-				ComPtr<ID3D11RasterizerState> renderedShadowState;
-
 				ComPtr<ID3D11Texture2D> shadowMap;
 				ComPtr<ID3D11ShaderResourceView> shadowView;
 				ComPtr<ID3D11DepthStencilView> shadowDepth;
@@ -78,8 +76,6 @@ namespace ADResource
 					renderedTarget = nullptr;
 					renderedTexture = nullptr;
 					renderedView = nullptr;
-
-					renderedShadowState = nullptr;
 
 					shadowMap = nullptr;
 					shadowView = nullptr;

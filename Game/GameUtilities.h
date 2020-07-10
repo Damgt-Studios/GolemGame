@@ -60,6 +60,8 @@ public:
 	static std::vector<Renderable*> GenerateRubble1(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateRubble2(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateAttackTower(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateBallista(XMFLOAT3 pos, XMFLOAT3 rotation);
 
 
 public:

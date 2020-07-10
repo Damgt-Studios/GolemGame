@@ -233,14 +233,6 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	result = renderer_resources.device->CreateShaderResourceView(renderer_resources.renderedTexture.Get(), &srvDesc, renderer_resources.renderedView.GetAddressOf());
 	assert(!FAILED(result));
 
-	D3D11_RASTERIZER_DESC srDesc;
-	ZeroMemory(&srDesc, sizeof(srDesc));
-	srDesc = CD3D11_RASTERIZER_DESC(CD3D11_RASTERIZER_DESC{});
-	srDesc.CullMode = D3D11_CULL_FRONT;
-
-	result = renderer_resources.device->CreateRasterizerState(&srDesc, renderer_resources.renderedShadowState.GetAddressOf());
-	assert(!FAILED(result));
-
 	D3D11_TEXTURE2D_DESC zBufferDesc;
 	ZeroMemory(&zBufferDesc, sizeof(zBufferDesc));
 	zBufferDesc.ArraySize = 1;
@@ -528,7 +520,6 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 	//Shadow Target
 	renderer_resources.context->OMSetRenderTargets(1, shadowRTV, renderer_resources.shadowDepth.Get());
-	renderer_resources.context->RSSetState(renderer_resources.renderedShadowState.Get());
 	renderer_resources.context->RSSetViewports(1, &renderer_resources.shadow_port);
 
 	renderer_resources.context->ClearRenderTargetView(renderer_resources.renderedTarget.Get(), color);
@@ -555,7 +546,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
 	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
-	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 250, 300), 0, 0);
+	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 300, 350), 0, 0);
 
 	XMFLOAT3 campos;
 	XMFLOAT3 pos, rot, scale;
@@ -568,8 +559,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	SimpleAnimModel* current_animated_model = nullptr;
 
 	renderer_resources.context->OMSetRenderTargets(1, shadowRTV, renderer_resources.shadowDepth.Get());
-	renderer_resources.context->RSSetState(renderer_resources.renderedShadowState.Get());
-	//renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
+	renderer_resources.context->RSSetState(renderer_resources.defaultRasterizerState.Get());
 	renderer_resources.context->RSSetViewports(1, &renderer_resources.shadow_port);
 
 	while (!ResourceManager::ShadowQueueEmpty())
