@@ -80,6 +80,7 @@ namespace ADResource
 			bool wireframe_mode;
 		};
 
+
 		//		struct Model
 		//		{
 		//#ifdef AD_MEMORY_DEFAULT
@@ -636,6 +637,12 @@ namespace ADResource
 			CollisionPacket(GameObject* a, GameObject* b, ADPhysics::Manifold& manifold) : A(a), B(b), m(manifold) {};
 		};
 
+		struct ClampingArgs
+		{
+			GameObject* golem;
+			QuadTree<ADPhysics::Triangle>* tree;
+			float time;
+		};
 
 		//If multiple instances will select one out of all of them and use only that one. 
 		//Not sure if extra ones still take up memory. Don't think they do
@@ -692,6 +699,11 @@ namespace ADResource
 			}
 		}
 
+		static void ResolveCollisionsWrapper(void* args, int index)
+		{
+			ResolveCollisions();
+		}
+
 
 		static bool GroundClamping(GameObject* obj, QuadTree<ADPhysics::Triangle>* tree, float delta_time)
 		{
@@ -710,6 +722,12 @@ namespace ADResource
 			}
 
 			return false;
+		}
+
+		static void GroundClampingWrapper(void* args, int index)
+		{
+			ClampingArgs* temp = static_cast<ClampingArgs*>(args);
+			GroundClamping(temp->golem, temp->tree, temp->time);
 		}
 	}
 };

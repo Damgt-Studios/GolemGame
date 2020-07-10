@@ -18,6 +18,8 @@
 #include "Listeners.h"
 //#include "MinionManager.h"
 #include <Scene.h>
+#include <JobManager.h>
+#include <future>
 
 //#define ShowColliders
 
@@ -41,11 +43,32 @@ using namespace Platform::Collections;
 bool FULLSCREEN = false;
 // Settings
 
+//struct ClampingArgs
+//{
+//	GameObject* golem;
+//	QuadTree<ADPhysics::Triangle>* tree;
+//	float time;
+//};
+
+struct whateverargs
+{
+	int a, b;
+	std::promise<int>* jobpromise;
+};
+
+void dumbassMath(void* arg, int index)
+{
+	whateverargs* penis = static_cast<whateverargs*>(arg);
+
+	penis->jobpromise->set_value(penis->a + penis->b);
+
+}
 
 // the class definition for the core "framework" of our app
 ref class App sealed : public IFrameworkView
 {
 private:
+	Jobs::JobManager* jobManagerTest;
 	Engine* engine;
 	TheGreatGolem* game;
 	AD_AUDIO::ADAudio* audioEngine;
@@ -73,6 +96,8 @@ private:
 
 	float default_yaw = 180.0f;
 	float default_pitch = 30.0f;
+	void* testingthread;
+	ClampingArgs* clampArgs;
 
 	// Physics
 	ADPhysics::AABB test_colider;
@@ -129,6 +154,33 @@ public:
 		audioEngine->Init();
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
+		jobManagerTest = Jobs::JobManager::GetInstance();
+		clampArgs = new ClampingArgs();
+
+		/*vector<promise<int>> promises;
+		vector<future<int>> futures;
+		vector<whateverargs*> peni;
+		for (int i = 0; i < 20; i++)
+		{
+			whateverargs* superpenis = new whateverargs();
+			superpenis->a = i + 1;
+			superpenis->b = i + 4;
+			promises.push_back(std::promise<int>());
+			futures.push_back(std::future<int>());
+			peni.push_back(superpenis);
+		}
+
+		for (int i = 0; i < 20; i++)
+		{
+			futures[i] = promises[i].get_future();
+			peni[i]->jobpromise = &promises[i];
+			jobManagerTest->AddJob(&dumbassMath, (void*)(peni[i]), 0);
+		}
+
+		for (int i = 0; i < 20; i++)
+		{
+			futures[i].wait();
+		}*/
 
 		BigCloudEmitterListener bigGolemDustParticles(engine->bigCloud);
 		bigGolemDustParticles.lifespan = 0.5f;
@@ -244,12 +296,12 @@ public:
 		//ADAI::FlockingGroup commandFlock;
 		//ADAI::FlockingGroup idleFlock;
 
-		//std::vector<Destructable*> stoneMinions;
-		//std::vector<Destructable*> waterMinions;
-		//std::vector<Destructable*> fireMinions;
-		//std::vector<Destructable*> woodMinions;
+		std::vector<Destructable*> stoneMinions;
+		std::vector<Destructable*> waterMinions;
+		std::vector<Destructable*> fireMinions;
+		std::vector<Destructable*> woodMinions;
 
-		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
+		currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
 
 		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
@@ -697,19 +749,26 @@ public:
 				//---------------------------------------------End New Physics System------------------------------------------
 
 				//Resolve all collisions that occurred this frame
-				ADResource::ADGameplay::ResolveCollisions();
+				//ADResource::ADGameplay::ResolveCollisions();
+				jobManagerTest->AddJob(&ADResource::ADGameplay::ResolveCollisionsWrapper, testingthread, 0);
 
-				/*for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
 					GroundClamping(waterMinions[i], tree, delta_time);
 					GroundClamping(fireMinions[i], tree, delta_time);
 					GroundClamping(woodMinions[i], tree, delta_time);
-				}*/
+				}
 
 			}
 
-			GroundClamping(golem, tree, delta_time);
+			clampArgs->golem = golem;
+			clampArgs->tree = tree;
+			clampArgs->time = delta_time;
+			
+
+			//GroundClamping(golem, tree, delta_time);
+			jobManagerTest->AddJob(&ADResource::ADGameplay::GroundClampingWrapper, (void*)clampArgs, 0);
 			//GroundClamping(cube, tree, delta_time);
 			//cube->transform.r[3].m128_f32[1] += 5;
 
