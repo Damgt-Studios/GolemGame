@@ -3,14 +3,19 @@
 
 void Camera::GetViewMatrix(XMMATRIX& viewMatrix)
 {
+
 	XMVECTOR position, targetPosition, up;
-	
+
 	position = XMLoadFloat3(&m_position);
 	targetPosition = XMLoadFloat3(&m_targetPosition);
 	up = XMLoadFloat3(&m_up);
 
 	viewMatrix = XMMatrixLookAtLH(position, targetPosition, up);
+	XMMATRIX InvView = XMMatrixInverse(nullptr, viewMatrix);
+	transform = XMMatrixTranslation(InvView.r[3].m128_f32[0], InvView.r[3].m128_f32[1], InvView.r[3].m128_f32[2]);
+	collider = OBB(transform, XMFLOAT3(20, 20, 20));
 }
+
 
 DirectX::XMFLOAT3& Camera::GetRight()
 {
@@ -36,8 +41,8 @@ XMFLOAT3& Camera::GetRotationEuler()
 {
 	XMMATRIX viewMatrix;
 	GetViewMatrix(viewMatrix);
-	
-	viewMatrix = XMMatrixInverse(nullptr,viewMatrix);
+
+	viewMatrix = XMMatrixInverse(nullptr, viewMatrix);
 
 	float Yaw; float Pitch; float Roll;
 	if (viewMatrix.r[0].m128_f32[0] == 1.0f)
@@ -104,6 +109,11 @@ void Camera::SetClippingPlanes(float _near, float _far)
 
 Camera::Camera()
 {
+	collider = OBB(transform, XMFLOAT3(20, 20, 20));
+	colliderPtr = &collider;
+
+
+	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
 	m_position = XMFLOAT3(0, 0, 0);
 	m_targetPosition = XMFLOAT3(0, 0, 0);
 	m_up = XMFLOAT3(0, 1, 0);
@@ -129,15 +139,17 @@ FPSCamera::FPSCamera(XMFLOAT3 position /*= XMFLOAT3(0, 0, 0)*/, float yaw /*= PI
 void FPSCamera::SetPosition(XMFLOAT3 position)
 {
 	m_position = position;
-
 	UpdateCameraVectors();
+
 }
 
 void FPSCamera::Rotate(float yaw, float pitch)
 {
+	
 	// Convert the yaw and pitch to radians
 	m_yaw += XMConvertToRadians(yaw);
 	m_pitch += XMConvertToRadians(pitch);
+
 
 	// Clamp the pitch between -180 and 180 exclusive
 	if (m_pitch < (-WMATH_PI / 2) + .1) m_pitch = (-WMATH_PI / 2) + .1;
@@ -195,7 +207,7 @@ void FPSCamera::UpdateCameraVectors()
 
 OrbitCamera::OrbitCamera() : mRadius(10.0f) {}
 
-void OrbitCamera::Rotate(float yaw, float pitch)
+void OrbitCamera::Rotate(float &yaw, float& pitch)
 {
 	m_yaw = XMConvertToRadians(yaw);
 	m_pitch = XMConvertToRadians(pitch);
@@ -204,7 +216,63 @@ void OrbitCamera::Rotate(float yaw, float pitch)
 
 	UpdateCameraVectors();
 }
+void OrbitCamera::OnCollision()
+{
+	 radiusChange = 180;
+	 changeView = true;
+	
+}
+void OrbitCamera::SetColliderPosition(XMFLOAT3 m)
+{
+}
+void OrbitCamera::CheckCollision(ADResource::ADGameplay::GameObject* obj)
+{
 
+	Manifold m;
+
+	if (obj->active)
+	{
+		if (obj->colliderPtr->isCollision(&collider, m))
+		{
+			//If collision and collision object is a trigger then go to OnTrigger Function
+			if (obj->colliderPtr->trigger)
+			{
+				//OnTrigger(obj);
+			}
+			//If collision and collision object is a collider then go to OnCollision Function
+			else
+			{
+
+				
+					collisionQueue.push(CollisionPacket(obj, this, m));
+					OnCollision();
+
+					if (colliderPtr->type == ColliderType::Plane)
+					{
+						m_pitch += 10;
+
+					}
+
+				
+
+
+			}
+		}
+		
+	
+
+
+
+
+	
+		
+		
+		
+		
+	}
+	
+
+}
 void OrbitCamera::SetLookAt(XMFLOAT3 target)
 {
 	m_targetPosition = target;
@@ -212,7 +280,7 @@ void OrbitCamera::SetLookAt(XMFLOAT3 target)
 
 void OrbitCamera::SetRadius(float radius)
 {
-	mRadius = clamp(radius, 2.0f, 100.0f);
+	mRadius = clamp(radius, 2.0f, 200.0f);
 }
 
 
@@ -235,10 +303,26 @@ void OrbitCamera::Update(XMFLOAT3 lookat, float yaw, float pitch, float delta_ti
 
 void OrbitCamera::UpdateCameraVectors()
 {
+	
+
+	SetRadius(radiusChange);
+	
+	
 	// Spherical to Cartesian coordinates
 	m_position.x = m_targetPosition.x + mRadius * cosf(m_pitch) * sinf(m_yaw);
 	m_position.y = m_targetPosition.y + mRadius * sinf(m_pitch);
 	m_position.z = m_targetPosition.z + mRadius * cosf(m_pitch) * cosf(m_yaw);
+
+
+
+	if (radiusChange > 45)
+	{
+		radiusChange -= .1f;
+	}
+
+
+
+
 }
 
 float clamp(float value, float min, float max)

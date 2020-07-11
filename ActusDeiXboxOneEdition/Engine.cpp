@@ -20,7 +20,7 @@ bool Engine::Initialize()
 
 	// Initialize unified buffers
 	//ResourceManager::ConfigureUnifiedBuffers(pbr.GetRendererResources()->device);
-
+	
 	// Start timer
 	engine_time = XTime();
 	engine_time.Restart();

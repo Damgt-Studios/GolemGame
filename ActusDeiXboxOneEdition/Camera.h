@@ -4,18 +4,24 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "Types.h"
 
+using namespace ADResource::ADGameplay;
+using namespace ADPhysics;
 using namespace DirectX;
 
-class Camera
+
+class Camera : public GameObject
 {
 public:
 	void GetViewMatrix(XMMATRIX& viewMatrix);
+	OBB collider;
+	bool changeView = false;
+	float radiusChange = 45;
 
 	virtual void SetPosition(XMFLOAT3& position) {};
 	virtual void Rotate(float yaw, float pitch) {};
 	virtual void Move(XMFLOAT3& position) {};
-
 	XMFLOAT3& GetRight();
 	XMFLOAT3& GetLook();
 	XMFLOAT3& GetUp();
@@ -27,6 +33,7 @@ public:
 	float GetFar();
 	void SetFOV(float fov);
 	void SetClippingPlanes(float _near, float _far);
+
 protected:
 	Camera();
 
@@ -54,9 +61,12 @@ class OrbitCamera : public Camera
 {
 public:
 	OrbitCamera();
+	virtual void Rotate(float& yaw, float& pitch);
+	void OnCollision();
+	float min_pitch = -90;
+	void SetColliderPosition(XMFLOAT3 m );
 
-	virtual void Rotate(float yaw, float pitch);
-
+	void CheckCollision(ADResource::ADGameplay::GameObject* obj);
 	void SetLookAt(XMFLOAT3 target);
 	void SetRadius(float radius);
 
@@ -65,7 +75,6 @@ public:
 	// Customs
 	void SetRunningTarget(XMFLOAT3 rt);
 	void Update(XMFLOAT3 lookat, float yaw, float pitch, float delta_time);
-
 private:
 	void UpdateCameraVectors();
 

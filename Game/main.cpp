@@ -77,7 +77,7 @@ private:
 	// Physics
 	ADPhysics::AABB test_colider;
 	ADPhysics::AABB test_colider1;
-	ADPhysics::Plane test_plane;
+	ADPhysics::_Plane test_plane;
 
 
 public:
@@ -166,11 +166,10 @@ public:
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		engine->GetOrbitCamera()->SetRadius(20);
+		
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-
-
-
+		
+		GameUtilities::AddGameObject(engine->GetOrbitCamera());
 		std::vector<std::string> bucketheadanims;
 		bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
 
@@ -199,7 +198,7 @@ public:
 		Renderable* rubbleCollider1 = GameUtilities::AddRenderableCollider();
 		Renderable* rubbleCollider2 = GameUtilities::AddRenderableCollider();
 		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
-
+		
 #ifdef ShowColliders
 		GameUtilities::AddGameObject(minionCollider);
 
@@ -507,10 +506,12 @@ public:
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
-			engine->GetOrbitCamera()->SetRadius(50);
+	
 			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
+			engine->GetOrbitCamera()->SetColliderPosition(ResourceManager::GetSkybox()->position);
+
 			golem->GetView(view);
 
 
@@ -524,9 +525,9 @@ public:
 
 
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
-			XMFLOAT4X4 persPass;
+			XMFLOAT4X4 persPass; 
 			XMStoreFloat4x4(&persPass, pers);
-
+			
 
 #ifdef _DEBUG
 			minionCollider->transform = XMMatrixScaling(20, 5, 20);
@@ -759,7 +760,7 @@ public:
 			{
 				pitch += camera_rotation_thresh * dt;
 			}
-
+			pitch = clamp(pitch,  0, 90);
 			if (Input::QueryButtonDown(GamepadButtons::LeftThumbstick) && Input::QueryButtonDown(GamepadButtons::RightThumbstick))
 			{
 				shutdown = true;
