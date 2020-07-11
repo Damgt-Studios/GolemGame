@@ -263,20 +263,26 @@ public:
 
 		//animationFiles[0] = "files/models/BattleMage.animfile";
 
+		engine->GetOrbitCamera()->SetClippingPlanes(0.1f, 10000.0f);
 
-
-		Renderable* tempPlane = currentScene.GetPlane();
+		//Renderable* tempPlane = currentScene.GetPlane();
+		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.5, 0.5), XMFLOAT3(0, 0, 0), true);
+		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/LevelVisible.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
 		GameUtilities::AddGameObject(tempPlane);
+		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(2400, 1700, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 180, 0), true);
+		mountainRange->colliderPtr = nullptr;
+		GameUtilities::AddGameObject(mountainRange);
+		//GameUtilities::AddGameObject(physicsPlane);
 
 #pragma region PhysicsSetup
 
 		//Physics Setup--------------------------------
-		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(tempPlane->GetMeshId());
+		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(physicsPlane->GetMeshId());
 		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
 		std::vector<ADPhysics::Triangle> ground;
 		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
 		XMMATRIX groundWorld = XMMatrixIdentity();
-		tempPlane->GetWorldMatrix(groundWorld);
+		physicsPlane->GetWorldMatrix(groundWorld);
 		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
 		{
 			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
