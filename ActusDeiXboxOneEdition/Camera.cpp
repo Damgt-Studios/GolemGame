@@ -13,7 +13,7 @@ void Camera::GetViewMatrix(XMMATRIX& viewMatrix)
 	viewMatrix = XMMatrixLookAtLH(position, targetPosition, up);
 	XMMATRIX InvView = XMMatrixInverse(nullptr, viewMatrix);
 	transform = XMMatrixTranslation(InvView.r[3].m128_f32[0], InvView.r[3].m128_f32[1], InvView.r[3].m128_f32[2]);
-	collider = OBB(transform, XMFLOAT3(1, 1, 1));
+	collider = OBB(transform, XMFLOAT3(20, 20, 20));
 }
 
 
@@ -205,7 +205,7 @@ void FPSCamera::UpdateCameraVectors()
 	XMStoreFloat3(&m_targetPosition, targetpositionvector);
 }
 
-OrbitCamera::OrbitCamera() : mRadius(10.0f) {}
+OrbitCamera::OrbitCamera() : mRadius(45.0f) {}
 
 void OrbitCamera::Rotate(float &yaw, float& pitch)
 {
@@ -218,7 +218,7 @@ void OrbitCamera::Rotate(float &yaw, float& pitch)
 }
 void OrbitCamera::OnCollision()
 {
-	 radiusChange = 180;
+	 radiusChange+= 10;
 	 changeView = true;
 	
 }
@@ -243,7 +243,7 @@ void OrbitCamera::CheckCollision(ADResource::ADGameplay::GameObject* obj)
 			else
 			{
 
-				if (obj->physicsType == (int)OBJECT_PHYSICS_TYPE::COLLIDABLE)
+				if (obj->physicsType == (int)OBJECT_PHYSICS_TYPE::COLLIDABLE || obj->physicsType == (int)OBJECT_PHYSICS_TYPE::STATIC)
 				{
 					collisionQueue.push(CollisionPacket(obj, this, m));
 					OnCollision();
@@ -272,7 +272,7 @@ void OrbitCamera::SetLookAt(XMFLOAT3 target)
 void OrbitCamera::SetRadius(float radius)
 {
 
-	mRadius = clamp(radius, 2.0f, 200.0f);
+	mRadius = clamp(radius, 2.0f, 400.0f);
 }
 
 
@@ -296,7 +296,10 @@ void OrbitCamera::Update(XMFLOAT3 lookat, float yaw, float pitch, float delta_ti
 void OrbitCamera::UpdateCameraVectors()
 {
 	
-
+	if (radiusChange > 300.0f)
+	{
+		radiusChange = 45.0f;
+	}
 	SetRadius(radiusChange);
 	
 	
@@ -310,6 +313,7 @@ void OrbitCamera::UpdateCameraVectors()
 	{
 		radiusChange -= 0.1f;
 	}
+
 
 
 }
