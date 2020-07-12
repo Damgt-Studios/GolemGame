@@ -346,6 +346,16 @@ public:
 		GameUtilities::AddGameObject(rock_wall4);
 		GameUtilities::AddGameObject(rock_wall5);
 
+		Renderable* water_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Water_Spawner.mat", XMFLOAT3(25, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
+		Renderable* fire_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Fire_Spawner.mat", XMFLOAT3(50, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
+		Renderable* forest_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Forest_Spawner.mat", XMFLOAT3(-25, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
+		Renderable* stone_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Stone_Spawner.mat", XMFLOAT3(-50, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
+
+		GameUtilities::AddGameObject(water_spawner);
+		GameUtilities::AddGameObject(fire_spawner);
+		GameUtilities::AddGameObject(forest_spawner);
+		GameUtilities::AddGameObject(stone_spawner);
+
 		for (int i = 0; i < 10; i++)
 		{
 			Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
