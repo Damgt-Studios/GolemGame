@@ -335,14 +335,16 @@ public:
 		GameUtilities::AddGameObject(rubble1);
 		house1->SetRubble(rubble1);
 
-		Renderable* rock_wall1 = GameUtilities::AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(312.5, 25, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
-		Renderable* rock_wall2 = GameUtilities::AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(312.5, 25, 75), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0), true);
-		Renderable* rock_wall3 = GameUtilities::AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(312.5, 25, 175), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
-		Renderable* rock_wall4 = GameUtilities::AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(312.5, 25, 225), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
+		Renderable* rock_wall1 = GameUtilities::AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(312.5, 25, 150), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
+		Renderable* rock_wall2 = GameUtilities::AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(312.5, 25, -0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0), true);
+		Renderable* rock_wall3 = GameUtilities::AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(312.5, 25, -150), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
+		Renderable* rock_wall4 = GameUtilities::AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(312.5, 25, -300), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
+		Renderable* rock_wall5 = GameUtilities::AddSimpleAsset("files/models/Cliff_5.mesh", "files/textures/Cliff_5.mat", XMFLOAT3(312.5, 15, -450), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
 		GameUtilities::AddGameObject(rock_wall1);
 		GameUtilities::AddGameObject(rock_wall2);
 		GameUtilities::AddGameObject(rock_wall3);
 		GameUtilities::AddGameObject(rock_wall4);
+		GameUtilities::AddGameObject(rock_wall5);
 
 		for (int i = 0; i < 10; i++)
 		{
