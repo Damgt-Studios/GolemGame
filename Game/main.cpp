@@ -267,12 +267,11 @@ public:
 
 		//Renderable* tempPlane = currentScene.GetPlane();
 		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.5, 0.5), XMFLOAT3(0, 0, 0), true);
-		Renderable* tempPlane = GameUtilities::AddSimpleAsset("files/models/LevelVisible.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
-		GameUtilities::AddGameObject(tempPlane);
-		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(2400, 1700, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 180, 0), true);
+		GameUtilities::AddGameObject(physicsPlane);
+
+		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(2400, 1750, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 180, 0), true);
 		mountainRange->colliderPtr = nullptr;
 		GameUtilities::AddGameObject(mountainRange);
-		//GameUtilities::AddGameObject(physicsPlane);
 
 #pragma region PhysicsSetup
 
@@ -333,6 +332,10 @@ public:
 		GameUtilities::AddGameObject(rubble1);
 		house1->SetRubble(rubble1);
 
+		Renderable* rock_wall = GameUtilities::AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(325, 25, 0), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
+		Renderable* rock_wall1 = GameUtilities::AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(325, 25, 50), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 180, 0), true);
+		GameUtilities::AddGameObject(rock_wall);
+		GameUtilities::AddGameObject(rock_wall1);
 
 		for (int i = 0; i < 10; i++)
 		{

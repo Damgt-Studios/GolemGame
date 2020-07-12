@@ -135,7 +135,7 @@ float4 main(OutputVertex v) : SV_TARGET
     
     //Multiply the sum of the Additional Modifications
     texelColor = float4(CalcHemisphericAmbient(v.normal, texelColor.xyz), 1);
-    dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.4f, 1);
+    dirFinal = dirFinal * clamp(CalcShadowAmount(v.lightSpaceCoords), 0.6f, 1);
     return texelColor * (dirFinal + pointFinal);
 }
 
