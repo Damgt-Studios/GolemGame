@@ -114,7 +114,7 @@ Camera::Camera()
 	colliderPtr = &collider;
 
 
-	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
+	physicsType = (int)OBJECT_PHYSICS_TYPE::TRIGGER;
 	m_position = XMFLOAT3(0, 0, 0);
 	m_targetPosition = XMFLOAT3(0, 0, 0);
 	m_up = XMFLOAT3(0, 1, 0);
@@ -243,9 +243,11 @@ void OrbitCamera::CheckCollision(ADResource::ADGameplay::GameObject* obj)
 			else
 			{
 
-				
+				if (obj->physicsType == (int)OBJECT_PHYSICS_TYPE::COLLIDABLE)
+				{
 					collisionQueue.push(CollisionPacket(obj, this, m));
 					OnCollision();
+				}
 
 				
 
