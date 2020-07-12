@@ -797,7 +797,7 @@ public:
 			{
 				pitch += camera_rotation_thresh * dt;
 			}
-			pitch = clamp(pitch,  0, 90);
+			pitch = clamp(pitch, 0, 45);
 			if (Input::QueryButtonDown(GamepadButtons::LeftThumbstick) && Input::QueryButtonDown(GamepadButtons::RightThumbstick))
 			{
 				shutdown = true;
