@@ -10,6 +10,7 @@ namespace ADResource
 		enum OBJECT_TAG
 		{
 			PLAYER = 0,
+			COMMAND_MARKER,
 			UNTYPED_MINION,
 			WOOD_MINION,
 			WATER_MINION,
@@ -62,8 +63,95 @@ namespace ADResource
 			std::string eventName;
 
 			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			//HitBox(const HitBox& _rhs) 
+			//{
+			//	colScale = _rhs.colScale;
+			//	vel = _rhs.vel;
+			//	isDeactivateOnFirstApplication = _rhs.isDeactivateOnFirstApplication;
+			//	offsetX = _rhs.offsetX;
+			//	offsetZ = _rhs.offsetZ;
+			//	offsetY = _rhs.offsetY;
+			//	lifespan = _rhs.lifespan;
+			//	collider = _rhs.collider;
+			//	eventName = _rhs.eventName;
+			//	for (auto& effect : _rhs.effects)
+			//	{
+			//		effects.push_back(effect->clone());
+			//	}
+			//	active = _rhs.active;
+			//	safeRadius = _rhs.safeRadius;
+			//	desirability = _rhs.desirability;
+			//	physicsType = _rhs.physicsType;
+			//	gamePlayType = _rhs.gamePlayType;
+			//	team = _rhs.team;
+			//	actionLevel = _rhs.actionLevel;
+			//	meshID = _rhs.meshID;
+			//	Velocity = _rhs.Velocity;
+			//	transform = _rhs.transform;
+			//	postTransform = _rhs.postTransform;
+			//	colliderPtr = &collider;
+			//	pmat = _rhs.pmat;
+			//};
+			//HitBox& operator =(const HitBox& _rhs) { return *this; };
 			~HitBox() = default;
 
+			HitBox* Clone()
+			{
+				HitBox* nBox = new HitBox();
+				XMFLOAT3 scale = XMFLOAT3(1, 1, 1);
+				nBox->SetScale(scale);
+				nBox->SetRotation(scale);
+				nBox->SetPosition(scale);
+				nBox->active = false;
+
+				//nBox->collider = collider;
+
+
+				int cnt = 0;
+				for (auto& effect : effects)
+				{
+					nBox->effects.push_back(effect->clone());
+					nBox->effects[cnt].get()->sourceID = ResourceManager::GenerateEffectID();
+					cnt++;
+				}
+				nBox->offsetX = offsetX;
+				nBox->offsetZ = offsetZ;
+				nBox->offsetY = offsetY;
+				nBox->colScale = colScale;
+				nBox->vel = vel;
+				nBox->lifespan = lifespan;
+				nBox->team = team;
+				if (nBox->team == 3)
+				{
+					nBox->gamePlayType = ADResource::ADGameplay::CONSUMPTION_HITBOX;
+				}
+				nBox->isDeactivateOnFirstApplication = isDeactivateOnFirstApplication;
+				nBox->eventName = eventName;
+				AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				nBox->SetMeshID(id);
+
+				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
+				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, XMFLOAT3(1, 1, 1));
+				nBox->collider.trigger = true;
+				nBox->SetScale(colScale);
+				nBox->colliderPtr = &nBox->collider;
+
+				//nBox->safeRadius = safeRadius;
+				//nBox->desirability = desirability;
+				//nBox->physicsType = physicsType;
+				//nBox->gamePlayType = gamePlayType;
+				//nBox->actionLevel = actionLevel;
+				//nBox->meshID = meshID;
+				//nBox->Velocity = Velocity;
+				//nBox->transform = transform;
+				//nBox->postTransform = postTransform;
+
+				//nBox->colliderPtr = &collider;
+				//nBox->pmat = pmat;
+
+				ResourceManager::AddGameObject(nBox);
+				return nBox;
+			}
 
 			void Enable()
 			{
@@ -164,10 +252,10 @@ namespace ADResource
 
 			bool StartAction(XMMATRIX* _casterTransform)
 			{
-				if (movesToPlayer)
+				if (hitbox && movesToPlayer)
 				{
-					hitbox->transform = *_casterTransform;
-					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
+					//hitbox->transform = *_casterTransform;
+					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), *_casterTransform);
 					XMVECTOR castSideNormal = _casterTransform->r[0];
 					XMVECTOR castUpNormal = _casterTransform->r[1];
 					XMVECTOR castHeadingNormal = _casterTransform->r[2];
@@ -246,7 +334,7 @@ namespace ADResource
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
 							{
-								if (hbpos != nullptr)
+								if (hbpos)
 								{
 									delete hbpos;
 								}
@@ -279,6 +367,30 @@ namespace ADResource
 						hitbox[i].active = false;
 					}
 				}
+			}
+
+			Action* Clone()
+			{
+				Action* action = new Action();
+				//action->hitboxCount = 0;
+				action->hitbox = hitbox->Clone();
+				//action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
+				action->hitboxCount++;
+				action->cooldownDuration = cooldownDuration;
+				action->attackDuration = attackDuration;
+				action->removeHbIfEnd = removeHbIfEnd;
+
+				for (auto& evnt : eventName)
+				{
+					action->eventName.push_back(evnt);
+					action->eventFired.push_back(false);
+				}
+				for (auto& evnt : eventDelay)
+				{
+					action->eventDelay.push_back(evnt);
+				}
+				action->hitboxDelay = hitboxDelay;
+				return action;
 			}
 		};
 

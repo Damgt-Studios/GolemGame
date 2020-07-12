@@ -1,5 +1,6 @@
 #pragma once
-#include "ADAI.h"
+//#include "ADAI.h"
+#include "GameplayAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
 #include <ADCombat.h>
@@ -51,8 +52,9 @@ namespace ADResource
 			// Public Data Members
 			// AI
 			GameObject* targetMarker;
+
 			float commandDistanceTimer = 0;
-			ADAI::FlockingGroup** flockingGroups;
+			ADAI::MinionGroup** minionGroups;
 			int commandTargetGroup = 0;
 
 

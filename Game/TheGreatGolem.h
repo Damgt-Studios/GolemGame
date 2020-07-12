@@ -366,6 +366,7 @@ public:
 					lhs = _entityStr.substr(0, midPos);
 					rhs = _entityStr.substr(midPos + 1, endPos - (midPos + 1));
 
+
 					if (lhs == "AddHitBox")
 					{
 						//auto tFoundIt = DefinitionDatabase::Instance()->hitboxDatabase.find(rhs);
@@ -373,7 +374,10 @@ public:
 						//{
 						//	int a = 0;
 						//}
+
 						action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
+						//HitBox* temp = action->hitbox->Clone();
+						//action->hitbox = temp;
 						action->hitboxCount++;
 					}
 					else if (lhs == "Cooldown")

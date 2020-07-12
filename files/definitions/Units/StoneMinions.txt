@@ -25,9 +25,9 @@ StatCurrent=10
 ;
 
 Effect=StoneMinionPunch:StatChange
-TickCount=1
-TickDuration=0
-TickOnEnter=false
+TickCount=0
+TickDuration=2
+TickOnEnter=true
 TickOnExit=false
 Stat=Health
 MinValue=-22
@@ -37,15 +37,20 @@ MaxValue=-22
 Hitbox=StoneMinionPunchHB:
 AddEffect=StoneMinionPunch
 OffsetX=0
-OffsetZ=30
+OffsetZ=5
+OffsetY=0
 Collider_Width=20
-Collider_Height=20
-Collider_Length=20
-SingleHit=true
+Collider_Height=10
+Collider_Length=30
+Team=0
+SingleHit=false
 ;
 
 Action=StoneMinionPunch:
 Cooldown=1.2
-Duration=0.5
+Duration=1.0
 AddHitBox=StoneMinionPunchHB
+AddEvent=Sfx_GolemPunch
+SetEventsDelay=0
+SetHitboxDelay=0.75
 ;

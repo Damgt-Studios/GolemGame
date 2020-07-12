@@ -17,7 +17,6 @@ namespace ADResource
 		class Building : public GameObject
 		{
 			StatSheet* stats;
-			std::string deathEvent;
 			Building* rubble = nullptr;
 
 
@@ -31,6 +30,9 @@ namespace ADResource
 
 
 		public:
+			std::string name;
+			std::string deathEvent;
+
 			Building()
 			{
 				//team = 1;
@@ -41,6 +43,12 @@ namespace ADResource
 			Building(const Building&) = delete;
 			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3), std::string statSheet)
 			{
+				//temp->SetScale(scale);
+				SetScale(collider_scale);
+				SetRotation(rotation);
+				SetPosition(position);
+				//pmat.InvMass = 0.01;
+
 				pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
 				models = Generator(position, rotation);
 
@@ -50,9 +58,12 @@ namespace ADResource
 				}
 
 				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
-				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+				//physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 				colliderPtr = &collider;
 				team = 1;
+				desirability = 1;
+				safeRadius = min((colliderScale.x / 2.f),(colliderScale.z / 2.f))-1;
+				attackRadius = 18.f;
 
 				SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			}
@@ -64,22 +75,24 @@ namespace ADResource
 
 			void RemoveFromScene()
 			{
+				desirability = -5;
 				for (size_t i = 0; i < models.size(); i++)
 				{
 					ResourceManager::RemoveGameObject(models[i]);
 				}
-				if (destructionEmitter && destructionEmitter2)
-				{
-					if (!destructionEmitter->GetActive())
-						destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
-					else
-						destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
-				}
+				//if (destructionEmitter && destructionEmitter2)
+				//{
+				//	if (!destructionEmitter->GetActive())
+				//		destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+				//	else
+				//		destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+				//}
 			};
 
 			virtual void Update(float delta_time)
 			{
 				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				SetPosition(pos);
 				//collider.Pos = VectorToFloat3(XMVector3Transform(Float3ToVector(collider.Pos), XMMatrixScaling(25, 25, 25)));
 
 				physicsType = COLLIDABLE;
@@ -118,6 +131,11 @@ namespace ADResource
 					effects.push_back(_effect->clone());
 					effects[effects.size() - 1].get()->OnApply(GetStatSheet());
 				}
+			}
+
+			Renderable* GetModelByIndex(int _index)
+			{
+				return models[_index];
 			}
 
 			virtual StatSheet* GetStatSheet() override
@@ -167,8 +185,9 @@ namespace ADResource
 				}
 			}
 
-			UpwardCloudEmitter* destructionEmitter;
-			UpwardCloudEmitter* destructionEmitter2;
+
+			//UpwardCloudEmitter* destructionEmitter;
+			//UpwardCloudEmitter* destructionEmitter2;
 		private:
 			XMFLOAT3 pos, rot, off, colliderScale;
 			std::vector<Renderable*> models;

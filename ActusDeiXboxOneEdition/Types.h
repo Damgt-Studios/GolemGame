@@ -614,11 +614,13 @@ namespace ADResource
 		public:
 			bool active = true;
 			float safeRadius = 5.0f;
+			float attackRadius = 5.0f;
 			float desirability = 0;
 
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
+			UINT actionLevel = 0;
 			AD_ULONG meshID;
 			//OBJECT_DEFENSE defenseType;
 			XMFLOAT4 Velocity = { 0,0,0,0 };

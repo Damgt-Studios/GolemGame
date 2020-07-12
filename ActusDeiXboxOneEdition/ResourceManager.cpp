@@ -6,7 +6,8 @@
 AD_ULONG ResourceManager::current_id = 1;
 AD_ULONG ResourceManager::effect_id = 0;
 
-AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool instanced, bool wireframe) {
+AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool instanced, bool wireframe) 
+{
 	ADUtils::SHADER shader = { 0 };
 
 	if (!wireframe)
@@ -25,7 +26,8 @@ AD_ULONG ResourceManager::AddSimpleModel(std::string modelname, std::string mate
 	return InitializeSimpleModel(modelname, materials, position, scale, rotation, shader, instanced);
 }
 
-AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) {
+AD_ULONG ResourceManager::AddAnimatedModel(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation, bool wireframe) 
+{
 	ADUtils::SHADER shader = { 0 };
 
 	if (!wireframe)
