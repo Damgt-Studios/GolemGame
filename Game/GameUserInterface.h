@@ -96,6 +96,7 @@ namespace GolemGameUISetup
         UINT SetupPauseScreen(ADUI::ADUI* myUI, PauseMenuController* _pauseMenuController);
         UINT SetupOptionsScreen(ADUI::ADUI* myUI, OptionsMenuUIController* _optionsMenuUIController);
         UINT SetupEngGameScreen(ADUI::ADUI* myUI);
+        UINT SetupDefeatGameScreen(ADUI::ADUI* myUI);
         UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController);
         UINT SetupDebugMenu(ADUI::ADUI* myUI);
         UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid); // std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);

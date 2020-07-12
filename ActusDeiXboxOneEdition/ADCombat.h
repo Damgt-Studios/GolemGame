@@ -227,12 +227,14 @@ namespace ADResource
 			float attackDuration;
 			float attackTimer;
 			float hitboxDelay = 0;
-			HitBox* hitbox;
-			UINT hitboxCount;
+			float scaleCorrection = 10;
+			std::vector<HitBox*> hitboxes;
+			UINT currentHitBox = 0;
+			UINT hitboxCount = 0;
 
 			bool removeHbIfEnd = true;
 			bool movesToPlayer = true;
-			bool hitboxFired = false;
+			std::vector<bool> hitboxFired;
 
 			std::vector<bool> eventFired;
 			std::vector<float> eventDelay;
@@ -243,70 +245,79 @@ namespace ADResource
 			//If the attack doesn't own the hitbox this needs to change.
 			~Action()
 			{
-				delete hitbox;
-				if (hbpos)
+				for (auto& hb : hitboxes)
 				{
-					delete hbpos;
+					delete hb;
 				}
+				hitboxes.clear();
 			};
 
 			bool StartAction(XMMATRIX* _casterTransform)
 			{
-				if (hitbox && movesToPlayer)
-				{
-					//hitbox->transform = *_casterTransform;
-					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), *_casterTransform);
-					XMVECTOR castSideNormal = _casterTransform->r[0];
-					XMVECTOR castUpNormal = _casterTransform->r[1];
-					XMVECTOR castHeadingNormal = _casterTransform->r[2];
-					XMVECTOR targetLocation = _casterTransform->r[3];
-
-					castUpNormal = XMVector4Normalize(castUpNormal);
-					XMFLOAT3 casterUN;
-					XMStoreFloat3(&casterUN, castUpNormal);
-
-					castSideNormal = XMVector4Normalize(castSideNormal);
-					XMFLOAT3 casterSN;
-					XMStoreFloat3(&casterSN, castSideNormal);
-
-
-					castHeadingNormal = XMVector4Normalize(castHeadingNormal);
-					XMFLOAT3 casterFN;
-					XMStoreFloat3(&casterFN, castHeadingNormal);
-					XMFLOAT3 targetPos;
-					XMStoreFloat3(&targetPos, targetLocation);
-
-					targetPos.x += (casterFN.x * hitbox->offsetZ) + (casterUN.x * hitbox->offsetY) + (casterSN.x * hitbox->offsetX);
-					targetPos.y += (casterFN.y * hitbox->offsetZ) + (casterUN.y * hitbox->offsetY) + (casterSN.y * hitbox->offsetX);
-					targetPos.z += (casterFN.z * hitbox->offsetZ) + (casterUN.z * hitbox->offsetY) + (casterSN.z * hitbox->offsetX);
-
-					hitbox->SetPosition(targetPos);
-
-					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
-					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
-					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
-
-				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
+					if (hitboxes.size() > 0 && movesToPlayer)
+					{
+						//hitbox->transform = *_casterTransform;
+						hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x * scaleCorrection, hitboxes[currentHitBox]->colScale.y * scaleCorrection, hitboxes[currentHitBox]->colScale.z * scaleCorrection), *_casterTransform);
+						XMVECTOR castSideNormal = _casterTransform->r[0];
+						XMVECTOR castUpNormal = _casterTransform->r[1];
+						XMVECTOR castHeadingNormal = _casterTransform->r[2];
+						XMVECTOR targetLocation = _casterTransform->r[3];
+						//hitboxes[currentHitBox]->transform.r[3] = targetLocation;
+
+						castUpNormal = XMVector4Normalize(castUpNormal);
+						XMFLOAT3 casterUN;
+						XMStoreFloat3(&casterUN, castUpNormal);
+
+						castSideNormal = XMVector4Normalize(castSideNormal);
+						XMFLOAT3 casterSN;
+						XMStoreFloat3(&casterSN, castSideNormal);
+
+
+						castHeadingNormal = XMVector4Normalize(castHeadingNormal);
+						XMFLOAT3 casterFN;
+						XMStoreFloat3(&casterFN, castHeadingNormal);
+						XMFLOAT3 targetPos;
+						XMStoreFloat3(&targetPos, targetLocation);
+
+						targetPos.x += (casterFN.x * hitboxes[currentHitBox]->offsetZ) + (casterUN.x * hitboxes[currentHitBox]->offsetY) + (casterSN.x * hitboxes[currentHitBox]->offsetX);
+						targetPos.y += (casterFN.y * hitboxes[currentHitBox]->offsetZ) + (casterUN.y * hitboxes[currentHitBox]->offsetY) + (casterSN.y * hitboxes[currentHitBox]->offsetX);
+						targetPos.z += (casterFN.z * hitboxes[currentHitBox]->offsetZ) + (casterUN.z * hitboxes[currentHitBox]->offsetY) + (casterSN.z * hitboxes[currentHitBox]->offsetX);
+
+						hitboxes[currentHitBox]->SetPosition(targetPos);
+						hitboxes[currentHitBox]->Velocity.x = (casterFN.x * hitboxes[currentHitBox]->vel.z) + (casterUN.x * hitboxes[currentHitBox]->vel.y) + (casterSN.x * hitboxes[currentHitBox]->vel.x);
+						hitboxes[currentHitBox]->Velocity.y = (casterFN.y * hitboxes[currentHitBox]->vel.z) + (casterUN.y * hitboxes[currentHitBox]->vel.y) + (casterSN.y * hitboxes[currentHitBox]->vel.x);
+						hitboxes[currentHitBox]->Velocity.z = (casterFN.z * hitboxes[currentHitBox]->vel.z) + (casterUN.z * hitboxes[currentHitBox]->vel.y) + (casterSN.z * hitboxes[currentHitBox]->vel.x);
+
+					}
 					for (int i = 0; i < eventDelay.size(); i++)
 					{
 						eventFired[i] = false;
 					}
-					if (hitbox)
+					if (hitboxes.size() > 0)
 					{
 						cooldownTimer = cooldownDuration;
 						attackTimer = attackDuration;
-						for (int i = 0; i < hitboxCount; ++i)
-						{
+						//for (auto& hb:hitboxes)
+						//{
 							if (hitboxDelay <= 0)
 							{
-								hitboxFired = true;
-								hitbox[i].Enable();
+								currentHitBox++;
+								if (currentHitBox >= hitboxCount)
+								{
+									currentHitBox = 0;
+									for (auto& hb : hitboxFired)
+									{
+										hb = false;
+									}
+								}
+								hitboxFired[currentHitBox] = true;
+								hitboxes[currentHitBox]->Enable();
 							}
 							active = true;
 							return true;
-						}
+						//}
 					}
 				}
 				return false;
@@ -320,16 +331,16 @@ namespace ADResource
 				}
 				if (active)
 				{
+					if (hitboxFired[currentHitBox] == false && attackDuration - attackTimer > hitboxDelay)
+					{
+						//for (auto& hb : hitboxes)
+						//{
+							hitboxFired[currentHitBox] = true;
+							hitboxes[currentHitBox]->Enable();
+						//}
+					}
 					if (attackTimer > 0)
 					{
-						if (hitboxFired == false && attackDuration - attackTimer > hitboxDelay)
-						{
-							for (int i = 0; i < hitboxCount; ++i)
-							{
-								hitboxFired = true;
-								hitbox[i].Enable();
-							}
-						}
 						for (int i = 0; i < eventDelay.size(); i++)
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
@@ -338,7 +349,7 @@ namespace ADResource
 								{
 									delete hbpos;
 								}
-								hbpos = new XMFLOAT3(hitbox->GetPosition());
+								hbpos = new XMFLOAT3(hitboxes[currentHitBox]->GetPosition());
 								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)hbpos);
 								eventFired[i] = true;
 							}
@@ -349,8 +360,12 @@ namespace ADResource
 							EndAction();
 						}
 					}
+					else
+					{
+						EndAction();
+					}
 
-					hitbox->collider.Pos = hitbox->GetPosition();
+					hitboxes[currentHitBox]->collider.Pos = hitboxes[currentHitBox]->GetPosition();
 				}
 
 			}
@@ -358,14 +373,18 @@ namespace ADResource
 			void EndAction()
 			{
 				//Some hit boxes would turn off this way, others require they burn out or collide.
-				if (hitbox && removeHbIfEnd)
+				if (hitboxes[currentHitBox])
 				{
 					active = false;
-					hitboxFired = false;
-					for (int i = 0; i < hitboxCount; ++i)
-					{
-						hitbox[i].active = false;
-					}
+					//hitboxFired[currentHitBox] = false;
+					//for (auto& hb : hitboxes)
+					//{
+						if (removeHbIfEnd)
+						{
+							hitboxes[currentHitBox]->active = false;
+							hitboxFired[currentHitBox]  = false;
+						}
+					//}
 				}
 			}
 
@@ -373,12 +392,17 @@ namespace ADResource
 			{
 				Action* action = new Action();
 				//action->hitboxCount = 0;
-				action->hitbox = hitbox->Clone();
+				for (auto& hb : hitboxes)
+				{
+					action->hitboxes.push_back(hb->Clone());
+					action->hitboxFired.push_back(false);
+				}
 				//action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
-				action->hitboxCount++;
+				action->hitboxCount = hitboxCount;
 				action->cooldownDuration = cooldownDuration;
 				action->attackDuration = attackDuration;
 				action->removeHbIfEnd = removeHbIfEnd;
+				action->scaleCorrection = scaleCorrection;
 
 				for (auto& evnt : eventName)
 				{

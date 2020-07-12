@@ -5,6 +5,7 @@
 //Constructor and Destructor
 ADResource::ADGameplay::Golem::Golem() {
 
+	desirability = 2;
 	anim_controller[STONE] = new AnimationStateMachine();
 	anim_controller[WATER] = new AnimationStateMachine();
 	anim_controller[FIRE] = new AnimationStateMachine();
@@ -99,7 +100,7 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 	}
 	if (stats->RequestStats("Health")->currentValue <= 0)
 	{
-		//Death();
+		Death();
 	}
 }
 
@@ -216,6 +217,19 @@ void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 void ADResource::ADGameplay::Golem::Remove()
 {
 
+}
+
+void ADResource::ADGameplay::Golem::Death()
+{
+	//Put a timer here to let the death animation play.
+	active = false;
+	//stop input and other processes now that your aren't active or however you want to do it.
+
+	ADUI::UIMessage eventUIMessage;
+	eventUIMessage.targetID = 1;
+	eventUIMessage.externalMsg = true;
+	eventUIMessage.commandID = 0;
+	ADUI::MessageReceiver::SendMessage(&eventUIMessage);
 }
 
 

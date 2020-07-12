@@ -56,12 +56,14 @@ namespace ADAI
 	public:
 		SimpleStateMachine mySSM;
 		XMFLOAT3 currentTargetLocation;
+		ADResource::ADGameplay::Action* myAttack;
 		ADResource::ADGameplay::Building* building;
 		ADResource::ADGameplay::GameObject* currentTarget;
 
 		void Update(float _deltaTime)
 		{
 			mySSM.Update(_deltaTime);
+			myAttack->Update(_deltaTime);
 		};
 	};
 
@@ -85,12 +87,15 @@ namespace ADAI
 			}
 			else
 			{
-				if (!tower->currentTarget->active)
+				if (!tower->currentTarget->active || DistanceCalculation(tower->currentTarget->GetPosition(), tower->building->GetPosition()) > 800.f)
 				{
 					tower->currentTarget = nullptr;
+
 				}
 				else
 				{
+					tower->mySSM.SwitchState(1, _deltaTime);
+
 					XMVECTOR pos = tower->building->transform.r[3];
 
 					XMVECTOR distanceToPlane = XMVector3Dot({ 0,1,0 }, (tower->currentTarget->transform.r[3] - tower->building->GetModelByIndex(0)->transform.r[3]));
@@ -108,6 +113,7 @@ namespace ADAI
 
 					tower->building->GetModelByIndex(0)->SetScale({ 0.05,0.05,0.05 });
 					tower->building->GetModelByIndex(0)->SetPosition({ pos.m128_f32[0], pos.m128_f32[1], pos.m128_f32[2] });
+					tower->building->transform = tower->building->GetModelByIndex(0)->transform;
 				}
 			}
 		};

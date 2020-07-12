@@ -37,6 +37,7 @@ namespace ADResource
 			void CheckCollision(GameObject* obj);
 			virtual void OnCollision(GameObject* other, Manifold& m);
 			void Remove();
+			void Death();
 			void InitializeController();
 
 

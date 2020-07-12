@@ -50,8 +50,8 @@ namespace ADGameplay
 		std::vector<PBRArguments> villagerArguments;
 
 		std::vector<Destructable*> villagers;
-		std::vector<Building*> buildings;
 		std::vector<ADAI::TowerAI*> towers;
+		std::vector<Building*> buildings;
 
 		//Minions
 		std::vector<Destructable*> stoneMinions;
@@ -172,14 +172,14 @@ namespace ADGameplay
 
 
 
-			Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
+			Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 			house1->name = "house1";
 			GameUtilities::AddGameObject(house1);
 			AddBuilding(house1);
 			//house1->destructionEmitter = &engine->destructionCloud;
 			//house1->destructionEmitter2 = &engine->destructionCloud2;
 
-			Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
+			Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble1);
 			house1->SetRubble(rubble1);
 

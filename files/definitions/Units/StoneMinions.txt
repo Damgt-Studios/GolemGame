@@ -39,9 +39,9 @@ AddEffect=StoneMinionPunch
 OffsetX=0
 OffsetZ=5
 OffsetY=0
-Collider_Width=20
-Collider_Height=10
-Collider_Length=30
+Collider_Width=5
+Collider_Height=5
+Collider_Length=10
 Team=0
 SingleHit=false
 ;

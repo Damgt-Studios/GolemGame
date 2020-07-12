@@ -634,28 +634,28 @@ public:
 			{
 				physics_timer = 0;
 				//--------------------------------------------------------------------------------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-					for (unsigned int j = 0; j < OBJ_COUNT; j++)
-					{
-						if (i != j)
-						{
-							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
-							{
-								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
-								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
-									{
-										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
-										{
-											OBJS[i]->CheckCollision(OBJS[j]);
-										}
-									}
-								}
-							}
-						}
-					}
-				}*/
+				//for (int i = 0; i < OBJ_COUNT; i++)
+				//{
+				//	for (unsigned int j = 0; j < OBJ_COUNT; j++)
+				//	{
+				//		if (i != j)
+				//		{
+				//			if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+				//			{
+				//				if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+				//				{
+				//					if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
+				//					{
+				//						if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+				//						{
+				//							OBJS[i]->CheckCollision(OBJS[j]);
+				//						}
+				//					}
+				//				}
+				//			}
+				//		}
+				//	}
+				//}
 
 				for (int i = 0; i < OBJ_COUNT; i++)
 				{

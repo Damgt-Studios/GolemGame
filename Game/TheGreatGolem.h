@@ -245,7 +245,7 @@ public:
 				trigger->team = 1;
 
 
-			std:string currentEffect;
+				std:string currentEffect;
 				while (endPos != std::string::npos)
 				{
 					midPos = _entityStr.find('=');
@@ -375,10 +375,20 @@ public:
 						//	int a = 0;
 						//}
 
-						action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
+						action->hitboxes.push_back(DefinitionDatabase::Instance()->hitboxDatabase[rhs]);
+						action->hitboxFired.push_back(false);
 						//HitBox* temp = action->hitbox->Clone();
 						//action->hitbox = temp;
 						action->hitboxCount++;
+					}
+					else if (lhs == "HitboxDuplicates")
+					{
+						action->hitboxCount = std::stoi(rhs);
+						for (int i = 1; i < action->hitboxCount; ++i)
+						{
+							action->hitboxes.push_back(action->hitboxes[0]->Clone());
+							action->hitboxFired.push_back(false);
+						}
 					}
 					else if (lhs == "Cooldown")
 					{

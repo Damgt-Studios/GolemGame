@@ -55,6 +55,7 @@ namespace ADAI
 	{
 	public:
 		SimpleStateMachine* mySSM;
+		UINT returnIndex;
 		//ADResource::ADGameplay::GameObject* target;
 		UINT attackCount = 1;
 		UINT attackCounter = 0;
@@ -93,7 +94,7 @@ namespace ADAI
 				{
 					attackCounter = 0;
 					mySSM->gameObject->actionLevel = 0;
-					mySSM->SwitchState(1);
+					mySSM->SwitchState(returnIndex);
 				}
 			}
 		};

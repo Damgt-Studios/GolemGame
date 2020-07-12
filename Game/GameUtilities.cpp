@@ -271,7 +271,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
+	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
 
 
 	return temp;
@@ -292,9 +292,9 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
 
-	scale.x *= 10.0f;
-	scale.y *= 10.0f;
-	scale.z *= 10.0f;
+	scale.x *= (1.f/scale.x);
+	scale.y *= (1.f/scale.y);
+	scale.z *= (1.f/scale.z);
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
@@ -473,6 +473,9 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	_destructable->gamePlayType = OBJECT_TAG::PEASANT;
 	_destructable->deathEvent = "VillagerDeath";
 	_destructable->team = 1;
+	_destructable->colScale.x *= 5;
+	_destructable->colScale.y *= 5;
+	_destructable->colScale.z *= 5;
 
 	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
 	temp->mySSM.gameObject = _destructable;
@@ -505,6 +508,7 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
 	attacking->mySSM = &temp->mySSM;
+	attacking->returnIndex = 1;
 	attacking->myAttack = DefinitionDatabase::Instance()->actionDatabase["VillagerCower"];
 	temp->mySSM.states.push_back(attacking);
 
@@ -518,6 +522,9 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	_destructable->deathEvent = "MinionDeath";
 	_destructable->desirability = 0.5f;
 	_destructable->team = 0;
+	_destructable->colScale.x *= 5;
+	_destructable->colScale.y *= 5;
+	_destructable->colScale.z *= 5;
 
 	ADAI::MinionAI* temp = new ADAI::MinionAI;
 	temp->mySSM.gameObject = _destructable;
@@ -535,6 +542,7 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
 	attacking->mySSM = &temp->mySSM;
+	attacking->returnIndex = 1;
 	temp->mySSM.states.push_back(attacking);
 
 	switch (_destructable->gamePlayType)
@@ -542,21 +550,25 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	case STONE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
 		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = temp->myAttack;
 		break;
 	case WATER_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
 		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = temp->myAttack;
 		break;
 	case FIRE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
 		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = temp->myAttack;
 		break;
 	case WOOD_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
 		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = temp->myAttack;
 		break;
 	}
@@ -586,7 +598,9 @@ ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADReso
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
 	attacking->mySSM = &temp->mySSM;
-	attacking->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+	temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["BallistaBoltFire"]->Clone();
+	attacking->myAttack = temp->myAttack;
+	attacking->returnIndex =0;
 	temp->mySSM.states.push_back(attacking);
 
 	temp->mySSM.currentState = targeting;
