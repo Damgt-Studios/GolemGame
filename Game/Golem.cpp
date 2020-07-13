@@ -113,8 +113,6 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 	{
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
-
-			//If collision and collision object is a trigger then go to OnTrigger Function
 			if (obj->colliderPtr->trigger)
 			{
 				//OnTrigger(obj);

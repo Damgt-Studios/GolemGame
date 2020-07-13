@@ -245,9 +245,9 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 //}
 
 
-Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
+	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
 
 	// Transform data
@@ -271,7 +271,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
+	//temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
 
 
 	return temp;
@@ -291,6 +291,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
+	temp->anim_controller->Initialize(temp);
 
 	scale.x *= (1.f/scale.x);
 	scale.y *= (1.f/scale.y);
@@ -525,9 +526,17 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	_destructable->colScale.x *= 5;
 	_destructable->colScale.y *= 5;
 	_destructable->colScale.z *= 5;
+	_destructable->anim_controller->SetNamebyIndex(0, "Idle");
+	_destructable->anim_controller->SetNamebyIndex(1, "Run");
+	_destructable->anim_controller->SetNamebyIndex(2, "Attack");
+	_destructable->anim_controller->SetNamebyIndex(3, "Born");
+	_destructable->anim_controller->SetNamebyIndex(4, "Flinch");
+	_destructable->anim_controller->SetNamebyIndex(5, "Death");
+
 
 	ADAI::MinionAI* temp = new ADAI::MinionAI;
 	temp->mySSM.gameObject = _destructable;
+	temp->minion = _destructable;
 
 
 	ADAI::FlockingState* idling = new ADAI::FlockingState();
@@ -552,6 +561,7 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
 		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = temp->myAttack;
+
 		break;
 	case WATER_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));

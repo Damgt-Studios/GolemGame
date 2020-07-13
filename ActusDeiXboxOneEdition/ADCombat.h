@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderable.h"
+#include <AnimationStateMachine.h>
 #include <unordered_map>
 
 
@@ -164,21 +165,25 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				// Physics
-				collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
-				colliderPtr = &collider;
-				collider.trigger = true;
 
-				if (lifespan > 0)
+				if (active)
 				{
-					lifespan -= _deltaTime;
-					if (lifespan <= 0)
-					{
-						active = false;
-					}
-				}
+					// Physics
+					collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
+					colliderPtr = &collider;
+					collider.trigger = true;
 
-				AddToPositionVector((XMFLOAT3&)Velocity);
+					if (lifespan > 0)
+					{
+						lifespan -= _deltaTime;
+						if (lifespan <= 0)
+						{
+							active = false;
+						}
+					}
+
+					AddToPositionVector((XMFLOAT3&)Velocity);
+				}
 			}
 
 
@@ -186,13 +191,16 @@ namespace ADResource
 			{
 				if (active && obj->active)
 				{
-					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
+					if (!obj->colliderPtr->trigger)
 					{
-						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						ADPhysics::Manifold m;
+						if (obj->colliderPtr->isCollision(&collider, m))
 						{
-							if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
-								PassEffects(obj);
+							if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+							{
+								if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+									PassEffects(obj);
+							}
 						}
 					}
 				}
@@ -424,10 +432,16 @@ namespace ADResource
 			StatSheet* stats;
 		public:
 			XMFLOAT3 colScale;
+			AnimationStateMachine* anim_controller;
 			ADPhysics::AABB collider;
 			std::string deathEvent;
 
-			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; }
+			Destructable() 
+			{ 
+				colliderPtr = &collider; 
+				physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; 
+				anim_controller = new AnimationStateMachine();
+			}
 			~Destructable() override
 			{
 				delete stats;
@@ -442,6 +456,7 @@ namespace ADResource
 					colliderPtr = &collider;
 					physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
+					anim_controller->SetModel_To_CurrentAnimation();
 				}
 			};
 
@@ -471,7 +486,10 @@ namespace ADResource
 					ADPhysics::Manifold m;
 					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						collisionQueue.push(CollisionPacket(this, obj, m));
+						if (!obj->colliderPtr->trigger)
+						{
+							collisionQueue.push(CollisionPacket(this, obj, m));
+						}
 					}
 				}
 			}
@@ -481,9 +499,6 @@ namespace ADResource
 				for (int i = 0; i < effects.size(); ++i)
 				{
 					effects[i].get()->Update(_deltaTime);
-
-					//std::string msg = std::to_string(effects[i].get()->tickTimer);
-					//ADUI::MessageReceiver::Log(msg);
 
 					if (effects[i].get()->isFinished)
 					{
@@ -545,37 +560,42 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				// Physics
-				XMFLOAT3 dang;
-				XMStoreFloat3(&dang, transform.r[3]);
-				collider = ADPhysics::AABB(dang, colScale);
-				colliderPtr = &collider;
-				collider.trigger = true;
+				if (active)
+				{
+					// Physics
+					XMFLOAT3 dang;
+					XMStoreFloat3(&dang, transform.r[3]);
+					collider = ADPhysics::AABB(dang, colScale);
+					colliderPtr = &collider;
+					collider.trigger = true;
+				}
 			};
 
 			void CheckCollision(GameObject* obj) override
 			{
 				if (active && obj->active)
 				{
-					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
+					if (!obj->colliderPtr->trigger)
 					{
-						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						ADPhysics::Manifold m;
+						if (obj->colliderPtr->isCollision(&collider, m))
 						{
-							if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
+							if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 							{
-								CallEvent();
-								if (isDeactivateOnFirstApplication)
+								if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
 								{
-									active = false;
+									CallEvent();
+									if (isDeactivateOnFirstApplication)
+									{
+										active = false;
+									}
+								}
+								else
+								{
+									PassEffects(obj);
 								}
 							}
-							else
-							{
-								PassEffects(obj);
-							}
 						}
-
 					}
 				}
 			}

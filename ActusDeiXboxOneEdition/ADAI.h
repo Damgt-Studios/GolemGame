@@ -42,6 +42,7 @@ namespace ADAI
 	public:
 		SimpleStateMachine* mySSM;
 		XMFLOAT4 VelocityWhenFlocking = { 0,0,0,0 };
+		bool turning = false;
 
 		//Current Pathfinding Path
 		void Update(float _deltaTime)
@@ -87,8 +88,10 @@ namespace ADAI
 			{
 				if (attackCounter < attackCount)
 				{
-					attackCounter++;
-					myAttack->StartAction(&mySSM->gameObject->transform);
+					if (myAttack->StartAction(&mySSM->gameObject->transform))
+					{
+						attackCounter++;
+					}
 				}
 				else
 				{

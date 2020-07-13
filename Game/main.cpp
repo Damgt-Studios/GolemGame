@@ -689,7 +689,7 @@ public:
 				//Resolve all collisions that occurred this frame
 				ADResource::ADGameplay::ResolveCollisions();
 
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 1; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
 					GroundClamping(waterMinions[i], tree, delta_time);

@@ -81,7 +81,7 @@ namespace ADGameplay
 
 
 		//Target
-		Destructable* m1;
+		Trigger* m1;
 
 		//Events
 		UINT stoneMinionCount = 10;
@@ -201,8 +201,8 @@ namespace ADGameplay
 			Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower);
 
-			Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
-			GameUtilities::AddGameObject(ballista);
+			//Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
+			//GameUtilities::AddGameObject(ballista);
 
 
 			Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
@@ -253,14 +253,14 @@ namespace ADGameplay
 
 			villagerThreats.push_back(golem);
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				villagerThreats.push_back(stoneMinions[i]);
 				villagerThreats.push_back(waterMinions[i]);
 				villagerThreats.push_back(fireMinions[i]);
 				villagerThreats.push_back(woodMinions[i]);
 			}
-			towers.push_back(GameUtilities::AttachTowerAI(ballista, &villagerThreats));
+			//towers.push_back(GameUtilities::AttachTowerAI(ballista, &villagerThreats));
 
 			for (int i = 0; i < 10; i++)
 			{
@@ -278,7 +278,7 @@ namespace ADGameplay
 				minionTargets.push_back(building);
 			}
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->minionGroups[STONE], &minionTargets, STONE_MINION));
 				//stoneMinionsAI[i]->currentTarget = golem->targetMarker;
@@ -369,6 +369,11 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				stoneMinionAnimations.push_back(temp);
 			}
+			stoneMinionAnimations.push_back("files/models/Minion_3_Run.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Punch.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Born.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Flinch.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Death.animfile");
 
 			uint32_t NumWaterAnimations;
 			file.read((char*)&NumWaterAnimations, sizeof(uint32_t));
@@ -381,6 +386,11 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				waterMinionAnimations.push_back(temp);
 			}
+			waterMinionAnimations.push_back("files/models/Minion_4_Run.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Punch.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Born.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Flinch.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Death.animfile");
 
 			uint32_t NumFireAnimations;
 			file.read((char*)&NumFireAnimations, sizeof(uint32_t));
@@ -393,6 +403,11 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				fireMinionAnimations.push_back(temp);
 			}
+			fireMinionAnimations.push_back("files/models/Minion_2_Run.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Punch.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Born.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Flinch.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Death.animfile");
 
 			uint32_t NumWoodAnimations;
 			file.read((char*)&NumWoodAnimations, sizeof(uint32_t));
@@ -405,6 +420,11 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				woodMinionAnimations.push_back(temp);
 			}
+			woodMinionAnimations.push_back("files/models/Minion_1_Run.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Punch.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Born.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Flinch.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Death.animfile");
 
 			uint32_t NumStone;
 			file.read((char*)&NumStone, sizeof(uint32_t));
@@ -443,7 +463,7 @@ namespace ADGameplay
 
 			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				stoneMinionArguments[i].position.x += i * 5;
 				waterMinionArguments[i].position.z += i * 5;
@@ -467,7 +487,7 @@ namespace ADGameplay
 			//	renderables[i]->physicsType = renderableArguments[i].type;
 			//}
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < 1; i++)
 			{
 				GameUtilities::AddGameObject(stoneMinions[i]);
 				GameUtilities::AddGameObject(waterMinions[i]);
@@ -482,7 +502,7 @@ namespace ADGameplay
 
 
 			//Dan added this:
-			m1 = GameUtilities::AddDestructableFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(-145, 5, -145), XMFLOAT3(3, 3, 3), XMFLOAT3(0, 0, 0));
+			m1 = GameUtilities::AddTriggerFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(-145, 5, -145), XMFLOAT3(3, 3, 3), XMFLOAT3(0, 0, 0));
 
 			//m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-145, 5, -145), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 			golem->targetMarker = m1;

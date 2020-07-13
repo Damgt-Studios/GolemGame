@@ -23,7 +23,10 @@ namespace ADAI
 
 		void Update(float _deltaTime)
 		{
-			mySSM.Update(_deltaTime);
+			if (mySSM.gameObject->active)
+			{
+				mySSM.Update(_deltaTime);	
+			}
 		};
 	};
 
@@ -33,6 +36,7 @@ namespace ADAI
 		SimpleStateMachine mySSM;
 		XMFLOAT3 currentTargetLocation;
 		ADResource::ADGameplay::GameObject* currentTarget;
+		ADResource::ADGameplay::Destructable* minion;
 		ADResource::ADGameplay::Action* myAttack;
 
 		//Waypoints (both direct and pathing)
@@ -46,8 +50,11 @@ namespace ADAI
 
 		void Update(float _deltaTime)
 		{
-			mySSM.Update(_deltaTime);
-			myAttack->Update(_deltaTime);
+			if (mySSM.gameObject->active)
+			{
+				mySSM.Update(_deltaTime);
+				myAttack->Update(_deltaTime);
+			}
 		};
 	};
 
@@ -62,8 +69,11 @@ namespace ADAI
 
 		void Update(float _deltaTime)
 		{
-			mySSM.Update(_deltaTime);
-			myAttack->Update(_deltaTime);
+			if (mySSM.gameObject->active)
+			{
+				mySSM.Update(_deltaTime);
+				myAttack->Update(_deltaTime);
+			}
 		};
 	};
 
@@ -99,7 +109,7 @@ namespace ADAI
 					XMVECTOR pos = tower->building->transform.r[3];
 
 					XMVECTOR distanceToPlane = XMVector3Dot({ 0,1,0 }, (tower->currentTarget->transform.r[3] - tower->building->GetModelByIndex(0)->transform.r[3]));
-					XMVECTOR pointOnPlane = tower->currentTarget->transform.r[3] - (XMVECTOR{ 0.f,1.f,0.f } * distanceToPlane.m128_f32[0]);
+					XMVECTOR pointOnPlane = tower->currentTarget->transform.r[3] - (XMVECTOR{ 0.f,1.f,0.f } *distanceToPlane.m128_f32[0]);
 
 					XMVECTOR forward = XMVector3Normalize(tower->building->GetModelByIndex(0)->transform.r[3] - pointOnPlane);
 
@@ -248,57 +258,61 @@ namespace ADAI
 			CalculateAverages();
 			for (int i = 0; i < flockers.size(); ++i)
 			{
-				XMVECTOR velocity = XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
-				XMFLOAT4 heading;
-				XMStoreFloat4(&heading, XMVector4Normalize(velocity));
-
-				flockerState[i]->VelocityWhenFlocking.x += heading.x * _deltaTime * moveSpeed;
-				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
-				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
-
-
-				XMVECTOR direction = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[0]));
-				XMFLOAT3 fvec;
-				XMStoreFloat3(&fvec, direction);
-
-				if (fvec.x > 0.2f)
+				if (flockers[i]->mySSM.gameObject->active)
 				{
-					XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.10f);
-					flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+					XMVECTOR velocity = XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
+					XMFLOAT4 heading;
+					XMStoreFloat4(&heading, XMVector4Normalize(velocity));
+
+					flockerState[i]->VelocityWhenFlocking.x += heading.x * _deltaTime * moveSpeed;
+					flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
+					flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
+
+
+					XMVECTOR direction = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[0]));
+					XMFLOAT3 fvec;
+					XMStoreFloat3(&fvec, direction);
+
+					if (fvec.x > 0.2f)
+					{
+						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.10f);
+						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+					}
+					else if (fvec.x < -0.2f)
+					{
+						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(-0.10f);
+						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+					}
+
+
+					velocity = CalculateCohesionAcceleration(flockers[i]->mySSM.gameObject) + CalculateSeparationAcceleration(flockers[i]->mySSM.gameObject);
+					if (flockers[i]->currentFear)
+					{
+						velocity += CalculateFleeingAcceleration(flockers[i]);
+					}
+					if (flockers[i]->currentStructure)
+					{
+						velocity += CalculateSafetyAcceleration(flockers[i]);
+					}
+					velocity *= (maxSpeed * _deltaTime);
+					velocity += (XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity) * 0.9f);
+
+					XMFLOAT4 yCancel;
+					XMStoreFloat4(&yCancel, velocity);
+					yCancel.y = 0;
+					velocity = XMLoadFloat4(&yCancel);
+
+					XMFLOAT4 length;
+					XMStoreFloat4(&length, XMVector4Length(velocity));
+
+					if (length.x > maxSpeed)
+					{
+						velocity = ShortenLength(velocity, maxSpeed);
+					}
+
+					XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);
+
 				}
-				else if (fvec.x < -0.2f)
-				{
-					XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(-0.10f);
-					flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
-				}
-
-
-				velocity = CalculateCohesionAcceleration(flockers[i]->mySSM.gameObject) + CalculateSeparationAcceleration(flockers[i]->mySSM.gameObject);
-				if (flockers[i]->currentFear)
-				{
-					velocity += CalculateFleeingAcceleration(flockers[i]);
-				}
-				if (flockers[i]->currentStructure)
-				{
-					velocity += CalculateSafetyAcceleration(flockers[i]);
-				}
-				velocity *= (maxSpeed * _deltaTime);
-				velocity += (XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity) * 0.9f);
-
-				XMFLOAT4 yCancel;
-				XMStoreFloat4(&yCancel, velocity);
-				yCancel.y = 0;
-				velocity = XMLoadFloat4(&yCancel);
-
-				XMFLOAT4 length;
-				XMStoreFloat4(&length, XMVector4Length(velocity));
-
-				if (length.x > maxSpeed)
-				{
-					velocity = ShortenLength(velocity, maxSpeed);
-				}
-
-				XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);
 			}
 		};
 	};
@@ -689,51 +703,77 @@ namespace ADAI
 			CalculateAverages();
 			for (int i = 0; i < flockers.size(); ++i)
 			{
-				XMVECTOR velocity = XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
-				XMFLOAT4 heading;
-				XMStoreFloat4(&heading, XMVector4Normalize(velocity));
-
-				XMVECTOR direction = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[0]));
-				XMFLOAT3 fvec;
-				XMStoreFloat3(&fvec, direction);
-
-				if (fvec.x > 0.2f)
+				if (flockers[i]->mySSM.gameObject->active)
 				{
-					XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.10f);
-					flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+					XMVECTOR velocity = XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
+					XMFLOAT4 heading;
+					XMStoreFloat4(&heading, XMVector4Normalize(velocity));
+
+					XMVECTOR direction = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[0]));
+					XMVECTOR backCheck = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[2]));
+
+					XMFLOAT3 fvec;
+					XMStoreFloat3(&fvec, direction);
+					XMFLOAT3 zvec;
+					XMStoreFloat3(&zvec, backCheck);
+
+					
+					if (fvec.x > 0.2f)
+					{
+						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.10f);
+						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+						flockerState[i]->turning = true;
+					}
+					else if (fvec.x < -0.2f)
+					{
+						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(-0.10f);
+						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+						flockerState[i]->turning = true;
+					}
+					else if(zvec.x < 0)
+					{
+						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.25f);
+						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+						flockerState[i]->turning = true;
+					}
+					else
+					{
+						flockerState[i]->turning = false;
+					}
+
+					flockerState[i]->VelocityWhenFlocking.x += heading.x * _deltaTime * moveSpeed;
+					flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
+					flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
+
+					if (flockers[i]->currentTarget)
+					{
+						flockers[i]->currentTargetLocation = flockers[i]->currentTarget->GetPosition();
+					}
+
+					velocity = CalculateCohesionAcceleration(flockers[i]->mySSM.gameObject) + CalculateSeparationAcceleration(flockers[i]->mySSM.gameObject) + CalculateTargetAcceleration(flockers[i]);// +CalculateReturnAcceleration(flockers[i]);
+					velocity *= (maxSpeed * _deltaTime);
+					velocity += XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
+
+					XMFLOAT4 yCancel;
+					XMStoreFloat4(&yCancel, velocity);
+					yCancel.y = 0;
+					velocity = XMLoadFloat4(&yCancel);
+
+					XMFLOAT4 length;
+					XMStoreFloat4(&length, XMVector4Length(velocity));
+
+					if (length.x > maxSpeed)
+					{
+						velocity = ShortenLength(velocity, maxSpeed);
+					}
+
+					XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);
+					//else
+					//{
+					//	XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, { 0,0,0 });
+					//}
+					
 				}
-				else if (fvec.x < -0.2f)
-				{
-					XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(-0.10f);
-					flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
-				}
-
-				flockerState[i]->VelocityWhenFlocking.x += heading.x * _deltaTime * moveSpeed;
-				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
-				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
-
-				if (flockers[i]->currentTarget)
-				{
-					flockers[i]->currentTargetLocation = flockers[i]->currentTarget->GetPosition();
-				}
-				velocity = CalculateCohesionAcceleration(flockers[i]->mySSM.gameObject) + CalculateSeparationAcceleration(flockers[i]->mySSM.gameObject) + CalculateTargetAcceleration(flockers[i]);// +CalculateReturnAcceleration(flockers[i]);
-				velocity *= (maxSpeed * _deltaTime);
-				velocity += XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
-
-				XMFLOAT4 yCancel;
-				XMStoreFloat4(&yCancel, velocity);
-				yCancel.y = 0;
-				velocity = XMLoadFloat4(&yCancel);
-
-				XMFLOAT4 length;
-				XMStoreFloat4(&length, XMVector4Length(velocity));
-
-				if (length.x > maxSpeed)
-				{
-					velocity = ShortenLength(velocity, maxSpeed);
-				}
-
-				XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);
 			}
 		};
 	};
@@ -764,7 +804,11 @@ namespace ADAI
 						if (minion->currentTarget->gamePlayType != ADResource::ADGameplay::OBJECT_TAG::COMMAND_MARKER)
 						{
 							minion->currentTarget = minion->currentTarget;
-							minion->currentTarget->actionLevel += 50;
+							if (minion->currentTarget->gamePlayType == ADResource::ADGameplay::OBJECT_TAG::PEASANT)
+							{
+								minion->currentTarget->actionLevel += 50;
+							}
+							minion->minion->anim_controller->PlayAnimationByName("Attack");
 							minion->mySSM.SwitchState(2, _deltaTime);
 
 
@@ -786,6 +830,7 @@ namespace ADAI
 							minion->mySSM.gameObject->SetScale({ 0.03,0.03,0.03 });
 							minion->mySSM.gameObject->SetPosition({ pos.m128_f32[0], pos.m128_f32[1], pos.m128_f32[2] });
 
+							return;
 						}
 					}
 				}
@@ -797,7 +842,18 @@ namespace ADAI
 				timer = 0;
 			}
 			mySSM->gameObject->Velocity = VelocityWhenFlocking;
-			mySSM->gameObject->AddToPositionVector((XMFLOAT3&)mySSM->gameObject->Velocity);
+			if (mySSM->gameObject->Velocity.x > 0 || mySSM->gameObject->Velocity.z > 0 || mySSM->gameObject->Velocity.x < 0 || mySSM->gameObject->Velocity.z < 0)
+			{
+				minion->minion->anim_controller->PlayAnimationByName("Run");
+			}
+			else
+			{
+				minion->minion->anim_controller->PlayAnimationByName("Idle");
+			}
+			if (!turning)
+			{
+				mySSM->gameObject->AddToPositionVector((XMFLOAT3&)mySSM->gameObject->Velocity);
+			}
 		};
 	};
 
