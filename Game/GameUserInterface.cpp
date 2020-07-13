@@ -41,6 +41,22 @@ namespace GolemGameUISetup
 					buttonPressed = true;
 					break;
 				}
+				case 1:
+				{
+					//overlays[overlaysNameToID["TitleScreen"]]->Enable();
+					uiState = ENGINE_STATE::PAUSED;
+					controllers[controllersNameToID["TitleScreenController"]]->Enable();
+					overlays[overlaysNameToID["DefeatScreen"]]->Enable();
+					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
+					Disable();
+
+					//controllers[controllersNameToID["EndScreenController"]]->Enable();
+
+					//componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
+					buttonPressed = true;
+					break;
+				}
 				case 2:
 				{
 					//health -= 1;
@@ -118,7 +134,7 @@ namespace GolemGameUISetup
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
 		bool buttonPressed = false;
-		if (_message && !overlays[overlaysNameToID["SuccessScreen"]]->active)
+		if (_message && !overlays[overlaysNameToID["SuccessScreen"]]->active && !overlays[overlaysNameToID["DefeatScreen"]]->active)
 		{
 			buttonPressed = true;
 			if (_message->targetID == ADUI::UIMessageTargets::Controller)
@@ -184,13 +200,14 @@ namespace GolemGameUISetup
 				buttonPressed = true;
 			}
 		}
-		else if (overlays[overlaysNameToID["SuccessScreen"]]->active)
+		else if (overlays[overlaysNameToID["SuccessScreen"]]->active || overlays[overlaysNameToID["DefeatScreen"]]->active)
 		{
 			if (Input::QueryButtonDown(GamepadButtons::B) || Input::QueryButtonDown(GamepadButtons::A))
 			{
 				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 				overlays[overlaysNameToID["CreditsScreen"]]->Disable();
 				overlays[overlaysNameToID["SuccessScreen"]]->Disable();
+				overlays[overlaysNameToID["DefeatScreen"]]->Disable();
 				overlays[overlaysNameToID["HUD"]]->Disable();
 
 				ADUI::UIMessage message;
@@ -863,6 +880,22 @@ namespace GolemGameUISetup
 		return successID;
 	}
 
+	UINT GameUserInterface::SetupDefeatGameScreen(ADUI::ADUI* myUI)
+	{
+		//SuccessScreen
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 1, 1 };
+		UINT creditsID = myUI->AddNewOverlay("DefeatScreen", false, false);
+		ADUI::Image2D* creditsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
+		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
+		myUI->AddUIComponent("CreditsBG", creditsImage);
+		myUI->overlays[creditsID]->AddComponent(creditsImage);
+		UINT successID = myUI->AddNewOverlay("DefeatScreen", false, false);
+		myUI->overlays[successID]->AddComponent(creditsImage);
+
+		return successID;
+	}
+
 	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
@@ -1345,7 +1378,9 @@ namespace GolemGameUISetup
 		titleScreenController->Enable();
 		UINT titleID = SetupTitleScreen(myUI, titleScreenController);
 		UINT endgameID = SetupEngGameScreen(myUI);
+		UINT defeatedID = SetupDefeatGameScreen(myUI);
 		titleScreenController->AddOverlay(myUI->overlays[endgameID]);
+		titleScreenController->AddOverlay(myUI->overlays[defeatedID]);
 
 		//// PauseScreen Controller
 		PauseMenuController* PauseScreenController = new PauseMenuController(myUI->GetUIState());
@@ -1392,6 +1427,7 @@ namespace GolemGameUISetup
 		gameplayMessageController->AddController(optionScreenController);
 
 		gameplayMessageController->AddOverlay(myUI->overlays[endgameID]);
+		gameplayMessageController->AddOverlay(myUI->overlays[defeatedID]);
 
 		//gameplayMessageController
 

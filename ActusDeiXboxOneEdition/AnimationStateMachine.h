@@ -3,6 +3,7 @@
 //#include "MeshLoader.h"
 #include "Renderable.h"
 //#include "../Game/GameplayBaseClasses.h"
+
 using namespace std;
 class AnimationStateMachine
 {

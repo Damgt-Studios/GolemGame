@@ -254,15 +254,15 @@ public:
 #endif
 #endif
 
-		//ADAI::FlockingGroup commandFlock;
-		//ADAI::FlockingGroup idleFlock;
+		//ADAI::MinionGroup commandFlock;
+		////ADAI::FlockingGroup idleFlock;
 
-		//std::vector<Destructable*> stoneMinions;
-		//std::vector<Destructable*> waterMinions;
-		//std::vector<Destructable*> fireMinions;
-		//std::vector<Destructable*> woodMinions;
+		std::vector<Destructable*> stoneMinions;
+		std::vector<Destructable*> waterMinions;
+		std::vector<Destructable*> fireMinions;
+		std::vector<Destructable*> woodMinions;
 
-		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
+		currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
 
 		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
@@ -335,15 +335,15 @@ public:
 #pragma endregion
 
 
-		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
-		GameUtilities::AddGameObject(house1);
-		currentScene.AddBuilding(house1);
-		house1->destructionEmitter = &engine->destructionCloud;
-		house1->destructionEmitter2 = &engine->destructionCloud2;
+		//Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
+		//GameUtilities::AddGameObject(house1);
+		//currentScene.AddBuilding(house1);
+		//house1->destructionEmitter = &engine->destructionCloud;
+		//house1->destructionEmitter2 = &engine->destructionCloud2;
 
-		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
-		GameUtilities::AddGameObject(rubble1);
-		house1->SetRubble(rubble1);
+		//Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
+		//GameUtilities::AddGameObject(rubble1);
+		//house1->SetRubble(rubble1);
 
 //DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
 #pragma region Level Boundary
@@ -728,8 +728,6 @@ public:
 
 		ResourceManager::FinalizedStatics();
 
-
-
 		XMFLOAT2 mapDimensions = { 3000 , 3000 };
 		float minionWidth = 10;
 		ADAI::ADPathfinding pathfinder;
@@ -740,7 +738,6 @@ public:
 			return;
 		}
 		game->LoadGameUserInterface(engine->GetUI(), audioEngine, &pathfinder.tileMap);
-
 
 
 		//rubble1->Remove();
@@ -809,8 +806,8 @@ public:
 			
 
 #ifdef _DEBUG
-			minionCollider->transform = XMMatrixScaling(20, 5, 20);
-			minionCollider->transform.r[3] = { 20,10,20, 1 };
+			//minionCollider->transform = XMMatrixScaling(20, 5, 20);
+			//minionCollider->transform.r[3] = { 20,10,20, 1 };
 
 			//golemCollider->transform = golem->GetColliderInfo();
 
@@ -841,7 +838,7 @@ public:
 
 			//cartCollider->transform = cart->GetColliderInfo();
 
-			rubbleCollider1->transform = rubble1->GetColliderInfo();
+			//rubbleCollider1->transform = rubble1->GetColliderInfo();
 			//rubbleCollider2->transform = rubble2->GetColliderInfo();
 			//rubbleCollider3->transform = rubble3->GetColliderInfo();
 #endif
@@ -863,30 +860,29 @@ public:
 			{
 				physics_timer = 0;
 				//--------------------------------------------------------------------------------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-					for (unsigned int j = 0; j < OBJ_COUNT; j++)
-					{
-						if (i != j)
-						{
-							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
-							{
-								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
-								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
-									{
-										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
-										{
-											OBJS[i]->CheckCollision(OBJS[j]);
-										}
-									}
-								}
-							}
-						}
-					}
-				}*/
-				
-				//----------------------------------New Physics System-------------------------------
+				//for (int i = 0; i < OBJ_COUNT; i++)
+				//{
+				//	for (unsigned int j = 0; j < OBJ_COUNT; j++)
+				//	{
+				//		if (i != j)
+				//		{
+				//			if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+				//			{
+				//				if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+				//				{
+				//					if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
+				//					{
+				//						if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+				//						{
+				//							OBJS[i]->CheckCollision(OBJS[j]);
+				//						}
+				//					}
+				//				}
+				//			}
+				//		}
+				//	}
+				//}
+
 				for (int i = 0; i < OBJ_COUNT; i++)
 				{
 
@@ -920,18 +916,17 @@ public:
 						}
 					}
 				}
-				//---------------------------------------------End New Physics System------------------------------------------
 
 				//Resolve all collisions that occurred this frame
 				ADResource::ADGameplay::ResolveCollisions();
 
-				/*for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 10; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
 					GroundClamping(waterMinions[i], tree, delta_time);
 					GroundClamping(fireMinions[i], tree, delta_time);
 					GroundClamping(woodMinions[i], tree, delta_time);
-				}*/
+				}
 
 			}
 
