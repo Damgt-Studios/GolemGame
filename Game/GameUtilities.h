@@ -71,7 +71,11 @@ public:
 	static std::vector<Renderable*> GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateAttackTower(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateBallista(XMFLOAT3 pos, XMFLOAT3 rotation);
-
+	static std::vector<Renderable*> GenerateRockWall1(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateRockWall2(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateRockWall3(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateRockWall4(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GenerateRockWall5(XMFLOAT3 pos, XMFLOAT3 rotation);
 
 public:
 	// Game object shit

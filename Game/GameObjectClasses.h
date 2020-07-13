@@ -41,6 +41,23 @@ namespace ADResource
 			~Building() { delete stats; };
 			Building(Building&) = delete;
 			Building(const Building&) = delete;
+			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3))
+			{
+				pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
+				models = Generator(position, rotation);
+
+				for (size_t i = 0; i < models.size(); i++)
+				{
+					models[i]->colliderPtr = nullptr;
+				}
+
+				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+				colliderPtr = &collider;
+				team = 1;
+
+				stats = nullptr;
+			}
 			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3), std::string statSheet)
 			{
 				//temp->SetScale(scale);
@@ -99,8 +116,9 @@ namespace ADResource
 				colliderPtr = &collider;
 
 				if (active)
-				{
-					ProcessEffects(delta_time);
+				{	
+					if (stats != nullptr)
+						ProcessEffects(delta_time);
 				}
 			}
 
