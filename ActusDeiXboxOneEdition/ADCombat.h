@@ -345,7 +345,6 @@ namespace ADResource
 						//{
 							hitboxFired[currentHitBox] = true;
 							hitboxes[currentHitBox]->Enable();
-							currentHitBox++;
 						//}
 					}
 					if (attackTimer > 0)

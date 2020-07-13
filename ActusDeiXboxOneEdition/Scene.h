@@ -201,8 +201,8 @@ namespace ADGameplay
 			Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower);
 
-			//Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
-			//GameUtilities::AddGameObject(ballista);
+			Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
+			GameUtilities::AddGameObject(ballista);
 
 
 			Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
@@ -256,14 +256,14 @@ namespace ADGameplay
 
 			villagerThreats.push_back(golem);
 
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				villagerThreats.push_back(stoneMinions[i]);
 				villagerThreats.push_back(waterMinions[i]);
 				villagerThreats.push_back(fireMinions[i]);
 				villagerThreats.push_back(woodMinions[i]);
 			}
-			//towers.push_back(GameUtilities::AttachTowerAI(ballista, &villagerThreats));
+			towers.push_back(GameUtilities::AttachTowerAI(ballista, &villagerThreats));
 
 			for (int i = 0; i < 10; i++)
 			{
@@ -281,7 +281,7 @@ namespace ADGameplay
 				minionTargets.push_back(building);
 			}
 
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->minionGroups[STONE], &minionTargets, STONE_MINION));
 				//stoneMinionsAI[i]->currentTarget = golem->targetMarker;
@@ -466,7 +466,7 @@ namespace ADGameplay
 
 			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
 
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				stoneMinionArguments[i].position.x += i * 5;
 				waterMinionArguments[i].position.z += i * 5;
@@ -490,7 +490,7 @@ namespace ADGameplay
 			//	renderables[i]->physicsType = renderableArguments[i].type;
 			//}
 
-			for (int i = 0; i < 1; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				GameUtilities::AddGameObject(stoneMinions[i]);
 				GameUtilities::AddGameObject(waterMinions[i]);
