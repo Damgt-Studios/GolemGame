@@ -217,10 +217,7 @@ public:
 		Renderable* rubbleCollider2 = GameUtilities::AddRenderableCollider();
 		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
 
-		Renderable* rock_wallCollider1 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider2 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider3 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider4 = GameUtilities::AddRenderableCollider();
+		Renderable* rock_wallCollider = GameUtilities::AddRenderableCollider();
 
 #ifdef ShowColliders
 		GameUtilities::AddGameObject(minionCollider);
@@ -246,10 +243,7 @@ public:
 		GameUtilities::AddGameObject(rubbleCollider2);
 		GameUtilities::AddGameObject(rubbleCollider3);
 
-		GameUtilities::AddGameObject(rock_wallCollider1);
-		GameUtilities::AddGameObject(rock_wallCollider2);
-		GameUtilities::AddGameObject(rock_wallCollider3);
-		GameUtilities::AddGameObject(rock_wallCollider4);
+		GameUtilities::AddGameObject(rock_wallCollider);
 
 #endif
 #endif
@@ -346,6 +340,7 @@ public:
 		house1->SetRubble(rubble1);
 
 //DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+
 #pragma region Level Boundary
 
 		GameObject* object1 = new GameObject();
@@ -364,7 +359,13 @@ public:
 		object4->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 20));
 
-		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
+		GameObject* object5 = new GameObject();
+		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -675), XMFLOAT3(20, 100, 1125));
+
+		//rock_wallCollider->transform = XMMatrixMultiply(XMMatrixScaling(20, 100, 1125), XMMatrixTranslation(400,0,-675));
+
+		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
 
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 10), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 50), XMFLOAT3(0, 0, 0));
@@ -532,10 +533,47 @@ public:
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -70), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -20), XMFLOAT3(0, 0, 0));
 
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1250), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1210), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -1160), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -1110), XMFLOAT3(0, 0, 0));
+												
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1060), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1020), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -970), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -920), XMFLOAT3(0, 0, 0));
+												
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -870), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -830), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -780), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -730), XMFLOAT3(0, 0, 0));
+												
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -680), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -640), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -590), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -540), XMFLOAT3(0, 0, 0));
+											
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -490), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -450), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -400), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -350), XMFLOAT3(0, 0, 0));
+												
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -300), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -160), XMFLOAT3(0, 0, 0));
+												 
+		/*GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -110), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -70), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -20), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 30), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, 80), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, 120), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, 170), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 220), XMFLOAT3(0, 0, 0));*/
+												  
 #pragma endregion
-
-
-
 
 		//Renderable* water_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Water_Spawner.mat", XMFLOAT3(25, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
 		//Renderable* fire_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Fire_Spawner.mat", XMFLOAT3(50, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
