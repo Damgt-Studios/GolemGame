@@ -486,7 +486,7 @@ namespace ADResource
 					ADPhysics::Manifold m;
 					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						if (!obj->colliderPtr->trigger)
+						if (!obj->colliderPtr->trigger)// && obj->gamePlayType != gamePlayType)
 						{
 							collisionQueue.push(CollisionPacket(this, obj, m));
 						}

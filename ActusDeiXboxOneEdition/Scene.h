@@ -250,6 +250,9 @@ namespace ADGameplay
 
 			std::vector<std::string> bucketheadAnimations;
 			bucketheadAnimations.push_back("files/models/Bucket_Idle.animfile");
+			bucketheadAnimations.push_back("files/models/Bucket_Run.animfile");
+			bucketheadAnimations.push_back("files/models/Bucket_Fear.animfile");
+			bucketheadAnimations.push_back("files/models/Bucket_Death.animfile");
 
 			villagerThreats.push_back(golem);
 

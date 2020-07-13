@@ -477,9 +477,14 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	_destructable->colScale.x *= 5;
 	_destructable->colScale.y *= 5;
 	_destructable->colScale.z *= 5;
+	_destructable->anim_controller->SetNamebyIndex(0, "Idle");
+	_destructable->anim_controller->SetNamebyIndex(1, "Run");
+	_destructable->anim_controller->SetNamebyIndex(2, "Cower");
+	_destructable->anim_controller->SetNamebyIndex(3, "Death");
 
 	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
 	temp->mySSM.gameObject = _destructable;
+	temp->destructable = _destructable;
 
 	ADAI::FlockingState* waypoint = new ADAI::FlockingState();
 	waypoint->mySSM = &temp->mySSM;
@@ -536,7 +541,7 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 
 	ADAI::MinionAI* temp = new ADAI::MinionAI;
 	temp->mySSM.gameObject = _destructable;
-	temp->minion = _destructable;
+	temp->destructable = _destructable;
 
 
 	ADAI::FlockingState* idling = new ADAI::FlockingState();

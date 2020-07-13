@@ -9,6 +9,7 @@ namespace ADAI
 	{
 	public:
 		SimpleStateMachine mySSM;
+		ADResource::ADGameplay::Destructable* destructable;
 		ADResource::ADGameplay::GameObject* currentStructure;
 		ADResource::ADGameplay::GameObject* currentFear;
 
@@ -36,7 +37,7 @@ namespace ADAI
 		SimpleStateMachine mySSM;
 		XMFLOAT3 currentTargetLocation;
 		ADResource::ADGameplay::GameObject* currentTarget;
-		ADResource::ADGameplay::Destructable* minion;
+		ADResource::ADGameplay::Destructable* destructable;
 		ADResource::ADGameplay::Action* myAttack;
 
 		//Waypoints (both direct and pathing)
@@ -270,18 +271,34 @@ namespace ADAI
 
 
 					XMVECTOR direction = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[0]));
+					XMVECTOR backCheck = XMVector3Dot(velocity, XMVector3Normalize(flockers[i]->mySSM.gameObject->transform.r[2]));
 					XMFLOAT3 fvec;
 					XMStoreFloat3(&fvec, direction);
+					XMFLOAT3 zvec;
+					XMStoreFloat3(&zvec, backCheck);
+
 
 					if (fvec.x > 0.2f)
 					{
 						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.10f);
 						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+						flockerState[i]->turning = true;
 					}
 					else if (fvec.x < -0.2f)
 					{
 						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(-0.10f);
 						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+						flockerState[i]->turning = true;
+					}
+					else if (zvec.x < 0)
+					{
+						XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(0.25f);
+						flockers[i]->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, flockers[i]->mySSM.gameObject->transform);
+						flockerState[i]->turning = true;
+					}
+					else
+					{
+						flockerState[i]->turning = false;
 					}
 
 
@@ -345,6 +362,7 @@ namespace ADAI
 						{
 							tempTarget->actionLevel += 5;
 							villager->mySSM.SwitchState(2, _deltaTime);
+							villager->destructable->anim_controller->PlayAnimationByName("Cower");
 
 							XMVECTOR pos = villager->mySSM.gameObject->transform.r[3];
 
@@ -373,6 +391,7 @@ namespace ADAI
 
 							//XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(fvec.x);
 							//villager->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, villager->mySSM.gameObject->transform);
+							return;
 						}
 					}
 					if (timer > waitDuration)
@@ -421,7 +440,18 @@ namespace ADAI
 				timer = 0;
 			}
 			mySSM->gameObject->Velocity = VelocityWhenFlocking;
-			mySSM->gameObject->AddToPositionVector((XMFLOAT3&)mySSM->gameObject->Velocity);
+			if (mySSM->gameObject->Velocity.x > 0 || mySSM->gameObject->Velocity.z > 0 || mySSM->gameObject->Velocity.x < 0 || mySSM->gameObject->Velocity.z < 0)
+			{
+				villager->destructable->anim_controller->PlayAnimationByName("Run");
+			}
+			else
+			{
+				villager->destructable->anim_controller->PlayAnimationByName("Idle");
+			}
+			if (!turning)
+			{
+				mySSM->gameObject->AddToPositionVector((XMFLOAT3&)mySSM->gameObject->Velocity);
+			}
 		};
 	};
 
@@ -808,7 +838,7 @@ namespace ADAI
 							{
 								minion->currentTarget->actionLevel += 50;
 							}
-							minion->minion->anim_controller->PlayAnimationByName("Attack");
+							minion->destructable->anim_controller->PlayAnimationByName("Attack");
 							minion->mySSM.SwitchState(2, _deltaTime);
 
 
@@ -844,11 +874,11 @@ namespace ADAI
 			mySSM->gameObject->Velocity = VelocityWhenFlocking;
 			if (mySSM->gameObject->Velocity.x > 0 || mySSM->gameObject->Velocity.z > 0 || mySSM->gameObject->Velocity.x < 0 || mySSM->gameObject->Velocity.z < 0)
 			{
-				minion->minion->anim_controller->PlayAnimationByName("Run");
+				minion->destructable->anim_controller->PlayAnimationByName("Run");
 			}
 			else
 			{
-				minion->minion->anim_controller->PlayAnimationByName("Idle");
+				minion->destructable->anim_controller->PlayAnimationByName("Idle");
 			}
 			if (!turning)
 			{
