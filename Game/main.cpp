@@ -270,6 +270,8 @@ public:
 
 		//animationFiles[0] = "files/models/BattleMage.animfile";
 
+		golem->transform.r[3] = XMVectorSet(500, 0, -1100, 1);
+
 		engine->GetOrbitCamera()->SetClippingPlanes(0.1f, 10000.0f);
 
 		//Renderable* tempPlane = currentScene.GetPlane();
@@ -316,52 +318,30 @@ public:
 			tree->Insert(treePoints[i]);
 		}
 
-
-		// Construct physics stuff
-		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
-
-		//Needed to add this to the colliders for the collision queue
-
-		/*c2->colliderPtr = &test_colider1;
-		c2->type = OBJECT_TYPE::STATIC;*/
-
 #pragma endregion
 
-
-		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
-		GameUtilities::AddGameObject(house1);
-		currentScene.AddBuilding(house1);
-		house1->destructionEmitter = &engine->destructionCloud;
-		house1->destructionEmitter2 = &engine->destructionCloud2;
-
-		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
-		GameUtilities::AddGameObject(rubble1);
-		house1->SetRubble(rubble1);
-
 //DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
-
 #pragma region Level Boundary
 
 		GameObject* object1 = new GameObject();
 		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
+		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(22.5, 100, 2000));
 		
 		GameObject* object2 = new GameObject();
 		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(20, 100, 2000));
+		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(22.5, 100, 2000));
 
 		GameObject* object3 = new GameObject();
 		object3->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 20));
+		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 22.5));
 
 		GameObject* object4 = new GameObject();
 		object4->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 20));
+		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 22.5));
 
 		GameObject* object5 = new GameObject();
 		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -675), XMFLOAT3(20, 100, 1125));
+		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -675), XMFLOAT3(22.5, 100, 1125));
 
 		//rock_wallCollider->transform = XMMatrixMultiply(XMMatrixScaling(20, 100, 1125), XMMatrixTranslation(400,0,-675));
 
@@ -562,18 +542,52 @@ public:
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -160), XMFLOAT3(0, 0, 0));
-												 
-		/*GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -110), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -70), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -20), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 30), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, 80), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, 120), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, 170), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 220), XMFLOAT3(0, 0, 0));*/
 												  
 #pragma endregion
+
+#pragma region Level
+
+		for (unsigned int i = 0; i < 5; i++)
+		{
+			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, -900), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
+			GameUtilities::AddGameObject(tutorialWall);
+		}
+		
+		for (unsigned int i = 0; i < 5; i++)
+		{
+			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
+			GameUtilities::AddGameObject(tutorialWall);
+		}
+
+		for (unsigned int i = 0; i < 5; i++)
+		{
+			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, -300), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
+			GameUtilities::AddGameObject(tutorialWall);
+		}
+		
+		for (unsigned int i = 0; i < 5; i++)
+		{
+			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
+			GameUtilities::AddGameObject(tutorialWall);
+		}
+
+		Building* tower = new Building(XMFLOAT3(407.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower, "Tower");
+		GameUtilities::AddGameObject(tower);
+
+		Building* towerWall = new Building(XMFLOAT3(407.5, 0, -25), XMFLOAT3(0, 90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
+		GameUtilities::AddGameObject(towerWall);
+
+#pragma endregion
+
+		/*Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
+		GameUtilities::AddGameObject(house1);
+		currentScene.AddBuilding(house1);
+		house1->destructionEmitter = &engine->destructionCloud;
+		house1->destructionEmitter2 = &engine->destructionCloud2;
+
+		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
+		GameUtilities::AddGameObject(rubble1);
+		house1->SetRubble(rubble1);*/
 
 		//Renderable* water_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Water_Spawner.mat", XMFLOAT3(25, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
 		//Renderable* fire_spawner = GameUtilities::AddSimpleAsset("files/models/Spawner.mesh", "files/textures/Fire_Spawner.mat", XMFLOAT3(50, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), true);
@@ -879,7 +893,7 @@ public:
 
 			//cartCollider->transform = cart->GetColliderInfo();
 
-			rubbleCollider1->transform = rubble1->GetColliderInfo();
+			//rubbleCollider1->transform = rubble1->GetColliderInfo();
 			//rubbleCollider2->transform = rubble2->GetColliderInfo();
 			//rubbleCollider3->transform = rubble3->GetColliderInfo();
 #endif
