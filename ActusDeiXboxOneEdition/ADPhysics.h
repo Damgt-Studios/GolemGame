@@ -775,7 +775,7 @@ namespace ADPhysics
 			PenetrationDepth = Overlap.z;
 		}
 
-		XMVECTOR Vector = (XMVECTOR&)(box2.Pos) - (XMVECTOR&)(box1.Pos);
+		XMVECTOR Vector = Float3ToVector(box2.Pos) - Float3ToVector(box1.Pos);
 		XMFLOAT4 FloatVector = VectorToFloat4(Vector);
 
 		float dot = FloatVector.x * ContactNormal.x + FloatVector.y * ContactNormal.y + FloatVector.z * ContactNormal.z;
