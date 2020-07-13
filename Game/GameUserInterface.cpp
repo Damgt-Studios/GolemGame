@@ -323,10 +323,10 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
-	{
-		audioSystem = _audioSystem;
-	}
+	//void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
+	//{
+	//	audioSystem = _audioSystem;
+	//}
 
 	bool OptionsMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
@@ -345,19 +345,19 @@ namespace GolemGameUISetup
 							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
 							switch (_message->componentIndex)
 							{
-							case AD_AUDIO::MUSIC:
-								audioSystem->masterMusicVolume = _message->fvalue.x;
-								quick = 0.1f;
-								audioSystem->RefreshMusicVolumes();
-								break;
-							case AD_AUDIO::SOUND_FX:
-								audioSystem->masterSoundFXVolume = _message->fvalue.x;
-								quick = 0.1f;
-								break;
-							case AD_AUDIO::UI_SOUND_FX:
-								audioSystem->masterUISoundFXVolume = _message->fvalue.x;
-								quick = 0.1f;
-								break;
+							//case AD_AUDIO::MUSIC:
+							//	audioSystem->masterMusicVolume = _message->fvalue.x;
+							//	quick = 0.1f;
+							//	audioSystem->RefreshMusicVolumes();
+							//	break;
+							//case AD_AUDIO::SOUND_FX:
+							//	audioSystem->masterSoundFXVolume = _message->fvalue.x;
+							//	quick = 0.1f;
+							//	break;
+							//case AD_AUDIO::UI_SOUND_FX:
+							//	audioSystem->masterUISoundFXVolume = _message->fvalue.x;
+							//	quick = 0.1f;
+							//	break;
 							default:
 								break;
 							}
@@ -1399,7 +1399,7 @@ namespace GolemGameUISetup
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);
-		optionScreenController->SetAudio(_audioSystem);
+		//optionScreenController->SetAudio(_audioSystem);
 
 		//////gameplayScreenController->AddComponent(sliderList);
 		//gameplayScreenController->AddComponent(buttonList2);

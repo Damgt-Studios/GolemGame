@@ -85,7 +85,7 @@ namespace GolemGameUISetup
         AD_AUDIO::ADAudio* audioSystem;
     public:
         OptionsMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
+        //void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick);
     };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "fmod_studio.hpp"
-#include "fmod.hpp"
+//#include "fmod_studio.hpp"
+//#include "fmod.hpp"
 #include <string>
 #include <map>
 #include <vector>
@@ -13,28 +13,28 @@
 namespace AD_AUDIO
 {
 
-    enum AUDIO_SOURCE_TYPE
-    {
-        MUSIC = 0,
-        SOUND_FX,
-        UI_SOUND_FX
-    };
+    //enum AUDIO_SOURCE_TYPE
+    //{
+    //    MUSIC = 0,
+    //    SOUND_FX,
+    //    UI_SOUND_FX
+    //};
 
     class ADAudio {
-    public:
-        float masterMusicVolume = 0.5f;
-        float masterSoundFXVolume = 0.5f;
-        float masterUISoundFXVolume = 0.5f;
+    //public:
+    //    float masterMusicVolume = 0.5f;
+    //    float masterSoundFXVolume = 0.5f;
+    //    float masterUISoundFXVolume = 0.5f;
 
         static void Init();
         static void Update();
         static void Shutdown();
-        static int AudioErrorCheck(FMOD_RESULT result);
+        //static int AudioErrorCheck(FMOD_RESULT result);
 
-        //Load the Banks
-        void LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
+    //    //Load the Banks
+    //    void LoadBank(const std::string& strBankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
 
-        //Sounds & Channels
+    //    //Sounds & Channels
         void LoadSound(const std::string& strSoundName, bool b3d = true, bool bLooping = false, bool bStream = false);
         void UnLoadSound(const std::string& strSoundName);
         int PlaySounds(const std::string& strSoundName, const XMFLOAT3& vPos = XMFLOAT3{ 0, 0, 0 }, float fVolumedB = 0.0f);
@@ -44,17 +44,17 @@ namespace AD_AUDIO
         void SetChannelVolume(int nChannelId, float fVolumedB);
         bool IsPlaying(int nChannelId) const;
 
-        //Events
+    //    //Events
 	    void LoadEvent(const std::string& strEventName);
         void PlayEvent(const string& strEventName);
         void StopEvent(const string& strEventName, bool bImmediate = false);
          bool IsEventPlaying(const string& strEventName) const;
 
-        //Spatial Positioning Functions
-        void Set3dListenerAndOrientation(const FMOD_VECTOR& vPos = FMOD_VECTOR{ 0, 0, 0 }, float fVolumedB = 0.0f);
+    //    //Spatial Positioning Functions
+        //void Set3dListenerAndOrientation(const FMOD_VECTOR& vPos = FMOD_VECTOR{ 0, 0, 0 }, float fVolumedB = 0.0f);
         void SetChannel3dPosition(int nChannelId, const XMFLOAT3& vPosition);
-        FMOD_VECTOR VectorToFmod(const XMFLOAT3& vPosition);
-        
+        //FMOD_VECTOR VectorToFmod(const XMFLOAT3& vPosition);
+    //    
     };
 
     //A class can contain an audio source and use it to play sounds.  Couples classes but works fine if that's easily managed.
@@ -82,15 +82,15 @@ namespace AD_AUDIO
 
         void Update();
 
-        FMOD::Studio::System* studioSystem;
-        FMOD::System* audioSystem;
+        //FMOD::Studio::System* studioSystem;
+        //FMOD::System* audioSystem;
 
         int nextChannelId = -1;
 
-        std::map<std::string, FMOD::Sound*> soundsName_map;
-        std::map<int, FMOD::Channel*> channelsID_map;
-        std::vector<AudioSource*> musicChannels;
-        std::map<string, FMOD::Studio::EventInstance*> eventsName_map;
-        std::map<string, FMOD::Studio::Bank*> bankName_map;
+        //std::map<std::string, FMOD::Sound*> soundsName_map;
+        //std::map<int, FMOD::Channel*> channelsID_map;
+        //std::vector<AudioSource*> musicChannels;
+        //std::map<string, FMOD::Studio::EventInstance*> eventsName_map;
+        //std::map<string, FMOD::Studio::Bank*> bankName_map;
     };
 }
