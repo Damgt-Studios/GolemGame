@@ -32,6 +32,7 @@ namespace
 
 	std::vector<ADResource::ADRenderer::SimpleModel*> fbxmodels;
 	std::vector<ADResource::ADRenderer::SimpleModel*> colliders;
+	std::unordered_map<AD_ULONG, unsigned int>::const_iterator model_iter;
 
 	std::vector<ADResource::ADGameplay::GameObject*> minionPool;
 

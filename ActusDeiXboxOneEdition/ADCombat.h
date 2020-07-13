@@ -264,6 +264,15 @@ namespace ADResource
 			{
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
+					currentHitBox++;
+					if (currentHitBox >= hitboxCount)
+					{
+						currentHitBox = 0;
+						for (auto& hb : hitboxFired)
+						{
+							hb = false;
+						}
+					}
 					if (hitboxes.size() > 0 && movesToPlayer)
 					{
 						//hitbox->transform = *_casterTransform;
@@ -311,15 +320,6 @@ namespace ADResource
 						//{
 							if (hitboxDelay <= 0)
 							{
-								currentHitBox++;
-								if (currentHitBox >= hitboxCount)
-								{
-									currentHitBox = 0;
-									for (auto& hb : hitboxFired)
-									{
-										hb = false;
-									}
-								}
 								hitboxFired[currentHitBox] = true;
 								hitboxes[currentHitBox]->Enable();
 							}
@@ -345,6 +345,7 @@ namespace ADResource
 						//{
 							hitboxFired[currentHitBox] = true;
 							hitboxes[currentHitBox]->Enable();
+							currentHitBox++;
 						//}
 					}
 					if (attackTimer > 0)
@@ -486,7 +487,7 @@ namespace ADResource
 					ADPhysics::Manifold m;
 					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						if (!obj->colliderPtr->trigger)// && obj->gamePlayType != gamePlayType)
+						if (!obj->colliderPtr->trigger && obj->team != team)
 						{
 							collisionQueue.push(CollisionPacket(this, obj, m));
 						}

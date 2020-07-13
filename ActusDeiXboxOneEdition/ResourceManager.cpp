@@ -398,12 +398,12 @@ ADResource::ADGameplay::GameObject** ResourceManager::GetGameObjectPtr()
 ADResource::ADRenderer::SimpleModel** ResourceManager::GetSimpleModelPtrFromMeshId(AD_ULONG mesh_id)
 {
 	SimpleModel** temp = nullptr;
-	std::unordered_map<AD_ULONG, unsigned int>::const_iterator iter = fbxmodel_map.find(mesh_id);
+	model_iter = fbxmodel_map.find(mesh_id);
 
-	if (iter != fbxmodel_map.end())
+	if (model_iter != fbxmodel_map.end())
 	{
 		// Found
-		temp = &fbxmodels[iter->second];
+		temp = &fbxmodels[model_iter->second];
 	}
 
 	return temp;
