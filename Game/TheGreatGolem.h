@@ -604,136 +604,136 @@ public:
 	bool LoadGameAudio(AD_AUDIO::ADAudio* audioEngine)
 	{
 		//Load the Main Banks
-		audioEngine->LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
-		audioEngine->LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
+		//audioEngine->LoadBank("files//audio//Master.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
+		//audioEngine->LoadBank("files//audio//Master.strings.bank", FMOD_STUDIO_LOAD_BANK_NORMAL);
 
 		//Load the Music and create the Events to Call the Music.
-		titleMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
-		titleMusic.engine = audioEngine;
-		titleMusic.personalVolume = 0.02f;
-		titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
-		levelMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
-		levelMusic.engine = audioEngine;
-		levelMusic.personalVolume = 1.f;
-		levelMusic.LoadSound("files\\audio\\Amysticaljourney3.wav", false, false, true, true);
-		endMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
-		endMusic.engine = audioEngine;
-		endMusic.personalVolume = 0.8f;
-		endMusic.LoadSound("files\\audio\\Ending.mp3", false, false, true, true);
+		//titleMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
+		//titleMusic.engine = audioEngine;
+		//titleMusic.personalVolume = 0.02f;
+		//titleMusic.LoadSound("files\\audio\\Opening.mp3", false, false, true, true);
+		//levelMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
+		//levelMusic.engine = audioEngine;
+		//levelMusic.personalVolume = 1.f;
+		//levelMusic.LoadSound("files\\audio\\Amysticaljourney3.wav", false, false, true, true);
+		//endMusic.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::MUSIC;
+		//endMusic.engine = audioEngine;
+		//endMusic.personalVolume = 0.8f;
+		//endMusic.LoadSound("files\\audio\\Ending.mp3", false, false, true, true);
 
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &stopLevelMusicEvent);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &stopEndMusicEvent);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &stopLevelMusicEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &stopEndMusicEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayTitle", &playTitleEvent);
 
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &stopTitleMusicEvent);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &stopEndMusicEvent);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &playLevelEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &stopTitleMusicEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &stopEndMusicEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayLevel", &playLevelEvent);
 
 
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &stopTitleMusicEvent);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &stopLevelMusicEvent);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &playEndEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &stopTitleMusicEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &stopLevelMusicEvent);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("PlayEnd", &playEndEvent);
 
 
 
 		//Load The Golems Sound Effects
 
-		golemSteps.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemSteps.engine = audioEngine;
-		golemSteps.personalVolume = 0.5f;
-		golemSteps.restartOnRepeat = true;
-		golemSteps.LoadSound("event:/Sfx_GolemStep", true, false, true, true);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSteps", &golemStepEvent);
+		//golemSteps.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemSteps.engine = audioEngine;
+		//golemSteps.personalVolume = 0.5f;
+		//golemSteps.restartOnRepeat = true;
+		//golemSteps.LoadSound("event:/Sfx_GolemStep", true, false, true, true);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSteps", &golemStepEvent);
 
 
-		golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemPunchSound.engine = audioEngine;
-		golemPunchSound.personalVolume = 0.5f;
-		golemPunchSound.restartOnRepeat = false;
-		golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
+		//golemPunchSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemPunchSound.engine = audioEngine;
+		//golemPunchSound.personalVolume = 0.5f;
+		//golemPunchSound.restartOnRepeat = false;
+		//golemPunchSound.LoadSound("event:/Sfx_MinorGrunt", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchEvent);
 
-		golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemKickSound.engine = audioEngine;
-		golemKickSound.personalVolume = 0.5f;
-		golemKickSound.restartOnRepeat = false;
-		golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
+		//golemKickSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemKickSound.engine = audioEngine;
+		//golemKickSound.personalVolume = 0.5f;
+		//golemKickSound.restartOnRepeat = false;
+		//golemKickSound.LoadSound("event:/Sfx_EarthHit2", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemKick", &golemKickEvent);
 
-		golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemSlamSound.engine = audioEngine;
-		golemSlamSound.personalVolume = 0.5f;
-		golemSlamSound.restartOnRepeat = false;
-		golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
+		//golemSlamSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemSlamSound.engine = audioEngine;
+		//golemSlamSound.personalVolume = 0.5f;
+		//golemSlamSound.restartOnRepeat = false;
+		//golemSlamSound.LoadSound("event:/Sfx_EarthHit", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemSlam", &golemSlamEvent);
 
-		golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemWaveSound.engine = audioEngine;
-		golemWaveSound.personalVolume = 0.5f;
-		golemWaveSound.restartOnRepeat = false;
-		golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
+		//golemWaveSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemWaveSound.engine = audioEngine;
+		//golemWaveSound.personalVolume = 0.5f;
+		//golemWaveSound.restartOnRepeat = false;
+		//golemWaveSound.LoadSound("event:/Sfx_WaterWaveSpell", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemWaterWave", &golemWaveEvent);
 
-		golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemFireball.engine = audioEngine;
-		golemFireball.personalVolume = 0.5f;
-		golemFireball.restartOnRepeat = false;
-		golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
+		//golemFireball.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemFireball.engine = audioEngine;
+		//golemFireball.personalVolume = 0.5f;
+		//golemFireball.restartOnRepeat = false;
+		//golemFireball.LoadSound("event:/Sfx_FireBallSpell", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemFireball", &golemFireballEvent);
 
-		golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemIronHide.engine = audioEngine;
-		golemIronHide.personalVolume = 0.5f;
-		golemIronHide.restartOnRepeat = false;
-		golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
+		//golemIronHide.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemIronHide.engine = audioEngine;
+		//golemIronHide.personalVolume = 0.5f;
+		//golemIronHide.restartOnRepeat = false;
+		//golemIronHide.LoadSound("event:/Sfx_IronSkinSpell", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemTaunt", &golemTauntEvent);
 
-		golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemRootingSpell.engine = audioEngine;
-		golemRootingSpell.personalVolume = 0.5f;
-		golemRootingSpell.restartOnRepeat = false;
-		golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
+		//golemRootingSpell.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemRootingSpell.engine = audioEngine;
+		//golemRootingSpell.personalVolume = 0.5f;
+		//golemRootingSpell.restartOnRepeat = false;
+		//golemRootingSpell.LoadSound("event:/Sfx_RootCrushSpell", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemRooting", &golemRootEvent);
 
-		golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
-		golemEatMinion.engine = audioEngine;
-		golemEatMinion.personalVolume = 0.5f;
-		golemEatMinion.restartOnRepeat = false;
-		golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
-
-
-		menuConfirmSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		menuConfirmSound.engine = audioEngine;
-		menuConfirmSound.personalVolume = 0.5f;
-		menuConfirmSound.restartOnRepeat = true;
-		menuConfirmSound.LoadSound("event:/UI_SFX_GridConfirm", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_Confirm", &menuConfirmEvent);
-
-		menuReturnSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		menuReturnSound.engine = audioEngine;
-		menuReturnSound.personalVolume = 0.5f;
-		menuReturnSound.restartOnRepeat = true;
-		menuReturnSound.LoadSound("event:/UI_SFX_MenuReturn", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_Return", &menuReturnEvent);
-
-		menuCursorMovementSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		menuCursorMovementSound.engine = audioEngine;
-		menuCursorMovementSound.personalVolume = 0.5f;
-		menuCursorMovementSound.restartOnRepeat = true;
-		menuCursorMovementSound.LoadSound("event:/UI_SFX_GridMovement", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_MoveCursor", &menuCursorMovementEvent);
-
-		golemSliderMovementSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
-		golemSliderMovementSound.engine = audioEngine;
-		golemSliderMovementSound.personalVolume = 0.5f;
-		golemSliderMovementSound.restartOnRepeat = true;
-		golemSliderMovementSound.LoadSound("event:/UI_SFX_Sliderclick", true, true, false, false);
-		ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_SliderClick", &golemSliderMovementEvent);
+		//golemEatMinion.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::SOUND_FX;
+		//golemEatMinion.engine = audioEngine;
+		//golemEatMinion.personalVolume = 0.5f;
+		//golemEatMinion.restartOnRepeat = false;
+		//golemEatMinion.LoadSound("event:/Sfx_MinnionScream", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemEat", &golemEatMinionEvent);
 
 
+		//menuConfirmSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		//menuConfirmSound.engine = audioEngine;
+		//menuConfirmSound.personalVolume = 0.5f;
+		//menuConfirmSound.restartOnRepeat = true;
+		//menuConfirmSound.LoadSound("event:/UI_SFX_GridConfirm", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_Confirm", &menuConfirmEvent);
 
-		ADEvents::ADEventSystem::Instance()->PrintData();
+		//menuReturnSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		//menuReturnSound.engine = audioEngine;
+		//menuReturnSound.personalVolume = 0.5f;
+		//menuReturnSound.restartOnRepeat = true;
+		//menuReturnSound.LoadSound("event:/UI_SFX_MenuReturn", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_Return", &menuReturnEvent);
+
+		//menuCursorMovementSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		//menuCursorMovementSound.engine = audioEngine;
+		//menuCursorMovementSound.personalVolume = 0.5f;
+		//menuCursorMovementSound.restartOnRepeat = true;
+		//menuCursorMovementSound.LoadSound("event:/UI_SFX_GridMovement", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_MoveCursor", &menuCursorMovementEvent);
+
+		//golemSliderMovementSound.audioSourceType = AD_AUDIO::AUDIO_SOURCE_TYPE::UI_SOUND_FX;
+		//golemSliderMovementSound.engine = audioEngine;
+		//golemSliderMovementSound.personalVolume = 0.5f;
+		//golemSliderMovementSound.restartOnRepeat = true;
+		//golemSliderMovementSound.LoadSound("event:/UI_SFX_Sliderclick", true, true, false, false);
+		//ADEvents::ADEventSystem::Instance()->RegisterClient("UI_Sfx_SliderClick", &golemSliderMovementEvent);
+
+
+
+		//ADEvents::ADEventSystem::Instance()->PrintData();
 
 		return true;
 	};

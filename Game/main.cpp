@@ -127,7 +127,7 @@ public:
 		game = new TheGreatGolem();
 
 		//Initialize.  Order Matters.
-		audioEngine->Init();
+		//audioEngine->Init();
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
 
@@ -794,8 +794,8 @@ public:
 
 
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
-			audioEngine->Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
-			audioEngine->Update();
+			//audioEngine->Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
+			//audioEngine->Update();
 
 			XMFLOAT4X4 viewPass;
 			XMStoreFloat4x4(&viewPass, view);
@@ -960,7 +960,7 @@ public:
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
 			}
 		}
-		audioEngine->Shutdown();
+		//audioEngine->Shutdown();
 		engine->ShutDown();
 		tree->Shutdown();
 	}
