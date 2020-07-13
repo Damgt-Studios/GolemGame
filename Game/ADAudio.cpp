@@ -117,6 +117,7 @@ namespace AD_AUDIO
         //    ADAudio::AudioErrorCheck(audioImp->channelsID_map[nChannelId]->setVolume(fVolumedB));
         //}
         //return nChannelId;
+        return 0;
     }
 
     void ADAudio::StopChannel(int nChannelId)
@@ -163,6 +164,7 @@ namespace AD_AUDIO
         //    ADAudio::AudioErrorCheck(audioImp->channelsID_map[nChannelId]->isPlaying(&isPlaying));
         //}
         //return isPlaying;
+        return false;
     }
 
 
