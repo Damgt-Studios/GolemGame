@@ -67,16 +67,16 @@ namespace ADAI
 
 			mapSize = _mapSize;
 			cellSize = { _agentSize, _agentSize };
-			columns = (mapSize.x / cellSize.x);
-			rows = (mapSize.y / cellSize.y);
+			columns = static_cast<UINT>(mapSize.x / cellSize.x);
+			rows = static_cast<UINT>(mapSize.y / cellSize.y);
 			xDivisions = columns + 1;
 			yDivisions = rows + 1;
 		}
 
 		void GetColumnRowFromPosition(XMFLOAT2 _position, UINT& _out_column, UINT& _out_row)
 		{
-			_out_column = (_position.x + (mapSize.x / 2.f)) / cellSize.x;
-			_out_row = (_position.y + (mapSize.y / 2.f)) / cellSize.y;
+			_out_column = static_cast<UINT>((_position.x + (mapSize.x / 2.f)) / cellSize.x);
+			_out_row = static_cast<UINT>((_position.y + (mapSize.y / 2.f)) / cellSize.y);
 			//float x = _position.x - (planeLows.x * mapSize.x);
 			//float z = _position.y - (planeLows.y * mapSize.y);
 			//_out_column = int(x / cellSize.x);
@@ -170,7 +170,7 @@ namespace ADAI
 			}
 		}
 
-		SearchNode* GetTile(int _column = 0, int _row = 0)
+		SearchNode* GetTile(UINT _column = 0, UINT _row = 0)
 		{
 			if (_column < 0 || _column >= tileMap.columns || _row < 0 || _row >= tileMap.rows)
 			{

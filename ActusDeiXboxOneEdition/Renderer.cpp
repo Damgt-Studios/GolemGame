@@ -5,6 +5,14 @@
 
 ADResource::ADRenderer::PBRRenderer::RendererResources ADResource::ADRenderer::PBRRenderer::renderer_resources = ADResource::ADRenderer::PBRRenderer::RendererResources();
 
+unsigned int convertSizeUINT(size_t what)
+{
+	if (what > UINT_MAX) {
+		int i = 0;
+	}
+	return static_cast<unsigned int>(what);
+}
+
 ADResource::ADRenderer::PBRRenderer::PBRRenderer()
 {
 	// Create the device
@@ -65,8 +73,8 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	scd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 	scd.SampleDesc.Count = 1;
-	scd.Width = Window->Bounds.Width;
-	scd.Height = Window->Bounds.Height;
+	scd.Width = static_cast<int>(Window->Bounds.Width);
+	scd.Height = static_cast<int>(Window->Bounds.Height);
 
 	result = dxgiFactory->CreateSwapChainForCoreWindow(
 		renderer_resources.device.Get(),
@@ -81,8 +89,8 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	renderer_resources.width = scd.Width;
 	renderer_resources.height = scd.Height;
 
-	renderer_resources.viewport.Width = scd.Width;
-	renderer_resources.viewport.Height = scd.Height;
+	renderer_resources.viewport.Width = static_cast<float>(scd.Width);
+	renderer_resources.viewport.Height = static_cast<float>(scd.Height);
 	renderer_resources.viewport.TopLeftY = renderer_resources.viewport.TopLeftX = 0;
 	renderer_resources.viewport.MinDepth = 0;
 	renderer_resources.viewport.MaxDepth = 1;
@@ -101,7 +109,8 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 	ZeroMemory(&rdesc, sizeof(D3D11_RASTERIZER_DESC));
 	rdesc.FrontCounterClockwise = false;
 	rdesc.DepthBiasClamp = 1;
-	rdesc.DepthBias = rdesc.SlopeScaledDepthBias = 0;
+	rdesc.DepthBias = 0;
+	rdesc.SlopeScaledDepthBias = 0;
 	rdesc.DepthClipEnable = true;
 	rdesc.FillMode = D3D11_FILL_SOLID;
 	rdesc.CullMode = D3D11_CULL_BACK;
@@ -191,8 +200,8 @@ bool ADResource::ADRenderer::PBRRenderer::Initialize()
 
 #pragma region Shadow Initialization
 
-	renderer_resources.shadow_port.Width = scd.Width * 4;
-	renderer_resources.shadow_port.Height = scd.Height * 4;
+	renderer_resources.shadow_port.Width = static_cast<float>(scd.Width * 4);
+	renderer_resources.shadow_port.Height = static_cast<float>(scd.Height * 4);
 	renderer_resources.shadow_port.TopLeftY = renderer_resources.viewport.TopLeftX = 0;
 	renderer_resources.shadow_port.MinDepth = 0;
 	renderer_resources.shadow_port.MaxDepth = 1;

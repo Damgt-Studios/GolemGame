@@ -125,25 +125,25 @@ public:
     void HandleEvent(ADEvents::ADEvent* _event) override;
 };
 
-class AudioSourceListener : public ADEvents::Listener
-{
-private:
-    AD_AUDIO::AudioSource& audioSource;
-public:
-    AudioSourceListener(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
-    void HandleEvent(ADEvents::ADEvent* _event) override;
-    //std::string ToString() override;
-};
-
-class AudioStopListener : public ADEvents::Listener
-{
-private:
-    AD_AUDIO::AudioSource& audioSource;
-public:
-    AudioStopListener(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
-    void HandleEvent(ADEvents::ADEvent* _event) override;
-    std::string ToString() override;
-};
+//class AudioSourceListener : public ADEvents::Listener
+//{
+//private:
+//    AD_AUDIO::AudioSource& audioSource;
+//public:
+//    AudioSourceListener(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
+//    void HandleEvent(ADEvents::ADEvent* _event) override;
+//    //std::string ToString() override;
+//};
+//
+//class AudioStopListener : public ADEvents::Listener
+//{
+//private:
+//    AD_AUDIO::AudioSource& audioSource;
+//public:
+//    AudioStopListener(AD_AUDIO::AudioSource& _audioSource) : audioSource(_audioSource) {};
+//    void HandleEvent(ADEvents::ADEvent* _event) override;
+//    std::string ToString() override;
+//};
 
 class ApplyEffectListener : public ADEvents::Listener
 {

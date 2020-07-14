@@ -2,10 +2,10 @@
 #include "Listeners.h"
 
 
-void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
-{
-    audioSource.Play();
-}
+//void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
+//{
+//    audioSource.Play();
+//}
 
 void RecoveryEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
@@ -43,15 +43,15 @@ void CylinderEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 }, 15.0f);
 }
 
-void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
-{
-    audioSource.Stop();
-}
-
-std::string AudioStopListener::ToString()
-{
-    return std::string();
-}
+//void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
+//{
+//    audioSource.Stop();
+//}
+//
+//std::string AudioStopListener::ToString()
+//{
+//    return std::string();
+//}
 
 void BigCloudEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
@@ -175,11 +175,11 @@ void SetUITilingListener::HandleEvent(ADEvents::ADEvent* _event)
         cvalue = ceil((cvalue * 100.f) / float(maximum));
         //value = Lerp(minimum, maximum, value);
     }
-    if (cvalue < minimum)
-        cvalue = minimum;
-    if (cvalue > maximum)
-        cvalue = maximum;
-    image->tiled = cvalue;
+    if (cvalue < static_cast<float>(minimum))
+        cvalue = static_cast<float>(minimum);
+    if (cvalue > static_cast<float>(maximum))
+        cvalue = static_cast<float>(maximum);
+    image->tiled = static_cast<UINT>(cvalue);
 }
 
 std::string SetUITilingListener::ToString()

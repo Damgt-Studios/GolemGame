@@ -2,7 +2,9 @@
 #include "pch.h"
 #include "Types.h"
 #include "Utils.h"
+#include  <d3dcompiler.h>
 #include "DDSTextureLoader.h"
+#pragma comment(lib,"D3dcompiler.lib")
 using namespace DirectX;
 using namespace std;
 
@@ -55,14 +57,14 @@ public:
 	{
 		if (lifeSpan == -1)
 		{
-			velocity.y += GRAVITY * gravityEffect * (float)time;
-			attributes.position.x += newVelocity.x * time;
-			attributes.position.y += newVelocity.y * time;
-			attributes.position.z += newVelocity.z * time;
+			velocity.y += GRAVITY * gravityEffect * static_cast<float>(time);
+			attributes.position.x += newVelocity.x * static_cast<float>(time);
+			attributes.position.y += newVelocity.y * static_cast<float>(time);
+			attributes.position.z += newVelocity.z * static_cast<float>(time);
 		}
 		else
 		{
-			elaspedTime += time;
+			elaspedTime += static_cast<float>(time);
 			if (elaspedTime > lifeSpan && lifeSpan != -1.0f)
 			{
 				attributes.position = newPosition;
@@ -73,10 +75,10 @@ public:
 			}
 			else
 			{
-				velocity.y += GRAVITY * gravityEffect * (float)time;
-				attributes.position.x += velocity.x * time;
-				attributes.position.y += velocity.y * time;
-				attributes.position.z += velocity.z * time;
+				velocity.y += GRAVITY * gravityEffect * static_cast<float>(time);
+				attributes.position.x += velocity.x * static_cast<float>(time);
+				attributes.position.y += velocity.y * static_cast<float>(time);
+				attributes.position.z += velocity.z * static_cast<float>(time);
 			}
 		}
 	}
@@ -239,9 +241,12 @@ public:
 
 		HRESULT result;
 
-		result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
-		result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
-		result = D3DCompileFromFile(gshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_GS, D3DCOMPILE_DEBUG, 0, &geometryblob, nullptr);
+		ID3DBlob* errorBlob1 = nullptr;
+		ID3DBlob* errorBlob2 = nullptr;
+		ID3DBlob* errorBlob3 = nullptr;
+		result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, &errorBlob1);
+		result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, &errorBlob2);
+		result = D3DCompileFromFile(gshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_GS, D3DCOMPILE_DEBUG, 0, &geometryblob, &errorBlob3);
 		assert(!FAILED(result));
 
 		result = Device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &vertexShader);
@@ -467,7 +472,7 @@ public:
 		isActive = false;
 		lifeSpan = 0.0f;
 		emitterRadius = radius;
-		emitterSlices = radius * 16;
+		emitterSlices = static_cast<int>(radius * 16);
 		emitterPos = Pos;
 		size = amountOfParticles;
 		float theta = 2.0f * 3.14159f / (float)emitterSlices;
@@ -1226,7 +1231,7 @@ public:
 		isActive = false;
 		lifeSpan = 0.0f;
 		emitterRadius = radius;
-		emitterSlices = radius * 16;
+		emitterSlices = static_cast<int>(radius * 16);
 		emitterPos = Pos;
 		size = amountOfParticles;
 		float theta = 2.0f * 3.14159f / (float)emitterSlices;

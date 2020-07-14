@@ -172,6 +172,7 @@ AD_ULONG ResourceManager::InitializeAnimatedModel(std::string modelname, std::st
 	//ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader, materials);
 	ADUtils::LoadAnimatedMesh(modelname.c_str(), *temp, animations, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, shader);
 	ADUtils::LoadTextures(materials, temp, ADResource::ADRenderer::PBRRenderer::GetRendererResources()->device, texturesBank);
+	Sleep(2);
 
 	// grab id and add stuff
 	AD_ULONG id = GenerateUniqueID();

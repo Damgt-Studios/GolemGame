@@ -38,10 +38,10 @@ void ADUI::UIComponent::SetPosition(XMFLOAT2 _position)
     position.x = _position.x * Settings::posScalingWidth;
     position.y = _position.y * Settings::posScalingHeight;
 
-    corners.left = position.x;
-    corners.top = position.y;
-    corners.right = position.x + size.x;
-    corners.bottom = position.y + size.y;
+    corners.left = static_cast<long>(position.x);
+    corners.top = static_cast<long>(position.y);
+    corners.right = static_cast<long>(position.x + size.x);
+    corners.bottom = static_cast<long>(position.y + size.y);
 
     //center.x = size.x / 2;
     //center.y = size.y / 2;
@@ -61,14 +61,14 @@ void ADUI::UIComponent::SetCorners(XMFLOAT4 _position)
 void ADUI::UIComponent::SetWidth(float _width)
 {
     size.x = _width;
-    corners.right = position.x + size.x;
+    corners.right = static_cast<long>(position.x + size.x);
     //center.x = position.x + (size.x * 0.5f * Settings::resScalingWidth);
 }
 
 void ADUI::UIComponent::SetHeight(float _height)
 {
     size.y = _height;
-    corners.bottom = position.y + size.y;
+    corners.bottom = static_cast<long>(position.y + size.y);
     //center.y = position.y + (size.y * 0.5f * Settings::resScalingHeight);
 }
 
@@ -136,7 +136,7 @@ ADUI::Image2D::~Image2D()
 void ADUI::Image2D::BuildAnimation(RECT _uvRect, UINT _uvColumnCount, UINT _animationCount, AnimationData* _animations)
 {
     uvCount = 0;
-    for (int i = 0; i < _animationCount; ++i)
+    for (UINT i = 0; i < _animationCount; ++i)
     {
          uvCount += _animations[i].frameCount;
         _animations[i].updateThreshold = (1.0f / _animations[i].fps);
@@ -154,14 +154,14 @@ void ADUI::Image2D::BuildAnimation(RECT _uvRect, UINT _uvColumnCount, UINT _anim
     float currentColumn = 0;
     float currentRow = 0;
 
-    for (int i = 0; i < uvCount; ++i)
+    for (UINT i = 0; i < uvCount; ++i)
     {
-        currentRow = i / _uvColumnCount;
-        currentColumn = i - (currentRow * _uvColumnCount);
-        uvRect[i].left = uvRect[0].left + (uvRect[0].right - uvRect[0].left) * currentColumn;
-        uvRect[i].right = uvRect[0].right + (uvRect[0].right - uvRect[0].left) * currentColumn;
-        uvRect[i].top = uvRect[0].top + (uvRect[0].bottom - uvRect[0].top) * currentRow;
-        uvRect[i].bottom = uvRect[0].bottom + (uvRect[0].bottom - uvRect[0].top) * currentRow;
+        currentRow = static_cast<float>(i) / _uvColumnCount;
+        currentColumn = static_cast<float>(i) - (currentRow * _uvColumnCount);
+        uvRect[i].left = uvRect[0].left + (uvRect[0].right - uvRect[0].left) * static_cast<long>(currentColumn);
+        uvRect[i].right = uvRect[0].right + (uvRect[0].right - uvRect[0].left) * static_cast<long>(currentColumn);
+        uvRect[i].top = uvRect[0].top + (uvRect[0].bottom - uvRect[0].top) * static_cast<long>(currentRow);
+        uvRect[i].bottom = uvRect[0].bottom + (uvRect[0].bottom - uvRect[0].top) * static_cast<long>(currentRow);
     }
 }
 
@@ -266,15 +266,15 @@ void ADUI::Image2D::Render()
     {
         if (stretched)
         {
-            RECT scaledRect = { corners.left * (scale.x), // * Settings::posScalingWidth),
-                corners.top * (scale.y),// Settings::posScalingHeight * ,
-                corners.right * (scale.x),//Settings::resScalingWidth *),
-                corners.bottom * (scale.y) };//Settings::resScalingHeight *) };
+            RECT scaledRect = { corners.left * static_cast<long>(scale.x), // * Settings::posScalingWidth),
+                corners.top * static_cast<long>(scale.y),// Settings::posScalingHeight * ,
+                corners.right * static_cast<long>(scale.x),//Settings::resScalingWidth *),
+                corners.bottom * static_cast<long>(scale.y) };//Settings::resScalingHeight *) };
             //spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, anchor, effects, depth);
             spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, center, effects, depth);
         }
         else
-            for (int i = 0; i < tiled; ++i)
+            for (UINT i = 0; i < tiled; ++i)
             {
                 float x = position.x + (i * GetWidth());
                 spriteBatch->Draw(texture, { x, position.y }, &uvRect[currentFrame], tint, rotation, center, { Settings::resScalingWidth * scale.x, Settings::resScalingHeight * scale.y }, effects, depth);
@@ -697,7 +697,7 @@ void ADUI::ADUI::AddTextureArray(char** _fileNameArray, UINT _count)
 {
     uiResources.textureCount = _count;
     uiResources.uiTextures = new ID3D11ShaderResourceView * [_count];
-    for (int i = 0; i < _count; ++i)
+    for (UINT i = 0; i < _count; ++i)
     {
         ADUtils::LoadUITextures(_fileNameArray[i], &uiResources.uiTextures[i], device);
     }
@@ -706,10 +706,11 @@ void ADUI::ADUI::AddTextureArray(char** _fileNameArray, UINT _count)
 void ADUI::ADUI::AddFontArray(char** _fileNameArray, UINT _count)
 {
     fontCount = _count;
-    spriteFonts = new Text2D[_count];
-    for (int i = 0; i < _count; ++i)
+    //spriteFonts = new Text2D[_count];
+    for (UINT i = 0; i < _count; i++)
     {
-        spriteFonts[i].Initialize(_fileNameArray[i], device.Get(), spriteBatch.get());
+        spriteFonts.push_back(new Text2D);
+        spriteFonts[i]->Initialize(_fileNameArray[i], device.Get(), spriteBatch.get());
     }
 }
 
@@ -751,7 +752,7 @@ void ADUI::ADUI::Update(float delta_time)
             if (uiControllers[control]->active)
             {
                 float quick = 0;
-                for (int cComps = 0; cComps < uiControllers[control]->GetComponentCount(); ++cComps)
+                for (UINT cComps = 0; cComps < uiControllers[control]->GetComponentCount(); ++cComps)
                 {
                     if (uiControllers[control]->ProcessResponse(uiControllers[control]->GetComponent(cComps)->ProcessInput(), quick))
                     {
@@ -820,7 +821,7 @@ void ADUI::ADUI::Shutdown()
     }
     uiControllers.clear();
 
-    for (int i = 0; i < uiResources.textureCount; ++i)
+    for (UINT i = 0; i < uiResources.textureCount; ++i)
     {
         if (uiResources.uiTextures[i])
             uiResources.uiTextures[i]->Release();
@@ -833,7 +834,14 @@ void ADUI::ADUI::Shutdown()
             delete[] animations[i];
         }
     }
-    delete[] spriteFonts;
+    for (int i = 0; i < spriteFonts.size(); ++i)
+    {
+        if (spriteFonts[i] != nullptr)
+        {
+            delete[] spriteFonts[i];
+        }
+    }
+    spriteFonts.clear();
     animations.clear();
 
 
@@ -873,7 +881,7 @@ ADUI::Text2D* ADUI::ADUI::GetFont(UINT _id)
 {
     if (_id >= fontCount)
         _id = fontCount - 1;
-    return &spriteFonts[_id];
+    return spriteFonts[_id];
 }
 
 ADUI::ADUI* ADUI::MessageReceiver::userInterface = nullptr;
@@ -908,7 +916,7 @@ ADUI::UIComponentSelector::UIComponentSelector(UINT _componentCount, UIComponent
 
 ADUI::UIComponentSelector::~UIComponentSelector()
 {
-    for (int i = 0; i < componentCount; ++i)
+    for (UINT i = 0; i < componentCount; ++i)
     {
         delete components[i];
     }
@@ -921,7 +929,7 @@ ADUI::UIMessage* ADUI::UIComponentSelector::ProcessInput()
     if (active)
     {
         UIMessage* message = nullptr;
-        for (int i = 0; i < reactionCount; ++i)
+        for (UINT i = 0; i < reactionCount; ++i)
         {
             message = reactions[i]->ProcessInput();
             if (message != nullptr)
@@ -1018,7 +1026,7 @@ ADUI::Text2D* ADUI::UIComponentSelector::GetText2D()
 
 void ADUI::UIComponentSelector::SetCorners(XMFLOAT4 _pos)
 {
-    for (int i = 0; i < componentCount; ++i)
+    for (UINT i = 0; i < componentCount; ++i)
     {
         components[i]->SetCorners(_pos);
     }
@@ -1088,8 +1096,8 @@ void ADUI::ComponentGrid::RecalculatePositions()
     switch (spacingStyle)
     {
     case ComponentGridStyle::ExactSpacing:
-        width = positions[0].right - positions[0].left;
-        height = positions[0].bottom - positions[0].top;
+        width = static_cast<float>(positions[0].right - positions[0].left);
+        height = static_cast<float>(positions[0].bottom - positions[0].top);
 
         break;
     case ComponentGridStyle::FirstComponent:
@@ -1106,8 +1114,8 @@ void ADUI::ComponentGrid::RecalculatePositions()
 
     for (int i = 0; i < components.size(); ++i)
     {
-        XSpacing = (width + spacing) * (i % columns);
-        YSpacing = (height + spacing) * (i / columns);
+        XSpacing = static_cast<int>(width + spacing) * (i % columns);
+        YSpacing = static_cast<int>(height + spacing) * (i / columns);
         components[i]->SetCorners({ float(positions[0].left + XSpacing), float(positions[0].top + YSpacing),  float(positions[0].left + XSpacing + width), float(positions[0].top + YSpacing + height) });
 
     }
@@ -1149,7 +1157,7 @@ void ADUI::ComponentGrid::Generate(UIComponent* _comp, XMFLOAT4 _position, XMFLO
     columns = _columns;
     active = _active;
     controlFocus = _isFocus;
-    for (int i = 0; i < _count; ++i)
+    for (UINT i = 0; i < _count; ++i)
     {
         components.push_back(_comp->clone());
     }
@@ -1416,7 +1424,7 @@ void ADUI::Slider::Render()
 
 ADUI::UIComponent::~UIComponent()
 {
-    for (int i = 0; i < reactionCount; ++i)
+    for (UINT i = 0; i < reactionCount; ++i)
     {
         if(reactions[i])
             delete reactions[i];
@@ -1428,7 +1436,7 @@ ADUI::UIMessage* ADUI::UIComponent::ProcessInput()
 {
     if (active)
     {
-        for (int i = 0; i < reactionCount; ++i)
+        for (UINT i = 0; i < reactionCount; ++i)
         {
             UIMessage* message = nullptr;
             message = reactions[i]->ProcessInput();

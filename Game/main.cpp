@@ -49,7 +49,7 @@ ref class App sealed : public IFrameworkView
 private:
 	Engine* engine;
 	TheGreatGolem* game;
-	AD_AUDIO::ADAudio* audioEngine;
+	//AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
 	ADGameplay::Scene currentScene;
 	//MinionManager* minionManager;
@@ -123,53 +123,14 @@ public:
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 		//---------------------Create The Engines and the Game Object
 		engine = new Engine;
-		audioEngine = new AD_AUDIO::ADAudio;
+
+		//audioEngine = new AD_AUDIO::ADAudio;
 		game = new TheGreatGolem();
 
 		//Initialize.  Order Matters.
 		//audioEngine->Init();
-		game->LoadGameAudio(audioEngine);
+		//game->LoadGameAudio(audioEngine);
 		game->Initialize();
-
-		BigCloudEmitterListener bigGolemDustParticles(engine->bigCloud);
-		bigGolemDustParticles.lifespan = 0.5f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
-
-		RecoveryEmitterListener golemRecoveryParticles(engine->recoveryEmitter);
-		golemRecoveryParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
-
-		SmallCloudEmitterListener smallGolemDustParticles(engine->smallCloud);
-		smallGolemDustParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
-
-		WaterWaveEmitterListener waveParticles(engine->waterWave);
-		waveParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
-
-		IronSkinEmitterListener ironSkinParticles(engine->ironSkin);
-		ironSkinParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
-
-		FireballEmitterListener fireballParticles(engine->fireball);
-		fireballParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
-
-		CylinderEmitterListener woodCylinderParticles(engine->woodCylinder);
-		woodCylinderParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWoodCylinderParticles", &woodCylinderParticles);
-
-		CylinderEmitterListener fireCylinderParticles(engine->fireCylinder);
-		fireCylinderParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireCylinderParticles", &fireCylinderParticles);
-
-		CylinderEmitterListener waterCylinderParticles(engine->waterCylinder);
-		waterCylinderParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaterCylinderParticles", &waterCylinderParticles);
-
-		CylinderEmitterListener stoneCylinderParticles(engine->stoneCylinder);
-		stoneCylinderParticles.lifespan = 1.0f;
-		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemStoneCylinderParticles", &stoneCylinderParticles);
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
@@ -188,8 +149,8 @@ public:
 
 
 
-		std::vector<std::string> bucketheadanims;
-		bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
+		//std::vector<std::string> bucketheadanims;
+		//bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
 
 
 
@@ -286,53 +247,6 @@ public:
 		mountainRange->colliderPtr = nullptr;
 		GameUtilities::AddGameObject(mountainRange);
 
-#pragma region PhysicsSetup
-
-		//Physics Setup--------------------------------
-		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(physicsPlane->GetMeshId());
-		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
-		std::vector<ADPhysics::Triangle> ground;
-		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
-		XMMATRIX groundWorld = XMMatrixIdentity();
-		physicsPlane->GetWorldMatrix(groundWorld);
-		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
-		{
-			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
-			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
-			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
-
-			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
-			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
-			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
-
-			ADPhysics::Triangle* tri = new Triangle(A, B, C);
-
-			ground.push_back(*tri);
-
-			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
-			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
-			treePoints.push_back(point);
-		}
-
-		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
-		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
-
-		for (unsigned int i = 0; i < treePoints.size(); i++)
-		{
-			tree->Insert(treePoints[i]);
-		}
-
-
-		// Construct physics stuff
-		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
-		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
-
-		//Needed to add this to the colliders for the collision queue
-
-		/*c2->colliderPtr = &test_colider1;
-		c2->type = OBJECT_TYPE::STATIC;*/
-
-#pragma endregion
 
 
 		//Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
@@ -728,16 +642,104 @@ public:
 
 		ResourceManager::FinalizedStatics();
 
+#pragma region PhysicsSetup
+
+		//Physics Setup--------------------------------
+		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(physicsPlane->GetMeshId());
+		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
+		std::vector<ADPhysics::Triangle> ground;
+		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
+		XMMATRIX groundWorld = XMMatrixIdentity();
+		physicsPlane->GetWorldMatrix(groundWorld);
+		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
+		{
+			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
+			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
+			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
+
+			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
+			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
+			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
+
+			ADPhysics::Triangle* tri = new Triangle(A, B, C);
+
+			ground.push_back(*tri);
+
+			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
+			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
+			treePoints.push_back(point);
+		}
+
+		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
+		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
+
+		for (unsigned int i = 0; i < treePoints.size(); i++)
+		{
+			tree->Insert(treePoints[i]);
+		}
+
+
+		// Construct physics stuff
+		//test_colider1 = ADPhysics::AABB(XMFLOAT3(0, 5, 15), XMFLOAT3(2, 2, 2));
+		//test_plane = ADPhysics::Plane(XMMatrixTranslation(0, -5, 0), XMFLOAT3(10, 0, 10));
+
+		//Needed to add this to the colliders for the collision queue
+
+		/*c2->colliderPtr = &test_colider1;
+		c2->type = OBJECT_TYPE::STATIC;*/
+
+#pragma endregion
+
 		XMFLOAT2 mapDimensions = { 3000 , 3000 };
 		float minionWidth = 10;
-		ADAI::ADPathfinding pathfinder;
-		pathfinder.Initialize(&planeModel->vertices, mapDimensions, minionWidth, 20.f);
+		/*ADAI::ADPathfinding pathfinder;
+		pathfinder.Initialize(&planeModel->vertices, mapDimensions, minionWidth, 20.f);*/
 
 		if (!engine->Initialize())
 		{
 			return;
 		}
-		game->LoadGameUserInterface(engine->GetUI(), audioEngine, &pathfinder.tileMap);
+		//game->LoadGameUserInterface(engine->GetUI(), &pathfinder.tileMap);//, audioEngine
+
+		BigCloudEmitterListener bigGolemDustParticles(engine->bigCloud);
+		bigGolemDustParticles.lifespan = 0.5f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
+
+		RecoveryEmitterListener golemRecoveryParticles(engine->recoveryEmitter);
+		golemRecoveryParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
+
+		SmallCloudEmitterListener smallGolemDustParticles(engine->smallCloud);
+		smallGolemDustParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
+
+		WaterWaveEmitterListener waveParticles(engine->waterWave);
+		waveParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
+
+		IronSkinEmitterListener ironSkinParticles(engine->ironSkin);
+		ironSkinParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
+
+		FireballEmitterListener fireballParticles(engine->fireball);
+		fireballParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);
+
+		CylinderEmitterListener woodCylinderParticles(engine->woodCylinder);
+		woodCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWoodCylinderParticles", &woodCylinderParticles);
+
+		CylinderEmitterListener fireCylinderParticles(engine->fireCylinder);
+		fireCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireCylinderParticles", &fireCylinderParticles);
+
+		CylinderEmitterListener waterCylinderParticles(engine->waterCylinder);
+		waterCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaterCylinderParticles", &waterCylinderParticles);
+
+		CylinderEmitterListener stoneCylinderParticles(engine->stoneCylinder);
+		stoneCylinderParticles.lifespan = 1.0f;
+		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemStoneCylinderParticles", &stoneCylinderParticles);
 
 
 		//rubble1->Remove();
@@ -747,7 +749,7 @@ public:
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 		game_time.Restart();
-		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
+		//ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 		while (!shutdown)
 		{
 			game_time.Signal();
@@ -757,23 +759,23 @@ public:
 			ProcessInput();
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
-			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
-			{
-				//minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
-				//pathfinder.ClearDebug();
-				UINT srow;
-				UINT scolumn;
-				UINT drow;
-				UINT dcolumn;
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), scolumn, srow);
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->targetMarker->GetPosition().x, golem->targetMarker->GetPosition().z), dcolumn, drow);
-				pathfinder.enter(scolumn, srow, dcolumn, drow);
-			}
-			if (!pathfinder.isDone())
-			{
-				pathfinder.update(0.001f);
-			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
+			//if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
+			//{
+			//	//minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
+			//	//pathfinder.ClearDebug();
+			//	UINT srow;
+			//	UINT scolumn;
+			//	UINT drow;
+			//	UINT dcolumn;
+			//	pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), scolumn, srow);
+			//	pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->targetMarker->GetPosition().x, golem->targetMarker->GetPosition().z), dcolumn, drow);
+			//	pathfinder.enter(scolumn, srow, dcolumn, drow);
+			//}
+			//if (!pathfinder.isDone())
+			//{
+			//	pathfinder.update(0.001f);
+			//}
+			//pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
 			//golem->flockingGroups[commandTargetGroup
 
 			// Debug draw
@@ -897,7 +899,7 @@ public:
 					}
 				}
 
-				for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				for (int i = 0; i < OBJ_COUNT; i++)
 				{
 					if (OBJS[i]->colliderPtr)
 					{
@@ -910,10 +912,10 @@ public:
 								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
 						}
 
-						for (auto& object : forcedCollisions)
-						{
-							OBJS[i]->CheckCollision(object);
-						}
+						//for (auto& object : forcedCollisions)
+						//{
+						//	OBJS[i]->CheckCollision(object);
+						//}
 					}
 				}
 

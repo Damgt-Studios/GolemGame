@@ -360,24 +360,24 @@ namespace GolemGameUISetup
 						if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)
 						{
 							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
-							switch (_message->componentIndex)
-							{
-							//case AD_AUDIO::MUSIC:
-							//	audioSystem->masterMusicVolume = _message->fvalue.x;
-							//	quick = 0.1f;
-							//	audioSystem->RefreshMusicVolumes();
+							//switch (_message->componentIndex)
+							//{
+							////case AD_AUDIO::MUSIC:
+							////	audioSystem->masterMusicVolume = _message->fvalue.x;
+							////	quick = 0.1f;
+							////	audioSystem->RefreshMusicVolumes();
+							////	break;
+							////case AD_AUDIO::SOUND_FX:
+							////	audioSystem->masterSoundFXVolume = _message->fvalue.x;
+							////	quick = 0.1f;
+							////	break;
+							////case AD_AUDIO::UI_SOUND_FX:
+							////	audioSystem->masterUISoundFXVolume = _message->fvalue.x;
+							////	quick = 0.1f;
+							////	break;
+							//default:
 							//	break;
-							//case AD_AUDIO::SOUND_FX:
-							//	audioSystem->masterSoundFXVolume = _message->fvalue.x;
-							//	quick = 0.1f;
-							//	break;
-							//case AD_AUDIO::UI_SOUND_FX:
-							//	audioSystem->masterUISoundFXVolume = _message->fvalue.x;
-							//	quick = 0.1f;
-							//	break;
-							default:
-								break;
-							}
+							//}
 
 						}
 						else
@@ -1333,7 +1333,7 @@ namespace GolemGameUISetup
 	}
 
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADAI::PathingGrid* _grid) //, AD_AUDIO::ADAudio* _audioSystem
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;

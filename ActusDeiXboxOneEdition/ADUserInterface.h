@@ -606,7 +606,7 @@ namespace ADUI
         ComPtr<ID3D11DeviceContext1> context;
         ComPtr<ID3D11RenderTargetView> rtv;
         UINT fontCount;
-        Text2D* spriteFonts;
+        std::vector<Text2D*> spriteFonts;
         UINT uiState = 1;
         UILog* uiLog;
 

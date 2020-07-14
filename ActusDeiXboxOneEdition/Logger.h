@@ -14,11 +14,11 @@
 class Logger
 {
 public:
-	static std::string buffer;
-	static std::string newMessage;
-	static time_t prev_time;
-	static time_t current_time;
-	static time_t message_time;
+	//static std::string buffer;
+	//static std::string newMessage;
+	//static time_t prev_time;
+	//static time_t current_time;
+	//static time_t message_time;
 
 	static void LogMessage(std::string message = "")
 	{

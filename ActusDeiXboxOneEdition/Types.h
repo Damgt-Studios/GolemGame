@@ -217,7 +217,7 @@ namespace ADResource
 
 				if (animations.size() > 0)
 				{
-					modifier = animations[animationCurrentIndex].frames.size();
+					modifier = static_cast<float>(animations[animationCurrentIndex].frames.size());
 
 					//Animations
 
@@ -232,7 +232,7 @@ namespace ADResource
 						elapsedTime = 0;
 					}
 
-					for (int i = animations[animationCurrentIndex].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
+					for (size_t i = animations[animationCurrentIndex].frames[counter].jointsMatrix.size() - 1; i >= 0; --i)
 					{
 						int nextKeyframe = 0;
 
@@ -388,8 +388,8 @@ namespace ADResource
 			bool tickOnEnter;
 			bool tickOnExit;
 			UINT tickCount;
-			UINT sourceID;
-			UINT instanceID;
+			AD_ULONG sourceID;
+			AD_ULONG instanceID;
 
 			virtual UINT OnApply(StatSheet* _targetsStatSheet) { return 0; };
 

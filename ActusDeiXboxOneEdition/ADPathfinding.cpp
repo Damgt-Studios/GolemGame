@@ -3,9 +3,9 @@
 
 void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVertices)
 {
-	for (int r = 0; r < tileMap.yDivisions; r++)
+	for (UINT r = 0; r < tileMap.yDivisions; r++)
 	{
-		for (int c = 0; c < tileMap.xDivisions; c++)
+		for (UINT c = 0; c < tileMap.xDivisions; c++)
 		{
 			pointGrid.push_back({ XMFLOAT3(c * tileMap.cellSize.x, 0, r * tileMap.cellSize.y), true });
 		}
@@ -52,9 +52,9 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 						((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + OBJS[i]->colliderPtr->GetWidth() / 2.f),
 						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + OBJS[i]->colliderPtr->GetLength() / 2.f));
 
-					for (int r = 0; r < tileMap.yDivisions; r++)
+					for (UINT r = 0; r < tileMap.yDivisions; r++)
 					{
-						for (int c = 0; c < tileMap.xDivisions; c++)
+						for (UINT c = 0; c < tileMap.xDivisions; c++)
 						{
 							if (colliderQuad.x < pointGrid[(c + (tileMap.xDivisions * r))].position.x &&
 								colliderQuad.y < pointGrid[(c + (tileMap.xDivisions * r))].position.z &&
@@ -227,9 +227,9 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 	tileMap.Initializing(_planeVertices, _mapSize, _agentSize, _agentToWallGap);
 	CreatePointGrid(_planeVertices);
 
-	for (int r = 0; r < tileMap.rows; r++)
+	for (UINT r = 0; r < tileMap.rows; r++)
 	{
-		for (int c = 0; c < tileMap.columns; c++)
+		for (UINT c = 0; c < tileMap.columns; c++)
 		{
 			PathingNode* mapNode = new PathingNode();
 			mapNode->position = XMFLOAT3(pointGrid[(r * (tileMap.xDivisions)) + c].position.x + (tileMap.cellSize.x / 2.f),
@@ -322,9 +322,9 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 		}
 	}
 
-	for (int r = 0; r < tileMap.rows; r++)
+	for (UINT r = 0; r < tileMap.rows; r++)
 	{
-		for (int c = 0; c < tileMap.columns; c++)
+		for (UINT c = 0; c < tileMap.columns; c++)
 		{
 			if (tileMap.nodeGrid[(r * (tileMap.columns)) + c]->threeSided)// && tileMap.nodeGrid[(r * (tileMap.xDivisions)) + c]->walkable)
 			{
@@ -499,9 +499,9 @@ void ADAI::ADPathfinding::exit()
 {
 	if (visited_map.size() > 0)
 	{
-		for (int x = 0; x < tileMap.columns; ++x)
+		for (UINT x = 0; x < tileMap.columns; ++x)
 		{
-			for (int y = 0; y < tileMap.rows; ++y)
+			for (UINT y = 0; y < tileMap.rows; ++y)
 			{
 				SearchNode* tl = GetTile(x, y);
 				if (visited_map[tl] != nullptr)

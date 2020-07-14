@@ -4,6 +4,7 @@
 #include "DDSTextureLoader.h"
 
 #include "Utils.h"
+#pragma comment(lib,"D3dcompiler.lib")
 
 
 //************************************
@@ -299,11 +300,15 @@ void ADUtils::LoadAnimatedMesh(const char* modelname, SimpleAnimModel& model, st
 	std::wstring pshadername(p.begin(), p.end());
 
 	HRESULT result;
+	ID3DBlob* errorBlob1 = nullptr;
+	ID3DBlob* errorBlob2 = nullptr;
 
-	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, nullptr);
+	result = D3DCompileFromFile(vshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_VS, D3DCOMPILE_DEBUG, 0, &vertexblob, &errorBlob1);
 	assert(!FAILED(result));
-	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, nullptr);
+
+	result = D3DCompileFromFile(pshadername.c_str(), NULL, NULL, ADUtils::SHADER_ENTRY_POINT, ADUtils::SHADER_MODEL_PS, D3DCOMPILE_DEBUG, 0, &pixelblob, &errorBlob1);
 	assert(!FAILED(result));
+
 
 	result = device->CreateVertexShader(vertexblob->GetBufferPointer(), vertexblob->GetBufferSize(), nullptr, &model.vertexShader);
 	assert(!FAILED(result));

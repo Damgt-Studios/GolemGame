@@ -120,10 +120,10 @@ Camera::Camera()
 	m_up = XMFLOAT3(0, 1, 0);
 	m_right = XMFLOAT3(0, 0, 0);
 	m_worldUp = XMFLOAT3(0, 1, 0);
-	m_yaw = WMATH_PI;
-	m_fov = WMATH_PI / 4; // default fov
-	m_near = .01;
-	m_far = 3000;
+	m_yaw = static_cast<float>(WMATH_PI);
+	m_fov = static_cast<float>(WMATH_PI) / 4.f; // default fov
+	m_near = .01f;
+	m_far = 3000.f;
 }
 
 
@@ -152,8 +152,8 @@ void FPSCamera::Rotate(float yaw, float pitch)
 
 
 	// Clamp the pitch between -180 and 180 exclusive
-	if (m_pitch < (-WMATH_PI / 2) + .1) m_pitch = (-WMATH_PI / 2) + .1;
-	else if (m_pitch > (WMATH_PI / 2) - .1) m_pitch = (WMATH_PI / 2) - .1;
+	if (m_pitch < static_cast<float>(-WMATH_PI / 2) + .1f) m_pitch = static_cast<float>(-WMATH_PI / 2) + .1f;
+	else if (m_pitch > static_cast<float>(WMATH_PI / 2) - .1f) m_pitch = static_cast<float>(WMATH_PI / 2) - .1f;
 
 	// Update the other shit
 	UpdateCameraVectors();
@@ -212,7 +212,7 @@ void OrbitCamera::Rotate(float &yaw, float& pitch)
 	m_yaw = XMConvertToRadians(yaw);
 	m_pitch = XMConvertToRadians(pitch);
 
-	m_pitch = clamp(m_pitch, (-WMATH_PI / 2.0f) + 0.1f, (WMATH_PI / 2.0f) - 0.1f);
+	m_pitch = clamp(m_pitch, static_cast<float>(-WMATH_PI / 2.0f) + 0.1f, static_cast<float>(WMATH_PI / 2.0f) - 0.1f);
 
 	UpdateCameraVectors();
 }

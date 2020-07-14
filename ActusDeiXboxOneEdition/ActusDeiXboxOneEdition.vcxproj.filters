@@ -93,9 +93,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="..\files\shaders\base_ps.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -162,5 +159,8 @@
     <FxCompile Include="..\files\shaders\anim_shadows_ps.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

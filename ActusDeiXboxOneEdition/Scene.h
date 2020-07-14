@@ -372,12 +372,6 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				stoneMinionAnimations.push_back(temp);
 			}
-			stoneMinionAnimations.push_back("files/models/Minion_3_Run.animfile");
-			stoneMinionAnimations.push_back("files/models/Minion_3_Punch.animfile");
-			stoneMinionAnimations.push_back("files/models/Minion_3_Born.animfile");
-			stoneMinionAnimations.push_back("files/models/Minion_3_Flinch.animfile");
-			stoneMinionAnimations.push_back("files/models/Minion_3_Death.animfile");
-
 			uint32_t NumWaterAnimations;
 			file.read((char*)&NumWaterAnimations, sizeof(uint32_t));
 			for (uint32_t i = 0; i < NumWaterAnimations; i++)
@@ -389,12 +383,6 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				waterMinionAnimations.push_back(temp);
 			}
-			waterMinionAnimations.push_back("files/models/Minion_4_Run.animfile");
-			waterMinionAnimations.push_back("files/models/Minion_4_Punch.animfile");
-			waterMinionAnimations.push_back("files/models/Minion_4_Born.animfile");
-			waterMinionAnimations.push_back("files/models/Minion_4_Flinch.animfile");
-			waterMinionAnimations.push_back("files/models/Minion_4_Death.animfile");
-
 			uint32_t NumFireAnimations;
 			file.read((char*)&NumFireAnimations, sizeof(uint32_t));
 			for (uint32_t i = 0; i < NumFireAnimations; i++)
@@ -406,12 +394,6 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				fireMinionAnimations.push_back(temp);
 			}
-			fireMinionAnimations.push_back("files/models/Minion_2_Run.animfile");
-			fireMinionAnimations.push_back("files/models/Minion_2_Punch.animfile");
-			fireMinionAnimations.push_back("files/models/Minion_2_Born.animfile");
-			fireMinionAnimations.push_back("files/models/Minion_2_Flinch.animfile");
-			fireMinionAnimations.push_back("files/models/Minion_2_Death.animfile");
-
 			uint32_t NumWoodAnimations;
 			file.read((char*)&NumWoodAnimations, sizeof(uint32_t));
 			for (uint32_t i = 0; i < NumWoodAnimations; i++)
@@ -423,12 +405,6 @@ namespace ADGameplay
 				file.read((char*)temp.c_str(), tempNum);
 				woodMinionAnimations.push_back(temp);
 			}
-			woodMinionAnimations.push_back("files/models/Minion_1_Run.animfile");
-			woodMinionAnimations.push_back("files/models/Minion_1_Punch.animfile");
-			woodMinionAnimations.push_back("files/models/Minion_1_Born.animfile");
-			woodMinionAnimations.push_back("files/models/Minion_1_Flinch.animfile");
-			woodMinionAnimations.push_back("files/models/Minion_1_Death.animfile");
-
 			uint32_t NumStone;
 			file.read((char*)&NumStone, sizeof(uint32_t));
 			stoneMinionArguments.resize(NumStone);
@@ -456,6 +432,7 @@ namespace ADGameplay
 
 			file.close();
 
+
 			for (unsigned int i = 0; i < sceneLights.size(); i++)
 			{
 				ResourceManager::AddLight(sceneLights[i]);
@@ -465,6 +442,31 @@ namespace ADGameplay
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
 
 			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
+
+
+			stoneMinionAnimations.push_back("files/models/Minion_3_Run.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Punch.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Born.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Flinch.animfile");
+			stoneMinionAnimations.push_back("files/models/Minion_3_Death.animfile");
+
+			waterMinionAnimations.push_back("files/models/Minion_4_Run.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Punch.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Born.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Flinch.animfile");
+			waterMinionAnimations.push_back("files/models/Minion_4_Death.animfile");
+
+			fireMinionAnimations.push_back("files/models/Minion_2_Run.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Punch.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Born.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Flinch.animfile");
+			fireMinionAnimations.push_back("files/models/Minion_2_Death.animfile");
+
+			woodMinionAnimations.push_back("files/models/Minion_1_Run.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Punch.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Born.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Flinch.animfile");
+			woodMinionAnimations.push_back("files/models/Minion_1_Death.animfile");
 
 			for (int i = 0; i < 10; i++)
 			{

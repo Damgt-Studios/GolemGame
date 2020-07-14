@@ -20,7 +20,7 @@ public:
 
 	StatChange()
 	{
-		tickDuration = 0.2;
+		tickDuration = 0.2f;
 		tickTimer = 0;
 		currentTick = 0;
 		tickCount = 1;

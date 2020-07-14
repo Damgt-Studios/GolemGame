@@ -1351,8 +1351,8 @@ namespace ADPhysics
 
 	static void PositionalCorrection(XMFLOAT4& Position1, const PhysicsMaterial& mat1, XMFLOAT4& Position2, const PhysicsMaterial& mat2, Manifold& m)
 	{
-		const float percent = 1; // usually 20% to 80%
-		const float slop = 0.001; // usually 0.01f to 0.1f;
+		const float percent = 1.f; // usually 20% to 80%
+		const float slop = 0.001f; // usually 0.01f to 0.1f;
 		XMVECTOR correction = max(abs(m.PenetrationDepth) - slop, 0.0f) / (mat1.InvMass + mat2.InvMass) * percent * (XMVECTOR&)m.Normal;
 		correction.m128_f32[3] = 0;
 		Position1 = (XMFLOAT4&)((XMVECTOR&)Position1 - mat1.InvMass * correction);
