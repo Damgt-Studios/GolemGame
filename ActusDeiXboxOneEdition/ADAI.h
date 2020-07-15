@@ -1,325 +1,121 @@
 #pragma once
 #include "Types.h"
-
-
+#include "ADCombat.h"
 
 namespace ADAI
 {
-	//Forward Declaration
-	class AIUnit;
-
 	class State
 	{
-	protected:
-
 	public:
-		AIUnit* owner = nullptr;
-		XMVECTOR personalTarget;
-
-		std::vector<ADResource::ADGameplay::GameObject*> objectsToApproach;
-		std::vector<ADResource::ADGameplay::GameObject*> objectsToAvoid;
 		virtual void Update(float _deltaTime) = 0;
+		virtual void EnterState(float _deltaTime) {};
+		virtual void ExitState(float _deltaTime) {};
 	};
 
-	class IdleState : public State
+	class SimpleStateMachine
 	{
-		virtual void Update(float _deltaTime);
-	};
+	public:
+		ADResource::ADGameplay::GameObject* gameObject;
+		std::vector<ADAI::State*> states;
+		ADAI::State* currentState;
 
-	class WayPointState : public State
-	{
-		std::vector<XMFLOAT4> wayPoints;
-		//Current Pathfinding Path
-		virtual void Update(float _deltaTime);
+		void SwitchState(ADAI::State* _state, float _deltaTime = 0.f)
+		{
+			currentState->ExitState(_deltaTime);
+			currentState = _state;
+			currentState->EnterState(_deltaTime);
+		};
+		void SwitchState(int _stateID, float _deltaTime = 0.f)
+		{
+			currentState->ExitState(_deltaTime);
+			currentState = states[_stateID];
+			currentState->EnterState(_deltaTime);
+		};
+		void Update(float _deltaTime)
+		{
+			currentState->Update(_deltaTime);
+		};
 	};
 
 	class FlockingState : public State
 	{
 	public:
+		SimpleStateMachine* mySSM;
 		XMFLOAT4 VelocityWhenFlocking = { 0,0,0,0 };
+		bool turning = false;
 
 		//Current Pathfinding Path
-		void Update(float _deltaTime);
+		void Update(float _deltaTime)
+		{
+			mySSM->gameObject->Velocity = VelocityWhenFlocking;
+			mySSM->gameObject->AddToPositionVector((XMFLOAT3&)mySSM->gameObject->Velocity);
+		};
 	};
 
-	class AIUnit
+	class AttackingState : public State
 	{
 	public:
-		ADResource::ADGameplay::GameObject* owner;
-		std::vector<ADAI::State*> states;
-		ADAI::State* currentState;
+		SimpleStateMachine* mySSM;
+		UINT returnIndex;
+		//ADResource::ADGameplay::GameObject* target;
+		UINT attackCount = 1;
+		UINT attackCounter = 0;
+		ADResource::ADGameplay::Action* myAttack;
 
-		void SwitchState()
+		virtual void OnEnter()
 		{
-			//currentState = ...
+			mySSM->gameObject->Velocity = { 0,0,0,0 };
 		}
 
-		void Update(float _deltaTime);
-
-	};
-
-	class FlockingGroup
-	{
-	public:
-		std::vector<AIUnit*> flockers;
-		std::vector<FlockingState*> flockerState;
-		float commandDirectionalStrength = 0.00f;
-		float returnDirectionalStrength = 0.00f;
-		float alignmentDirectionalStrength = 0.00f;
-		float targetCohesionStrength = 1.0f;
-		float cohesionStrength = 0.7f;
-		float separationStrength = 1.0f;
-		float flockRadius = 10.0;
-		float maxSpeed = 1.0f;
-		float moveSpeed = 0.1f;
-		XMVECTOR averagePosition;
-		XMVECTOR averageForward;
-		XMVECTOR commandDirection;
-		XMMATRIX* groupTarget; //Player
-		XMVECTOR commandDestination;
-
-		XMFLOAT3 SetCommandDirection(XMMATRIX _camera, float _distance)
+		//Current Pathfinding Path
+		void Update(float _deltaTime)
 		{
-			for (int i = 0; i < flockers.size(); ++i)
+			//XMVECTOR zVec = minion->currentTarget->transform.r[3] - minion->mySSM.gameObject->transform.r[3];
+			//zVec = XMVector3Normalize(zVec);
+
+			//XMVECTOR direction = XMVector3Dot(zVec, XMVector3Normalize(minion->mySSM.gameObject->transform.r[0]));
+			//XMFLOAT3 fvec;
+			//XMStoreFloat3(&fvec, direction);
+
+			//XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(fvec.x);
+			//minion->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, minion->mySSM.gameObject->transform);
+
+			if (myAttack->active)
 			{
-				flockers[i]->currentState = flockers[i]->states[1];
-			}
-			commandDirectionalStrength = 1.2f;
-			returnDirectionalStrength = 0.f;
-
-			//commandDestination = ((groupTarget->r[3] - _camera.r[3]));
-			//XMFLOAT3 temp;
-			//XMStoreFloat3(&temp, commandDestination);
-			//commandDestination = _camera.r[3] + XMLoadFloat3(&temp);
-
-			XMVECTOR camHeadingNormal = XMMatrixInverse(nullptr, _camera).r[2];
-			XMFLOAT4 camFN;
-			XMStoreFloat4(&camFN, camHeadingNormal);
-
-			XMVECTOR targetPosition = XMMatrixInverse(nullptr, _camera).r[3];
-			XMFLOAT3 targetP;
-			XMStoreFloat3(&targetP, targetPosition);
-
-			targetP.x += camFN.x * _distance;
-			targetP.y = 0;
-			targetP.z += camFN.z * _distance;
-
-			commandDestination = XMLoadFloat3(&targetP);
-
-			return targetP;
-		};
-
-		void ReturnCall()
-		{
-			for (int i = 0; i < flockers.size(); ++i)
-			{
-				flockers[i]->currentState = flockers[i]->states[1];
-				;
-			}
-			commandDirectionalStrength = 0.f;
-			returnDirectionalStrength = 1.2f;
-		};
-
-		void AddUnitToGroup(AIUnit* _flocker, FlockingState* _flockersState)
-		{
-			flockers.push_back(_flocker);
-			flockerState.push_back(_flockersState);
-		};
-
-		void CalculateAverages()
-		{
-			averagePosition = { 0,0,0 };
-			averageForward = { 0,0,0 };
-			int count = flockers.size();
-			for (int i = 0; i < count; ++i)
-			{
-				averagePosition += flockers[i]->owner->transform.r[3];
-				averageForward += XMLoadFloat4(&flockers[i]->owner->Velocity);
-			}
-			XMVECTOR cnt = { count, count, count, count };
-			XMVECTOR forward = { count, count, count, count };
-			averagePosition /= cnt;
-			averageForward /= forward;
-			return;
-		};
-
-		XMVECTOR CalculateAlignmentAcceleration(ADResource::ADGameplay::GameObject* _object)
-		{
-			XMVECTOR af = averageForward * (1.f / maxSpeed);
-			af = XMVector4Normalize(af);
-			af *= alignmentDirectionalStrength;
-			return af;
-		}
-
-		XMVECTOR CalculateDirectionalAcceleration(ADResource::ADGameplay::GameObject* _object)
-		{
-			XMFLOAT3 sigh = _object->GetPosition();
-			XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			XMVECTOR velocity = commandDestination - objectPos;
-
-			velocity = XMVector4Normalize(velocity);
-
-			velocity *= commandDirectionalStrength;
-			return velocity;
-		}
-
-		XMVECTOR CalculateReturnAcceleration(ADResource::ADGameplay::GameObject* _object)
-		{
-			//XMFLOAT3 sigh = _object->GetPosition();
-			//XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			//XMFLOAT4X4 f4x4;
-			//XMStoreFloat4x4(&f4x4, *groupTarget);
-			//XMVECTOR f4 = { f4x4.m[3][0], f4x4.m[3][1], f4x4.m[3][2],f4x4.m[3][3]};
-			//XMVECTOR velocity = { 0,0,0,0 };// = f4 - objectPos;
-
-			//velocity = XMVector4Normalize(velocity);
-
-			//velocity *= returnDirectionalStrength;
-			//return velocity;
-
-
-			XMFLOAT3 sigh = _object->GetPosition();
-			XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			XMVECTOR velocity = groupTarget->r[3] - objectPos;
-
-			velocity = XMVector4Normalize(velocity);
-
-			velocity *= returnDirectionalStrength;
-			return velocity;
-		}
-
-		XMVECTOR CalculateTargetAcceleration(AIUnit* _object)
-		{
-			//XMFLOAT3 sigh = _object->GetPosition();
-			//XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			//XMFLOAT4X4 f4x4;
-			//XMStoreFloat4x4(&f4x4, *groupTarget);
-			//XMVECTOR f4 = { f4x4.m[3][0], f4x4.m[3][1], f4x4.m[3][2],f4x4.m[3][3]};
-			//XMVECTOR velocity = { 0,0,0,0 };// = f4 - objectPos;
-
-			//velocity = XMVector4Normalize(velocity);
-
-			//velocity *= returnDirectionalStrength;
-			//return velocity;
-
-
-			XMFLOAT3 sigh = _object->owner->GetPosition();
-			XMVECTOR objectPos = XMLoadFloat3(&sigh);
-			XMVECTOR velocity = _object->currentState->personalTarget - objectPos;
-
-			velocity = XMVector4Normalize(velocity);
-
-			velocity *= targetCohesionStrength;
-			return velocity;
-		}
-
-		XMVECTOR CalculateCohesionAcceleration(ADResource::ADGameplay::GameObject* _object)
-		{
-			XMFLOAT3 sigh = _object->GetPosition();
-			XMVECTOR ap = XMLoadFloat3(&sigh);
-			ap = averagePosition - ap;
-
-			XMFLOAT4 length;
-			XMStoreFloat4(&length, XMVector4Length(ap));
-
-			if (length.x < flockRadius)
-			{
-				ap = XMVector4Normalize(ap);
-				ap *= (length.x / flockRadius);
+				myAttack->Update(_deltaTime);
 			}
 			else
 			{
-				ap = XMVector4Normalize(ap);
-			}
-			ap *= cohesionStrength;
-			return ap;
-		}
-
-		XMVECTOR CalculateSeparationAcceleration(ADResource::ADGameplay::GameObject* _object)
-		{
-			XMVECTOR B = { 0, 0, 0 };
-			// int distanceThreshold =
-
-			XMFLOAT3 sigh;
-			XMFLOAT3 sigh2;
-			XMVECTOR distance;
-
-			int count = flockers.size();
-			for (int i = 0; i < count; ++i)
-			{
-				sigh = flockers[i]->owner->GetPosition();
-				sigh2 = _object->GetPosition();
-				XMVECTOR enemyPOS = XMLoadFloat3(&sigh);
-				XMVECTOR myPOS = XMLoadFloat3(&sigh2);
-				distance = enemyPOS - myPOS;
-
-				float threshold = flockers[i]->owner->safeRadius + _object->safeRadius;
-
-				XMFLOAT4 length;
-				XMStoreFloat4(&length, XMVector4Length(distance));
-				if (length.x < threshold)
+				if (attackCounter < attackCount)
 				{
-					XMVECTOR C = myPOS - enemyPOS;
-					C = XMVector4Normalize(C);
-					C *= (threshold - length.x) / threshold;
-					B += C;
+					if (myAttack->StartAction(&mySSM->gameObject->transform))
+					{
+						attackCounter++;
+					}
+					else
+					{
+						attackCounter = 0;
+						mySSM->gameObject->actionLevel = 0;
+						mySSM->SwitchState(returnIndex);
+					}
 				}
-			}
-			//Sum the distances
-			//Negate the new value
-			B = XMVector4Normalize(B);
-			B *= separationStrength;
-			return B;
-		}
-
-
-		void CalculateUnitVelocities()
-		{
-
-		}
-
-		XMVECTOR ShortenLength(XMVECTOR A, float reductionLength)
-		{
-			XMVECTOR B = A;
-			B = XMVector4Normalize(B);
-			B *= reductionLength;
-			return B;
-		}
-
-		void Update(float _deltaTime)
-		{
-			CalculateAverages();
-			for (int i = 0; i < flockers.size(); ++i)
-			{
-				XMVECTOR velocity = XMLoadFloat4(&flockers[i]->owner->Velocity);
-				XMFLOAT4 heading;
-				XMStoreFloat4(&heading, XMVector4Normalize(velocity));
-
-				flockerState[i]->VelocityWhenFlocking.x += heading.x * _deltaTime * moveSpeed;
-				flockerState[i]->VelocityWhenFlocking.y += heading.y * _deltaTime * moveSpeed;
-				flockerState[i]->VelocityWhenFlocking.z += heading.z * _deltaTime * moveSpeed;
-
-				velocity = CalculateAlignmentAcceleration(flockers[i]->owner) + CalculateCohesionAcceleration(flockers[i]->owner) + CalculateSeparationAcceleration(flockers[i]->owner) + CalculateDirectionalAcceleration(flockers[i]->owner) + CalculateReturnAcceleration(flockers[i]->owner) + CalculateTargetAcceleration(flockers[i]);
-				velocity *= (maxSpeed * _deltaTime);
-				velocity += XMLoadFloat4(&flockers[i]->owner->Velocity);
-
-				XMFLOAT4 yCancel;
-				XMStoreFloat4(&yCancel, velocity);
-				yCancel.y = 0;
-				velocity = XMLoadFloat4(&yCancel);
-
-				XMFLOAT4 length;
-				XMStoreFloat4(&length, XMVector4Length(velocity));
-
-				if (length.x > maxSpeed)
+				else
 				{
-					velocity = ShortenLength(velocity, maxSpeed);
+					attackCounter = 0;
+					mySSM->gameObject->actionLevel = 0;
+					mySSM->SwitchState(returnIndex);
 				}
-
-				XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);
 			}
 		};
 	};
+
+	static XMVECTOR ShortenLength(XMVECTOR A, float reductionLength)
+	{
+		XMVECTOR B = A;
+		B = XMVector4Normalize(B);
+		B *= reductionLength;
+		return B;
+	}
 
 	static float DistanceCalculation(XMFLOAT3 _obj1Pos, XMFLOAT3 _obj2Pos)
 	{
@@ -334,13 +130,25 @@ namespace ADAI
 		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
 		for (int i = 0; i < _searchGroup.size(); i++)
 		{
-			float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
-			if ((distance < distnaceLimit) && (distance * (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
+			if (_searchGroup[i]->active)
 			{
-				currentTarget = _searchGroup[i];
+				float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
+				if (distance < distnaceLimit)
+				{
+					if (distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
+					{
+						currentTarget = _searchGroup[i];
+						currentTargetDistance = distance * (2 - (_searchGroup[i]->desirability * desirabilityWeight));
+					}
+				}
 			}
 		}
 		return currentTarget;
 	}
+
+	static void turnTo(XMMATRIX _turner, XMMATRIX _target)
+	{
+	}
+
 };
 

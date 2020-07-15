@@ -188,8 +188,8 @@ public:
 
 
 
-		std::vector<std::string> bucketheadanims;
-		bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
+		//std::vector<std::string> bucketheadanims;
+		//bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
 
 
 
@@ -223,33 +223,33 @@ public:
 		Renderable* rock_wallCollider4 = GameUtilities::AddRenderableCollider();
 
 #ifdef ShowColliders
-		GameUtilities::AddGameObject(minionCollider);
+		//GameUtilities::AddGameObject(minionCollider);
 
 		GameUtilities::AddGameObject(golemCollider);
-		GameUtilities::AddGameObject(house1Collider);
-		GameUtilities::AddGameObject(house2Collider);
-		GameUtilities::AddGameObject(house3Collider);
-		GameUtilities::AddGameObject(house4Collider);
-		GameUtilities::AddGameObject(barn1Collider);
-		GameUtilities::AddGameObject(barn2Collider);
-		GameUtilities::AddGameObject(gatewayCollider);
-		GameUtilities::AddGameObject(towerCollider);
-		GameUtilities::AddGameObject(scaffoldingCollider);
-		GameUtilities::AddGameObject(wallCollider);
-		GameUtilities::AddGameObject(wellCollider);
-		GameUtilities::AddGameObject(tavernCollider);
-		GameUtilities::AddGameObject(rockCollider);
-		GameUtilities::AddGameObject(meeting_hallCollider);
-		GameUtilities::AddGameObject(cartCollider);
+		//GameUtilities::AddGameObject(house1Collider);
+		//GameUtilities::AddGameObject(house2Collider);
+		//GameUtilities::AddGameObject(house3Collider);
+		//GameUtilities::AddGameObject(house4Collider);
+		//GameUtilities::AddGameObject(barn1Collider);
+		//GameUtilities::AddGameObject(barn2Collider);
+		//GameUtilities::AddGameObject(gatewayCollider);
+		//GameUtilities::AddGameObject(towerCollider);
+		//GameUtilities::AddGameObject(scaffoldingCollider);
+		//GameUtilities::AddGameObject(wallCollider);
+		//GameUtilities::AddGameObject(wellCollider);
+		//GameUtilities::AddGameObject(tavernCollider);
+		//GameUtilities::AddGameObject(rockCollider);
+		//GameUtilities::AddGameObject(meeting_hallCollider);
+		//GameUtilities::AddGameObject(cartCollider);
 
-		GameUtilities::AddGameObject(rubbleCollider1);
-		GameUtilities::AddGameObject(rubbleCollider2);
-		GameUtilities::AddGameObject(rubbleCollider3);
+		//GameUtilities::AddGameObject(rubbleCollider1);
+		//GameUtilities::AddGameObject(rubbleCollider2);
+		//GameUtilities::AddGameObject(rubbleCollider3);
 
-		GameUtilities::AddGameObject(rock_wallCollider1);
-		GameUtilities::AddGameObject(rock_wallCollider2);
-		GameUtilities::AddGameObject(rock_wallCollider3);
-		GameUtilities::AddGameObject(rock_wallCollider4);
+		//GameUtilities::AddGameObject(rock_wallCollider1);
+		//GameUtilities::AddGameObject(rock_wallCollider2);
+		//GameUtilities::AddGameObject(rock_wallCollider3);
+		//GameUtilities::AddGameObject(rock_wallCollider4);
 
 #endif
 #endif
@@ -257,12 +257,12 @@ public:
 		//ADAI::FlockingGroup commandFlock;
 		//ADAI::FlockingGroup idleFlock;
 
-		//std::vector<Destructable*> stoneMinions;
-		//std::vector<Destructable*> waterMinions;
-		//std::vector<Destructable*> fireMinions;
-		//std::vector<Destructable*> woodMinions;
+		std::vector<Destructable*> stoneMinions;
+		std::vector<Destructable*> waterMinions;
+		std::vector<Destructable*> fireMinions;
+		std::vector<Destructable*> woodMinions;
 
-		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
+		currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
 
 		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
@@ -335,7 +335,7 @@ public:
 #pragma endregion
 
 
-		Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
+		/*Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 		GameUtilities::AddGameObject(house1);
 		currentScene.AddBuilding(house1);
 		house1->destructionEmitter = &engine->destructionCloud;
@@ -343,7 +343,7 @@ public:
 
 		Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
 		GameUtilities::AddGameObject(rubble1);
-		house1->SetRubble(rubble1);
+		house1->SetRubble(rubble1);*/
 
 //DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
 #pragma region Level Boundary
@@ -809,23 +809,23 @@ public:
 			
 
 #ifdef _DEBUG
-			minionCollider->transform = XMMatrixScaling(20, 5, 20);
-			minionCollider->transform.r[3] = { 20,10,20, 1 };
+			//minionCollider->transform = XMMatrixScaling(20, 5, 20);
+			//minionCollider->transform.r[3] = { 20,10,20, 1 };
 
 			//golemCollider->transform = golem->GetColliderInfo();
 
-			/*house1Collider->transform = house1->GetColliderInfo();
-			house2Collider->transform = house2->GetColliderInfo();
-			house3Collider->transform = house3->GetColliderInfo();
-			house4Collider->transform = house4->GetColliderInfo();
+			///*house1Collider->transform = house1->GetColliderInfo();
+			//house2Collider->transform = house2->GetColliderInfo();
+			//house3Collider->transform = house3->GetColliderInfo();
+			//house4Collider->transform = house4->GetColliderInfo();
 
-			barn1Collider->transform = barn1->GetColliderInfo();
+			//barn1Collider->transform = barn1->GetColliderInfo();
 
-			barn2Collider->transform = barn2->GetColliderInfo();
+			//barn2Collider->transform = barn2->GetColliderInfo();
 
-			gatewayCollider->transform = gateway->GetColliderInfo();
+			//gatewayCollider->transform = gateway->GetColliderInfo();
 
-			towerCollider->transform = tower->GetColliderInfo();*/
+			//towerCollider->transform = tower->GetColliderInfo();*/
 
 			//scaffoldingCollider->transform = scaffolding->GetColliderInfo();
 
@@ -841,7 +841,7 @@ public:
 
 			//cartCollider->transform = cart->GetColliderInfo();
 
-			rubbleCollider1->transform = rubble1->GetColliderInfo();
+			//rubbleCollider1->transform = rubble1->GetColliderInfo();
 			//rubbleCollider2->transform = rubble2->GetColliderInfo();
 			//rubbleCollider3->transform = rubble3->GetColliderInfo();
 #endif
@@ -925,13 +925,13 @@ public:
 				//Resolve all collisions that occurred this frame
 				ADResource::ADGameplay::ResolveCollisions();
 
-				/*for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 1; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
 					GroundClamping(waterMinions[i], tree, delta_time);
 					GroundClamping(fireMinions[i], tree, delta_time);
 					GroundClamping(woodMinions[i], tree, delta_time);
-				}*/
+				}
 
 			}
 

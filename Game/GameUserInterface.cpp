@@ -41,6 +41,22 @@ namespace GolemGameUISetup
 					buttonPressed = true;
 					break;
 				}
+				case 1:
+				{
+					//overlays[overlaysNameToID["TitleScreen"]]->Enable();
+					uiState = ENGINE_STATE::PAUSED;
+					controllers[controllersNameToID["TitleScreenController"]]->Enable();
+					overlays[overlaysNameToID["DefeatScreen"]]->Enable();
+					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
+					Disable();
+
+					//controllers[controllersNameToID["EndScreenController"]]->Enable();
+
+					//componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
+					buttonPressed = true;
+					break;
+				}
 				case 2:
 				{
 					//health -= 1;
@@ -118,7 +134,7 @@ namespace GolemGameUISetup
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
 		bool buttonPressed = false;
-		if (_message && !overlays[overlaysNameToID["SuccessScreen"]]->active)
+		if (_message && !overlays[overlaysNameToID["SuccessScreen"]]->active && !overlays[overlaysNameToID["DefeatScreen"]]->active)
 		{
 			buttonPressed = true;
 			if (_message->targetID == ADUI::UIMessageTargets::Controller)
@@ -184,13 +200,14 @@ namespace GolemGameUISetup
 				buttonPressed = true;
 			}
 		}
-		else if (overlays[overlaysNameToID["SuccessScreen"]]->active)
+		else if (overlays[overlaysNameToID["SuccessScreen"]]->active || overlays[overlaysNameToID["DefeatScreen"]]->active)
 		{
 			if (Input::QueryButtonDown(GamepadButtons::B) || Input::QueryButtonDown(GamepadButtons::A))
 			{
 				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 				overlays[overlaysNameToID["CreditsScreen"]]->Disable();
 				overlays[overlaysNameToID["SuccessScreen"]]->Disable();
+				overlays[overlaysNameToID["DefeatScreen"]]->Disable();
 				overlays[overlaysNameToID["HUD"]]->Disable();
 
 				ADUI::UIMessage message;
@@ -449,7 +466,7 @@ namespace GolemGameUISetup
 		ADUI::Label2D* creditsLabel0 = new ADUI::Label2D();
 		creditsLabel0->SetFont(myUI->GetFont(CreditsFont));
 		creditsLabel0->SetText("Programmers", XMFLOAT2(800, 400)
-			);
+		);
 		creditsLabel0->Enable();
 		creditsLabel0->SetTint(Colors::SteelBlue);
 		myUI->AddUIComponent("CreditsLabel0", creditsLabel0);
@@ -458,7 +475,7 @@ namespace GolemGameUISetup
 		ADUI::Label2D* creditsLabel = new ADUI::Label2D();
 		creditsLabel->SetFont(myUI->GetFont(CreditsFont - 1));
 		creditsLabel->SetText(" Taylor Addington \n Moises Carmona \n Gage Dietz \n Daniel Hayward \n Ahmed Fayez", XMFLOAT2(800, 750)
-			);
+		);
 		creditsLabel->Enable();
 		creditsLabel->SetTint(Colors::SteelBlue);
 		myUI->AddUIComponent("CreditsLabel1", creditsLabel);
@@ -467,7 +484,7 @@ namespace GolemGameUISetup
 		ADUI::Label2D* creditsLabel2 = new ADUI::Label2D();
 		creditsLabel2->SetFont(myUI->GetFont(CreditsFont));
 		creditsLabel2->SetText("Producers", XMFLOAT2(2300, 400)
-			);
+		);
 		creditsLabel2->Enable();
 		creditsLabel2->SetTint(Colors::SteelBlue);
 		myUI->AddUIComponent("CreditsLabel2", creditsLabel2);
@@ -476,7 +493,7 @@ namespace GolemGameUISetup
 		ADUI::Label2D* creditsLabel3 = new ADUI::Label2D();
 		creditsLabel3->SetFont(myUI->GetFont(CreditsFont - 1));
 		creditsLabel3->SetText(" Michael Hervieux \n Verdayne Graham", XMFLOAT2(2400, 600)
-			);
+		);
 		creditsLabel3->Enable();
 		creditsLabel3->SetTint(Colors::SteelBlue);
 		myUI->AddUIComponent("CreditsLabel3", creditsLabel3);
@@ -485,7 +502,7 @@ namespace GolemGameUISetup
 		ADUI::Label2D* creditsLabel4 = new ADUI::Label2D();
 		creditsLabel4->SetFont(myUI->GetFont(CreditsFont));
 		creditsLabel4->SetText("Audio Designer", XMFLOAT2(2450, 900)
-			);
+		);
 		creditsLabel4->Enable();
 		creditsLabel4->SetTint(Colors::SteelBlue);
 		myUI->AddUIComponent("CreditsLabel4", creditsLabel4);
@@ -494,7 +511,7 @@ namespace GolemGameUISetup
 		ADUI::Label2D* creditsLabel5 = new ADUI::Label2D();
 		creditsLabel5->SetFont(myUI->GetFont(CreditsFont - 1));
 		creditsLabel5->SetText(" Josh Packard", XMFLOAT2(2350, 1000)
-			);
+		);
 		creditsLabel5->Enable();
 		creditsLabel5->SetTint(Colors::SteelBlue);
 		myUI->AddUIComponent("CreditsLabel3", creditsLabel5);
@@ -858,6 +875,22 @@ namespace GolemGameUISetup
 		myUI->AddUIComponent("CreditsBG", creditsImage);
 		myUI->overlays[creditsID]->AddComponent(creditsImage);
 		UINT successID = myUI->AddNewOverlay("SuccessScreen", false, false);
+		myUI->overlays[successID]->AddComponent(creditsImage);
+
+		return successID;
+	}
+
+	UINT GameUserInterface::SetupDefeatGameScreen(ADUI::ADUI* myUI)
+	{
+		//SuccessScreen
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 1, 1 };
+		UINT creditsID = myUI->AddNewOverlay("DefeatScreen", false, false);
+		ADUI::Image2D* creditsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
+		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
+		myUI->AddUIComponent("CreditsBG", creditsImage);
+		myUI->overlays[creditsID]->AddComponent(creditsImage);
+		UINT successID = myUI->AddNewOverlay("DefeatScreen", false, false);
 		myUI->overlays[successID]->AddComponent(creditsImage);
 
 		return successID;
@@ -1345,7 +1378,9 @@ namespace GolemGameUISetup
 		titleScreenController->Enable();
 		UINT titleID = SetupTitleScreen(myUI, titleScreenController);
 		UINT endgameID = SetupEngGameScreen(myUI);
+		UINT defeatedID = SetupDefeatGameScreen(myUI);
 		titleScreenController->AddOverlay(myUI->overlays[endgameID]);
+		titleScreenController->AddOverlay(myUI->overlays[defeatedID]);
 
 		//// PauseScreen Controller
 		PauseMenuController* PauseScreenController = new PauseMenuController(myUI->GetUIState());
@@ -1392,6 +1427,7 @@ namespace GolemGameUISetup
 		gameplayMessageController->AddController(optionScreenController);
 
 		gameplayMessageController->AddOverlay(myUI->overlays[endgameID]);
+		gameplayMessageController->AddOverlay(myUI->overlays[defeatedID]);
 
 		//gameplayMessageController
 
