@@ -869,13 +869,23 @@ namespace GolemGameUISetup
 		//SuccessScreen
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
 		emptyAnimation[0] = { 0, 1, 1 };
-		UINT creditsID = myUI->AddNewOverlay("SuccessScreen", false, false);
+		UINT successID = myUI->AddNewOverlay("SuccessScreen", false, false);
 		ADUI::Image2D* creditsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
 		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("CreditsBG", creditsImage);
-		myUI->overlays[creditsID]->AddComponent(creditsImage);
-		UINT successID = myUI->AddNewOverlay("SuccessScreen", false, false);
 		myUI->overlays[successID]->AddComponent(creditsImage);
+
+
+		ADUI::Label2D* gameOverText = new ADUI::Label2D();
+		gameOverText->SetFont(myUI->GetFont(5));
+		gameOverText->SetText("Success!", { 1900, 480 });// XMFLOAT2(1920, 1080));
+		gameOverText->active = true;
+		gameOverText->visible = true;
+		gameOverText->SetTint({ .1f,0.5f,0.8f,1 });
+		myUI->AddUIComponent("EndScreenText", gameOverText);
+		myUI->overlays[successID]->AddComponent(gameOverText);
+
+
 
 		return successID;
 	}
@@ -890,10 +900,19 @@ namespace GolemGameUISetup
 		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("CreditsBG", creditsImage);
 		myUI->overlays[creditsID]->AddComponent(creditsImage);
-		UINT successID = myUI->AddNewOverlay("DefeatScreen", false, false);
-		myUI->overlays[successID]->AddComponent(creditsImage);
 
-		return successID;
+
+		ADUI::Label2D* gameOverText = new ADUI::Label2D();
+		gameOverText->SetFont(myUI->GetFont(5));
+		gameOverText->SetText("Defeat!", { 1900, 480 });// XMFLOAT2(1920, 1080));
+		gameOverText->active = true;
+		gameOverText->visible = true;
+		gameOverText->SetTint({ 0.8f,0.5f,.1f,1 });
+		myUI->AddUIComponent("GameOverScreenText", gameOverText);
+		myUI->overlays[creditsID]->AddComponent(gameOverText);
+
+
+		return creditsID;
 	}
 
 	UINT GameUserInterface::SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController)
