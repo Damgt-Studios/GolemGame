@@ -39,6 +39,7 @@
     <ClCompile Include="TheGreatGolem.cpp" />
     <ClCompile Include="MinionManager.cpp" />
     <ClCompile Include="GamePlayAI.cpp" />
+    <ClCompile Include="SceneLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -245,5 +246,6 @@
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="MinionManager.h" />
     <ClInclude Include="GamePlayAI.h" />
+    <ClInclude Include="SceneLoader.h" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "Renderer.h"
 
+
 // Static private members
 AD_ULONG ResourceManager::current_id = 1;
 AD_ULONG ResourceManager::effect_id = 0;

@@ -5,14 +5,14 @@
 #include <SpriteFont.h>
 
 #include "Utils.h"
-#include <d3dcompiler.h>
-#include "DDSTextureLoader.h"
 #include <string>
 #include <deque>
 #include "Input.h"
 #include <map>
 #include <CommonStates.h>
 
+#include <d3dcompiler.h>
+#include "DDSTextureLoader.h"
 
 namespace ADUI
 {

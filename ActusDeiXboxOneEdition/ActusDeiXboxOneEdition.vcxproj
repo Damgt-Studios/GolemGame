@@ -305,6 +305,7 @@
     <ClCompile Include="ADAI.cpp" />
     <ClCompile Include="ADEventSystem.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
+    <ClCompile Include="ADParticles.cpp" />
     <ClCompile Include="ADPathfinding.cpp" />
     <ClCompile Include="ADUserInterface.cpp" />
     <ClCompile Include="AnimationStateMachine.cpp" />

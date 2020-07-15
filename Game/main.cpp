@@ -49,7 +49,7 @@ ref class App sealed : public IFrameworkView
 private:
 	Engine* engine;
 	TheGreatGolem* game;
-	AD_AUDIO::ADAudio* audioEngine;
+	//AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
 	ADGameplay::Scene currentScene;
 	//MinionManager* minionManager;
@@ -123,12 +123,12 @@ public:
 		CoreWindow^ Window = CoreWindow::GetForCurrentThread();
 		//---------------------Create The Engines and the Game Object
 		engine = new Engine;
-		audioEngine = new AD_AUDIO::ADAudio;
+		//audioEngine = new AD_AUDIO::ADAudio;
 		game = new TheGreatGolem();
 
 		//Initialize.  Order Matters.
-		audioEngine->Init();
-		game->LoadGameAudio(audioEngine);
+		//audioEngine->Init();
+		//game->LoadGameAudio(audioEngine);
 		game->Initialize();
 
 		BigCloudEmitterListener bigGolemDustParticles(engine->bigCloud);
@@ -739,7 +739,7 @@ public:
 		{
 			return;
 		}
-		game->LoadGameUserInterface(engine->GetUI(), audioEngine, &pathfinder.tileMap);
+		game->LoadGameUserInterface(engine->GetUI(), &pathfinder.tileMap); //, audioEngine
 
 
 
@@ -750,7 +750,7 @@ public:
 		// String shit
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 		game_time.Restart();
-		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
+		//ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
 		while (!shutdown)
 		{
 			game_time.Signal();
@@ -794,8 +794,8 @@ public:
 
 
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
-			audioEngine->Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
-			audioEngine->Update();
+			//audioEngine->Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
+			//audioEngine->Update();
 
 			XMFLOAT4X4 viewPass;
 			XMStoreFloat4x4(&viewPass, view);
@@ -960,7 +960,7 @@ public:
 				ApplicationView::GetForCurrentView()->Title = ref new String(wchar);
 			}
 		}
-		audioEngine->Shutdown();
+		//audioEngine->Shutdown();
 		engine->ShutDown();
 		tree->Shutdown();
 	}

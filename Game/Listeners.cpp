@@ -2,10 +2,10 @@
 #include "Listeners.h"
 
 
-void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
-{
-    audioSource.Play();
-}
+//void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
+//{
+//    audioSource.Play();
+//}
 
 void RecoveryEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
@@ -43,15 +43,15 @@ void CylinderEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 }, 15.0f);
 }
 
-void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
-{
-    audioSource.Stop();
-}
+//void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
+//{
+//    audioSource.Stop();
+//}
 
-std::string AudioStopListener::ToString()
-{
-    return std::string();
-}
+//std::string AudioStopListener::ToString()
+//{
+//    return std::string();
+//}
 
 void BigCloudEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {

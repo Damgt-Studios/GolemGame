@@ -31,7 +31,7 @@ namespace GolemGameUISetup
 					uiState = ENGINE_STATE::PAUSED;
 					controllers[controllersNameToID["TitleScreenController"]]->Enable();
 					overlays[overlaysNameToID["SuccessScreen"]]->Enable();
-					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					//ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
 					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
 					Disable();
 
@@ -47,7 +47,7 @@ namespace GolemGameUISetup
 					uiState = ENGINE_STATE::PAUSED;
 					controllers[controllersNameToID["TitleScreenController"]]->Enable();
 					overlays[overlaysNameToID["DefeatScreen"]]->Enable();
-					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					//ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
 					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
 					Disable();
 
@@ -141,7 +141,7 @@ namespace GolemGameUISetup
 			{
 				if (_message->commandID == 1)
 				{
-					ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
+					//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 					switch (_message->componentIndex)
 					{
 					case 0:
@@ -154,7 +154,7 @@ namespace GolemGameUISetup
 						overlays[overlaysNameToID["HUD"]]->Enable();
 						uiState = ADUI::UISTATE::GAMEPLAY;
 
-						ADEvents::ADEventSystem::Instance()->SendEvent("PlayLevel", (void*)0);
+						//ADEvents::ADEventSystem::Instance()->SendEvent("PlayLevel", (void*)0);
 						buttonPressed = true;
 						break;
 					}
@@ -178,7 +178,7 @@ namespace GolemGameUISetup
 				}
 				else
 				{
-					ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
+					//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
 				}
 
 			}
@@ -193,7 +193,7 @@ namespace GolemGameUISetup
 		{
 			if (Input::QueryButtonDown(GamepadButtons::B))
 			{
-				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
+				//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
 				overlays[overlaysNameToID["CreditsScreen"]]->Disable();
 				overlays[overlaysNameToID["TitleScreen"]]->Enable();
 				componentTypeMap[componentsNameToID["TitleMenu"]]->Enable();
@@ -204,7 +204,7 @@ namespace GolemGameUISetup
 		{
 			if (Input::QueryButtonDown(GamepadButtons::B) || Input::QueryButtonDown(GamepadButtons::A))
 			{
-				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
+				//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 				overlays[overlaysNameToID["CreditsScreen"]]->Disable();
 				overlays[overlaysNameToID["SuccessScreen"]]->Disable();
 				overlays[overlaysNameToID["DefeatScreen"]]->Disable();
@@ -243,7 +243,7 @@ namespace GolemGameUISetup
 					{
 						if (uiState == ADUI::UISTATE::MENUSTATE)
 						{
-							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
+							//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 							UINT pauseOverlayID = overlaysNameToID["PauseScreen"];
 							if (overlays[pauseOverlayID]->active)
 							{
@@ -293,7 +293,7 @@ namespace GolemGameUISetup
 					}
 					else
 					{
-						ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
+						//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
 					}
 
 				}
@@ -316,7 +316,7 @@ namespace GolemGameUISetup
 				overlays[pauseOverlayID]->Disable();
 				uiState = ADUI::UISTATE::GAMEPLAY;
 				componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
-				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
+				//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
 			}
 			else
 			{
@@ -334,16 +334,16 @@ namespace GolemGameUISetup
 				overlays[overlaysNameToID["GuideScreen"]]->Disable();
 				componentTypeMap[componentsNameToID["PauseMenu"]]->Enable();
 				overlays[overlaysNameToID["PauseScreen"]]->Enable();
-				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
+				//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
 			}
 		}
 		return buttonPressed;
 	}
 
-	void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
-	{
-		audioSystem = _audioSystem;
-	}
+	//void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
+	//{
+	//	audioSystem = _audioSystem;
+	//}
 
 	bool OptionsMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
@@ -359,25 +359,25 @@ namespace GolemGameUISetup
 					{
 						if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)
 						{
-							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
-							switch (_message->componentIndex)
-							{
-							case AD_AUDIO::MUSIC:
-								audioSystem->masterMusicVolume = _message->fvalue.x;
-								quick = 0.1f;
-								audioSystem->RefreshMusicVolumes();
-								break;
-							case AD_AUDIO::SOUND_FX:
-								audioSystem->masterSoundFXVolume = _message->fvalue.x;
-								quick = 0.1f;
-								break;
-							case AD_AUDIO::UI_SOUND_FX:
-								audioSystem->masterUISoundFXVolume = _message->fvalue.x;
-								quick = 0.1f;
-								break;
-							default:
-								break;
-							}
+							//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
+							//switch (_message->componentIndex)
+							//{
+							//case AD_AUDIO::MUSIC:
+							//	audioSystem->masterMusicVolume = _message->fvalue.x;
+							//	quick = 0.1f;
+							//	audioSystem->RefreshMusicVolumes();
+							//	break;
+							//case AD_AUDIO::SOUND_FX:
+							//	audioSystem->masterSoundFXVolume = _message->fvalue.x;
+							//	quick = 0.1f;
+							//	break;
+							//case AD_AUDIO::UI_SOUND_FX:
+							//	audioSystem->masterUISoundFXVolume = _message->fvalue.x;
+							//	quick = 0.1f;
+							//	break;
+							//default:
+							//	break;
+							//}
 
 						}
 						else
@@ -387,17 +387,17 @@ namespace GolemGameUISetup
 							case 0: //Audio
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
 								componentTypeMap[componentsNameToID["AudioMenu"]]->Enable();
-								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
+								//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
 							case 1: //Video
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
 								componentTypeMap[componentsNameToID["ControlsMenu"]]->Enable();
-								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
+								//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
 							case 2: //Controls
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
 								componentTypeMap[componentsNameToID["VideoMenu"]]->Enable();
-								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
+								//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
 							default:
 								break;
@@ -406,7 +406,7 @@ namespace GolemGameUISetup
 					}
 					else
 					{
-						ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
+						//ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_MoveCursor", (void*)0);
 					}
 				}
 			}
@@ -1352,7 +1352,7 @@ namespace GolemGameUISetup
 	}
 
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADAI::PathingGrid* _grid) //, AD_AUDIO::ADAudio* _audioSystem
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
@@ -1454,7 +1454,7 @@ namespace GolemGameUISetup
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);
-		optionScreenController->SetAudio(_audioSystem);
+		//optionScreenController->SetAudio(_audioSystem);
 
 		//////gameplayScreenController->AddComponent(sliderList);
 		//gameplayScreenController->AddComponent(buttonList2);

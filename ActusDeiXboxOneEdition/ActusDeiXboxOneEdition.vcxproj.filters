@@ -45,6 +45,7 @@
     <ClCompile Include="ADPathfinding.cpp" />
     <ClCompile Include="AnimationStateMachine.cpp" />
     <ClCompile Include="ADEventSystem.cpp" />
+    <ClCompile Include="ADParticles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
