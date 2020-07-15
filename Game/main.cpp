@@ -1008,11 +1008,6 @@ public:
 			{
 				shutdown = true;
 			}
-			else if (Input::QueryButtonDown(GamepadButtons::RightThumbstick))
-			{
-				yaw = default_yaw;
-				pitch = default_pitch;
-			}
 		}
 	}
 
