@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderable.h"
+#include <AnimationStateMachine.h>
 #include <unordered_map>
 
 
@@ -10,6 +11,7 @@ namespace ADResource
 		enum OBJECT_TAG
 		{
 			PLAYER = 0,
+			COMMAND_MARKER,
 			UNTYPED_MINION,
 			WOOD_MINION,
 			WATER_MINION,
@@ -62,8 +64,95 @@ namespace ADResource
 			std::string eventName;
 
 			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			//HitBox(const HitBox& _rhs) 
+			//{
+			//	colScale = _rhs.colScale;
+			//	vel = _rhs.vel;
+			//	isDeactivateOnFirstApplication = _rhs.isDeactivateOnFirstApplication;
+			//	offsetX = _rhs.offsetX;
+			//	offsetZ = _rhs.offsetZ;
+			//	offsetY = _rhs.offsetY;
+			//	lifespan = _rhs.lifespan;
+			//	collider = _rhs.collider;
+			//	eventName = _rhs.eventName;
+			//	for (auto& effect : _rhs.effects)
+			//	{
+			//		effects.push_back(effect->clone());
+			//	}
+			//	active = _rhs.active;
+			//	safeRadius = _rhs.safeRadius;
+			//	desirability = _rhs.desirability;
+			//	physicsType = _rhs.physicsType;
+			//	gamePlayType = _rhs.gamePlayType;
+			//	team = _rhs.team;
+			//	actionLevel = _rhs.actionLevel;
+			//	meshID = _rhs.meshID;
+			//	Velocity = _rhs.Velocity;
+			//	transform = _rhs.transform;
+			//	postTransform = _rhs.postTransform;
+			//	colliderPtr = &collider;
+			//	pmat = _rhs.pmat;
+			//};
+			//HitBox& operator =(const HitBox& _rhs) { return *this; };
 			~HitBox() = default;
 
+			HitBox* Clone()
+			{
+				HitBox* nBox = new HitBox();
+				XMFLOAT3 scale = XMFLOAT3(1, 1, 1);
+				nBox->SetScale(scale);
+				nBox->SetRotation(scale);
+				nBox->SetPosition(scale);
+				nBox->active = false;
+
+				//nBox->collider = collider;
+
+
+				int cnt = 0;
+				for (auto& effect : effects)
+				{
+					nBox->effects.push_back(effect->clone());
+					nBox->effects[cnt].get()->sourceID = ResourceManager::GenerateEffectID();
+					cnt++;
+				}
+				nBox->offsetX = offsetX;
+				nBox->offsetZ = offsetZ;
+				nBox->offsetY = offsetY;
+				nBox->colScale = colScale;
+				nBox->vel = vel;
+				nBox->lifespan = lifespan;
+				nBox->team = team;
+				if (nBox->team == 3)
+				{
+					nBox->gamePlayType = ADResource::ADGameplay::CONSUMPTION_HITBOX;
+				}
+				nBox->isDeactivateOnFirstApplication = isDeactivateOnFirstApplication;
+				nBox->eventName = eventName;
+				AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				nBox->SetMeshID(id);
+
+				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
+				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, XMFLOAT3(1, 1, 1));
+				nBox->collider.trigger = true;
+				nBox->SetScale(colScale);
+				nBox->colliderPtr = &nBox->collider;
+
+				//nBox->safeRadius = safeRadius;
+				//nBox->desirability = desirability;
+				//nBox->physicsType = physicsType;
+				//nBox->gamePlayType = gamePlayType;
+				//nBox->actionLevel = actionLevel;
+				//nBox->meshID = meshID;
+				//nBox->Velocity = Velocity;
+				//nBox->transform = transform;
+				//nBox->postTransform = postTransform;
+
+				//nBox->colliderPtr = &collider;
+				//nBox->pmat = pmat;
+
+				ResourceManager::AddGameObject(nBox);
+				return nBox;
+			}
 
 			void Enable()
 			{
@@ -76,21 +165,25 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				// Physics
-				collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
-				colliderPtr = &collider;
-				collider.trigger = true;
 
-				if (lifespan > 0)
+				if (active)
 				{
-					lifespan -= _deltaTime;
-					if (lifespan <= 0)
-					{
-						active = false;
-					}
-				}
+					// Physics
+					collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
+					colliderPtr = &collider;
+					collider.trigger = true;
 
-				AddToPositionVector((XMFLOAT3&)Velocity);
+					if (lifespan > 0)
+					{
+						lifespan -= _deltaTime;
+						if (lifespan <= 0)
+						{
+							active = false;
+						}
+					}
+
+					AddToPositionVector((XMFLOAT3&)Velocity);
+				}
 			}
 
 
@@ -98,13 +191,20 @@ namespace ADResource
 			{
 				if (active && obj->active)
 				{
-					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
+					if (!obj->colliderPtr->trigger)
 					{
-						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						ADPhysics::Manifold m;
+						if (obj->colliderPtr->isCollision(&collider, m))
 						{
-							if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
-								PassEffects(obj);
+							if (obj->has_stats)
+							{
+								if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+								{
+									if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+										PassEffects(obj);
+								}
+							}
+
 						}
 					}
 				}
@@ -139,12 +239,14 @@ namespace ADResource
 			float attackDuration;
 			float attackTimer;
 			float hitboxDelay = 0;
-			HitBox* hitbox;
-			UINT hitboxCount;
+			float scaleCorrection = 10;
+			std::vector<HitBox*> hitboxes;
+			UINT currentHitBox = 0;
+			UINT hitboxCount = 0;
 
 			bool removeHbIfEnd = true;
 			bool movesToPlayer = true;
-			bool hitboxFired = false;
+			std::vector<bool> hitboxFired;
 
 			std::vector<bool> eventFired;
 			std::vector<float> eventDelay;
@@ -155,70 +257,80 @@ namespace ADResource
 			//If the attack doesn't own the hitbox this needs to change.
 			~Action()
 			{
-				delete hitbox;
-				if (hbpos)
+				for (auto& hb : hitboxes)
 				{
-					delete hbpos;
+					delete hb;
 				}
+				hitboxes.clear();
 			};
 
 			bool StartAction(XMMATRIX* _casterTransform)
 			{
-				if (movesToPlayer)
-				{
-					hitbox->transform = *_casterTransform;
-					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
-					XMVECTOR castSideNormal = _casterTransform->r[0];
-					XMVECTOR castUpNormal = _casterTransform->r[1];
-					XMVECTOR castHeadingNormal = _casterTransform->r[2];
-					XMVECTOR targetLocation = _casterTransform->r[3];
-
-					castUpNormal = XMVector4Normalize(castUpNormal);
-					XMFLOAT3 casterUN;
-					XMStoreFloat3(&casterUN, castUpNormal);
-
-					castSideNormal = XMVector4Normalize(castSideNormal);
-					XMFLOAT3 casterSN;
-					XMStoreFloat3(&casterSN, castSideNormal);
-
-
-					castHeadingNormal = XMVector4Normalize(castHeadingNormal);
-					XMFLOAT3 casterFN;
-					XMStoreFloat3(&casterFN, castHeadingNormal);
-					XMFLOAT3 targetPos;
-					XMStoreFloat3(&targetPos, targetLocation);
-
-					targetPos.x += (casterFN.x * hitbox->offsetZ) + (casterUN.x * hitbox->offsetY) + (casterSN.x * hitbox->offsetX);
-					targetPos.y += (casterFN.y * hitbox->offsetZ) + (casterUN.y * hitbox->offsetY) + (casterSN.y * hitbox->offsetX);
-					targetPos.z += (casterFN.z * hitbox->offsetZ) + (casterUN.z * hitbox->offsetY) + (casterSN.z * hitbox->offsetX);
-
-					hitbox->SetPosition(targetPos);
-
-					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
-					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
-					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
-
-				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
+					currentHitBox++;
+					if (currentHitBox >= hitboxCount)
+					{
+						currentHitBox = 0;
+						for (auto& hb : hitboxFired)
+						{
+							hb = false;
+						}
+					}
+					if (hitboxes.size() > 0 && movesToPlayer)
+					{
+						//hitbox->transform = *_casterTransform;
+						hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x * scaleCorrection, hitboxes[currentHitBox]->colScale.y * scaleCorrection, hitboxes[currentHitBox]->colScale.z * scaleCorrection), *_casterTransform);
+
+						XMVECTOR castSideNormal = _casterTransform->r[0];
+						XMVECTOR castUpNormal = _casterTransform->r[1];
+						XMVECTOR castHeadingNormal = _casterTransform->r[2];
+						XMVECTOR targetLocation = _casterTransform->r[3];
+						hitboxes[currentHitBox]->transform.r[3] = targetLocation;
+
+						castUpNormal = XMVector4Normalize(castUpNormal);
+						XMFLOAT3 casterUN;
+						XMStoreFloat3(&casterUN, castUpNormal);
+
+						castSideNormal = XMVector4Normalize(castSideNormal);
+						XMFLOAT3 casterSN;
+						XMStoreFloat3(&casterSN, castSideNormal);
+
+
+						castHeadingNormal = XMVector4Normalize(castHeadingNormal);
+						XMFLOAT3 casterFN;
+						XMStoreFloat3(&casterFN, castHeadingNormal);
+						XMFLOAT3 targetPos;
+						XMStoreFloat3(&targetPos, targetLocation);
+
+						targetPos.x += (casterFN.x * hitboxes[currentHitBox]->offsetZ) + (casterUN.x * hitboxes[currentHitBox]->offsetY) + (casterSN.x * hitboxes[currentHitBox]->offsetX);
+						targetPos.y += (casterFN.y * hitboxes[currentHitBox]->offsetZ) + (casterUN.y * hitboxes[currentHitBox]->offsetY) + (casterSN.y * hitboxes[currentHitBox]->offsetX);
+						targetPos.z += (casterFN.z * hitboxes[currentHitBox]->offsetZ) + (casterUN.z * hitboxes[currentHitBox]->offsetY) + (casterSN.z * hitboxes[currentHitBox]->offsetX);
+
+						hitboxes[currentHitBox]->SetPosition(targetPos);
+						hitboxes[currentHitBox]->Velocity.x = (casterFN.x * hitboxes[currentHitBox]->vel.z) + (casterUN.x * hitboxes[currentHitBox]->vel.y) + (casterSN.x * hitboxes[currentHitBox]->vel.x);
+						hitboxes[currentHitBox]->Velocity.y = (casterFN.y * hitboxes[currentHitBox]->vel.z) + (casterUN.y * hitboxes[currentHitBox]->vel.y) + (casterSN.y * hitboxes[currentHitBox]->vel.x);
+						hitboxes[currentHitBox]->Velocity.z = (casterFN.z * hitboxes[currentHitBox]->vel.z) + (casterUN.z * hitboxes[currentHitBox]->vel.y) + (casterSN.z * hitboxes[currentHitBox]->vel.x);
+
+					}
 					for (int i = 0; i < eventDelay.size(); i++)
 					{
 						eventFired[i] = false;
 					}
-					if (hitbox)
+					if (hitboxes.size() > 0)
 					{
 						cooldownTimer = cooldownDuration;
 						attackTimer = attackDuration;
-						for (int i = 0; i < hitboxCount; ++i)
+						//for (auto& hb:hitboxes)
+						//{
+						if (hitboxDelay <= 0)
 						{
-							if (hitboxDelay <= 0)
-							{
-								hitboxFired = true;
-								hitbox[i].Enable();
-							}
-							active = true;
-							return true;
+							hitboxFired[currentHitBox] = true;
+							hitboxes[currentHitBox]->Enable();
 						}
+						active = true;
+						return true;
+						//}
 					}
 				}
 				return false;
@@ -232,25 +344,25 @@ namespace ADResource
 				}
 				if (active)
 				{
+					if (hitboxFired[currentHitBox] == false && attackDuration - attackTimer > hitboxDelay)
+					{
+						//for (auto& hb : hitboxes)
+						//{
+						hitboxFired[currentHitBox] = true;
+						hitboxes[currentHitBox]->Enable();
+						//}
+					}
 					if (attackTimer > 0)
 					{
-						if (hitboxFired == false && attackDuration - attackTimer > hitboxDelay)
-						{
-							for (int i = 0; i < hitboxCount; ++i)
-							{
-								hitboxFired = true;
-								hitbox[i].Enable();
-							}
-						}
 						for (int i = 0; i < eventDelay.size(); i++)
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
 							{
-								if (hbpos != nullptr)
+								if (hbpos)
 								{
 									delete hbpos;
 								}
-								hbpos = new XMFLOAT3(hitbox->GetPosition());
+								hbpos = new XMFLOAT3(hitboxes[currentHitBox]->GetPosition());
 								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)hbpos);
 								eventFired[i] = true;
 							}
@@ -261,8 +373,12 @@ namespace ADResource
 							EndAction();
 						}
 					}
+					else
+					{
+						EndAction();
+					}
 
-					hitbox->collider.Pos = hitbox->GetPosition();
+					hitboxes[currentHitBox]->collider.Pos = hitboxes[currentHitBox]->GetPosition();
 				}
 
 			}
@@ -270,15 +386,48 @@ namespace ADResource
 			void EndAction()
 			{
 				//Some hit boxes would turn off this way, others require they burn out or collide.
-				if (hitbox && removeHbIfEnd)
+				if (hitboxes[currentHitBox])
 				{
 					active = false;
-					hitboxFired = false;
-					for (int i = 0; i < hitboxCount; ++i)
+					//hitboxFired[currentHitBox] = false;
+					//for (auto& hb : hitboxes)
+					//{
+					if (removeHbIfEnd)
 					{
-						hitbox[i].active = false;
+						hitboxes[currentHitBox]->active = false;
+						hitboxFired[currentHitBox] = false;
 					}
+					//}
 				}
+			}
+
+			Action* Clone()
+			{
+				Action* action = new Action();
+				//action->hitboxCount = 0;
+				for (auto& hb : hitboxes)
+				{
+					action->hitboxes.push_back(hb->Clone());
+					action->hitboxFired.push_back(false);
+				}
+				//action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
+				action->hitboxCount = hitboxCount;
+				action->cooldownDuration = cooldownDuration;
+				action->attackDuration = attackDuration;
+				action->removeHbIfEnd = removeHbIfEnd;
+				action->scaleCorrection = scaleCorrection;
+
+				for (auto& evnt : eventName)
+				{
+					action->eventName.push_back(evnt);
+					action->eventFired.push_back(false);
+				}
+				for (auto& evnt : eventDelay)
+				{
+					action->eventDelay.push_back(evnt);
+				}
+				action->hitboxDelay = hitboxDelay;
+				return action;
 			}
 		};
 
@@ -288,10 +437,16 @@ namespace ADResource
 			StatSheet* stats;
 		public:
 			XMFLOAT3 colScale;
+			AnimationStateMachine* anim_controller;
 			ADPhysics::AABB collider;
 			std::string deathEvent;
 
-			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; }
+			Destructable()
+			{
+				colliderPtr = &collider;
+				physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
+				anim_controller = new AnimationStateMachine();
+			}
 			~Destructable() override
 			{
 				delete stats;
@@ -306,6 +461,7 @@ namespace ADResource
 					colliderPtr = &collider;
 					physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
+					anim_controller->SetModel_To_CurrentAnimation();
 				}
 			};
 
@@ -325,6 +481,7 @@ namespace ADResource
 
 			void SetStatSheet(StatSheet* statSheet)
 			{
+				has_stats = true;
 				stats = statSheet;
 			};
 
@@ -335,7 +492,10 @@ namespace ADResource
 					ADPhysics::Manifold m;
 					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						collisionQueue.push(CollisionPacket(this, obj, m));
+						if (!obj->colliderPtr->trigger && obj->team != team)
+						{
+							collisionQueue.push(CollisionPacket(this, obj, m));
+						}
 					}
 				}
 			}
@@ -345,9 +505,6 @@ namespace ADResource
 				for (int i = 0; i < effects.size(); ++i)
 				{
 					effects[i].get()->Update(_deltaTime);
-
-					//std::string msg = std::to_string(effects[i].get()->tickTimer);
-					//ADUI::MessageReceiver::Log(msg);
 
 					if (effects[i].get()->isFinished)
 					{
@@ -409,37 +566,42 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				// Physics
-				XMFLOAT3 dang;
-				XMStoreFloat3(&dang, transform.r[3]);
-				collider = ADPhysics::AABB(dang, colScale);
-				colliderPtr = &collider;
-				collider.trigger = true;
+				if (active)
+				{
+					// Physics
+					XMFLOAT3 dang;
+					XMStoreFloat3(&dang, transform.r[3]);
+					collider = ADPhysics::AABB(dang, colScale);
+					colliderPtr = &collider;
+					collider.trigger = true;
+				}
 			};
 
 			void CheckCollision(GameObject* obj) override
 			{
 				if (active && obj->active)
 				{
-					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
+					if (!obj->colliderPtr->trigger)
 					{
-						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						ADPhysics::Manifold m;
+						if (obj->colliderPtr->isCollision(&collider, m))
 						{
-							if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
+							if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 							{
-								CallEvent();
-								if (isDeactivateOnFirstApplication)
+								if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
 								{
-									active = false;
+									CallEvent();
+									if (isDeactivateOnFirstApplication)
+									{
+										active = false;
+									}
+								}
+								else
+								{
+									PassEffects(obj);
 								}
 							}
-							else
-							{
-								PassEffects(obj);
-							}
 						}
-
 					}
 				}
 			}

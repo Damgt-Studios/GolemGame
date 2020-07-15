@@ -17,11 +17,11 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	InitAnims();
 
-	flockingGroups = new ADAI::FlockingGroup * [5];
+	minionGroups = new ADAI::MinionGroup* [5];
 	for (int i = 0; i < 5; ++i)
 	{
-		flockingGroups[i] = new ADAI::FlockingGroup();
-		flockingGroups[i]->groupTarget = &transform;
+		minionGroups[i] = new ADAI::MinionGroup();
+		minionGroups[i]->player = &transform;
 	}
 
 	desirability = 0.2f;
@@ -33,9 +33,9 @@ ADResource::ADGameplay::Golem::~Golem()
 {
 	for (int i = 0; i < 5; ++i)
 	{
-		delete flockingGroups[i];
+		delete minionGroups[i];
 	}
-	delete[] flockingGroups;
+	delete[] minionGroups;
 }
 
 
@@ -57,7 +57,7 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 
 	for (int i = 0; i < 5; ++i)
 	{
-		flockingGroups[i]->Update(delta_time);
+		minionGroups[i]->Update(delta_time);
 	}
 
 	// Physics
@@ -98,7 +98,7 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 	}
 	if (stats->RequestStats("Health")->currentValue <= 0)
 	{
-		//Death();
+		Death();
 	}
 }
 
@@ -107,7 +107,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 {
 	Manifold m;
 
-	if (obj->active)
+	if (obj->active && this!=obj)
 	{
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
@@ -217,6 +217,18 @@ void ADResource::ADGameplay::Golem::Remove()
 
 }
 
+void ADResource::ADGameplay::Golem::Death()
+{
+	//Put a timer here to let the death animation play.
+	active = false;
+	//stop input and other processes now that your aren't active or however you want to do it.
+
+	ADUI::UIMessage eventUIMessage;
+	eventUIMessage.targetID = 1;
+	eventUIMessage.externalMsg = true;
+	eventUIMessage.commandID = 0;
+	ADUI::MessageReceiver::SendMessage(&eventUIMessage);
+}
 
 // Accessors
 void ADResource::ADGameplay::Golem::GetView(XMMATRIX& view)
@@ -520,15 +532,18 @@ void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
 {
 	if (commandTargetGroup == 4)
 	{
-		for (int i = 0; i < 3; ++i)
+		targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
+		minionGroups[0]->SetDestination(targetMarker);
+		for (int i = 1; i < 4; ++i)
 		{
-			flockingGroups[i]->SetCommandDirection(camera, delta_time);
+			//minionGroups[i]->SetCommandDirection(camera, delta_time);
+			minionGroups[i]->SetDestination(targetMarker);
 		}
-		targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera, delta_time));
 	}
 	else
 	{
-		targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
+		targetMarker->SetPosition(minionGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
+		minionGroups[commandTargetGroup]->SetDestination(targetMarker);
 	}
 }
 
@@ -550,12 +565,14 @@ void ADResource::ADGameplay::Golem::RecallMinions()
 	{
 		for (int i = 0; i < 4; ++i)
 		{
-			flockingGroups[i]->ReturnCall();
+			//minionGroups[i]->ReturnCall();
+			minionGroups[i]->SetTarget(this);
 		}
 	}
 	else
 	{
-		flockingGroups[commandTargetGroup]->ReturnCall();
+		minionGroups[commandTargetGroup]->SetTarget(this);
+		//minionGroups[commandTargetGroup]->ReturnCall();
 	}
 }
 
