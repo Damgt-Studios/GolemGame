@@ -312,7 +312,6 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (Input::QueryButtonDown(GamepadButtons::A) && !isActing && responseTimer < 0)
 		{
 			GroundSlam();
-			stats->RequestStats("Health")->currentValue = 15;
 		}
 
 		// Golem Kick
