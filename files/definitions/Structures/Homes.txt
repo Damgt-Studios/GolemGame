@@ -110,6 +110,20 @@ StatFail=0
 StatCurrent=6
 ;
 
+StatSheet=Hall:
+AddStat=Health
+StatMin=0
+StatMax=1000
+StatFail=0
+StatCurrent= 1000
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=6
+;
+
 StatSheet=Barracks:
 AddStat=Health
 StatMin=0

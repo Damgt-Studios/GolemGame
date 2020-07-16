@@ -12,16 +12,15 @@ struct ADQuadTreePoint
 	and set the objects X to this point's x, and the objects Z to this point's Y \
 	We will be thinking of this as a top down view so the objects Y will be irrelevant \
 	unless this was an Octree.
-	ADQuadTreePoint(int x, int y, T& t) : x(x), y(y), data(&t) {};
+	ADQuadTreePoint(float x, float y, T& t) : x(round(x)), y(round(y)), data(&t) {};
 };
 
 //Creates a Quad variable that will be the bounding box of the Quad tree
 struct ADQuad
 {
-	int x, y;
-	float width, height;
+	float x, y, width, height;
 
-	ADQuad(int x, int y, float w, float h) :
+	ADQuad(float x, float y, float w, float h) :
 		x(x), y(y), width(w), height(h) {};
 
 	template <typename T>
