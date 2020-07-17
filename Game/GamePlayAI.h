@@ -93,7 +93,7 @@ namespace ADAI
 				timer += _deltaTime;
 				if (timer > waitDuration)
 				{
-					tower->currentTarget = ADAI::FindNearest(tower->building, *targets, 800.f, 1.f);
+					tower->currentTarget = ADAI::FindNearest(tower->building, *targets, 250.f, 1.f);
 				}
 			}
 			else
