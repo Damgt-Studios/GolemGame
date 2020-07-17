@@ -207,3 +207,17 @@ StatMax=500
 StatFail=0
 StatCurrent=8
 ;
+
+StatSheet=Inv:
+AddStat=Health
+StatMin=0
+StatMax=1000000
+StatFail=0
+StatCurrent= 1000000
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=8
+;

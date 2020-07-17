@@ -583,6 +583,30 @@ public:
 		GameUtilities::AddGameObject(rock_wall6);
 		GameUtilities::AddGameObject(rock_wall7);
 		GameUtilities::AddGameObject(rock_wall8);
+
+		Building* real_tree = new Building(XMFLOAT3(-300, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree);
+
+		Building* real_tree2 = new Building(XMFLOAT3(-325, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree2);
+		
+		Building* real_tree3 = new Building(XMFLOAT3(-350, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree3);
+
+		Building* real_tree4 = new Building(XMFLOAT3(-375, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree4);
+		
+		Building* real_tree5 = new Building(XMFLOAT3(-400, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree5);
+
+		Building* real_tree6 = new Building(XMFLOAT3(-425, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree6);
+		
+		Building* real_tree7 = new Building(XMFLOAT3(-450, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree7);
+
+		Building* real_tree8 = new Building(XMFLOAT3(-475, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
+		GameUtilities::AddGameObject(real_tree8);
 		
 												  
 #pragma endregion
