@@ -540,7 +540,7 @@ namespace ADResource
 			{
 				XMVECTOR camRot = GetRotation(cam);
 				bool isStraight = false;
-				if (((angle > -0.75f && angle < 0.75f) || ((angle > 2.39f && angle < 3.89f) || (angle < -2.39f && angle > -3.89f))) && (camRot.m128_f32[1] > 1.57 && camRot.m128_f32[1] < 1.58))
+				if (((angle > -0.75f && angle < 0.75f) || ((angle > 2.39f && angle < 3.89f) || (angle < -2.39f && angle > -3.89f))) && ((camRot.m128_f32[1] > 1.57 && camRot.m128_f32[1] < 1.58)|| (camRot.m128_f32[1] > -0.1f && camRot.m128_f32[1] < 0.1f)))
 					isStraight = true;
 				angle *= (180.0f / PI);
 
