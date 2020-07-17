@@ -17,7 +17,7 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	InitAnims();
 
-	minionGroups = new ADAI::MinionGroup* [5];
+	minionGroups = new ADAI::MinionGroup * [5];
 	for (int i = 0; i < 5; ++i)
 	{
 		minionGroups[i] = new ADAI::MinionGroup();
@@ -27,6 +27,8 @@ ADResource::ADGameplay::Golem::Golem() {
 	desirability = 0.2f;
 
 	playerElement = 0;
+
+	isAlive = true;
 }
 
 ADResource::ADGameplay::Golem::~Golem()
@@ -96,9 +98,9 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 			i--;
 		}
 	}
-	if (stats->RequestStats("Health")->currentValue <= 0)
+	if (stats->RequestStats("Health")->currentValue <= 0 && isAlive)
 	{
-		Death();
+		Die();
 	}
 }
 
@@ -107,7 +109,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 {
 	Manifold m;
 
-	if (obj->active && this!=obj)
+	if (obj->active && this != obj)
 	{
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
@@ -208,7 +210,7 @@ void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 		}
 		XMFLOAT4 pos;
 		XMStoreFloat4(&pos, transform.r[3]);
-		bigPuffs[playerElement]->Activate({pos.x, pos.y + 15, pos.z, pos.w});
+		bigPuffs[playerElement]->Activate({ pos.x, pos.y + 15, pos.z, pos.w });
 	}
 }
 
@@ -277,120 +279,130 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 // Private Methods
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
-	// Idle Animation
-	if (!isActing)
+	if (isAlive)
 	{
-		if (idleTime > 10.0)
-			anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idleLook.c_str());
-		else
-			anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idle.c_str());
-		idleTime += delta_time;
+		// Idle Animation
+		if (!isActing)
+		{
+			if (idleTime > 10.0)
+				anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idleLook.c_str());
+			else
+				anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idle.c_str());
+			idleTime += delta_time;
+		}
+
+		XMFLOAT3 pos(0, 0, 0);
+
+		responseTimer -= delta_time;
+		currentAnimTime -= delta_time;
+
+		if (currentAnimTime < -1000000 || currentAnimTime > 1000000)
+			currentAnimTime = 0.0;
+
+		if (currentAnimTime <= 0.0)
+			isActing = false;
+
+		// Golem Tower Punch
+		if (Input::QueryButtonDown(GamepadButtons::X) && !isActing && responseTimer < 0)
+		{
+			TowerPunch();
+		}
+
+		// Golem Ground Slam
+		if (Input::QueryButtonDown(GamepadButtons::A) && !isActing && responseTimer < 0)
+		{
+			GroundSlam();
+		}
+
+		// Golem Kick
+		if (Input::QueryButtonDown(GamepadButtons::B) && !isActing && responseTimer < 0)
+		{
+			Kick();
+		}
+
+		// Golem Special Move
+		if (Input::QueryButtonDown(GamepadButtons::Y) && !isActing && responseTimer < 0 && stats->RequestStats("Token")->currentValue > stats->RequestStats("Token")->minValue)
+		{
+			PerformSpecial();
+		}
+
+		// Increment Player Element
+		if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && !isActing && responseTimer < 0)
+		{
+			ChangeElement(true);
+		}
+
+		// Decrement Player Element
+		if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && !isActing && responseTimer < 0)
+		{
+			ChangeElement(false);
+		}
+
+		// Move up minions list
+		if (Input::QueryButtonDown(GamepadButtons::DPadDown) && responseTimer < 0)
+		{
+			ChangeMinionGroup(true);
+		}
+
+		// Move down minions list
+		if (Input::QueryButtonDown(GamepadButtons::DPadUp) && responseTimer < 0)
+		{
+			ChangeMinionGroup(false);
+		}
+
+		// Consume Minion
+		if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing && responseTimer < 0)
+		{
+			ConsumeMinion();
+		}
+
+		// Summon Minion
+		if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing && responseTimer < 0)
+		{
+			SummonMinions();
+		}
+
+		// Recall Minions
+		if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
+		{
+			RecallMinions();
+		}
+
+		// Send Minions Ahead
+		if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
+		{
+			commandDistanceTimer += delta_time;
+			CastCommandTarget(commandDistanceTimer * 500);
+		}
+		else if (commandDistanceTimer > 0)
+		{
+			CommandMinions();
+			commandDistanceTimer = 0;
+		}
+
+
+
+
+		// Golem Movement
+		XMFLOAT4 forward;
+		XMStoreFloat4(&forward, Golem::transform.r[2]);
+		if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK)) && !isActing)
+		{
+			MoveGolem(forward, delta_time);
+		}
+
+		AddToPositionVector((XMFLOAT3&)Velocity);
+
+		Velocity.x = 0;
+		Velocity.z = 0;
 	}
-
-	XMFLOAT3 pos(0, 0, 0);
-
-	responseTimer -= delta_time;
-	currentAnimTime -= delta_time;
-
-	if (currentAnimTime < -1000000 || currentAnimTime > 1000000)
-		currentAnimTime = 0.0;
-
-	if (currentAnimTime <= 0.0)
-		isActing = false;
-
-	// Golem Tower Punch
-	if (Input::QueryButtonDown(GamepadButtons::X) && !isActing && responseTimer < 0)
+	else
 	{
-		TowerPunch();
+		currentAnimTime -= delta_time;
+
+		if (currentAnimTime <= 0.0)
+			Death();
 	}
-
-	// Golem Ground Slam
-	if (Input::QueryButtonDown(GamepadButtons::A) && !isActing && responseTimer < 0)
-	{
-		GroundSlam();
-	}
-
-	// Golem Kick
-	if (Input::QueryButtonDown(GamepadButtons::B) && !isActing && responseTimer < 0)
-	{
-		Kick();
-	}
-
-	// Golem Special Move
-	if (Input::QueryButtonDown(GamepadButtons::Y) && !isActing && responseTimer < 0 && stats->RequestStats("Token")->currentValue > stats->RequestStats("Token")->minValue)
-	{
-		PerformSpecial();
-	}
-
-	// Increment Player Element
-	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && !isActing && responseTimer < 0)
-	{
-		ChangeElement(true);
-	}
-
-	// Decrement Player Element
-	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && !isActing && responseTimer < 0)
-	{
-		ChangeElement(false);
-	}
-
-	// Move up minions list
-	if (Input::QueryButtonDown(GamepadButtons::DPadDown) && responseTimer < 0)
-	{
-		ChangeMinionGroup(true);
-	}
-
-	// Move down minions list
-	if (Input::QueryButtonDown(GamepadButtons::DPadUp) && responseTimer < 0)
-	{
-		ChangeMinionGroup(false);
-	}
-
-	// Consume Minion
-	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing && responseTimer < 0)
-	{
-		ConsumeMinion();
-	}
-
-	// Summon Minion
-	if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing && responseTimer < 0)
-	{
-		SummonMinions();
-	}
-
-	// Recall Minions
-	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
-	{
-		RecallMinions();
-	}
-
-	// Send Minions Ahead
-	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
-	{
-		commandDistanceTimer += delta_time;
-		CastCommandTarget(commandDistanceTimer * 500);
-	}
-	else if (commandDistanceTimer > 0)
-	{
-		CommandMinions();
-		commandDistanceTimer = 0;
-	}
-
-
-
-
-	// Golem Movement
-	XMFLOAT4 forward;
-	XMStoreFloat4(&forward, Golem::transform.r[2]);
-	if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK)) && !isActing)
-	{
-		MoveGolem(forward, delta_time);
-	}
-
-	AddToPositionVector((XMFLOAT3&)Velocity);
-
-	Velocity.x = 0;
-	Velocity.z = 0;
 }
 
 void ADResource::ADGameplay::Golem::InitAnims()
@@ -670,6 +682,15 @@ void ADResource::ADGameplay::Golem::FlinchFromRight()
 {
 	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].heavyHitRight.c_str());
 	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].heavyHitRight.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::Die()
+{
+	isAlive = false;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].death.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].death.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }
