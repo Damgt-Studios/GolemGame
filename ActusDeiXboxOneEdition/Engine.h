@@ -94,4 +94,5 @@ public:
 	CylinderEmitter stoneCylinder;
 	UpwardCloudEmitter destructionCloud;
 	UpwardCloudEmitter destructionCloud2;
+	BloodEmitter bloodEmitters[10];
 };

@@ -42,6 +42,10 @@ bool Engine::Initialize()
 	stoneCylinder.Initialize(pbr.renderer_resources.device.Get(), 100, { 0,25,25,1 }, 15.0f, L"files/textures/Particle_Stone.dds");
 	destructionCloud.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Smoke.dds");
 	destructionCloud2.Initialize(pbr.renderer_resources.device.Get(), 4000, { 0,25,25,1 }, L"files/textures/Particle_Smoke.dds");
+	for (int i = 0; i < 10; ++i)
+	{
+		bloodEmitters[i].Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_Blood_Sheet.dds");
+	}
 
 	woodCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
 	fireCylinder.Activate(10.0f, { 0,-1000,0,0 }, 15.0f);
@@ -136,6 +140,10 @@ bool Engine::Update()
 	stoneCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
 	destructionCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
 	destructionCloud2.UpdateParticles(delta_time_sf, view, proj, camPos);
+	for (int i = 0; i < 10; ++i)
+	{
+		bloodEmitters[i].UpdateParticles(delta_time_sf, view, proj, camPos);
+	}
 
 	return true;
 }
@@ -167,6 +175,10 @@ bool Engine::Render()
 	stoneCylinder.RenderParticles(pbr.renderer_resources.context.Get());
 	destructionCloud.RenderParticles(pbr.renderer_resources.context.Get());
 	destructionCloud2.RenderParticles(pbr.renderer_resources.context.Get());
+	for (int i = 0; i < 10; ++i)
+	{
+		bloodEmitters->RenderParticles(pbr.renderer_resources.context.Get());
+	}
 	userInterface.Render();
 	pbr.Frame();
 
