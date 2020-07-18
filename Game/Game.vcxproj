@@ -365,6 +365,7 @@
     <ClInclude Include="Listeners.h" />
     <ClInclude Include="MinionManager.h" />
     <ClInclude Include="pchgame.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>

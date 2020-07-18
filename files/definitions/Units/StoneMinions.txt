@@ -50,7 +50,5 @@ Action=StoneMinionPunch:
 Cooldown=2.0
 Duration=1.0
 AddHitBox=StoneMinionPunchHB
-AddEvent=Sfx_GolemPunch
-SetEventsDelay=0
 SetHitboxDelay=0.75
 ;

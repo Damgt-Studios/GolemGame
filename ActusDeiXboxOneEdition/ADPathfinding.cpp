@@ -177,22 +177,6 @@ float ADAI::ADPathfinding::DistanceCalculation(PathingNode* _a, PathingNode* _b)
 	return sqrt((xDist * xDist) + (yDist * yDist));
 }
 
-ADAI::ADPathfinding::ADPathfinding()
-{
-
-}
-
-ADAI::ADPathfinding::~ADPathfinding()
-{
-	for (auto it = searching_map.begin(), itEnd = searching_map.end(); it != itEnd; ++it)
-	{
-		delete it->second;
-	}
-	for (auto it = visited_map.begin(), itEnd = visited_map.end(); it != itEnd; ++it)
-	{
-		delete it->second;
-	}
-}
 
 void ADAI::ADPathfinding::UpdatePlayerNode(float _x, float _z, float _mapWidth, float _mapHeight)
 {
@@ -220,6 +204,12 @@ std::vector<ADAI::PathingNode*>* ADAI::ADPathfinding::GetPlaneNodes()
 	return &tileMap.nodeGrid;
 }
 
+
+ADAI::ADPathfinding* ADAI::ADPathfinding::Instance()
+{
+	static ADPathfinding instance;
+	return &instance;
+}
 
 void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
 {
@@ -526,10 +516,16 @@ void ADAI::ADPathfinding::exit()
 
 void ADAI::ADPathfinding::shutdown()
 {
+
+
 	int skipped = 0;
 	if (tileMap.nodeGrid.size() > 0)
 	{
 		for (auto it = searching_map.begin(), itEnd = searching_map.end(); it != itEnd; ++it)
+		{
+			delete it->second;
+		}
+		for (auto it = visited_map.begin(), itEnd = visited_map.end(); it != itEnd; ++it)
 		{
 			delete it->second;
 		}
@@ -558,4 +554,16 @@ bool ADAI::ADPathfinding::isDone() const
 std::vector<const ADAI::PathingNode*> const ADAI::ADPathfinding::getSolution() const
 {
 	return solution;
+}
+
+std::vector<XMFLOAT3> ADAI::ADPathfinding::getSolutionPoints() const
+{
+	std::vector<XMFLOAT3> points;
+	float xAdjust = (tileMap.columns / 2.f) * tileMap.cellSize.x;
+	float zAdjust = (tileMap.rows / 2.f) * tileMap.cellSize.y;
+	for (auto& solPoint : solution)
+	{
+		points.push_back(XMFLOAT3( solPoint->position.x - xAdjust, 0, solPoint->position.z - zAdjust));
+	}
+	return points;
 }

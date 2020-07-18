@@ -70,16 +70,6 @@ namespace ADAI
 		//Current Pathfinding Path
 		void Update(float _deltaTime)
 		{
-			//XMVECTOR zVec = minion->currentTarget->transform.r[3] - minion->mySSM.gameObject->transform.r[3];
-			//zVec = XMVector3Normalize(zVec);
-
-			//XMVECTOR direction = XMVector3Dot(zVec, XMVector3Normalize(minion->mySSM.gameObject->transform.r[0]));
-			//XMFLOAT3 fvec;
-			//XMStoreFloat3(&fvec, direction);
-
-			//XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(fvec.x);
-			//minion->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, minion->mySSM.gameObject->transform);
-
 			if (myAttack->active)
 			{
 				myAttack->Update(_deltaTime);
@@ -146,9 +136,29 @@ namespace ADAI
 		return currentTarget;
 	}
 
-	static void turnTo(XMMATRIX _turner, XMMATRIX _target)
+	static XMFLOAT3 FindNearestPoint(ADResource::ADGameplay::GameObject* _gameObject, std::vector<XMFLOAT3>* _searchGroup, float distnaceLimit, float desirabilityWeight, UINT& index)
 	{
+		float currentTargetDistance = 9999999;
+		XMFLOAT3 currentTarget = { 0,0,0 };
+		for (int i = 0; i < _searchGroup->size(); i++)
+		{
+			float distance = DistanceCalculation(_gameObject->GetPosition(), (*_searchGroup)[i]);
+			if (distance < distnaceLimit)
+			{
+				if (distance <= currentTargetDistance && i < index)
+				{
+					index = i;
+					currentTargetDistance = distance;
+					currentTarget = (*_searchGroup)[i];
+				}
+			}
+		}
+		return currentTarget;
 	}
+
+	//static void turnTo(XMMATRIX _turner, XMMATRIX _target)
+	//{
+	//}
 
 };
 

@@ -11,9 +11,9 @@
 #include "Renderer.h"
 #include "Input.h"
 #include "ResourceManager.h"
-//#include "XTime.h"
+#include "XTime.h"
 
-//#include "Types.h"
+#include "Types.h"
 #include "ADUserInterface.h"
 #include "ADParticles.h"
 

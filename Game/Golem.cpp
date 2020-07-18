@@ -483,19 +483,21 @@ void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_tim
 
 void ADResource::ADGameplay::Golem::PerformSpecial()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].special.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].special->StartAction(&transform);
 
-	stats->RequestStats("Token")->currentValue--;
-	if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
-	{
-		stats->RequestStats("Token")->currentValue = 0;
+	if (gActions[playerElement].special->StartAction(&transform))
+	{	
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].special.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+		stats->RequestStats("Token")->currentValue--;
+		if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+		{
+			stats->RequestStats("Token")->currentValue = 0;
+		}
+		ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
 	}
-	ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
 }
 
 void ADResource::ADGameplay::Golem::TowerPunch()

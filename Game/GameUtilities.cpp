@@ -113,34 +113,59 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 	golem->has_stats = true;
 
 	golem->consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+	golem->consume->scaleCorrection = 10;
 
 	golem->gActions[STONE].kick = DefinitionDatabase::Instance()->actionDatabase["StoneGolemKick"];
+	golem->gActions[STONE].kick->scaleCorrection = 10;
 	golem->gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
+	golem->gActions[STONE].punch->scaleCorrection = 10;
 	golem->gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
+	golem->gActions[STONE].slam->scaleCorrection = 10;
 	golem->gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golem->gActions[STONE].special->scaleCorrection = 10;
 	golem->gActions[STONE].nextForm = DefinitionDatabase::Instance()->actionDatabase["StoneNextForm"];
+	golem->gActions[STONE].nextForm->scaleCorrection = 10;
 	golem->gActions[STONE].prevForm = DefinitionDatabase::Instance()->actionDatabase["StonePreviousForm"];
+	golem->gActions[STONE].prevForm->scaleCorrection = 10;
 
 	golem->gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
+	golem->gActions[WATER].kick->scaleCorrection = 10;
 	golem->gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
+	golem->gActions[WATER].punch->scaleCorrection = 10;
 	golem->gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
+	golem->gActions[WATER].slam->scaleCorrection = 10;
 	golem->gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golem->gActions[WATER].special->scaleCorrection = 5;
 	golem->gActions[WATER].nextForm = DefinitionDatabase::Instance()->actionDatabase["WaterNextForm"];
+	golem->gActions[WATER].nextForm->scaleCorrection = 10;
 	golem->gActions[WATER].prevForm = DefinitionDatabase::Instance()->actionDatabase["WaterPreviousForm"];
+	golem->gActions[WATER].prevForm->scaleCorrection = 10;
 
 	golem->gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
+	golem->gActions[FIRE].kick->scaleCorrection = 10;
 	golem->gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
+	golem->gActions[FIRE].punch->scaleCorrection = 10;
 	golem->gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
+	golem->gActions[FIRE].slam->scaleCorrection = 10;
 	golem->gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golem->gActions[FIRE].special->scaleCorrection = 10;
 	golem->gActions[FIRE].nextForm = DefinitionDatabase::Instance()->actionDatabase["FireNextForm"];
+	golem->gActions[FIRE].nextForm->scaleCorrection = 10;
 	golem->gActions[FIRE].prevForm = DefinitionDatabase::Instance()->actionDatabase["FirePreviousForm"];
+	golem->gActions[FIRE].prevForm->scaleCorrection = 10;
 
 	golem->gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golem->gActions[WOOD].kick->scaleCorrection = 10;
 	golem->gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golem->gActions[WOOD].punch->scaleCorrection = 10;
 	golem->gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golem->gActions[WOOD].slam->scaleCorrection = 10;
 	golem->gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+	golem->gActions[WOOD].special->scaleCorrection = 10;
 	golem->gActions[WOOD].nextForm = DefinitionDatabase::Instance()->actionDatabase["WoodNextForm"];
+	golem->gActions[WOOD].nextForm->scaleCorrection = 10;
 	golem->gActions[WOOD].prevForm = DefinitionDatabase::Instance()->actionDatabase["WoodPreviousForm"];
+	golem->gActions[WOOD].prevForm->scaleCorrection = 10;
 
 	golem->consume->active = false;
 	for (int i = 0; i < 4; ++i)
@@ -250,7 +275,6 @@ Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::stri
 {
 	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
-
 	// Transform data
 	temp->SetScale(scale);
 	temp->SetRotation(rotation);
@@ -269,12 +293,34 @@ Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::stri
 	//scale.x *= 0.5f;
 	//scale.y *= 0.5f;
 	//scale.z *= 0.5f;
+
+	//scale.x *= (1.f / scale.x);
+	//scale.y *= (1.f / scale.y);
+	//scale.z *= (1.f / scale.z);
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
 	//temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
 
+	return temp;
+}
 
+MessageTrigger* GameUtilities::AddMessageTrigger(ADUI::UIMessage _message, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::MessageTrigger* temp = new ADResource::ADGameplay::MessageTrigger;
+
+
+	// Transform data
+	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
+	temp->team = 1;
+	temp->colScale = scale;
+	temp->collider = ADPhysics::AABB(position, temp->colScale);
+	temp->colliderPtr = &temp->collider;
+	temp->eventUIMessage = _message;
+	temp->has_mesh = false;
+	temp->gamePlayType = EVENT_TRIGGER;
 	return temp;
 }
 
@@ -471,13 +517,6 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	fleeing->villager = temp;
 	fleeing->fearedObjects = _fearGroup;
 
-
-	//fleeing->safetyStructures = _safetyGroup;
-	//for (auto& unit : _fearGroup)
-	//{
-	//	fleeing->fearedObjects.push_back(unit);
-	////}
-
 	for (auto& unit : *_safetyGroup)
 	{
 		fleeing->safetyStructures.push_back(unit);
@@ -528,6 +567,7 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	charging->mySSM = &temp->mySSM;
 	charging->minion = temp;
 	charging->targets = _killGroup;
+	//charging->myGroup = _localGroup;
 	temp->mySSM.states.push_back(charging);
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
@@ -590,6 +630,7 @@ ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADReso
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
 	attacking->mySSM = &temp->mySSM;
 	temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["BallistaBoltFire"]->Clone();
+	temp->myAttack->scaleCorrection = 10;
 	attacking->myAttack = temp->myAttack;
 	attacking->returnIndex = 0;
 	temp->mySSM.states.push_back(attacking);
@@ -616,7 +657,6 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation, instanced);
 	temp->SetMeshID(id);
-
 
 	return temp;
 }

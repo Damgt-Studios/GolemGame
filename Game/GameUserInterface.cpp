@@ -1,7 +1,5 @@
 #include "pchgame.h"
 #include "GameUserInterface.h"
-#include "Golem.h"
-
 
 namespace GolemGameUISetup
 {
@@ -32,6 +30,8 @@ namespace GolemGameUISetup
 					controllers[controllersNameToID["TitleScreenController"]]->Enable();
 					overlays[overlaysNameToID["SuccessScreen"]]->Enable();
 					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					controllers[controllersNameToID["HUD"]]->Disable();
+
 					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
 					Disable();
 
@@ -48,6 +48,7 @@ namespace GolemGameUISetup
 					controllers[controllersNameToID["TitleScreenController"]]->Enable();
 					overlays[overlaysNameToID["DefeatScreen"]]->Enable();
 					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					controllers[controllersNameToID["HUD"]]->Disable();
 					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
 					Disable();
 
@@ -121,14 +122,36 @@ namespace GolemGameUISetup
 	{
 		if (uiState == ADUI::UISTATE::GAMEPLAY)
 		{
-			bool buttonPressed = false;
 			if (_message)
 			{
-				buttonPressed = true;
+				if (_message->externalMsg)
+				{
+					overlays[overlaysNameToID["MessageBox"]]->visible = true;
+					text[0]->SetText(tutorialMessages[(_message->targetID*4)]);
+					text[1]->SetText(tutorialMessages[(_message->targetID*4)+1]);
+					text[2]->SetText(tutorialMessages[(_message->targetID*4)+2]);
+					text[3]->SetText(tutorialMessages[(_message->targetID*4)+3]);
+					uiState = PAUSED;
+				}
 			}
-			return buttonPressed;
 		}
 		return false;
+	}
+
+	bool HUDController::ProcessInput(float delta_time, float& quick)
+	{
+		bool buttonPressed = false;
+		if (overlays[overlaysNameToID["MessageBox"]]->visible)
+		{
+			if (Input::QueryButtonDown(GamepadButtons::B) || Input::QueryButtonDown(GamepadButtons::A))
+			{
+				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
+				overlays[overlaysNameToID["MessageBox"]]->visible = false;
+				uiState = GAMEPLAY;
+				buttonPressed = true;
+			}
+		}
+		return buttonPressed;
 	}
 
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
@@ -898,7 +921,7 @@ namespace GolemGameUISetup
 		UINT creditsID = myUI->AddNewOverlay("DefeatScreen", false, false);
 		ADUI::Image2D* creditsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
 		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("CreditsBG", creditsImage);
+		myUI->AddUIComponent("DefeatBG", creditsImage);
 		myUI->overlays[creditsID]->AddComponent(creditsImage);
 
 
@@ -1063,7 +1086,7 @@ namespace GolemGameUISetup
 
 		ADUI::Image2D* minionFacesRightAll = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 331, 197, 431 });
 		minionFacesRightAll->BuildAnimation({ 221, 1237, 321, 1337 }, 1, 2, faceButtons);
-		myUI->AddUIComponent("GolemFaceRight1", minionFacesRightAll);
+		myUI->AddUIComponent("GolemFaceAll", minionFacesRightAll);
 		myUI->overlays[hudID]->AddComponent(minionFacesRightAll);
 		minionFacesRightAll->Focus();
 		minionFacesRightAll->controlFocusAnimation = 1;
@@ -1071,7 +1094,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* stoneCountLabel = new ADUI::Label2D();
 		stoneCountLabel->SetFont(myUI->GetFont(2));
-		stoneCountLabel->SetText("x10", { 250, 380 });// XMFLOAT2(1920, 1080));
+		stoneCountLabel->SetText("10", { 250, 380 });// XMFLOAT2(1920, 1080));
 		stoneCountLabel->active = true;
 		stoneCountLabel->visible = true;
 		myUI->AddUIComponent("StoneCountLabel", stoneCountLabel);
@@ -1088,7 +1111,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* waterCountLabel = new ADUI::Label2D();
 		waterCountLabel->SetFont(myUI->GetFont(2));
-		waterCountLabel->SetText("x0", { 250, 480 });// XMFLOAT2(1920, 1080));
+		waterCountLabel->SetText("10", { 250, 480 });// XMFLOAT2(1920, 1080));
 		waterCountLabel->active = true;
 		waterCountLabel->visible = true;
 		myUI->AddUIComponent("WaterCountLabel", waterCountLabel);
@@ -1105,7 +1128,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* fireCountLabel = new ADUI::Label2D();
 		fireCountLabel->SetFont(myUI->GetFont(2));
-		fireCountLabel->SetText("x0", { 250, 580 });// XMFLOAT2(1920, 1080));
+		fireCountLabel->SetText("10", { 250, 580 });// XMFLOAT2(1920, 1080));
 		fireCountLabel->active = true;
 		fireCountLabel->visible = true;
 		myUI->AddUIComponent("FireCountLabel", fireCountLabel);
@@ -1114,7 +1137,7 @@ namespace GolemGameUISetup
 
 		ADUI::Image2D* minionFacesRight3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 637, 197, 737 });
 		minionFacesRight3->BuildAnimation({ 521, 1237, 621, 1337 }, 1, 2, faceButtons);
-		myUI->AddUIComponent("GolemFaceRight2", minionFacesRight3);
+		myUI->AddUIComponent("GolemFaceRight3", minionFacesRight3);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight3);
 		//minionFacesRight3->Focus();
 		minionFacesRight3->controlFocusAnimation = 1;
@@ -1122,7 +1145,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* woodCountLabel = new ADUI::Label2D();
 		woodCountLabel->SetFont(myUI->GetFont(2));
-		woodCountLabel->SetText("x0", { 250, 680 });// XMFLOAT2(1920, 1080));
+		woodCountLabel->SetText("10", { 250, 680 });// XMFLOAT2(1920, 1080));
 		woodCountLabel->active = true;
 		woodCountLabel->visible = true;
 		myUI->AddUIComponent("WoodCountLabel", woodCountLabel);
@@ -1131,7 +1154,7 @@ namespace GolemGameUISetup
 
 		ADUI::Image2D* minionFacesRight4 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 742, 197, 842 });
 		minionFacesRight4->BuildAnimation({ 621, 1237, 721, 1337 }, 1, 2, faceButtons);
-		myUI->AddUIComponent("GolemFaceRight1", minionFacesRight4);
+		myUI->AddUIComponent("GolemFaceRight4", minionFacesRight4);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight4);
 		//minionFacesRight4->Focus();
 		minionFacesRight4->controlFocusAnimation = 1;
@@ -1139,22 +1162,36 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* allCountLabel = new ADUI::Label2D();
 		allCountLabel->SetFont(myUI->GetFont(2));
-		allCountLabel->SetText("x0", { 250, 780 });// XMFLOAT2(1920, 1080));
+		allCountLabel->SetText("40", { 250, 780 });// XMFLOAT2(1920, 1080));
 		allCountLabel->active = true;
 		allCountLabel->visible = true;
 		myUI->AddUIComponent("AllCountLabel", allCountLabel);
 		myUI->overlays[hudID]->AddComponent(allCountLabel);
 		_hUDController->AddComponent(allCountLabel);
 
+		ADUI::Image2D* villagerBG = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3300, 50, 3800, 400 });
+		villagerBG->BuildAnimation({ 710, 1190, 840, 1300 }, 1, 1, emptyAnimation);
+		myUI->AddUIComponent("VillagerBG", villagerBG);
+		myUI->overlays[hudID]->AddComponent(villagerBG);
+		villagerBG->stretched = true;
+		_hUDController->AddComponent(villagerBG);
+
 		ADUI::Label2D* villagerCountLabel = new ADUI::Label2D();
 		villagerCountLabel->SetFont(myUI->GetFont(2));
-		villagerCountLabel->SetText("10", { 3590, 250 });// XMFLOAT2(1920, 1080));
+		villagerCountLabel->SetText("10", { 3550, 250 });// XMFLOAT2(1920, 1080));
 		villagerCountLabel->active = true;
 		villagerCountLabel->visible = true;
 		myUI->AddUIComponent("VillagerCountLabel", villagerCountLabel);
 		myUI->overlays[hudID]->AddComponent(villagerCountLabel);
 		_hUDController->AddComponent(villagerCountLabel);
 
+		ADUI::Label2D* villagerLabel = new ADUI::Label2D();
+		villagerLabel->SetFont(myUI->GetFont(2));
+		villagerLabel->SetText("Villagers Remaining", { 3550, 100 });// XMFLOAT2(1920, 1080));
+		villagerLabel->active = true;
+		villagerLabel->visible = true;
+		myUI->AddUIComponent("villagerLabel", villagerLabel);
+		myUI->overlays[hudID]->AddComponent(villagerLabel);
 
 		ADUI::ComponentGrid* rightButtonList = new ADUI::ComponentGrid();
 		rightButtonList->SetCorners({ 97, 331, 197, 431 });
@@ -1274,7 +1311,7 @@ namespace GolemGameUISetup
 		return 0;
 	}
 
-	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid) //std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight)
+	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
 		emptyAnimation[0] = { 0, 5, 0 };
@@ -1290,14 +1327,13 @@ namespace GolemGameUISetup
 		myUI->overlays[pathingID]->AddComponent(consoleBox);
 
 
-
-
-		//_debugController->planeNodes = &_grid->nodeGrid;
-		//for (int i = 0; i < _grid->nodeGrid.size(); i++)
+		//ADAI::PathingGrid* grid = &ADAI::ADPathfinding::Instance()->tileMap;
+		//_debugController->planeNodes = &grid->nodeGrid;
+		//for (int i = 0; i < grid->nodeGrid.size(); i++)
 		//{
 
-		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (_grid->nodeGrid[i]->position.x + 300.f) , 2160 - _grid->nodeGrid[i]->position.z, 3840.f - (_grid->nodeGrid[i]->position.x + 300.f),  2160 - _grid->nodeGrid[i]->position.z });
-		//	long heightValue = int((_grid->nodeGrid)[i]->position.y * 100.f);
+		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (grid->nodeGrid[i]->position.x + 300.f) , 2160 - grid->nodeGrid[i]->position.z, 3840.f - (grid->nodeGrid[i]->position.x + 300.f),  2160 - grid->nodeGrid[i]->position.z });
+		//	long heightValue = int((grid->nodeGrid)[i]->position.y * 100.f);
 		//	if (heightValue < -4)
 		//	{
 		//		heightValue = -4;
@@ -1313,12 +1349,65 @@ namespace GolemGameUISetup
 		//	tempImage->Focus();
 		//	myUI->AddUIComponent("genericImage", tempImage);
 		//	myUI->overlays[pathingID]->AddComponent(tempImage);
-		//	_debugController->node_image_map[(_grid->nodeGrid)[i]] = tempImage;
+		//	_debugController->node_image_map[(grid->nodeGrid)[i]] = tempImage;
 		//}
 
 		return pathingID;
 	}
 
+
+	UINT GameUserInterface::SetupMessageBox(ADUI::ADUI* myUI, HUDController* _hUDController)
+	{
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 1, 1 };
+
+		//UI Log
+		UINT messageID = myUI->AddNewOverlay("MessageBox", false, true);
+
+		ADUI::Image2D* messageBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 400, 1000, 3400, 2000 });
+		messageBox->BuildAnimation({ 710, 1190, 840, 1300 }, 1, 1, emptyAnimation);
+		messageBox->active = true;
+		messageBox->visible = true;
+		messageBox->stretched = true;
+		myUI->AddUIComponent("MessageBoxBG", messageBox);
+		myUI->overlays[messageID]->AddComponent(messageBox);
+
+		ADUI::Label2D* messageLabel = new ADUI::Label2D();
+		messageLabel->SetFont(myUI->GetFont(3));
+		messageLabel->SetText("Basic Message Text", { 1900, 1100 });// XMFLOAT2(1920, 1080));
+		messageLabel->active = true;
+		messageLabel->visible = true;
+		ADUI::Label2D* messageLabel2 = new ADUI::Label2D();
+		messageLabel2->SetFont(myUI->GetFont(3));
+		messageLabel2->SetText("Basic Message Text", { 1900, 1300 });// XMFLOAT2(1920, 1080));
+		messageLabel2->active = true;
+		messageLabel2->visible = true;
+		ADUI::Label2D* messageLabel3 = new ADUI::Label2D();
+		 messageLabel3->SetFont(myUI->GetFont(3));
+		 messageLabel3->SetText("Basic Message Text", { 1900, 1500 });// XMFLOAT2(1920, 1080));
+		 messageLabel3->active = true;
+		 messageLabel3->visible = true;
+		ADUI::Label2D* messageLabel4 = new ADUI::Label2D();
+		messageLabel4->SetFont(myUI->GetFont(3));
+		messageLabel4->SetText("Basic Message Text", { 1900, 1700 });// XMFLOAT2(1920, 1080));
+		messageLabel4->active = true;
+		messageLabel4->visible = true;
+		myUI->AddUIComponent("messageLabel", messageLabel);
+		myUI->overlays[messageID]->AddComponent(messageLabel);
+		myUI->AddUIComponent("messageLabel2", messageLabel2);
+		myUI->overlays[messageID]->AddComponent(messageLabel2);
+		myUI->AddUIComponent("messageLabel3", messageLabel3);
+		myUI->overlays[messageID]->AddComponent(messageLabel3);
+		myUI->AddUIComponent("messageLabel4", messageLabel4);
+		myUI->overlays[messageID]->AddComponent(messageLabel4);
+		_hUDController->AddOverlay(myUI->overlays[messageID]);
+		_hUDController->text.push_back(messageLabel);
+		_hUDController->text.push_back(messageLabel2);
+		_hUDController->text.push_back(messageLabel3);
+		_hUDController->text.push_back(messageLabel4);
+
+		return messageID;
+	}
 
 
 	UINT GameUserInterface::SetupLog(ADUI::ADUI* myUI)
@@ -1352,8 +1441,9 @@ namespace GolemGameUISetup
 	}
 
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem)
 	{
+		ADAI::PathingGrid* grid = &ADAI::ADPathfinding::Instance()->tileMap;
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
 
@@ -1390,6 +1480,7 @@ namespace GolemGameUISetup
 		myUI->AddUIController("HudController", hudController);
 		hudController->Disable();
 		UINT hudid = SetupHUD(myUI, hudController);
+		UINT humsgID = SetupMessageBox(myUI, hudController);
 
 		//// TitleScreen Controller
 		StartMenuUIController* titleScreenController = new StartMenuUIController(myUI->GetUIState());
@@ -1417,13 +1508,14 @@ namespace GolemGameUISetup
 		UINT logID = SetupLog(myUI);
 
 
+
 		// DebugScreen Controller
 		DebugController* debugController = new DebugController(myUI->GetUIState());
 		myUI->AddUIController("DebugController", debugController);
 		debugController->Enable();
 
 
-		UINT pathingID = SetupPathingMap(myUI, debugController, _grid);
+		UINT pathingID = SetupPathingMap(myUI, debugController);
 
 
 		titleScreenController->AddOverlay(myUI->overlays[hudid]);

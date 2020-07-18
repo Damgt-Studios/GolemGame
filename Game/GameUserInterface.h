@@ -1,6 +1,6 @@
 #pragma once
 #include "ADUserInterface.h"
-//#include "Types.h"
+#include "Types.h"
 #include "GameObjectClasses.h"
 #include "ADAudio.h"
 #include "Golem.h"
@@ -34,8 +34,25 @@ namespace GolemGameUISetup
     {
         ADResource::ADGameplay::Golem* player;
         UINT& uiState;
+        std::vector<std::string> tutorialMessages = {
+            "Use A,X or B to Attack.",
+            "Use Y to unleash a special attack.",
+            "You only have three special attack charges available.",
+            "Use R and L to change forms.",
+
+            "This will change your currently available special.             ", 
+            "Find Spawners to summon minions.                               ",
+            "Use Up and Down on the D-Pad to select minion groups by type.  ",
+            "The final group marked by the A commands all four groups.      ", 
+
+            "Destroy homes and people to gain essence.                      ",
+            "Essence allows you to summon more minions.                     ", 
+            "When the human population reaches zero you win.                ",
+            "Beware of towers as they will attack you and your minions.     "
+        };
 
     public:
+        std::vector<ADUI::Label2D*> text;
         SetUITilingListener healthTileListener;
         SetUITextListener essenceCountListener;
         SetUIFocusListener stoneFormListener;
@@ -58,6 +75,7 @@ namespace GolemGameUISetup
 
         HUDController(UINT* _uiState) : uiState(*_uiState) {};
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
+        virtual bool ProcessInput(float delta_time, float& quick) override;
     };
 
     class StartMenuUIController : public ADUI::OverlayController
@@ -99,10 +117,11 @@ namespace GolemGameUISetup
         UINT SetupDefeatGameScreen(ADUI::ADUI* myUI);
         UINT SetupHUD(ADUI::ADUI* myUI, HUDController* _hUDController);
         UINT SetupDebugMenu(ADUI::ADUI* myUI);
-        UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid); // std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
+        UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController); // std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
         UINT SetupLog(ADUI::ADUI* myUI);
+        UINT SetupMessageBox(ADUI::ADUI* myUI, HUDController* _hUDController);
     public:
-        void SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid);
+        void SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem);
     };
 
 }

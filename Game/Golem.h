@@ -1,5 +1,5 @@
 #pragma once
-//#include "ADAI.h"
+#include "ADAI.h"
 #include "GameplayAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"

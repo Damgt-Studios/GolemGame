@@ -30,8 +30,8 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-45
-MaxValue=-45
+MinValue=-200
+MaxValue=-200
 ;
 
 Hitbox=BallistaBoltHB:
@@ -42,6 +42,11 @@ OffsetZ=30
 Collider_Width=15
 Collider_Height=30
 Collider_Length=15
+Model_Name=files/models/Arrow.mesh
+Model_Mat=""
+Model_Width=0.1
+Model_Height=0.1
+Model_Length=0.1
 ZVelocity=10
 Team=1
 SingleHit=true

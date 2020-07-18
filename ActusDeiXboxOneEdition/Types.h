@@ -498,7 +498,7 @@ namespace ADResource
 
 		public:
 			// Setters/ Getters
-			void SetMeshID(AD_ULONG id) { meshID = id; };
+			void SetMeshID(AD_ULONG id) { meshID = id; has_mesh = true; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
 			void SetRotation(XMFLOAT3 rotation, RotationType type = RotationType::xyz)

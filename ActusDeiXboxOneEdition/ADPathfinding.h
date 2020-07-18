@@ -87,6 +87,12 @@ namespace ADAI
 	class ADPathfinding
 	{
 	private:
+
+		ADPathfinding() {};
+		~ADPathfinding() { shutdown(); };
+		ADPathfinding(const ADPathfinding& _rhs) {};
+		ADPathfinding& operator =(const ADPathfinding& _rhs) {};
+
 		// Timing
 		XTime throttle_time;
 
@@ -146,14 +152,14 @@ namespace ADAI
 		bool done = false;
 
 	public:
+		static ADPathfinding* Instance();
 		PathingGrid tileMap;
-		ADPathfinding();
-		~ADPathfinding();
 		void Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap);
 		void enter(int startColumn, int startRow, int goalColumn, int goalRow);
 		bool isDone() const;
 		void update(float timeslice);
 		std::vector<PathingNode const*> const getSolution() const;
+		std::vector<XMFLOAT3> getSolutionPoints() const;
 		void exit();
 		void shutdown();
 		void UpdatePlayerNode(float x, float z, float mapWidth, float mapHeight);

@@ -10,6 +10,7 @@
 #include "ADCombat.h"
 #include <ADEventSystem.h>
 #include <ADUserInterface.h>
+//#include "../Game/GameUserInterface.h"
 
 
 namespace ADGameplay
@@ -62,6 +63,7 @@ namespace ADGameplay
 
 		std::vector<ADResource::ADGameplay::GameObject*> villagerThreats;
 		std::vector<ADResource::ADGameplay::GameObject*> minionTargets;
+		std::vector<ADResource::ADGameplay::GameObject*> minionAvoids;
 
 		//Minion AI
 		std::vector<ADAI::MinionAI*> stoneMinionsAI;
@@ -85,7 +87,7 @@ namespace ADGameplay
 		Trigger* m1;
 
 		//Events
-		UINT stoneMinionCount = 1;
+		UINT stoneMinionCount = 10;
 		UINT waterMinionCount = 10;
 		UINT fireMinionCount = 10;
 		UINT woodMinionCount = 10;
@@ -166,73 +168,74 @@ namespace ADGameplay
 			//}
 
 
-			Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
-			GameUtilities::AddGameObject(house1);
-			AddBuilding(house1);
-			//house1->destructionEmitter = &engine->destructionCloud;
-			//house1->destructionEmitter2 = &engine->destructionCloud2;
+			//Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
+			//GameUtilities::AddGameObject(house1);
+			//AddBuilding(house1);
+			////house1->destructionEmitter = &engine->destructionCloud;
+			////house1->destructionEmitter2 = &engine->destructionCloud2;
 
-			Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
-			GameUtilities::AddGameObject(rubble1);
-			house1->SetRubble(rubble1);
-
-
-			for (int i = 0; i < 10; i++)
-			{
-				Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
-				GameUtilities::AddGameObject(housey);
-				AddBuilding(housey);
-				//housey->destructionEmitter = &engine->destructionCloud;
-				//housey->destructionEmitter2 = &engine->destructionCloud2;
-
-				Building* rubble2 = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2, "Rubble");
-				GameUtilities::AddGameObject(rubble2);
-				housey->SetRubble(rubble2);
-			}
-
-			Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
-			GameUtilities::AddGameObject(attackTower);
-
-			Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
-			GameUtilities::AddGameObject(ballista);
+			//Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
+			//GameUtilities::AddGameObject(rubble1);
+			//house1->SetRubble(rubble1);
 
 
-			Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
-			GameUtilities::AddGameObject(gateway);
+			//for (int i = 0; i < 10; i++)
+			//{
+			//	Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
+			//	GameUtilities::AddGameObject(housey);
+			//	AddBuilding(housey);
+			//	//housey->destructionEmitter = &engine->destructionCloud;
+			//	//housey->destructionEmitter2 = &engine->destructionCloud2;
 
-			Building* scaffolding = new Building(XMFLOAT3(410, 0, -400), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX, "Scaffolding");
-			GameUtilities::AddGameObject(scaffolding);
+			//	Building* rubble2 = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2, "Rubble");
+			//	GameUtilities::AddGameObject(rubble2);
+			//	housey->SetRubble(rubble2);
+			//}
 
-			Building* wall = new Building(XMFLOAT3(700, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall, "Wall");
-			GameUtilities::AddGameObject(wall);
+			//Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
+			//GameUtilities::AddGameObject(attackTower);
 
-			Building* well = new Building(XMFLOAT3(1500, 0, 1500), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Rubble");
-			GameUtilities::AddGameObject(well);
+			//Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
+			//GameUtilities::AddGameObject(ballista);
 
-			Building* tavern = new Building(XMFLOAT3(-100, 0, 100), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
-			GameUtilities::AddGameObject(tavern);
-			//AddBuilding(tavern);
 
-			Building* lamp = new Building(XMFLOAT3(62.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
-			GameUtilities::AddGameObject(lamp);
-			Building* lamp2 = new Building(XMFLOAT3(-125, 0, 187.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
-			GameUtilities::AddGameObject(lamp2);
+			//Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
+			//GameUtilities::AddGameObject(gateway);
 
-			Building* rock = new Building(XMFLOAT3(-20, 0, 220), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1, "Rubble");
-			GameUtilities::AddGameObject(rock);
+			//Building* scaffolding = new Building(XMFLOAT3(410, 0, -400), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX, "Scaffolding");
+			//GameUtilities::AddGameObject(scaffolding);
 
-			Building* meeting_hall = new Building(XMFLOAT3(100, 0, 360), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "House4");
-			GameUtilities::AddGameObject(meeting_hall);
-			//AddBuilding(meeting_hall);
+			//Building* wall = new Building(XMFLOAT3(700, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall, "Wall");
+			//GameUtilities::AddGameObject(wall);
 
-			Building* cart = new Building(XMFLOAT3(-125, 0, 310), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart, "Cart");
-			GameUtilities::AddGameObject(cart);
+			//Building* well = new Building(XMFLOAT3(1500, 0, 1500), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Rubble");
+			//GameUtilities::AddGameObject(well);
 
-			for (int i = 0; i < 10; ++i)
-			{
-				Building* realtree = new Building(XMFLOAT3(RandFloat(i - 1000, i + 1000), 0, RandFloat(i - 1000, i + 1000)), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Rubble");
-				GameUtilities::AddGameObject(realtree);
-			}
+			//Building* tavern = new Building(XMFLOAT3(-100, 0, 100), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
+			//GameUtilities::AddGameObject(tavern);
+			////AddBuilding(tavern);
+
+			//Building* lamp = new Building(XMFLOAT3(62.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
+			//GameUtilities::AddGameObject(lamp);
+			//Building* lamp2 = new Building(XMFLOAT3(-125, 0, 187.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
+			//GameUtilities::AddGameObject(lamp2);
+
+			//Building* rock = new Building(XMFLOAT3(-20, 0, 220), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1, "Rubble");
+			//GameUtilities::AddGameObject(rock);
+
+			//Building* meeting_hall = new Building(XMFLOAT3(100, 0, 360), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "House4");
+			//GameUtilities::AddGameObject(meeting_hall);
+			////AddBuilding(meeting_hall);
+
+			//Building* cart = new Building(XMFLOAT3(-125, 0, 310), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart, "Cart");
+			//GameUtilities::AddGameObject(cart);
+
+			//for (int i = 0; i < 10; ++i)
+			//{
+			//	Building* realtree = new Building(XMFLOAT3(RandFloat(i - 1000, i + 1000), 0, RandFloat(i - 1000, i + 1000)), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Rubble");
+			//	GameUtilities::AddGameObject(realtree);
+			//}
+
 
 			//villageFlock1.groupTarget = &golem->transform;
 			villageFlock1.groupCohesionStrength = 0.01f;
@@ -253,13 +256,13 @@ namespace ADGameplay
 				villagerThreats.push_back(fireMinions[i]);
 				villagerThreats.push_back(woodMinions[i]);
 			}
-			towers.push_back(GameUtilities::AttachTowerAI(ballista, &villagerThreats));
 
 			for (int i = 0; i < 10; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3((i - 5) * 10, 0, -245), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1, &villagerThreats, &buildings));
 			}
+
 			for (int i = 0; i < 10; i++)
 			{
 				minionTargets.push_back(villagers[i]);
@@ -271,6 +274,10 @@ namespace ADGameplay
 				minionTargets.push_back(building);
 			}
 
+			golem->minionGroups[STONE]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[WATER]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[FIRE]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[WOOD]->avoidanceGroup = &minionAvoids;
 			for (int i = 0; i < stoneMinionCount; i++)
 			{
 				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->minionGroups[STONE], &minionTargets, STONE_MINION));
@@ -603,6 +610,15 @@ namespace ADGameplay
 		void AddBuilding(Building* _building)
 		{
 			buildings.push_back(_building);
+			if (_building->HasTurret())
+			{
+				towers.push_back(GameUtilities::AttachTowerAI(_building->GetTurret(), &villagerThreats));
+			}
+
+			if (_building->HasRubble())
+			{
+				minionAvoids.push_back(_building->GetRubble());
+			}
 		}
 	};
 }

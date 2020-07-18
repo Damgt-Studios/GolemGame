@@ -1,9 +1,9 @@
 StatSheet=Rubble:
 AddStat=Health
 StatMin=1
-StatMax=1000
+StatMax=99999
 StatFail=0
-StatCurrent= 1000
+StatCurrent= 99999
 
 AddStat=Armor
 StatMin=500
