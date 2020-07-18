@@ -1,8 +1,8 @@
 #pragma once
 #include "GameObjectClasses.h"
 
-#include <ADCombat.h>
-#include <ADAI.h>
+#include "ADCombat.h"
+#include "ADAI.h"
 
 
 
