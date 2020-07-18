@@ -1,12 +1,13 @@
 #pragma once
 
-#include <string>
-
 #include "Golem.h"
 #include "GameplayAI.h"
 #include "GameObjectClasses.h"
-//#include "GameEffects.h"
-//#include "ADAI.h"
+#include "GameEffects.h"
+#include "ADAI.h"
+
+#include <string>
+
 
 class GameUtilities
 {

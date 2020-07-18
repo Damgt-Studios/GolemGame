@@ -1,11 +1,14 @@
 #pragma once
-#include "ADUserInterface.h"
 //#include "Types.h"
+//#include "ADAudio.h"
 #include "GameObjectClasses.h"
-#include "ADAudio.h"
 #include "Golem.h"
-#include <unordered_map>
 #include "Listeners.h"
+
+#include <ADUserInterface.h>
+
+#include <unordered_map>
+
 
 namespace GolemGameUISetup
 {
@@ -82,10 +85,10 @@ namespace GolemGameUISetup
     {
         UINT& uiState;
         UINT audioIndex;
-        AD_AUDIO::ADAudio* audioSystem;
+        //AD_AUDIO::ADAudio* audioSystem;
     public:
         OptionsMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
-        void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
+        //void SetAudio(AD_AUDIO::ADAudio* _audioSystem);
         virtual bool ProcessResponse(ADUI::UIMessage* _message, float& quick) override;
         virtual bool ProcessInput(float delta_time, float& quick);
     };
@@ -102,7 +105,7 @@ namespace GolemGameUISetup
         UINT SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid); // std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight);
         UINT SetupLog(ADUI::ADUI* myUI);
     public:
-        void SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid);
+        void SetupUI(ADUI::ADUI* myUI, ADAI::PathingGrid* _grid); //, AD_AUDIO::ADAudio* _audioSystem
     };
 
 }

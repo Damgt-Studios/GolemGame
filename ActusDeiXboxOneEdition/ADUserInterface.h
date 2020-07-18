@@ -1,18 +1,15 @@
 #pragma once
+#include "Input.h"
+#include "Utils.h"
+
 #include "Types.h"
 #include <vector>
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
-
-#include "Utils.h"
-#include <d3dcompiler.h>
-#include "DDSTextureLoader.h"
 #include <string>
 #include <deque>
-#include "Input.h"
 #include <map>
 #include <CommonStates.h>
-
 
 namespace ADUI
 {

@@ -1,6 +1,5 @@
 #include "pchgame.h"
 #include "GameUserInterface.h"
-#include "Golem.h"
 
 
 namespace GolemGameUISetup
@@ -340,10 +339,10 @@ namespace GolemGameUISetup
 		return buttonPressed;
 	}
 
-	void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
-	{
-		audioSystem = _audioSystem;
-	}
+	//void OptionsMenuUIController::SetAudio(AD_AUDIO::ADAudio* _audioSystem)
+	//{
+	//	audioSystem = _audioSystem;
+	//}
 
 	bool OptionsMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
@@ -357,31 +356,31 @@ namespace GolemGameUISetup
 					buttonPressed = true;
 					if (_message->commandID == 1)
 					{
-						if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)
-						{
-							ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
-							switch (_message->componentIndex)
-							{
-							case AD_AUDIO::MUSIC:
-								audioSystem->masterMusicVolume = _message->fvalue.x;
-								quick = 0.1f;
-								audioSystem->RefreshMusicVolumes();
-								break;
-							case AD_AUDIO::SOUND_FX:
-								audioSystem->masterSoundFXVolume = _message->fvalue.x;
-								quick = 0.1f;
-								break;
-							case AD_AUDIO::UI_SOUND_FX:
-								audioSystem->masterUISoundFXVolume = _message->fvalue.x;
-								quick = 0.1f;
-								break;
-							default:
-								break;
-							}
+						//if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)
+						//{
+						//	ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_SliderClick", (void*)0);
+						//	switch (_message->componentIndex)
+						//	{
+						//	case AD_AUDIO::MUSIC:
+						//		audioSystem->masterMusicVolume = _message->fvalue.x;
+						//		quick = 0.1f;
+						//		audioSystem->RefreshMusicVolumes();
+						//		break;
+						//	case AD_AUDIO::SOUND_FX:
+						//		audioSystem->masterSoundFXVolume = _message->fvalue.x;
+						//		quick = 0.1f;
+						//		break;
+						//	case AD_AUDIO::UI_SOUND_FX:
+						//		audioSystem->masterUISoundFXVolume = _message->fvalue.x;
+						//		quick = 0.1f;
+						//		break;
+						//	default:
+						//		break;
+						//	}
 
-						}
-						else
-						{
+						//}
+						//else
+						//{
 							switch (_message->componentIndex)
 							{
 							case 0: //Audio
@@ -402,7 +401,7 @@ namespace GolemGameUISetup
 							default:
 								break;
 							}
-						}
+						//}
 					}
 					else
 					{
@@ -417,27 +416,27 @@ namespace GolemGameUISetup
 	bool OptionsMenuUIController::ProcessInput(float delta_time, float& quick)
 	{
 		bool buttonPressed = false;
-		if (Input::QueryButtonDown(GamepadButtons::B))
-		{
-			ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
-			if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)// || componentTypeMap[componentsNameToID["ControlsMenu"]]->active || componentTypeMap[componentsNameToID["VideoMenu"]]->active)
-			{
-				componentTypeMap[componentsNameToID["AudioMenu"]]->Disable();
-				//componentTypeMap[componentsNameToID["ControlsMenu"]]->Disable();
-				//componentTypeMap[componentsNameToID["VideoMenu"]]->Disable();
-				componentTypeMap[componentsNameToID["OptionsMenu"]]->Enable();
-				buttonPressed = true;
-			}
-			else
-			{
-				overlays[overlaysNameToID["OptionsScreen"]]->Disable();
-				Disable();
+	//	if (Input::QueryButtonDown(GamepadButtons::B))
+	//	{
+	//		ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
+	//		if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)// || componentTypeMap[componentsNameToID["ControlsMenu"]]->active || componentTypeMap[componentsNameToID["VideoMenu"]]->active)
+	//		{
+	//			componentTypeMap[componentsNameToID["AudioMenu"]]->Disable();
+	//			//componentTypeMap[componentsNameToID["ControlsMenu"]]->Disable();
+	//			//componentTypeMap[componentsNameToID["VideoMenu"]]->Disable();
+	//			componentTypeMap[componentsNameToID["OptionsMenu"]]->Enable();
+	//			buttonPressed = true;
+	//		}
+	//		else
+	//		{
+	//			overlays[overlaysNameToID["OptionsScreen"]]->Disable();
+	//			Disable();
 
-				overlays[overlaysNameToID["PauseScreen"]]->Enable();
-				controllers[controllersNameToID["PauseScreenController"]]->Enable();
-				buttonPressed = true;
-			}
-		}
+	//			overlays[overlaysNameToID["PauseScreen"]]->Enable();
+	//			controllers[controllersNameToID["PauseScreenController"]]->Enable();
+	//			buttonPressed = true;
+	//		}
+	//	}
 		return buttonPressed;
 	}
 
@@ -1352,7 +1351,7 @@ namespace GolemGameUISetup
 	}
 
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, ADAI::PathingGrid* _grid) //, AD_AUDIO::ADAudio* _audioSystem
 	{
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
@@ -1454,7 +1453,7 @@ namespace GolemGameUISetup
 
 		optionScreenController->AddOverlay(myUI->overlays[pauseID]);
 		optionScreenController->AddController(PauseScreenController);
-		optionScreenController->SetAudio(_audioSystem);
+		//optionScreenController->SetAudio(_audioSystem);
 
 		//////gameplayScreenController->AddComponent(sliderList);
 		//gameplayScreenController->AddComponent(buttonList2);

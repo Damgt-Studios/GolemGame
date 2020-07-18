@@ -2,7 +2,7 @@
 #include <string>
 #include <list>
 #include <map>
-#include "Logger.h"
+//#include "Logger.h"
 
 namespace ADEvents
 {

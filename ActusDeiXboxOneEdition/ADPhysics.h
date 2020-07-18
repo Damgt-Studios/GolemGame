@@ -1,6 +1,7 @@
 #pragma once
-#include "DirectXMath.h"
 #include "ADMath.h"
+
+#include "DirectXMath.h"
 
 namespace ADPhysics
 {

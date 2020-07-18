@@ -1,17 +1,16 @@
 #pragma once
 
 #include "pch.h"
-
-#include <vector>
-#include <queue>
-
-#include <string>
-#include <unordered_map>
 #include "ADPhysics.h"
 #include "ADQuadTree.h"
 #include "MeshLoader.h"
 #include "ADEventSystem.h"
 #include "XTime.h"
+
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <queue>
 
 #ifndef AD_MEMORY_DEFAULT
 #include "ADMemoryManager.h"
@@ -149,6 +148,10 @@ namespace ADResource
 
 			// Texture stuff
 			ComPtr<ID3D11SamplerState> sampler;
+
+			//ID3D11ShaderResourceView** albedo;
+			//ID3D11ShaderResourceView** normal;
+			//ID3D11ShaderResourceView** emissive;
 
 			ADTexture* albedo;
 			ADTexture* normal;

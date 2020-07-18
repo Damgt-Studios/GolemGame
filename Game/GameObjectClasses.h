@@ -1,13 +1,16 @@
 #pragma once
-//#include <Types.h>
-//#include "ADUserInterface.h"
-//#include "GameplayBaseClasses.h"
-//#include "ResourceManager.h"
-//#include "ADEventSystem.h"
-#include <ADCombat.h>
+#include "GameplayBaseClasses.h"
+
+#include <ADUserInterface.h>
 #include <ADAI.h>
-#include "ADPathfinding.h"
-#include "ADParticles.h"
+#include <ADPathfinding.h>
+#include <ADCombat.h>
+#include <ADParticles.h>
+#include <ADEventSystem.h>
+
+#include <Types.h>
+#include <ResourceManager.h>
+
 
 namespace ADResource
 {

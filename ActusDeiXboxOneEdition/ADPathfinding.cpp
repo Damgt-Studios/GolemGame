@@ -87,7 +87,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 	//Up
@@ -97,7 +97,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 	//Up Right
@@ -107,7 +107,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 	//left
@@ -117,7 +117,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 	//right
@@ -127,7 +127,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 	//down left
@@ -137,7 +137,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 	//down
@@ -147,7 +147,7 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 
@@ -158,19 +158,19 @@ void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNo
 		if (targetDestination->tile->walkable)
 		{
 			searchNode->neighbors.push_back(targetDestination);
-			searchNode->neighborDist.push_back(DistanceCalculation(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
+			searchNode->neighborDist.push_back(DistanceCalculationNodes(pathNode, targetDestination->tile) * (targetDestination->tile->terrainWeight));
 		}
 	}
 }
 
-float ADAI::ADPathfinding::DistanceCalculation(PathingNode* _a)
+float ADAI::ADPathfinding::DistanceCalculationNodes(PathingNode* _a)
 {
 	float xDist = abs(_a->position.x - target->position.x);
 	float yDist = abs(_a->position.z - target->position.z);
 	return sqrt((xDist * xDist) + (yDist * yDist));
 }
 
-float ADAI::ADPathfinding::DistanceCalculation(PathingNode* _a, PathingNode* _b)
+float ADAI::ADPathfinding::DistanceCalculationNodes(PathingNode* _a, PathingNode* _b)
 {
 	float xDist = abs(_a->position.x - _b->position.x);
 	float yDist = abs(_a->position.z - _b->position.z);
@@ -397,7 +397,7 @@ void ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, i
 	first->parent = NULL;
 	first->searchNode = GetTile(startColumn, startRow);
 	first->givenCost = 0;
-	first->heuristicCost = DistanceCalculation(first->searchNode->tile);
+	first->heuristicCost = DistanceCalculationNodes(first->searchNode->tile);
 	first->finalCost = first->givenCost + first->heuristicCost * hWeight;
 	//pQueue.(first);
 	std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
@@ -483,7 +483,7 @@ void ADAI::ADPathfinding::update(float timeslice)
 				node->searchNode = *i;
 				node->parent = current;
 				node->givenCost = tempGivenCost;
-				node->heuristicCost = DistanceCalculation(node->searchNode->tile);
+				node->heuristicCost = DistanceCalculationNodes(node->searchNode->tile);
 				node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 				visited_map[*i] = node;
 				node->searchNode->tile->displayState = 1;

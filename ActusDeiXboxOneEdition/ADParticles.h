@@ -2,7 +2,9 @@
 #include "pch.h"
 #include "Types.h"
 #include "Utils.h"
-#include "DDSTextureLoader.h"
+
+#include <d3dcompiler.h>
+#include <DDSTextureLoader.h>
 using namespace DirectX;
 using namespace std;
 

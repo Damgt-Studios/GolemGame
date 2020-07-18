@@ -1,15 +1,14 @@
 #pragma once
-
-#define WMATH_PI 3.1415926
+#include "Types.h"
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include "Types.h"
 
 using namespace ADResource::ADGameplay;
 using namespace ADPhysics;
 using namespace DirectX;
 
+#define WMATH_PI 3.1415926
 
 
 class Camera : public GameObject

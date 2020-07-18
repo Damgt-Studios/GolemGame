@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include <d3dcompiler.h>
+#include "DDSTextureLoader.h"
 
 // Static private members
 AD_ULONG ResourceManager::current_id = 1;

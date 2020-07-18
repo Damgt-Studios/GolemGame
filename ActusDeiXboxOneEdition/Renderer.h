@@ -1,12 +1,17 @@
 #pragma once
 
-#include <string>
-#include <fstream>
-
 #include "Types.h"
 #include "Camera.h"
 #include "ResourceManager.h"
 #include "ADParticles.h"
+
+#include <d3dcompiler.h>
+#include <DDSTextureLoader.h>
+
+#include <string>
+#include <fstream>
+
+
 
 using namespace ADResource::ADRenderer;
 

@@ -1,21 +1,23 @@
 #pragma once
 
-#include <wrl/client.h>
-#include <d3d11_1.h>
-#include <DirectXMath.h>
-#include <vector>
-#include <string>
-#include <fstream>
-
 #include "Camera.h"
 #include "Renderer.h"
 #include "Input.h"
 #include "ResourceManager.h"
+#include "ADUserInterface.h"
+#include "ADParticles.h"
 //#include "XTime.h"
 
 //#include "Types.h"
-#include "ADUserInterface.h"
-#include "ADParticles.h"
+
+#include <wrl/client.h>
+#include <d3d11_1.h>
+
+#include <DirectXMath.h>
+
+#include <vector>
+#include <string>
+#include <fstream>
 
 using namespace DirectX;
 using namespace Microsoft::WRL;

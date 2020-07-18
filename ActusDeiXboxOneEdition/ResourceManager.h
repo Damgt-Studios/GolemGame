@@ -2,8 +2,6 @@
 
 //#include "Types.h"
 #include "Utils.h"
-#include <d3dcompiler.h>
-#include "DDSTextureLoader.h"
 
 #include <unordered_map>
 #include <string>

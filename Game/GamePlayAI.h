@@ -1,7 +1,10 @@
 #pragma once
-#include <ADAI.h>
-#include <ADCombat.h>
 #include "GameObjectClasses.h"
+
+#include <ADCombat.h>
+#include <ADAI.h>
+
+
 
 namespace ADAI
 {

@@ -1,12 +1,13 @@
 #pragma once
+//#include "GameUtilities.h"
+//#include "GameObjectClasses.h"
+#include "ADUserInterface.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <Types.h>
 #include <unordered_map>
-//#include "GameUtilities.h"
-//#include "GameObjectClasses.h"
-#include "ADUserInterface.h"
 
 
 class StatChange : public ADResource::ADGameplay::Effect

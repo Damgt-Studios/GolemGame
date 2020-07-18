@@ -1,8 +1,9 @@
 #pragma once
-#include "Renderable.h"
-#include <AnimationStateMachine.h>
-#include <unordered_map>
 
+#include "Renderable.h"
+#include "AnimationStateMachine.h"
+
+#include <unordered_map>
 
 namespace ADResource
 {

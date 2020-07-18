@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "Engine.h"
-
-#include "DDSTextureLoader.h"
 #include "Utils.h"
+
+#include <d3dcompiler.h>
+#include <DDSTextureLoader.h>
 
 Engine::Engine()
 {

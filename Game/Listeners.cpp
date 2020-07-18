@@ -1,11 +1,11 @@
 #include "pchgame.h"
 #include "Listeners.h"
 
-
-void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
-{
-    audioSource.Play();
-}
+//
+//void AudioSourceListener::HandleEvent(ADEvents::ADEvent* _event)
+//{
+//    //audioSource.Play();
+//}
 
 void RecoveryEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {
@@ -42,16 +42,16 @@ void CylinderEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
     XMFLOAT3 float4Event = (*static_cast<XMFLOAT3*>(_event->Parameter()));
     emitter.Activate(lifespan, { float4Event.x, float4Event.y, float4Event.z, 0 }, 15.0f);
 }
-
-void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
-{
-    audioSource.Stop();
-}
-
-std::string AudioStopListener::ToString()
-{
-    return std::string();
-}
+//
+//void AudioStopListener::HandleEvent(ADEvents::ADEvent* _event)
+//{
+//    //audioSource.Stop();
+//}
+//
+//std::string AudioStopListener::ToString()
+//{
+//    return std::string();
+//}
 
 void BigCloudEmitterListener::HandleEvent(ADEvents::ADEvent* _event)
 {

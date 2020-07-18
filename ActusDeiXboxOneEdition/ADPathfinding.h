@@ -1,11 +1,12 @@
 #pragma once
 #include "pch.h"
+
 #include "Types.h"
 #include "ResourceManager.h"
 #include "ADPhysics.h"
+
 #include <unordered_map>
 #include <set>
-
 
 namespace ADAI
 {
@@ -141,8 +142,8 @@ namespace ADAI
 		void CreatePointGrid(std::vector<SimpleVertex>* _planeVertices);
 		void CleanUpPointGrid();
 		void SetNeighbors(SearchNode* searchNode);
-		float DistanceCalculation(PathingNode* _a);
-		float DistanceCalculation(PathingNode* _a, PathingNode* _b);
+		float DistanceCalculationNodes(PathingNode* _a);
+		float DistanceCalculationNodes(PathingNode* _a, PathingNode* _b);
 		bool done = false;
 
 	public:

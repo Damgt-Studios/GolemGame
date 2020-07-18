@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ADUserInterface.h"
+#include <d3dcompiler.h>
+#include <DDSTextureLoader.h>
 
 bool ADUI::UIComponent::ProcessResponse(UIMessage* _message)
 {

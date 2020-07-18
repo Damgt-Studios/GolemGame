@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Types.h"
+
 #include <string>
 #include <fstream>
-
-#include "Types.h"
 
 using namespace ADResource::ADRenderer;
 
