@@ -177,9 +177,9 @@ public:
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		
+
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		
+
 		GameUtilities::AddGameObject(engine->GetOrbitCamera());
 		golem->bigPuffs[STONE] = &engine->bigStonePuff;
 		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
@@ -337,13 +337,13 @@ public:
 
 #pragma endregion
 
-//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+		//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
 #pragma region Level Boundary
 
 		GameObject* object1 = new GameObject();
 		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
-		
+
 		GameObject* object2 = new GameObject();
 		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(20, 100, 2000));
@@ -371,14 +371,14 @@ public:
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 240), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 290), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 340), XMFLOAT3(0, 180, 0));
-												   
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 390), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 430), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 480), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 530), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 580), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 620), XMFLOAT3(0, 0, 0));
-		
+
 		GameUtilities::GenerateRockWall3(XMFLOAT3(580, 0, 630), XMFLOAT3(0, 90, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(530, 0, 630), XMFLOAT3(0, 90, 0));
 		GameUtilities::GenerateRockWall1(XMFLOAT3(480, 0, 630), XMFLOAT3(0, 90, 0));
@@ -533,27 +533,27 @@ public:
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1210), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -1160), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -1110), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1060), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1020), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -970), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -920), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -870), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -830), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -780), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -730), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -680), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -640), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -590), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -540), XMFLOAT3(0, 0, 0));
-											
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -490), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -450), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -400), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -350), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -300), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
@@ -584,31 +584,650 @@ public:
 		GameUtilities::AddGameObject(rock_wall7);
 		GameUtilities::AddGameObject(rock_wall8);
 
-		Building* real_tree = new Building(XMFLOAT3(-300, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree);
+		XMFLOAT3 renderable_tree_positions[] = {
+			XMFLOAT3(-340, 0, 25),
+			XMFLOAT3(-370, 0, 25),
+			XMFLOAT3(-400, 0, 25),
+			XMFLOAT3(-430, 0, 25),
+			XMFLOAT3(-460, 0, 25),
+			XMFLOAT3(-490, 0, 25),
+			XMFLOAT3(-520, 0, 25),
+			XMFLOAT3(-550, 0, 25),
+			XMFLOAT3(-580, 0, 25),
+			XMFLOAT3(-610, 0, 25),
+			XMFLOAT3(-340, 0, 50),
+			XMFLOAT3(-370, 0, 50),
+			XMFLOAT3(-400, 0, 50),
+			XMFLOAT3(-430, 0, 50),
+			XMFLOAT3(-460, 0, 50),
+			XMFLOAT3(-490, 0, 50),
+			XMFLOAT3(-520, 0, 50),
+			XMFLOAT3(-550, 0, 50),
+			XMFLOAT3(-580, 0, 50),
+			XMFLOAT3(-610, 0, 50),
+			XMFLOAT3(-340, 0, 75),
+			XMFLOAT3(-370, 0, 75),
+			XMFLOAT3(-400, 0, 75),
+			XMFLOAT3(-430, 0, 75),
+			XMFLOAT3(-460, 0, 75),
+			XMFLOAT3(-490, 0, 75),
+			XMFLOAT3(-520, 0, 75),
+			XMFLOAT3(-550, 0, 75),
+			XMFLOAT3(-580, 0, 75),
+			XMFLOAT3(-610, 0, 75),
+			XMFLOAT3(-340, 0, 100),
+			XMFLOAT3(-370, 0, 100),
+			XMFLOAT3(-400, 0, 100),
+			XMFLOAT3(-430, 0, 100),
+			XMFLOAT3(-460, 0, 100),
+			XMFLOAT3(-490, 0, 100),
+			XMFLOAT3(-520, 0, 100),
+			XMFLOAT3(-550, 0, 100),
+			XMFLOAT3(-580, 0, 100),
+			XMFLOAT3(-610, 0, 100),
+			XMFLOAT3(-340, 0, 125),
+			XMFLOAT3(-370, 0, 125),
+			XMFLOAT3(-400, 0, 125),
+			XMFLOAT3(-430, 0, 125),
+			XMFLOAT3(-460, 0, 125),
+			XMFLOAT3(-490, 0, 125),
+			XMFLOAT3(-520, 0, 125),
+			XMFLOAT3(-550, 0, 125),
+			XMFLOAT3(-580, 0, 125),
+			XMFLOAT3(-610, 0, 125),
+			XMFLOAT3(-340, 0, 150),
+			XMFLOAT3(-370, 0, 150),
+			XMFLOAT3(-400, 0, 150),
+			XMFLOAT3(-430, 0, 150),
+			XMFLOAT3(-460, 0, 150),
+			XMFLOAT3(-490, 0, 150),
+			XMFLOAT3(-520, 0, 150),
+			XMFLOAT3(-550, 0, 150),
+			XMFLOAT3(-580, 0, 150),
+			XMFLOAT3(-610, 0, 150),
+			XMFLOAT3(-340, 0, 175),
+			XMFLOAT3(-370, 0, 175),
+			XMFLOAT3(-400, 0, 175),
+			XMFLOAT3(-430, 0, 175),
+			XMFLOAT3(-460, 0, 175),
+			XMFLOAT3(-490, 0, 175),
+			XMFLOAT3(-520, 0, 175),
+			XMFLOAT3(-550, 0, 175),
+			XMFLOAT3(-580, 0, 175),
+			XMFLOAT3(-610, 0, 175),
+			XMFLOAT3(-460, 0, 225),
+			XMFLOAT3(-490, 0, 225),
+			XMFLOAT3(-520, 0, 225),
+			XMFLOAT3(-550, 0, 225),
+			XMFLOAT3(-580, 0, 225),
+			XMFLOAT3(-610, 0, 225),
+			XMFLOAT3(-460, 0, 275),
+			XMFLOAT3(-490, 0, 275),
+			XMFLOAT3(-520, 0, 275),
+			XMFLOAT3(-550, 0, 275),
+			XMFLOAT3(-580, 0, 275),
+			XMFLOAT3(-610, 0, 275),
+			XMFLOAT3(-340, 0, 325),
+			XMFLOAT3(-370, 0, 325),
+			XMFLOAT3(-400, 0, 325),
+			XMFLOAT3(-430, 0, 325),
+			XMFLOAT3(-460, 0, 325),
+			XMFLOAT3(-490, 0, 325),
+			XMFLOAT3(-520, 0, 325),
+			XMFLOAT3(-550, 0, 325),
+			XMFLOAT3(-580, 0, 325),
+			XMFLOAT3(-610, 0, 325),
+			XMFLOAT3(-340, 0, 350),
+			XMFLOAT3(-370, 0, 350),
+			XMFLOAT3(-400, 0, 350),
+			XMFLOAT3(-430, 0, 350),
+			XMFLOAT3(-460, 0, 350),
+			XMFLOAT3(-490, 0, 350),
+			XMFLOAT3(-520, 0, 350),
+			XMFLOAT3(-550, 0, 350),
+			XMFLOAT3(-580, 0, 350),
+			XMFLOAT3(-610, 0, 350),
+			XMFLOAT3(-340, 0, 375),
+			XMFLOAT3(-370, 0, 375),
+			XMFLOAT3(-400, 0, 375),
+			XMFLOAT3(-430, 0, 375),
+			XMFLOAT3(-460, 0, 375),
+			XMFLOAT3(-490, 0, 375),
+			XMFLOAT3(-520, 0, 375),
+			XMFLOAT3(-550, 0, 375),
+			XMFLOAT3(-580, 0, 375),
+			XMFLOAT3(-610, 0, 375),
+			XMFLOAT3(-340, 0, 400),
+			XMFLOAT3(-370, 0, 400),
+			XMFLOAT3(-400, 0, 400),
+			XMFLOAT3(-430, 0, 400),
+			XMFLOAT3(-460, 0, 400),
+			XMFLOAT3(-490, 0, 400),
+			XMFLOAT3(-520, 0, 400),
+			XMFLOAT3(-550, 0, 400),
+			XMFLOAT3(-580, 0, 400),
+			XMFLOAT3(-610, 0, 400),
+			XMFLOAT3(-340, 0, 425),
+			XMFLOAT3(-370, 0, 425),
+			XMFLOAT3(-400, 0, 425),
+			XMFLOAT3(-430, 0, 425),
+			XMFLOAT3(-460, 0, 425),
+			XMFLOAT3(-490, 0, 425),
+			XMFLOAT3(-520, 0, 425),
+			XMFLOAT3(-550, 0, 425),
+			XMFLOAT3(-580, 0, 425),
+			XMFLOAT3(-610, 0, 425),
+			XMFLOAT3(-340, 0, 450),
+			XMFLOAT3(-370, 0, 450),
+			XMFLOAT3(-400, 0, 450),
+			XMFLOAT3(-430, 0, 450),
+			XMFLOAT3(-460, 0, 450),
+			XMFLOAT3(-490, 0, 450),
+			XMFLOAT3(-520, 0, 450),
+			XMFLOAT3(-550, 0, 450),
+			XMFLOAT3(-580, 0, 450),
+			XMFLOAT3(-610, 0, 450),
+			XMFLOAT3(-340, 0, 475),
+			XMFLOAT3(-370, 0, 475),
+			XMFLOAT3(-400, 0, 475),
+			XMFLOAT3(-430, 0, 475),
+			XMFLOAT3(-460, 0, 475),
+			XMFLOAT3(-490, 0, 475),
+			XMFLOAT3(-520, 0, 475),
+			XMFLOAT3(-550, 0, 475),
+			XMFLOAT3(-580, 0, 475),
+			XMFLOAT3(-610, 0, 475),
+			XMFLOAT3(-340, 0, 500),
+			XMFLOAT3(-370, 0, 500),
+			XMFLOAT3(-400, 0, 500),
+			XMFLOAT3(-430, 0, 500),
+			XMFLOAT3(-460, 0, 500),
+			XMFLOAT3(-490, 0, 500),
+			XMFLOAT3(-520, 0, 500),
+			XMFLOAT3(-550, 0, 500),
+			XMFLOAT3(-580, 0, 500),
+			XMFLOAT3(-610, 0, 500),
+			XMFLOAT3(-340, 0, 525),
+			XMFLOAT3(-370, 0, 525),
+			XMFLOAT3(-400, 0, 525),
+			XMFLOAT3(-430, 0, 525),
+			XMFLOAT3(-460, 0, 525),
+			XMFLOAT3(-490, 0, 525),
+			XMFLOAT3(-520, 0, 525),
+			XMFLOAT3(-550, 0, 525),
+			XMFLOAT3(-580, 0, 525),
+			XMFLOAT3(-610, 0, 525),
+			XMFLOAT3(-340, 0, 550),
+			XMFLOAT3(-370, 0, 550),
+			XMFLOAT3(-400, 0, 550),
+			XMFLOAT3(-430, 0, 550),
+			XMFLOAT3(-460, 0, 550),
+			XMFLOAT3(-490, 0, 550),
+			XMFLOAT3(-520, 0, 550),
+			XMFLOAT3(-550, 0, 550),
+			XMFLOAT3(-580, 0, 550),
+			XMFLOAT3(-610, 0, 550),
+			XMFLOAT3(-340, 0, 575),
+			XMFLOAT3(-370, 0, 575),
+			XMFLOAT3(-400, 0, 575),
+			XMFLOAT3(-430, 0, 575),
+			XMFLOAT3(-460, 0, 575),
+			XMFLOAT3(-490, 0, 575),
+			XMFLOAT3(-520, 0, 575),
+			XMFLOAT3(-550, 0, 575),
+			XMFLOAT3(-580, 0, 575),
+			XMFLOAT3(-610, 0, 575),
+			XMFLOAT3(-340, 0, 600),
+			XMFLOAT3(-370, 0, 600),
+			XMFLOAT3(-400, 0, 600),
+			XMFLOAT3(-430, 0, 600),
+			XMFLOAT3(-460, 0, 600),
+			XMFLOAT3(-490, 0, 600),
+			XMFLOAT3(-520, 0, 600),
+			XMFLOAT3(-550, 0, 600),
+			XMFLOAT3(-580, 0, 600),
+			XMFLOAT3(-610, 0, 600),
+			XMFLOAT3(-320, 0, -175),
+			XMFLOAT3(-350, 0, -175),
+			XMFLOAT3(-380, 0, -175),
+			XMFLOAT3(-410, 0, -175),
+			XMFLOAT3(-440, 0, -175),
+			XMFLOAT3(-470, 0, -175),
+			XMFLOAT3(-500, 0, -175),
+			XMFLOAT3(-530, 0, -175),
+			XMFLOAT3(-560, 0, -175),
+			XMFLOAT3(-590, 0, -175),
+			XMFLOAT3(-620, 0, -175),
+			XMFLOAT3(-320, 0, -200),
+			XMFLOAT3(-350, 0, -200),
+			XMFLOAT3(-380, 0, -200),
+			XMFLOAT3(-410, 0, -200),
+			XMFLOAT3(-440, 0, -200),
+			XMFLOAT3(-470, 0, -200),
+			XMFLOAT3(-500, 0, -200),
+			XMFLOAT3(-530, 0, -200),
+			XMFLOAT3(-560, 0, -200),
+			XMFLOAT3(-590, 0, -200),
+			XMFLOAT3(-620, 0, -200),
+			XMFLOAT3(-320, 0, -225),
+			XMFLOAT3(-350, 0, -225),
+			XMFLOAT3(-380, 0, -225),
+			XMFLOAT3(-410, 0, -225),
+			XMFLOAT3(-440, 0, -225),
+			XMFLOAT3(-470, 0, -225),
+			XMFLOAT3(-500, 0, -225),
+			XMFLOAT3(-530, 0, -225),
+			XMFLOAT3(-560, 0, -225),
+			XMFLOAT3(-590, 0, -225),
+			XMFLOAT3(-620, 0, -225),
+			XMFLOAT3(-320, 0, -250),
+			XMFLOAT3(-350, 0, -250),
+			XMFLOAT3(-380, 0, -250),
+			XMFLOAT3(-410, 0, -250),
+			XMFLOAT3(-440, 0, -250),
+			XMFLOAT3(-470, 0, -250),
+			XMFLOAT3(-500, 0, -250),
+			XMFLOAT3(-530, 0, -250),
+			XMFLOAT3(-560, 0, -250),
+			XMFLOAT3(-590, 0, -250),
+			XMFLOAT3(-620, 0, -250),
+			XMFLOAT3(-320, 0, -275),
+			XMFLOAT3(-350, 0, -275),
+			XMFLOAT3(-380, 0, -275),
+			XMFLOAT3(-410, 0, -275),
+			XMFLOAT3(-440, 0, -275),
+			XMFLOAT3(-470, 0, -275),
+			XMFLOAT3(-500, 0, -275),
+			XMFLOAT3(-530, 0, -275),
+			XMFLOAT3(-560, 0, -275),
+			XMFLOAT3(-590, 0, -275),
+			XMFLOAT3(-620, 0, -275),
+			XMFLOAT3(-320, 0, -300),
+			XMFLOAT3(-350, 0, -300),
+			XMFLOAT3(-380, 0, -300),
+			XMFLOAT3(-410, 0, -300),
+			XMFLOAT3(-440, 0, -300),
+			XMFLOAT3(-470, 0, -300),
+			XMFLOAT3(-500, 0, -300),
+			XMFLOAT3(-530, 0, -300),
+			XMFLOAT3(-560, 0, -300),
+			XMFLOAT3(-590, 0, -300),
+			XMFLOAT3(-620, 0, -300),
+			XMFLOAT3(-320, 0, -325),
+			XMFLOAT3(-350, 0, -325),
+			XMFLOAT3(-380, 0, -325),
+			XMFLOAT3(-410, 0, -325),
+			XMFLOAT3(-440, 0, -325),
+			XMFLOAT3(-470, 0, -325),
+			XMFLOAT3(-500, 0, -325),
+			XMFLOAT3(-530, 0, -325),
+			XMFLOAT3(-560, 0, -325),
+			XMFLOAT3(-590, 0, -325),
+			XMFLOAT3(-620, 0, -325),
+			XMFLOAT3(-520, 0, -350),
+			XMFLOAT3(-550, 0, -350),
+			XMFLOAT3(-580, 0, -350),
+			XMFLOAT3(-610, 0, -350),
+			XMFLOAT3(-520, 0, -375),
+			XMFLOAT3(-550, 0, -375),
+			XMFLOAT3(-580, 0, -375),
+			XMFLOAT3(-610, 0, -375),
+			XMFLOAT3(-520, 0, -400),
+			XMFLOAT3(-550, 0, -400),
+			XMFLOAT3(-580, 0, -400),
+			XMFLOAT3(-610, 0, -400),
+			XMFLOAT3(-520, 0, -425),
+			XMFLOAT3(-550, 0, -425),
+			XMFLOAT3(-580, 0, -425),
+			XMFLOAT3(-610, 0, -425),
+				XMFLOAT3(320, 0, -25),
+				XMFLOAT3(350, 0, -25),
+				XMFLOAT3(380, 0, -25),
+				XMFLOAT3(320, 0, -50),
+				XMFLOAT3(350, 0, -50),
+				XMFLOAT3(380, 0, -50),
+				XMFLOAT3(320, 0, -75),
+				XMFLOAT3(350, 0, -75),
+				XMFLOAT3(380, 0, -75),
+				XMFLOAT3(320, 0, -100),
+				XMFLOAT3(350, 0, -100),
+				XMFLOAT3(380, 0, -100),
+				XMFLOAT3(320, 0, -125),
+				XMFLOAT3(350, 0, -125),
+				XMFLOAT3(380, 0, -125),
+				XMFLOAT3(320, 0, -150),
+				XMFLOAT3(350, 0, -150),
+				XMFLOAT3(380, 0, -150),
+				XMFLOAT3(320, 0, -175),
+				XMFLOAT3(350, 0, -175),
+				XMFLOAT3(380, 0, -175),
+				XMFLOAT3(320, 0, -200),
+				XMFLOAT3(350, 0, -200),
+				XMFLOAT3(380, 0, -200),
+				XMFLOAT3(320, 0, -225),
+				XMFLOAT3(350, 0, -225),
+				XMFLOAT3(380, 0, -225),
+				XMFLOAT3(350, 0, -250),
+				XMFLOAT3(380, 0, -250),
+				XMFLOAT3(320, 0, -275),
+				XMFLOAT3(350, 0, -275),
+				XMFLOAT3(380, 0, -275),
+				XMFLOAT3(320, 0, -300),
+				XMFLOAT3(350, 0, -300),
+				XMFLOAT3(380, 0, -300),
+				XMFLOAT3(320, 0, -325),
+				XMFLOAT3(350, 0, -325),
+				XMFLOAT3(380, 0, -325),
+				XMFLOAT3(320, 0, -350),
+				XMFLOAT3(350, 0, -350),
+				XMFLOAT3(380, 0, -350),
+				XMFLOAT3(320, 0, -375),
+				XMFLOAT3(350, 0, -375),
+				XMFLOAT3(380, 0, -375),
+				XMFLOAT3(320, 0, -400),
+				XMFLOAT3(350, 0, -400),
+				XMFLOAT3(380, 0, -400),
+				XMFLOAT3(320, 0, -425),
+				XMFLOAT3(350, 0, -425),
+				XMFLOAT3(380, 0, -425),
+				XMFLOAT3(320, 0, -450),
+				XMFLOAT3(350, 0, -450),
+				XMFLOAT3(380, 0, -450),
+				XMFLOAT3(320, 0, -475),
+				XMFLOAT3(350, 0, -475),
+				XMFLOAT3(380, 0, -475),
+				XMFLOAT3(320, 0, -500),
+				XMFLOAT3(350, 0, -500),
+				XMFLOAT3(380, 0, -500),
+				XMFLOAT3(320, 0, -525),
+				XMFLOAT3(350, 0, -525),
+				XMFLOAT3(380, 0, -525),
+				XMFLOAT3(320, 0, -550),
+				XMFLOAT3(350, 0, -550),
+				XMFLOAT3(380, 0, -550),
+					XMFLOAT3(320, 0, -575),
+					XMFLOAT3(350, 0, -575),
+					XMFLOAT3(380, 0, -575),
+					XMFLOAT3(320, 0, -600),
+					XMFLOAT3(350, 0, -600),
+					XMFLOAT3(380, 0, -600),
+					XMFLOAT3(320, 0, -625),
+					XMFLOAT3(350, 0, -625),
+					XMFLOAT3(380, 0, -625),
+					XMFLOAT3(320, 0, -650),
+					XMFLOAT3(350, 0, -650),
+					XMFLOAT3(380, 0, -650),
+					XMFLOAT3(320, 0, -650),
+					XMFLOAT3(350, 0, -650),
+					XMFLOAT3(380, 0, -650),
+					XMFLOAT3(320, 0, -675),
+					XMFLOAT3(350, 0, -675),
+					XMFLOAT3(380, 0, -675),
+					XMFLOAT3(320, 0, -700),
+					XMFLOAT3(350, 0, -700),
+					XMFLOAT3(380, 0, -700),
+					XMFLOAT3(320, 0, -725),
+					XMFLOAT3(350, 0, -725),
+					XMFLOAT3(380, 0, -725),
+					XMFLOAT3(320, 0, -750),
+					XMFLOAT3(350, 0, -750),
+					XMFLOAT3(380, 0, -750),
+					XMFLOAT3(320, 0, -775),
+					XMFLOAT3(350, 0, -775),
+					XMFLOAT3(380, 0, -775),
+					XMFLOAT3(320, 0, -800),
+					XMFLOAT3(350, 0, -800),
+					XMFLOAT3(380, 0, -800),
+					XMFLOAT3(320, 0, -825),
+					XMFLOAT3(350, 0, -825),
+					XMFLOAT3(380, 0, -825),
+		};
 
-		Building* real_tree2 = new Building(XMFLOAT3(-325, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree2);
-		
-		Building* real_tree3 = new Building(XMFLOAT3(-350, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree3);
+		XMFLOAT3 collidable_tree_positions[] = {
+			XMFLOAT3(-300, 0, 12.5),
+			XMFLOAT3(-320, 0, 12.5),
+			XMFLOAT3(-340, 0, 12.5),
+			XMFLOAT3(-360, 0, 12.5),
+			XMFLOAT3(-380, 0, 12.5),
+			XMFLOAT3(-400, 0, 12.5),
+			XMFLOAT3(-420, 0, 12.5),
+			XMFLOAT3(-440, 0, 12.5),
+			XMFLOAT3(-460, 0, 12.5),
+			XMFLOAT3(-480, 0, 12.5),
+			XMFLOAT3(-500, 0, 12.5),
+			XMFLOAT3(-520, 0, 12.5),
+			XMFLOAT3(-540, 0, 12.5),
+			XMFLOAT3(-560, 0, 12.5),
+			XMFLOAT3(-580, 0, 12.5),
+			XMFLOAT3(-600, 0, 12.5),
+			XMFLOAT3(-620, 0, 12.5),
+			XMFLOAT3(-310, 0, 25),
+			XMFLOAT3(-300, 0, 37.5),
+			XMFLOAT3(-310, 0, 50),
+			XMFLOAT3(-300, 0, 62.5),
+			XMFLOAT3(-310, 0, 75),
+			XMFLOAT3(-300, 0, 87.5),
+			XMFLOAT3(-310, 0, 100),
+			XMFLOAT3(-300, 0, 112.5),
+			XMFLOAT3(-310, 0, 125),
+			XMFLOAT3(-300, 0, 137.5),
+			XMFLOAT3(-310, 0, 150),
+			XMFLOAT3(-300, 0, 162.5),
+			XMFLOAT3(-310, 0, 175),
+			XMFLOAT3(-300, 0, 187.5),
+			XMFLOAT3(-310, 0, 200),
+			XMFLOAT3(-330, 0, 200),
+			XMFLOAT3(-350, 0, 200),
+			XMFLOAT3(-370, 0, 200),
+			XMFLOAT3(-390, 0, 200),
+			XMFLOAT3(-410, 0, 200),
+			XMFLOAT3(-430, 0, 200),
+			XMFLOAT3(-450, 0, 200),
+			XMFLOAT3(-470, 0, 200),
+			XMFLOAT3(-490, 0, 200),
+			XMFLOAT3(-510, 0, 200),
+			XMFLOAT3(-530, 0, 200),
+			XMFLOAT3(-550, 0, 200),
+			XMFLOAT3(-570, 0, 200),
+			XMFLOAT3(-590, 0, 200),
+			XMFLOAT3(-440, 0, 212.5),
+			XMFLOAT3(-430, 0, 225),
+			XMFLOAT3(-440, 0, 237.5),
+			XMFLOAT3(-430, 0, 250),
+			XMFLOAT3(-440, 0, 262.5),
+			XMFLOAT3(-430, 0, 275),
+			XMFLOAT3(-440, 0, 287.5),
+			XMFLOAT3(-310, 0, 300),
+			XMFLOAT3(-330, 0, 300),
+			XMFLOAT3(-350, 0, 300),
+			XMFLOAT3(-370, 0, 300),
+			XMFLOAT3(-390, 0, 300),
+			XMFLOAT3(-410, 0, 300),
+			XMFLOAT3(-430, 0, 300),
+			XMFLOAT3(-450, 0, 300),
+			XMFLOAT3(-470, 0, 300),
+			XMFLOAT3(-490, 0, 300),
+			XMFLOAT3(-510, 0, 300),
+			XMFLOAT3(-530, 0, 300),
+			XMFLOAT3(-550, 0, 300),
+			XMFLOAT3(-570, 0, 300),
+			XMFLOAT3(-590, 0, 300),
+			XMFLOAT3(-300, 0, 312.5),
+			XMFLOAT3(-310, 0, 325),
+			XMFLOAT3(-300, 0, 337.5),
+			XMFLOAT3(-310, 0, 350),
+			XMFLOAT3(-300, 0, 362.5),
+			XMFLOAT3(-310, 0, 375),
+			XMFLOAT3(-300, 0, 387.5),
+			XMFLOAT3(-310, 0, 400),
+			XMFLOAT3(-300, 0, 412.5),
+			XMFLOAT3(-310, 0, 425),
+			XMFLOAT3(-300, 0, 437.5),
+			XMFLOAT3(-310, 0, 450),
+			XMFLOAT3(-300, 0, 462.5),
+			XMFLOAT3(-310, 0, 475),
+			XMFLOAT3(-300, 0, 487.5),
+			XMFLOAT3(-310, 0, 500),
+			XMFLOAT3(-300, 0, 512.5),
+			XMFLOAT3(-310, 0, 525),
+			XMFLOAT3(-300, 0, 537.5),
+			XMFLOAT3(-310, 0, 550),
+			XMFLOAT3(-300, 0, 562.5),
+			XMFLOAT3(-310, 0, 575),
+			XMFLOAT3(-300, 0, 587.5),
+			XMFLOAT3(-310, 0, 600),
+			XMFLOAT3(-300, 0, 612.5),
+			XMFLOAT3(-300, 0, -162.5),
+			XMFLOAT3(-320, 0, -162.5),
+			XMFLOAT3(-340, 0, -162.5),
+			XMFLOAT3(-360, 0, -162.5),
+			XMFLOAT3(-380, 0, -162.5),
+			XMFLOAT3(-400, 0, -162.5),
+			XMFLOAT3(-420, 0, -162.5),
+			XMFLOAT3(-440, 0, -162.5),
+			XMFLOAT3(-460, 0, -162.5),
+			XMFLOAT3(-480, 0, -162.5),
+			XMFLOAT3(-500, 0, -162.5),
+			XMFLOAT3(-520, 0, -162.5),
+			XMFLOAT3(-540, 0, -162.5),
+			XMFLOAT3(-560, 0, -162.5),
+			XMFLOAT3(-580, 0, -162.5),
+			XMFLOAT3(-600, 0, -162.5),
+			XMFLOAT3(-290, 0, -175),
+			XMFLOAT3(-300, 0, -187.5),
+			XMFLOAT3(-290, 0, -200),
+			XMFLOAT3(-300, 0, -212.5),
+			XMFLOAT3(-290, 0, -225),
+			XMFLOAT3(-300, 0, -237.5),
+			XMFLOAT3(-290, 0, -250),
+			XMFLOAT3(-300, 0, -262.5),
+			XMFLOAT3(-290, 0, -275),
+			XMFLOAT3(-300, 0, -287.5),
+			XMFLOAT3(-290, 0, -300),
+			XMFLOAT3(-300, 0, -312.5),
+			XMFLOAT3(-290, 0, -325),
+			XMFLOAT3(-300, 0, -337.5),
+			XMFLOAT3(-320, 0, -337.5),
+			XMFLOAT3(-340, 0, -337.5),
+			XMFLOAT3(-360, 0, -337.5),
+			XMFLOAT3(-380, 0, -337.5),
+			XMFLOAT3(-400, 0, -337.5),
+			XMFLOAT3(-420, 0, -337.5),
+			XMFLOAT3(-440, 0, -337.5),
+			XMFLOAT3(-460, 0, -337.5),
+			XMFLOAT3(-480, 0, -337.5),
+			XMFLOAT3(-500, 0, -337.5),
+			XMFLOAT3(-520, 0, -337.5),
+			XMFLOAT3(-540, 0, -337.5),
+			XMFLOAT3(-560, 0, -337.5),
+			XMFLOAT3(-580, 0, -337.5),
+			XMFLOAT3(-600, 0, -337.5),
+			XMFLOAT3(-490, 0, -350),
+			XMFLOAT3(-500, 0, -362.5),
+			XMFLOAT3(-490, 0, -375),
+			XMFLOAT3(-500, 0, -387.5),
+			XMFLOAT3(-490, 0, -400),
+			XMFLOAT3(-500, 0, -412.5),
+			XMFLOAT3(-490, 0, -425),
+			XMFLOAT3(-500, 0, -437.5),
+			XMFLOAT3(-490, 0, -450),
+			XMFLOAT3(-510, 0, -450),
+			XMFLOAT3(-530, 0, -450),
+			XMFLOAT3(-550, 0, -450),
+			XMFLOAT3(-570, 0, -450),
+			XMFLOAT3(-590, 0, -450),
+			XMFLOAT3(-610, 0, -450),
+				XMFLOAT3(290, 0, 0),
+				XMFLOAT3(310, 0, 0),
+				XMFLOAT3(330, 0, 0),
+				XMFLOAT3(350, 0, 0),
+				XMFLOAT3(370, 0, 0),
+				XMFLOAT3(390, 0, 0),
+				XMFLOAT3(300, 0, -12.5),
+				XMFLOAT3(330, 0, -12.5),
+				XMFLOAT3(360, 0, -12.5),
+				XMFLOAT3(390, 0, -12.5),
+				XMFLOAT3(290, 0, -25),
+				XMFLOAT3(300, 0, -37.5),
+				XMFLOAT3(290, 0, -50),
+				XMFLOAT3(300, 0, -62.5),
+				XMFLOAT3(290, 0, -75),
+				XMFLOAT3(300, 0, -87.5),
+				XMFLOAT3(290, 0, -100),
+				XMFLOAT3(300, 0, -112.5),
+				XMFLOAT3(290, 0, -125),
+				XMFLOAT3(300, 0, -137.5),
+				XMFLOAT3(290, 0, -150),
+				XMFLOAT3(300, 0, -162.5),
+				XMFLOAT3(290, 0, -175),
+				XMFLOAT3(300, 0, -187.5),
+				XMFLOAT3(290, 0, -200),
+				XMFLOAT3(300, 0, -212.5),
+				XMFLOAT3(290, 0, -225),
+				XMFLOAT3(300, 0, -237.5),
+				XMFLOAT3(290, 0, -250),
+				XMFLOAT3(300, 0, -262.5),
+				XMFLOAT3(290, 0, -275),
+				XMFLOAT3(300, 0, -287.5),
+				XMFLOAT3(290, 0, -300),
+				XMFLOAT3(300, 0, -312.5),
+				XMFLOAT3(290, 0, -325),
+				XMFLOAT3(300, 0, -337.5),
+				XMFLOAT3(290, 0, -350),
+				XMFLOAT3(300, 0, -362.5),
+				XMFLOAT3(290, 0, -375),
+				XMFLOAT3(300, 0, -387.5),
+				XMFLOAT3(290, 0, -400),
+				XMFLOAT3(300, 0, -412.5),
+				XMFLOAT3(290, 0, -425),
+				XMFLOAT3(300, 0, -437.5),
+				XMFLOAT3(290, 0, -450),
+				XMFLOAT3(300, 0, -462.5),
+				XMFLOAT3(290, 0, -475),
+				XMFLOAT3(300, 0, -487.5),
+				XMFLOAT3(290, 0, -500),
+				XMFLOAT3(300, 0, -512.5),
+				XMFLOAT3(290, 0, -525),
+				XMFLOAT3(300, 0, -537.5),
+				XMFLOAT3(290, 0, -550),
+				XMFLOAT3(300, 0, -562.5),
+				XMFLOAT3(290, 0, -575),
+				XMFLOAT3(300, 0, -587.5),
+				XMFLOAT3(290, 0, -600),
+				XMFLOAT3(300, 0, -612.5),
+				XMFLOAT3(290, 0, -625),
+				XMFLOAT3(300, 0, -637.5),
+				XMFLOAT3(290, 0, -650),
+				XMFLOAT3(300, 0, -662.5),
+				XMFLOAT3(290, 0, -675),
+				XMFLOAT3(300, 0, -687.5),
+				XMFLOAT3(290, 0, -700),
+				XMFLOAT3(300, 0, -712.5),
+				XMFLOAT3(290, 0, -725),
+				XMFLOAT3(300, 0, -737.5),
+				XMFLOAT3(290, 0, -750),
+				XMFLOAT3(300, 0, -762.5),
+				XMFLOAT3(290, 0, -775),
+				XMFLOAT3(300, 0, -787.5),
+				XMFLOAT3(290, 0, -800),
+				XMFLOAT3(300, 0, -812.5),
+				XMFLOAT3(290, 0, -825),
+				XMFLOAT3(300, 0, -837.5),
+				XMFLOAT3(320, 0, -837.5),
+				XMFLOAT3(340, 0, -837.5),
+				XMFLOAT3(360, 0, -837.5),
+				XMFLOAT3(380, 0, -837.5),
+		};
 
-		Building* real_tree4 = new Building(XMFLOAT3(-375, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree4);
-		
-		Building* real_tree5 = new Building(XMFLOAT3(-400, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree5);
+		for (auto& position : renderable_tree_positions)
+		{
+			GameUtilities::GenerateTree(position, XMFLOAT3(0, 0, 0));
+		}
 
-		Building* real_tree6 = new Building(XMFLOAT3(-425, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree6);
-		
-		Building* real_tree7 = new Building(XMFLOAT3(-450, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree7);
-
-		Building* real_tree8 = new Building(XMFLOAT3(-475, 0, 325), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 9, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv");
-		GameUtilities::AddGameObject(real_tree8);
-		
-												  
+		for (auto& position : collidable_tree_positions)
+		{
+			GameUtilities::AddGameObject(new Building(position, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 9, 12.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv"));
+		}
 #pragma endregion
 
 		/*Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
@@ -861,11 +1480,11 @@ public:
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
-	
+
 			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
-	
+
 
 			golem->GetView(view);
 
@@ -882,9 +1501,9 @@ public:
 
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
 
-			XMFLOAT4X4 persPass; 
+			XMFLOAT4X4 persPass;
 			XMStoreFloat4x4(&persPass, pers);
-			
+
 
 #ifdef _DEBUG
 			//minionCollider->transform = XMMatrixScaling(20, 5, 20);
@@ -963,7 +1582,7 @@ public:
 						}
 					}
 				}*/
-				
+
 				//----------------------------------New Physics System-------------------------------
 				for (int i = 0; i < OBJ_COUNT; i++)
 				{

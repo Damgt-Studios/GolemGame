@@ -570,6 +570,9 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 		current_obj = ResourceManager::PopFromShadowQueue();
 		current_model = ResourceManager::GetSimpleModelPtrFromMeshId(current_obj->GetMeshId());
 
+		if (current_model == nullptr)
+			continue;
+
 		if ((*current_model)->animated)
 		{
 			current_animated_model = static_cast<SimpleAnimModel*>(*current_model);

@@ -963,7 +963,7 @@ namespace ADGameplay
 
 #pragma endregion
 
-			/*towers.push_back(GameUtilities::AttachTowerAI(ballista1, &villagerThreats));
+			towers.push_back(GameUtilities::AttachTowerAI(ballista1, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista2, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista3, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista4, &villagerThreats));
@@ -992,7 +992,7 @@ namespace ADGameplay
 			towers.push_back(GameUtilities::AttachTowerAI(ballista27, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista28, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista29, &villagerThreats));
-			towers.push_back(GameUtilities::AttachTowerAI(ballista30, &villagerThreats));*/
+			towers.push_back(GameUtilities::AttachTowerAI(ballista30, &villagerThreats));
 
 			for (int i = 0; i < 10; i++)
 			{

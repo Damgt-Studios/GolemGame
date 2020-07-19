@@ -64,8 +64,8 @@ namespace ADResource
 				desirability = 1;
 				safeRadius = min((colliderScale.x / 2.f), (colliderScale.z / 2.f)) - 1;
 				attackRadius = 18.f;
-
-				SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
+				if (statSheet != "Inv")
+					SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			}
 
 			//Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3), std::string statSheet)
