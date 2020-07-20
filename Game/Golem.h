@@ -99,12 +99,13 @@ namespace ADResource
 			void FlinchFromBack();
 			void FlinchFromLeft();
 			void FlinchFromRight();
+			void Die();
 
 
 
 			// Private Data Members
 			// Golem Stats
-
+			bool isAlive;
 			int health;
 
 

@@ -1,9 +1,9 @@
 StatSheet=BallistaTower:
 AddStat=Health
 StatMin=0
-StatMax=1000
+StatMax=400
 StatFail=0
-StatCurrent=1000
+StatCurrent=400
 
 AddStat=Hate
 StatMin=0
@@ -19,9 +19,9 @@ StatCurrent=8
 
 AddStat=TargetingRange
 StatMin=1
-StatMax=2000
+StatMax=5
 StatFail=0
-StatCurrent=450
+StatCurrent=5
 ;
 
 Effect=BallistaBoltHit:StatChange
@@ -53,7 +53,7 @@ SingleHit=true
 ;
 
 Action=BallistaBoltFire:
-Cooldown=1.2
+Cooldown=2
 Duration=0.5
 AddHitBox=BallistaBoltHB
 HitboxDuplicates=3
