@@ -111,7 +111,7 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			overlays[overlaysNameToID["Log"]]->visible = false;
 			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
@@ -1327,30 +1327,30 @@ namespace GolemGameUISetup
 		myUI->overlays[pathingID]->AddComponent(consoleBox);
 
 
-		//ADAI::PathingGrid* grid = &ADAI::ADPathfinding::Instance()->tileMap;
-		//_debugController->planeNodes = &grid->nodeGrid;
-		//for (int i = 0; i < grid->nodeGrid.size(); i++)
-		//{
+		ADAI::PathingGrid* grid = &ADAI::ADPathfinding::Instance()->tileMap;
+		_debugController->planeNodes = &grid->nodeGrid;
+		for (int i = 0; i < grid->nodeGrid.size(); i++)
+		{
 
-		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (grid->nodeGrid[i]->position.x + 300.f) , 2160 - grid->nodeGrid[i]->position.z, 3840.f - (grid->nodeGrid[i]->position.x + 300.f),  2160 - grid->nodeGrid[i]->position.z });
-		//	long heightValue = int((grid->nodeGrid)[i]->position.y * 100.f);
-		//	if (heightValue < -4)
-		//	{
-		//		heightValue = -4;
-		//	}
-		//	if (heightValue > 4)
-		//	{
-		//		heightValue = 4;
-		//	}
+			ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2000.f - (grid->nodeGrid[i]->position.x + 300.f) , 1800 - grid->nodeGrid[i]->position.z, 2000.f - (grid->nodeGrid[i]->position.x + 300.f),  1800 - grid->nodeGrid[i]->position.z });
+			long heightValue = int((grid->nodeGrid)[i]->position.y * 100.f);
+			if (heightValue < -4)
+			{
+				heightValue = -4;
+			}
+			if (heightValue > 4)
+			{
+				heightValue = 4;
+			}
 
-		//	tempImage->BuildAnimation({ 2299, 184 + (heightValue * 16), 2315, 200 + (heightValue * 16) }, 5, 1, emptyAnimation);
-		//	tempImage->active = true;
-		//	tempImage->visible = true;
-		//	tempImage->Focus();
-		//	myUI->AddUIComponent("genericImage", tempImage);
-		//	myUI->overlays[pathingID]->AddComponent(tempImage);
-		//	_debugController->node_image_map[(grid->nodeGrid)[i]] = tempImage;
-		//}
+			tempImage->BuildAnimation({ 2299, 184 + (heightValue * 16), 2315, 200 + (heightValue * 16) }, 5, 1, emptyAnimation);
+			tempImage->active = true;
+			tempImage->visible = true;
+			tempImage->Focus();
+			myUI->AddUIComponent("genericImage", tempImage);
+			myUI->overlays[pathingID]->AddComponent(tempImage);
+			_debugController->node_image_map[(grid->nodeGrid)[i]] = tempImage;
+		}
 
 		return pathingID;
 	}
@@ -1521,6 +1521,7 @@ namespace GolemGameUISetup
 		titleScreenController->AddOverlay(myUI->overlays[hudid]);
 		titleScreenController->AddController(hudController);
 		titleScreenController->AddController(PauseScreenController);
+		titleScreenController->AddOverlay(myUI->overlays[logID]);
 
 		PauseScreenController->AddController(hudController);
 		PauseScreenController->AddOverlay(myUI->overlays[titleID]);
@@ -1528,7 +1529,7 @@ namespace GolemGameUISetup
 		PauseScreenController->AddOverlay(myUI->overlays[optionsID]);
 		PauseScreenController->AddController(optionScreenController);
 
-		//gameplayMessageController->AddOverlay(myUI->overlays[logID]);
+		gameplayMessageController->AddOverlay(myUI->overlays[logID]);
 		gameplayMessageController->AddController(hudController);
 		gameplayMessageController->AddOverlay(myUI->overlays[hudid]);
 		gameplayMessageController->AddController(titleScreenController);
@@ -1539,6 +1540,7 @@ namespace GolemGameUISetup
 
 		gameplayMessageController->AddOverlay(myUI->overlays[endgameID]);
 		gameplayMessageController->AddOverlay(myUI->overlays[defeatedID]);
+
 
 		//gameplayMessageController
 
@@ -1570,9 +1572,6 @@ namespace GolemGameUISetup
 
 
 
-		//titleScreenController->AddOverlay(myUI->overlays[logid]);
-		//gameplayScreenController->AddOverlay(myUI->overlays[logid]);
-		//endScreenController->AddOverlay(myUI->overlays[logid]);
 
 		//uiLog->WriteToLog("UI Log Created.");
 		//uiLog->WriteToLog("1.");

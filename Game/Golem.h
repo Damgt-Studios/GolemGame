@@ -3,7 +3,7 @@
 #include "GameplayAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
-#include <ADCombat.h>
+#include "ADCombat.h"
 #include "ADParticles.h"
 
 using namespace ADResource::ADGameplay;
@@ -88,7 +88,8 @@ namespace ADResource
 			void TowerPunch();
 			void GroundSlam();
 			void Kick();
-			void CastCommandTarget(float delta_time);
+			void CastCommandTarget(float delta_time);			
+			void SendToCommandTarget(float delta_time);
 			void CommandMinions();
 			void RecallMinions();
 			void ChangeElement(bool nextElement);

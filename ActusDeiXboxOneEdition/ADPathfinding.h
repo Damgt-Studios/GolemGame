@@ -3,6 +3,7 @@
 #include "Types.h"
 #include "ResourceManager.h"
 #include "ADPhysics.h"
+
 #include <unordered_map>
 #include <set>
 
@@ -31,6 +32,7 @@ namespace ADAI
 		UINT rows;
 		UINT xDivisions;
 		UINT yDivisions;
+		float agentToWallGap;
 		std::vector<PathingNode*> nodeGrid;
 
 		void Initializing(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
@@ -64,7 +66,7 @@ namespace ADAI
 			//mapSize.y = zdelta * _mapSize.y;
 			//cellSize.x = (_agentSize + _agentToWallGap);
 			//cellSize.y = (_agentSize + _agentToWallGap);
-
+			agentToWallGap = _agentToWallGap;
 			mapSize = _mapSize;
 			cellSize = { _agentSize, _agentSize };
 			columns = (mapSize.x / cellSize.x);
@@ -155,7 +157,7 @@ namespace ADAI
 		static ADPathfinding* Instance();
 		PathingGrid tileMap;
 		void Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap);
-		void enter(int startColumn, int startRow, int goalColumn, int goalRow);
+		int enter(int startColumn, int startRow, int goalColumn, int goalRow);
 		bool isDone() const;
 		void update(float timeslice);
 		std::vector<PathingNode const*> const getSolution() const;
@@ -164,6 +166,7 @@ namespace ADAI
 		void shutdown();
 		void UpdatePlayerNode(float x, float z, float mapWidth, float mapHeight);
 		std::vector<PathingNode*>* GetPlaneNodes();
+		void EnableTile(SearchNode* tile);
 
 		void ClearDebug()
 		{
@@ -183,6 +186,18 @@ namespace ADAI
 				return nullptr;
 			}
 			return searching_map[tileMap.nodeGrid[(_row * tileMap.columns) + _column]];
+		};
+
+		SearchNode* GetTileFromPosition(XMFLOAT2 _position)
+		{
+			UINT tcolumn = 0;
+			UINT trow = 0;
+			tileMap.GetColumnRowFromPosition(_position, tcolumn, trow);
+			if (tcolumn < 0 || tcolumn >= tileMap.columns || trow < 0 || trow >= tileMap.rows)
+			{
+				return nullptr;
+			}
+			return searching_map[tileMap.nodeGrid[(trow * tileMap.columns) + tcolumn]];
 		};
 	};
 }

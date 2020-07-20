@@ -48,9 +48,9 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 				if (OBJS[i]->colliderPtr->type != ADPhysics::ColliderType::Plane)
 				{
 					XMFLOAT4 colliderQuad(((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) - OBJS[i]->colliderPtr->GetWidth() / 2.f),
-						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) - OBJS[i]->colliderPtr->GetLength() / 2.f),
-						((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + OBJS[i]->colliderPtr->GetWidth() / 2.f),
-						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + OBJS[i]->colliderPtr->GetLength() / 2.f));
+						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) - (OBJS[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f),
+						((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + (OBJS[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap) / 2.f),
+						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + (OBJS[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f));
 
 					for (int r = 0; r < tileMap.yDivisions; r++)
 					{
@@ -73,7 +73,7 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 
 void ADAI::ADPathfinding::CleanUpPointGrid()
 {
-
+	pointGrid.clear();
 }
 
 void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNode)
@@ -205,11 +205,24 @@ std::vector<ADAI::PathingNode*>* ADAI::ADPathfinding::GetPlaneNodes()
 }
 
 
+void ADAI::ADPathfinding::EnableTile(SearchNode* _tile)
+{
+	//_tile->tile->walkable = true;
+	SetNeighbors(_tile);
+	for (auto& neighbor : _tile->neighbors)
+	{
+		neighbor->neighbors.push_back(_tile);
+		neighbor->neighborDist.push_back(DistanceCalculation(neighbor->tile, _tile->tile) * (_tile->tile->terrainWeight));
+	}
+}
+
+
 ADAI::ADPathfinding* ADAI::ADPathfinding::Instance()
 {
 	static ADPathfinding instance;
 	return &instance;
 }
+
 
 void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
 {
@@ -370,29 +383,68 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 	{
 		SetNeighbors(it->second);
 	}
+	CleanUpPointGrid();
 }
 
 
-void ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, int goalRow)
+int ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, int goalRow)
 {
 	//Setup the search process
+	int rvalue = 0;
 	ClearDebug();
 	done = false;
 	solution.clear();
 	visited_map.clear();
 	pHeap.clear();
-	if (GetTile(goalColumn, goalRow))
-		target = GetTile(goalColumn, goalRow)->tile;
+	target = nullptr;
+	int c = -1;
+	int r = -1;
+	while (!target)
+	{
+		c++;
+		if (c == 2)
+		{
+			c = 0;
+			r++;
+		}
+		if (r == 2)
+		{
+			return 2;
+		}
+		SearchNode* temp = GetTile(goalColumn + c, goalRow + r);
+		if (temp)
+		{
+			target = GetTile(goalColumn + c, goalRow + r)->tile;
+			if (!target->walkable)
+			{
+				target = nullptr;
+			}
+		}
+
+	}
+	SearchNode* tempNode = GetTile(startColumn, startRow);
+	if (tempNode)
+	{
+		if (tempNode->tile->walkable == false)
+		{
+			return 1;
+		}
+	}
+	else
+	{
+		return 1;
+	}
+
 	PlannerNode* first = new PlannerNode();
 	first->parent = NULL;
-	first->searchNode = GetTile(startColumn, startRow);
+	first->searchNode = tempNode;
 	first->givenCost = 0;
 	first->heuristicCost = DistanceCalculation(first->searchNode->tile);
 	first->finalCost = first->givenCost + first->heuristicCost * hWeight;
-	//pQueue.(first);
 	std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
 	pHeap.push_back(first);
 	visited_map[GetTile(startColumn, startRow)] = first;
+	return rvalue;
 }
 
 void ADAI::ADPathfinding::update(float timeslice)
@@ -517,7 +569,6 @@ void ADAI::ADPathfinding::exit()
 void ADAI::ADPathfinding::shutdown()
 {
 
-
 	int skipped = 0;
 	if (tileMap.nodeGrid.size() > 0)
 	{
@@ -563,7 +614,7 @@ std::vector<XMFLOAT3> ADAI::ADPathfinding::getSolutionPoints() const
 	float zAdjust = (tileMap.rows / 2.f) * tileMap.cellSize.y;
 	for (auto& solPoint : solution)
 	{
-		points.push_back(XMFLOAT3( solPoint->position.x - xAdjust, 0, solPoint->position.z - zAdjust));
+		points.push_back(XMFLOAT3(solPoint->position.x - xAdjust, 0, solPoint->position.z - zAdjust));
 	}
 	return points;
 }

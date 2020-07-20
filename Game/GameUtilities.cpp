@@ -503,6 +503,7 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	_destructable->anim_controller->SetNamebyIndex(3, "Death");
 	_destructable->safeRadius = 5.f;
 	_destructable->attackRadius = 8.f;
+	_destructable->desirability = 1.2f;
 
 	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
 	temp->mySSM.gameObject = _destructable;
@@ -537,11 +538,11 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	return temp;
 }
 
-ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType)
+ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType, ADAI::PathersQueue* _pathingQueue)
 {
 	_destructable->gamePlayType = _minionType;
 	_destructable->deathEvent = "MinionDeath";
-	_destructable->desirability = 0.5f;
+	_destructable->desirability = 1.0f;
 	_destructable->team = 0;
 	_destructable->colScale.x *= 8;
 	_destructable->colScale.y *= 10;
@@ -567,6 +568,7 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	charging->mySSM = &temp->mySSM;
 	charging->minion = temp;
 	charging->targets = _killGroup;
+	charging->pathingQueue = _pathingQueue;
 	//charging->myGroup = _localGroup;
 	temp->mySSM.states.push_back(charging);
 

@@ -1,13 +1,13 @@
 #pragma once
 #include <Types.h>
-#include <ADUserInterface.h>
+#include "ADUserInterface.h"
 #include "GameplayBaseClasses.h"
 #include "ResourceManager.h"
 #include "ADEventSystem.h"
-#include <ADCombat.h>
-#include <ADAI.h>
-#include <ADPathfinding.h>
-#include <ADParticles.h>
+#include "ADCombat.h"
+#include "ADAI.h"
+#include "ADPathfinding.h"
+#include "ADParticles.h"
 
 namespace ADResource
 {
@@ -122,7 +122,7 @@ namespace ADResource
 				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 				colliderPtr = &collider;
 				team = 1;
-				desirability = 1;
+				desirability = 1.0f;
 				safeRadius = min((colliderScale.x / 2.f), (colliderScale.z / 2.f)) - 1;
 				attackRadius = 12.f;
 
@@ -150,6 +150,7 @@ namespace ADResource
 			void SetRubble(Building* _rubble)
 			{
 				rubble = _rubble;
+				rubble->safeRadius = 30.0f;
 			};
 
 			void SetTurret(Building* _turret)
@@ -202,10 +203,10 @@ namespace ADResource
 				}
 				if (destructionEmitter && destructionEmitter2)
 				{
-					if (!destructionEmitter->GetActive())
-						destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
-					else
-						destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+					//if (!destructionEmitter->GetActive())
+					//	destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+					//else
+					//	destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
 				}
 			};
 
@@ -302,7 +303,35 @@ namespace ADResource
 					RemoveFromScene();
 					if (rubble)
 					{
+						rubble->active = true;
 						rubble->AddToScene();
+					}
+					else
+					{
+						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z })->tile->walkable = true;
+						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 12.5f, pos.z + 12.5f })->tile->walkable = true;
+						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 12.5f, pos.z - 12.5f })->tile->walkable = true;
+						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 12.5f, pos.z - 12.5f })->tile->walkable = true;
+						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 12.5f, pos.z + 12.5f })->tile->walkable = true;
+						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z }));
+						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 15, pos.z + 15 }));
+						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 15, pos.z - 15 }));
+						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 15, pos.z - 15 }));
+						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 15, pos.z + 15 }));
+						if (collider.GetWidth() > 27.5f || collider.GetLength() > 27.5f)
+						{
+							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z })->tile->walkable = true;
+							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z + 32.f })->tile->walkable = true;
+							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z - 32.f })->tile->walkable = true;
+							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z - 32.f })->tile->walkable = true;
+							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z + 32.f })->tile->walkable = true;
+							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z }));
+							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z + 32.f }));
+							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z - 32.f }));
+							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z - 32.f }));
+							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z + 32.f }));
+						}
+
 					}
 				}
 			}

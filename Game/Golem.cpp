@@ -17,14 +17,14 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	InitAnims();
 
-	minionGroups = new ADAI::MinionGroup * [5];
-	for (int i = 0; i < 5; ++i)
+	minionGroups = new ADAI::MinionGroup * [4];
+	for (int i = 0; i < 4; ++i)
 	{
 		minionGroups[i] = new ADAI::MinionGroup();
-		minionGroups[i]->player = &transform;
+		//minionGroups[i]->player = &transform;
 	}
 
-	desirability = 0.2f;
+	desirability = 1.0f;
 
 	playerElement = 0;
 
@@ -33,7 +33,7 @@ ADResource::ADGameplay::Golem::Golem() {
 
 ADResource::ADGameplay::Golem::~Golem()
 {
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		delete minionGroups[i];
 	}
@@ -57,7 +57,7 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 	}
 	ProcessEffects(delta_time);
 
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		minionGroups[i]->Update(delta_time);
 	}
@@ -120,7 +120,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 				//OnTrigger(obj);
 			}
 			//If collision and collision object is a collider then go to OnCollision Function
-			else
+			else if (obj->team != team)
 			{
 				collisionQueue.push(CollisionPacket(obj, this, m));
 				OnCollision(obj, m);
@@ -372,11 +372,12 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
 		{
 			commandDistanceTimer += delta_time;
-			CastCommandTarget(commandDistanceTimer * 500);
+			CastCommandTarget(commandDistanceTimer * 250);
 		}
 		else if (commandDistanceTimer > 0)
 		{
 			CommandMinions();
+			SendToCommandTarget(commandDistanceTimer * 250);
 			commandDistanceTimer = 0;
 		}
 
@@ -495,9 +496,8 @@ void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_tim
 
 void ADResource::ADGameplay::Golem::PerformSpecial()
 {
-
 	if (gActions[playerElement].special->StartAction(&transform))
-	{	
+	{
 		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].special.c_str());
 		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
 		isActing = true;
@@ -544,19 +544,22 @@ void ADResource::ADGameplay::Golem::Kick()
 
 void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
 {
+	targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
+
+}
+
+void ADResource::ADGameplay::Golem::SendToCommandTarget(float delta_time)
+{
+	targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
 	if (commandTargetGroup == 4)
 	{
-		targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
-		minionGroups[0]->SetDestination(targetMarker);
-		for (int i = 1; i < 4; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
-			//minionGroups[i]->SetCommandDirection(camera, delta_time);
 			minionGroups[i]->SetDestination(targetMarker);
 		}
 	}
 	else
 	{
-		targetMarker->SetPosition(minionGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
 		minionGroups[commandTargetGroup]->SetDestination(targetMarker);
 	}
 }

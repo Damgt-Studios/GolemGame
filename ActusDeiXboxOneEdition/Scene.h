@@ -1,15 +1,17 @@
 #pragma once
-
-#include <vector>
 #include "ResourceManager.h"
 #include "../Game/GameUtilities.h"
 #include "../Game/GameObjectClasses.h"
+#include "../Game/GameplayAI.h"
 #include "MeshLoader.h"
+#include "ADCombat.h"
+#include "ADEventSystem.h"
+#include "ADUserInterface.h"
+
 #include <iostream>
 #include <fstream>
-#include "ADCombat.h"
-#include <ADEventSystem.h>
-#include <ADUserInterface.h>
+
+#include <vector>
 //#include "../Game/GameUserInterface.h"
 
 
@@ -106,6 +108,8 @@ namespace ADGameplay
 
 		void InitializeScene()
 		{
+#pragma region oldshit
+
 			//Light light;
 			//ZeroMemory(&light, sizeof(Light));
 			//light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
@@ -237,7 +241,11 @@ namespace ADGameplay
 			//	GameUtilities::AddGameObject(realtree);
 			//}
 
+
+#pragma endregion
+
 			//villageFlock1.groupTarget = &golem->transform;
+
 			villageFlock1.groupCohesionStrength = 0.01f;
 			villageFlock1.groupSeparationStrength = 0.6f;
 
@@ -788,180 +796,332 @@ namespace ADGameplay
 
 			Building* ballista1 = new Building(XMFLOAT3(450, 20, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista1);
+			Building* rubble1 = new Building(XMFLOAT3(450, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			rubble1->active = false;
+			GameUtilities::AddGameObject(rubble1);
+			attackTower1->SetRubble(rubble1);
+			attackTower1->SetTurret(ballista1);
+			AddBuilding(attackTower1);
 
 			Building* attackTower2 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower2);
 
 			Building* ballista2 = new Building(XMFLOAT3(580, 20, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista2);
+			Building* rubble2 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble2);
+			attackTower2->SetRubble(rubble2);
+			attackTower2->SetTurret(ballista2);
+			AddBuilding(attackTower2);
 
 			Building* attackTower3 = new Building(XMFLOAT3(515, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
-			GameUtilities::AddGameObject(attackTower3);
+			GameUtilities::AddGameObject(attackTower3);		
 
 			Building* ballista3 = new Building(XMFLOAT3(515, 20, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
-			GameUtilities::AddGameObject(ballista3);
+			GameUtilities::AddGameObject(ballista3);	
+			Building* rubble3 = new Building(XMFLOAT3(515, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble3);
+			attackTower3->SetRubble(rubble3);
+			attackTower3->SetTurret(ballista3);
+			AddBuilding(attackTower3);
 
 			Building* attackTower4 = new Building(XMFLOAT3(550, 0, 350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower4);
 
 			Building* ballista4 = new Building(XMFLOAT3(550, 20, 350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista4);
+			Building* rubble4 = new Building(XMFLOAT3(550, 0, 350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble4);
+			attackTower4->SetRubble(rubble4);
+			attackTower4->SetTurret(ballista4);
+			AddBuilding(attackTower4);
 
 			Building* attackTower5 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower5);
 
 			Building* ballista5 = new Building(XMFLOAT3(350, 20, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista5);
+			Building* rubble5 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble5);
+			attackTower5->SetRubble(rubble5);
+			attackTower5->SetTurret(ballista5);
+			AddBuilding(attackTower5);
 
 			Building* attackTower6 = new Building(XMFLOAT3(250, 0, 375), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower6);
 
 			Building* ballista6 = new Building(XMFLOAT3(250, 20, 375), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista6);
+			Building* rubble6 = new Building(XMFLOAT3(250, 0, 375), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble6);
+			attackTower6->SetRubble(rubble6);
+			attackTower6->SetTurret(ballista6);
+			AddBuilding(attackTower6);
 
 			Building* attackTower7 = new Building(XMFLOAT3(-25, 0, 450), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower7);
 
 			Building* ballista7 = new Building(XMFLOAT3(-25, 20, 450), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista7);
+			Building* rubble7 = new Building(XMFLOAT3(-25, 0, 450), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble7);
+			attackTower7->SetRubble(rubble7);
+			attackTower7->SetTurret(ballista7);
+			AddBuilding(attackTower7);
 
 			Building* attackTower8 = new Building(XMFLOAT3(-25, 0, 300), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower8);
 
 			Building* ballista8 = new Building(XMFLOAT3(-25, 20, 300), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista8);
+			Building* rubble8 = new Building(XMFLOAT3(-25, 0, 300), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble8);
+			attackTower8->SetRubble(rubble8);
+			attackTower8->SetTurret(ballista8);
+			AddBuilding(attackTower8);
 
 			Building* attackTower9 = new Building(XMFLOAT3(-275, 0, 212.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower9);
 
 			Building* ballista9 = new Building(XMFLOAT3(-275, 20, 212.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista9);
+			Building* rubble9 = new Building(XMFLOAT3(-275, 0, 212.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble9);
+			attackTower9->SetRubble(rubble9);
+			attackTower9->SetTurret(ballista9);
+			AddBuilding(attackTower9);
 
 			Building* attackTower10 = new Building(XMFLOAT3(-275, 0, 287.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower10);
 
 			Building* ballista10 = new Building(XMFLOAT3(-275, 20, 287.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista10);
+			Building* rubble10 = new Building(XMFLOAT3(-275, 0, 287.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble10);
+			attackTower10->SetRubble(rubble10);
+			attackTower10->SetTurret(ballista10);
+			AddBuilding(attackTower10);
 
 			Building* attackTower11 = new Building(XMFLOAT3(-25, 0, 25), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower11);
 
 			Building* ballista11 = new Building(XMFLOAT3(-25, 20, 25), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista11);
+			Building* rubble11 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble11);
+			attackTower11->SetRubble(rubble11);
+			attackTower11->SetTurret(ballista11);
+			AddBuilding(attackTower11);
 
 			Building* attackTower12 = new Building(XMFLOAT3(25, 0, 25), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower12);
 
 			Building* ballista12 = new Building(XMFLOAT3(25, 20, 25), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista12);
+			Building* rubble12 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble12);
+			attackTower12->SetRubble(rubble12);
+			attackTower12->SetTurret(ballista12);
+			AddBuilding(attackTower12);
 
 			Building* attackTower13 = new Building(XMFLOAT3(-450, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower13);
 
 			Building* ballista13 = new Building(XMFLOAT3(-450, 20, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista13);
+			Building* rubble13 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble13);
+			attackTower13->SetRubble(rubble13);
+			attackTower13->SetTurret(ballista13);
+			AddBuilding(attackTower13);
 
 			Building* attackTower14 = new Building(XMFLOAT3(-50, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower14);
 
 			Building* ballista14 = new Building(XMFLOAT3(-50, 20, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista14);
+			Building* rubble14 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble14);
+			attackTower14->SetRubble(rubble14);
+			attackTower14->SetTurret(ballista14);
+			AddBuilding(attackTower14);
 
 			Building* attackTower15 = new Building(XMFLOAT3(150, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower15);
 
 			Building* ballista15 = new Building(XMFLOAT3(150, 20, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista15);
+			Building* rubble15 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble15);
+			attackTower15->SetRubble(rubble15);
+			attackTower15->SetTurret(ballista15);
+			AddBuilding(attackTower15);
 
 			Building* attackTower16 = new Building(XMFLOAT3(-449, 0, -570.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower16);
 
 			Building* ballista16 = new Building(XMFLOAT3(-449, 20, -570.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista16);
+			Building* rubble16 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble16);
+			attackTower16->SetRubble(rubble16);
+			attackTower16->SetTurret(ballista16);
+			AddBuilding(attackTower16);
 
 			Building* attackTower17 = new Building(XMFLOAT3(-449, 0, -620.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower17);
 
 			Building* ballista17 = new Building(XMFLOAT3(-449, 20, -620.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista17);
+			Building* rubble17 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble17);
+			attackTower17->SetRubble(rubble17);
+			attackTower17->SetTurret(ballista17);
+			AddBuilding(attackTower17);
 
 			Building* attackTower18 = new Building(XMFLOAT3(-212.5, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower18);
 
 			Building* ballista18 = new Building(XMFLOAT3(-212.5, 20, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista18);
+			Building* rubble18 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble18);
+			attackTower18->SetRubble(rubble18);
+			attackTower18->SetTurret(ballista18);
+			AddBuilding(attackTower18);
 
 			Building* attackTower19 = new Building(XMFLOAT3(-175, 0, -550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower19);
 
 			Building* ballista19 = new Building(XMFLOAT3(-175, 20, -550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista19);
+			Building* rubble19 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble19);
+			attackTower19->SetRubble(rubble19);
+			attackTower19->SetTurret(ballista19);
+			AddBuilding(attackTower19);
 
 			Building* attackTower20 = new Building(XMFLOAT3(-175, 0, -650), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower20);
 
 			Building* ballista20 = new Building(XMFLOAT3(-175, 20, -650), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista20);
+			Building* rubble20 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble20);
+			attackTower20->SetRubble(rubble20);
+			attackTower20->SetTurret(ballista20);
+			AddBuilding(attackTower20);
 
 			Building* attackTower21 = new Building(XMFLOAT3(150, 0, -775), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower21);
 
 			Building* ballista21 = new Building(XMFLOAT3(150, 20, -775), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista21);
+			Building* rubble21 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble21);
+			attackTower21->SetRubble(rubble21);
+			attackTower21->SetTurret(ballista21);
+			AddBuilding(attackTower21);
 
 			Building* attackTower22 = new Building(XMFLOAT3(-350, 0, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower22);
 
 			Building* ballista22 = new Building(XMFLOAT3(-350, 20, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista22);
+			Building* rubble22 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble22);
+			attackTower22->SetRubble(rubble22);
+			attackTower22->SetTurret(ballista22);
+			AddBuilding(attackTower22);
 
 			Building* attackTower23 = new Building(XMFLOAT3(-450, 0, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower23);
 
 			Building* ballista23 = new Building(XMFLOAT3(-450, 20, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista23);
+			Building* rubble23 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble23);
+			attackTower23->SetRubble(rubble23);
+			attackTower23->SetTurret(ballista23);
+			AddBuilding(attackTower23);
 
 			Building* attackTower24 = new Building(XMFLOAT3(-50, 0, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower24);
 
 			Building* ballista24 = new Building(XMFLOAT3(-50, 20, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista24);
+			Building* rubble24 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble24);
+			attackTower24->SetRubble(rubble24);
+			attackTower24->SetTurret(ballista24);
+			AddBuilding(attackTower24);
 
 			Building* attackTower25 = new Building(XMFLOAT3(-150, 0, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower25);
 
 			Building* ballista25 = new Building(XMFLOAT3(-150, 20, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista25);
+			Building* rubble25 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble25);
+			attackTower25->SetRubble(rubble25);
+			attackTower25->SetTurret(ballista25);
+			AddBuilding(attackTower25);
 
 			Building* attackTower26 = new Building(XMFLOAT3(150, 0, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower26);
 
 			Building* ballista26 = new Building(XMFLOAT3(150, 20, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista26);
+			Building* rubble26 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble26);
+			attackTower25->SetRubble(rubble26);
+			attackTower25->SetTurret(ballista26);
+			AddBuilding(attackTower26);
 
 			Building* attackTower27 = new Building(XMFLOAT3(250, 0, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower27);
 
 			Building* ballista27 = new Building(XMFLOAT3(250, 20, -925), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista27);
+			Building* rubble27 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble27);
+			attackTower27->SetRubble(rubble27);
+			attackTower27->SetTurret(ballista27);
+			AddBuilding(attackTower27);
+
 
 			Building* attackTower28 = new Building(XMFLOAT3(-450, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower28);
 
 			Building* ballista28 = new Building(XMFLOAT3(-450, 20, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista28);
+			Building* rubble28 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble28);
+			attackTower28->SetRubble(rubble28);
+			attackTower28->SetTurret(ballista28);
+			AddBuilding(attackTower28);
 
 			Building* attackTower29 = new Building(XMFLOAT3(-50, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower29);
 
 			Building* ballista29 = new Building(XMFLOAT3(-50, 20, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista29);
+			Building* rubble29 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble29);
+			attackTower29->SetRubble(rubble29);
+			attackTower29->SetTurret(ballista29);
+			AddBuilding(attackTower29);
 
 			Building* attackTower30 = new Building(XMFLOAT3(50, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			GameUtilities::AddGameObject(attackTower30);
 
 			Building* ballista30 = new Building(XMFLOAT3(50, 20, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista30);
+			Building* rubble30 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			GameUtilities::AddGameObject(rubble30);
+			attackTower30->SetRubble(rubble30);
+			attackTower30->SetTurret(ballista30);
+			AddBuilding(attackTower30);
 
 #pragma endregion
 
@@ -1013,19 +1173,68 @@ namespace ADGameplay
 				minionTargets.push_back(building);
 			}
 
+			ADAI::PathersQueue* pq = new ADAI::PathersQueue();
+			ADAI::CohesionGroup* cg = new ADAI::CohesionGroup();
+			ADAI::SeperationGroup* sg = new ADAI::SeperationGroup();
+			ADAI::TargetingGroup* tg = new ADAI::TargetingGroup();
+
+			for (int i = 0; i < 10; i++)
+			{
+				//cg->members.push_back(stoneMinions[i]);
+				//cg->members.push_back(fireMinions[i]);
+				//cg->members.push_back(waterMinions[i]);
+				cg->members.push_back(stoneMinions[i]);
+				sg->members.push_back(stoneMinions[i]);
+				tg->members.push_back(stoneMinions[i]);
+
+				cg->members.push_back(waterMinions[i]);
+				sg->members.push_back(waterMinions[i]);
+				tg->members.push_back(waterMinions[i]);
+
+				cg->members.push_back(fireMinions[i]);
+				sg->members.push_back(fireMinions[i]);
+				tg->members.push_back(fireMinions[i]);
+
+				cg->members.push_back(woodMinions[i]);
+				sg->members.push_back(woodMinions[i]);
+				tg->members.push_back(woodMinions[i]);
+			}
+
+
 			golem->minionGroups[STONE]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[STONE]->myGroups.push_back(cg);
+			golem->minionGroups[STONE]->myGroups.push_back(sg);
+			golem->minionGroups[STONE]->myTargetGroups.push_back(tg);
+
 			golem->minionGroups[WATER]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[WATER]->myGroups.push_back(cg);
+			golem->minionGroups[WATER]->myGroups.push_back(sg);
+			golem->minionGroups[WATER]->myTargetGroups.push_back(tg);
+
 			golem->minionGroups[FIRE]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[FIRE]->myGroups.push_back(cg);
+			golem->minionGroups[FIRE]->myGroups.push_back(sg);
+			golem->minionGroups[FIRE]->myTargetGroups.push_back(tg);
+
 			golem->minionGroups[WOOD]->avoidanceGroup = &minionAvoids;
+			golem->minionGroups[WOOD]->myGroups.push_back(cg);
+			golem->minionGroups[WOOD]->myGroups.push_back(sg);
+			golem->minionGroups[WOOD]->myTargetGroups.push_back(tg);
+
+			golem->minionGroups[STONE]->pathingQueue = pq;
+			golem->minionGroups[WATER]->pathingQueue = pq;
+			golem->minionGroups[FIRE]->pathingQueue = pq;
+			golem->minionGroups[WOOD]->pathingQueue = pq;
+
 			for (int i = 0; i < stoneMinionCount; i++)
 			{
-				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->minionGroups[STONE], &minionTargets, STONE_MINION));
+				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->minionGroups[STONE], &minionTargets, STONE_MINION, pq));
 				//stoneMinionsAI[i]->currentTarget = golem->targetMarker;
-				waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->minionGroups[WATER], &minionTargets, WATER_MINION));
+				waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->minionGroups[WATER], &minionTargets, WATER_MINION, pq));
 				//waterMinionsAI[i]->currentTarget = golem->targetMarker;
-				fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->minionGroups[FIRE], &minionTargets, FIRE_MINION));
+				fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->minionGroups[FIRE], &minionTargets, FIRE_MINION, pq));
 				//fireMinionsAI[i]->currentTarget = golem->targetMarker;
-				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->minionGroups[WOOD], &minionTargets, WOOD_MINION));
+				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->minionGroups[WOOD], &minionTargets, WOOD_MINION, pq));
 				//woodMinionsAI[i]->currentTarget = golem->targetMarker;
 
 				//stoneMinionsAI[i]->mySSM.states[1]->objectsToAvoid.push_back(villagers[i]);
@@ -1169,7 +1378,7 @@ namespace ADGameplay
 			Plane = GameUtilities::AddSimpleAsset(PlaneArguments.Model.data(), PlaneArguments.Texture.data(), PlaneArguments.position, PlaneArguments.scale, PlaneArguments.rotation);
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
 
-			golem = GameUtilities::LoadGolemFromModelFile(GolemArguments.position, GolemArguments.scale, GolemArguments.rotation);
+			golem = GameUtilities::LoadGolemFromModelFile({ 500.f, 0.1f, -1150.f }, GolemArguments.scale, GolemArguments.rotation);
 
 			for (int i = 0; i < stoneMinionCount; i++)
 			{
@@ -1177,10 +1386,10 @@ namespace ADGameplay
 				waterMinionArguments[i].position.z += i * 5;
 				fireMinionArguments[i].position.x += i * 5;
 				woodMinionArguments[i].position.x += i * 5;
-				stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile(stoneMinionArguments[i].Model.data(), stoneMinionArguments[i].Texture.data(), stoneMinionAnimations, stoneMinionArguments[i].position, stoneMinionArguments[i].scale, stoneMinionArguments[i].rotation));
-				waterMinions.push_back(GameUtilities::AddDestructableFromModelFile(waterMinionArguments[i].Model.data(), waterMinionArguments[i].Texture.data(), waterMinionAnimations, waterMinionArguments[i].position, waterMinionArguments[i].scale, waterMinionArguments[i].rotation));
-				fireMinions.push_back(GameUtilities::AddDestructableFromModelFile(fireMinionArguments[i].Model.data(), fireMinionArguments[i].Texture.data(), fireMinionAnimations, fireMinionArguments[i].position, fireMinionArguments[i].scale, fireMinionArguments[i].rotation));
-				woodMinions.push_back(GameUtilities::AddDestructableFromModelFile(woodMinionArguments[i].Model.data(), woodMinionArguments[i].Texture.data(), woodMinionAnimations, woodMinionArguments[i].position, woodMinionArguments[i].scale, woodMinionArguments[i].rotation));
+				stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile(stoneMinionArguments[i].Model.data(), stoneMinionArguments[i].Texture.data(), stoneMinionAnimations, { 500.f, 0.1f, -1150.f }, stoneMinionArguments[i].scale, stoneMinionArguments[i].rotation));
+				waterMinions.push_back(GameUtilities::AddDestructableFromModelFile(waterMinionArguments[i].Model.data(), waterMinionArguments[i].Texture.data(), waterMinionAnimations, { 500.f, 0.1f, -1150.f }, waterMinionArguments[i].scale, waterMinionArguments[i].rotation));
+				fireMinions.push_back(GameUtilities::AddDestructableFromModelFile(fireMinionArguments[i].Model.data(), fireMinionArguments[i].Texture.data(), fireMinionAnimations, { 500.f, 0.1f, -1150.f }, fireMinionArguments[i].scale, fireMinionArguments[i].rotation));
+				woodMinions.push_back(GameUtilities::AddDestructableFromModelFile(woodMinionArguments[i].Model.data(), woodMinionArguments[i].Texture.data(), woodMinionAnimations, { 500.f, 0.1f, -1150.f }, woodMinionArguments[i].scale, woodMinionArguments[i].rotation));
 			}
 
 			//for (int i = 0; i < renderableArguments.size(); i++)
