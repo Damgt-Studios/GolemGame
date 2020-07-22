@@ -173,7 +173,7 @@ public:
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
-		currentScene.LoadScene("files/scenes/TestScene.scenery");
+		currentScene.LoadScene("files/scenes/TestScene.scenery", engine);
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
