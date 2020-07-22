@@ -1275,7 +1275,7 @@ std::vector<Renderable*> GameUtilities::GeneratePathway3(XMFLOAT3 pos, XMFLOAT3 
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Pathway3.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 1, pos.z), XMFLOAT3(0.1, 0.1, 0.1), rotation, false));
+	temp.push_back(AddSimpleAsset("files/models/Pathway3.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.125, 0.125, 0.125), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{

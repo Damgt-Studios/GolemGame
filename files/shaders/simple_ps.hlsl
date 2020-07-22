@@ -76,7 +76,7 @@ float4 main(OutputVertex v) : SV_TARGET
 {
     float4 texelColor = diffuse.Sample(textureSampler, v.tex.xy);
     
-    clip(texelColor.a < 0.1 ? -1 : 1);
+    clip(texelColor.a < 0.5 ? -1 : 1);
     
     //Load normal from normal map
     float3 normalMap = normal.Sample(textureSampler, v.tex.xy);
@@ -94,7 +94,14 @@ float4 main(OutputVertex v) : SV_TARGET
         //texSpace = transpose(texSpace);
     
         //Convert normal from normal map to texture space and store in input.normal
-        v.normal = mul(normalMap, TBN);
+        
+        float3 temp = mul(normalMap, TBN);
+        if (all(temp != float3(0, 0, 0)))
+            v.normal = mul(normalMap, TBN);
+        else
+        {
+            v.normal = v.normal;
+        }
     }
     
     float4 dirFinal = float4(0, 0, 0, 0), pointFinal = float4(0, 0, 0, 1);
