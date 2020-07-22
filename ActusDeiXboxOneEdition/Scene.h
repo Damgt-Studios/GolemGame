@@ -1401,7 +1401,7 @@ namespace ADGameplay
 			}
 			for (int i = 40; i < 50; i++)
 			{
-				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(300.f, 0.1f, (-1150.f+(i*200.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*200.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock5, &villagerThreats, &buildings));
 			}
 
