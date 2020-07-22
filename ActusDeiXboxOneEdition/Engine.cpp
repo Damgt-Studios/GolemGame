@@ -177,7 +177,7 @@ bool Engine::Render()
 	destructionCloud2.RenderParticles(pbr.renderer_resources.context.Get());
 	for (int i = 0; i < 10; ++i)
 	{
-		bloodEmitters->RenderParticles(pbr.renderer_resources.context.Get());
+		bloodEmitters[i].RenderParticles(pbr.renderer_resources.context.Get());
 	}
 	userInterface.Render();
 	pbr.Frame();
