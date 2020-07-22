@@ -49,6 +49,7 @@ public:
 	{
 		for (int i = 0; i < targetedStats.size(); i++)
 		{
+			
 			targetedStats[i]->currentValue += minimumChange[i];
 			targetedStats[i]->currentValue = min(targetedStats[i]->currentValue, targetedStats[i]->maxValue);
 			targetedStats[i]->Set(max(targetedStats[i]->currentValue, targetedStats[i]->minValue));

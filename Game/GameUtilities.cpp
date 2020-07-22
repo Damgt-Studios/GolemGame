@@ -340,9 +340,9 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->SetMeshID(id);
 	temp->anim_controller->Initialize(temp);
 
-	scale.x *= (1.f / scale.x);
-	scale.y *= (1.f / scale.y);
-	scale.z *= (1.f / scale.z);
+	scale.x *= (1.f / scale.x) * 1.2;
+	scale.y *= (1.f / scale.y) * 1.2;
+	scale.z *= (1.f / scale.z) * 1.2;
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;

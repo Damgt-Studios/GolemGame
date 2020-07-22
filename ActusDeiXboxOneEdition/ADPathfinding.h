@@ -22,6 +22,7 @@ namespace ADAI
 		unsigned char terrainWeight;
 		bool threeSided;
 		bool directions[8];
+		float finalCost;
 	};
 
 	struct PathingGrid
@@ -86,6 +87,21 @@ namespace ADAI
 		};
 	};
 
+	struct SearchNode
+	{
+		SearchNode(PathingNode* _tile) : tile(_tile) {};
+		PathingNode* tile;
+		std::vector<SearchNode*> neighbors;
+		std::vector<float> neighborDist;
+	};
+
+	struct Solution
+	{
+		std::vector<XMFLOAT3> positions;
+		std::vector<float> totalLength;
+	};
+
+
 	class ADPathfinding
 	{
 	private:
@@ -102,15 +118,6 @@ namespace ADAI
 		{
 			XMFLOAT3 position;
 			bool walkable;
-		};
-
-
-		struct SearchNode
-		{
-			SearchNode(PathingNode* _tile) : tile(_tile) {};
-			PathingNode* tile;
-			std::vector<SearchNode*> neighbors;
-			std::vector<float> neighborDist;
 		};
 
 		struct PlannerNode
@@ -131,12 +138,14 @@ namespace ADAI
 				return (_a->finalCost > _b->finalCost);
 			};
 		};
+		std::vector<ADResource::ADGameplay::GameObject*>* extraCollidables;
 
 		std::vector<PathingPoint> pointGrid;
 
 		std::unordered_map<PathingNode*, SearchNode*> searching_map;
 		std::unordered_map<SearchNode*, PlannerNode*> visited_map;
-		std::vector<PathingNode const*> solution;
+		//std::vector<PathingNode const*> solution;
+		Solution solution;
 		std::vector<PathingNode*> previousTrace;
 		PlannerNode* current;
 		PlannerNode* retracer;
@@ -152,16 +161,19 @@ namespace ADAI
 		float DistanceCalculation(PathingNode* _a);
 		float DistanceCalculation(PathingNode* _a, PathingNode* _b);
 		bool done = false;
+		float xAdjust; 
+		float zAdjust; 
 
 	public:
 		static ADPathfinding* Instance();
 		PathingGrid tileMap;
-		void Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap);
+		void Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap, std::vector<ADResource::ADGameplay::GameObject*>* _extraCollidables);
+		int findAcceptablePoint(UINT& goalColumn, UINT& goalRow);
 		int enter(int startColumn, int startRow, int goalColumn, int goalRow);
 		bool isDone() const;
 		void update(float timeslice);
-		std::vector<PathingNode const*> const getSolution() const;
-		std::vector<XMFLOAT3> getSolutionPoints() const;
+		//std::vector<PathingNode const*> const getSolution() const;
+		Solution getSolutionPoints() const;
 		void exit();
 		void shutdown();
 		void UpdatePlayerNode(float x, float z, float mapWidth, float mapHeight);
@@ -199,6 +211,12 @@ namespace ADAI
 			}
 			return searching_map[tileMap.nodeGrid[(trow * tileMap.columns) + tcolumn]];
 		};
+
+		XMFLOAT3 AdjustPosition(XMFLOAT3 _position)
+		{
+			return { _position.x - xAdjust, 0, _position.z - zAdjust };
+
+		}
 	};
 }
 

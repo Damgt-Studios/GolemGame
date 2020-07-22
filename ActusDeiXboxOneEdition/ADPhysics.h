@@ -480,7 +480,6 @@ namespace ADPhysics
 			return false;
 		}
 		else if (w1 + w2 > 1.0f)
-			//Dan:  There was no return here,  is this supposed to be false or is this check not needed?
 			return false;
 
 		return true;

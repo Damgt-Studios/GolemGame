@@ -171,6 +171,263 @@ public:
 		stoneCylinderParticles.lifespan = 1.0f;
 		ADEvents::ADEventSystem::Instance()->RegisterClient("GolemStoneCylinderParticles", &stoneCylinderParticles);
 
+		//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+#pragma region Level Boundary
+
+		GameObject* object1 = new GameObject();
+		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+		object1->team = 4;
+		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
+
+		GameObject* object2 = new GameObject();
+		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+		object2->team = 4;
+		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(20, 100, 2000));
+
+		GameObject* object3 = new GameObject();
+		object3->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+		object3->team = 4;
+		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 20));
+
+		GameObject* object4 = new GameObject();
+		object4->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+		object4->team = 4;
+		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 22.5));
+
+		GameObject* object5 = new GameObject();
+		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+		object5->team = 4;
+		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -625), XMFLOAT3(22.5, 100, 1400));
+
+		//std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
+		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 10), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 50), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 100), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 150), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 200), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 240), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 290), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 340), XMFLOAT3(0, 180, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 390), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 430), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 480), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 530), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 580), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 620), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall3(XMFLOAT3(580, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(530, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(480, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(440, 0, 630), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(390, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(340, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(290, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(250, 0, 630), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(200, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(150, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(100, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(60, 0, 630), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(10, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-40, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-90, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-130, 0, 630), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-180, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-230, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-280, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-320, 0, 630), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-370, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-420, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-470, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-510, 0, 630), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-560, 0, 630), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-610, 0, 630), XMFLOAT3(0, 90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 620), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 580), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 530), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 480), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 430), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 390), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 340), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 290), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 240), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 200), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 150), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 100), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 50), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 10), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -40), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -90), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -140), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -180), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -230), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -280), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -330), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -370), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -420), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -470), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -520), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -560), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -610), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -660), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -710), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -750), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -800), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -850), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -900), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -940), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -990), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -1040), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -1090), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -1130), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -1180), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -1230), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-610, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-570, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-520, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-470, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-420, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-380, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-330, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-280, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-230, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(-190, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(-140, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(-90, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(-40, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(0, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(50, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(100, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(150, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(190, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(240, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(290, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(150, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(190, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(240, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(290, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(340, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(380, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(430, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(480, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(530, 0, -1250), XMFLOAT3(0, -90, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(570, 0, -1250), XMFLOAT3(0, 90, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(620, 0, -1250), XMFLOAT3(0, -90, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -1250), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -1210), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -1160), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -1110), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -1060), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -1020), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -970), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -920), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -870), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -830), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -780), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -730), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -680), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -640), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -590), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -540), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -490), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -450), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -400), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -350), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -300), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -260), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -210), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -160), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -110), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -70), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -20), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1250), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1210), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -1160), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -1110), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1060), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1020), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -970), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -920), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -870), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -830), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -780), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -730), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -680), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -640), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -590), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -540), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -490), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -450), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -400), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -350), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -300), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -160), XMFLOAT3(0, 0, 0));
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -110), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -70), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -20), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 30), XMFLOAT3(0, 0, 0));
+
+		Building* rock_wall1 = new Building(XMFLOAT3(380, 0, 80), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+		Building* rock_wall2 = new Building(XMFLOAT3(360, 0, 100), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
+		Building* rock_wall3 = new Building(XMFLOAT3(340, 0, 120), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
+		Building* rock_wall4 = new Building(XMFLOAT3(320, 0, 140), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+
+		GameUtilities::AddGameObject(rock_wall1);
+		GameUtilities::AddGameObject(rock_wall2);
+		GameUtilities::AddGameObject(rock_wall3);
+		GameUtilities::AddGameObject(rock_wall4);
+
+		Building* rock_wall5 = new Building(XMFLOAT3(300, 0, 160), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+		Building* rock_wall6 = new Building(XMFLOAT3(280, 0, 180), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
+		Building* rock_wall7 = new Building(XMFLOAT3(260, 0, 200), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
+		Building* rock_wall8 = new Building(XMFLOAT3(240, 0, 220), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+
+		GameUtilities::AddGameObject(rock_wall5);
+		GameUtilities::AddGameObject(rock_wall6);
+		GameUtilities::AddGameObject(rock_wall7);
+		GameUtilities::AddGameObject(rock_wall8);
+
+
+#pragma endregion
+
+#pragma region oldstuff
+
 		//Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(40, 30, 40), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 		//GameUtilities::AddGameObject(house1);
 		//currentScene.AddBuilding(house1);
@@ -384,6 +641,8 @@ public:
 		////Building* rubble6 = new Building(XMFLOAT3(210, 0, 680), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble3);
 		////GameUtilities::AddGameObject(rubble6);
 
+#pragma endregion
+
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
 		currentScene.LoadScene("files/scenes/TestScene.scenery");
@@ -553,255 +812,263 @@ public:
 
 
 
-//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
-#pragma region Level Boundary
+////DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+//#pragma region Level Boundary
+//
+//		GameObject* object1 = new GameObject();
+//		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+//		object1->team = 4;
+//		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
+//		
+//		GameObject* object2 = new GameObject();
+//		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+//		object1->team = 4;
+//		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(20, 100, 2000));
+//
+//		GameObject* object3 = new GameObject();
+//		object3->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+//		object1->team = 4;
+//		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 20));
+//
+//		GameObject* object4 = new GameObject();
+//		object4->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+//		object1->team = 4;
+//		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 22.5));
+//
+//		GameObject* object5 = new GameObject();
+//		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+//		object1->team = 4;
+//		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -625), XMFLOAT3(22.5, 100, 1400));
+//
+//		//std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
+//		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 10), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 50), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 100), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 150), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 200), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 240), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 290), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 340), XMFLOAT3(0, 180, 0));
+//												   
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 390), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 430), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 480), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 530), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 580), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 620), XMFLOAT3(0, 0, 0));
+//		
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(580, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(530, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(480, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(440, 0, 630), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(390, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(340, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(290, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(250, 0, 630), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(200, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(150, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(100, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(60, 0, 630), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(10, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-40, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-90, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-130, 0, 630), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-180, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-230, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-280, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-320, 0, 630), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-370, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-420, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-470, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-510, 0, 630), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-560, 0, 630), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-610, 0, 630), XMFLOAT3(0, 90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 620), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 580), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 530), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 480), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 430), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 390), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 340), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 290), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 240), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 200), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 150), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 100), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 50), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 10), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -40), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -90), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -140), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -180), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -230), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -280), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -330), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -370), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -420), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -470), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -520), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -560), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -610), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -660), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -710), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -750), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -800), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -850), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -900), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -940), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -990), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -1040), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -1090), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -1130), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -1180), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -1230), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-610, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-570, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-520, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-470, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-420, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-380, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-330, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-280, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-230, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(-190, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(-140, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(-90, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(-40, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(0, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(50, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(100, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(150, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(190, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(240, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(290, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(150, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(190, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(240, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(290, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(340, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(380, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(430, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(480, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(530, 0, -1250), XMFLOAT3(0, -90, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(570, 0, -1250), XMFLOAT3(0, 90, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(620, 0, -1250), XMFLOAT3(0, -90, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -1250), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -1210), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -1160), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -1110), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -1060), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -1020), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -970), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -920), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -870), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -830), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -780), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -730), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -680), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -640), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -590), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -540), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -490), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -450), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -400), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -350), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -300), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -260), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -210), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -160), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -110), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -70), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -20), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1250), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1210), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -1160), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -1110), XMFLOAT3(0, 0, 0));
+//												
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1060), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1020), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -970), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -920), XMFLOAT3(0, 0, 0));
+//												
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -870), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -830), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -780), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -730), XMFLOAT3(0, 0, 0));
+//												
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -680), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -640), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -590), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -540), XMFLOAT3(0, 0, 0));
+//											
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -490), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -450), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -400), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -350), XMFLOAT3(0, 0, 0));
+//												
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -300), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -160), XMFLOAT3(0, 0, 0));
+//
+//		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -110), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -70), XMFLOAT3(0, 180, 0));
+//		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -20), XMFLOAT3(0, 0, 0));
+//		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 30), XMFLOAT3(0, 0, 0));
+//
+//		Building* rock_wall1 = new Building(XMFLOAT3(380, 0, 80), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+//		Building* rock_wall2 = new Building(XMFLOAT3(360, 0, 100), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
+//		Building* rock_wall3 = new Building(XMFLOAT3(340, 0, 120), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
+//		Building* rock_wall4 = new Building(XMFLOAT3(320, 0, 140), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+//
+//		GameUtilities::AddGameObject(rock_wall1);
+//		GameUtilities::AddGameObject(rock_wall2);
+//		GameUtilities::AddGameObject(rock_wall3);
+//		GameUtilities::AddGameObject(rock_wall4);
+//
+//		Building* rock_wall5 = new Building(XMFLOAT3(300, 0, 160), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+//		Building* rock_wall6 = new Building(XMFLOAT3(280, 0, 180), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
+//		Building* rock_wall7 = new Building(XMFLOAT3(260, 0, 200), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
+//		Building* rock_wall8 = new Building(XMFLOAT3(240, 0, 220), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+//
+//		GameUtilities::AddGameObject(rock_wall5);
+//		GameUtilities::AddGameObject(rock_wall6);
+//		GameUtilities::AddGameObject(rock_wall7);
+//		GameUtilities::AddGameObject(rock_wall8);
+//		
+//												  
+//#pragma endregion
 
-		GameObject* object1 = new GameObject();
-		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
-		
-		GameObject* object2 = new GameObject();
-		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(20, 100, 2000));
+#pragma region oldstuff
 
-		GameObject* object3 = new GameObject();
-		object3->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 20));
-
-		GameObject* object4 = new GameObject();
-		object4->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 22.5));
-
-		GameObject* object5 = new GameObject();
-		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -625), XMFLOAT3(22.5, 100, 1400));
-
-		//std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
-		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 10), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 50), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 100), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 150), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 200), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 240), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 290), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 340), XMFLOAT3(0, 180, 0));
-												   
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 390), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 430), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 480), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 530), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 580), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 620), XMFLOAT3(0, 0, 0));
-		
-		GameUtilities::GenerateRockWall3(XMFLOAT3(580, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(530, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(480, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(440, 0, 630), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(390, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(340, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(290, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(250, 0, 630), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(200, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(150, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(100, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(60, 0, 630), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(10, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-40, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-90, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-130, 0, 630), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-180, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-230, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-280, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-320, 0, 630), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-370, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-420, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-470, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-510, 0, 630), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-560, 0, 630), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-610, 0, 630), XMFLOAT3(0, 90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 620), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 580), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 530), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 480), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 430), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 390), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 340), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 290), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 240), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 200), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, 150), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, 100), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, 50), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, 10), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -40), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -90), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -140), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -180), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -230), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -280), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -330), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -370), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -420), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -470), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -520), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -560), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -610), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -660), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -710), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -750), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -800), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -850), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -900), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -940), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -990), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -1040), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-630, 0, -1090), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-630, 0, -1130), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-630, 0, -1180), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-630, 0, -1230), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-610, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-570, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-520, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-470, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-420, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-380, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-330, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-280, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-230, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(-190, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(-140, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(-90, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(-40, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(0, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(50, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(100, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(150, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(190, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(240, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(290, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(150, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(190, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(240, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(290, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(340, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(380, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(430, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(480, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(530, 0, -1250), XMFLOAT3(0, -90, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(570, 0, -1250), XMFLOAT3(0, 90, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(620, 0, -1250), XMFLOAT3(0, -90, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -1250), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -1210), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -1160), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -1110), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -1060), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -1020), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -970), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -920), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -870), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -830), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -780), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -730), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -680), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -640), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -590), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -540), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -490), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -450), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -400), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -350), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -300), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -260), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -210), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, -160), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, -110), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, -70), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, -20), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1250), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1210), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -1160), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -1110), XMFLOAT3(0, 0, 0));
-												
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1060), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1020), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -970), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -920), XMFLOAT3(0, 0, 0));
-												
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -870), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -830), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -780), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -730), XMFLOAT3(0, 0, 0));
-												
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -680), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -640), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -590), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -540), XMFLOAT3(0, 0, 0));
-											
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -490), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -450), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -400), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -350), XMFLOAT3(0, 0, 0));
-												
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -300), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -160), XMFLOAT3(0, 0, 0));
-
-		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -110), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -70), XMFLOAT3(0, 180, 0));
-		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -20), XMFLOAT3(0, 0, 0));
-		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 30), XMFLOAT3(0, 0, 0));
-
-		Building* rock_wall1 = new Building(XMFLOAT3(380, 0, 80), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
-		Building* rock_wall2 = new Building(XMFLOAT3(360, 0, 100), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
-		Building* rock_wall3 = new Building(XMFLOAT3(340, 0, 120), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
-		Building* rock_wall4 = new Building(XMFLOAT3(320, 0, 140), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
-
-		GameUtilities::AddGameObject(rock_wall1);
-		GameUtilities::AddGameObject(rock_wall2);
-		GameUtilities::AddGameObject(rock_wall3);
-		GameUtilities::AddGameObject(rock_wall4);
-
-		Building* rock_wall5 = new Building(XMFLOAT3(300, 0, 160), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
-		Building* rock_wall6 = new Building(XMFLOAT3(280, 0, 180), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
-		Building* rock_wall7 = new Building(XMFLOAT3(260, 0, 200), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
-		Building* rock_wall8 = new Building(XMFLOAT3(240, 0, 220), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
-
-		GameUtilities::AddGameObject(rock_wall5);
-		GameUtilities::AddGameObject(rock_wall6);
-		GameUtilities::AddGameObject(rock_wall7);
-		GameUtilities::AddGameObject(rock_wall8);
-		
-												  
-#pragma endregion
 
 		/*Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
 		GameUtilities::AddGameObject(house1);
@@ -978,6 +1245,7 @@ public:
 		//	GameUtilities::AddGameObject(realtree);
 		//}
 
+#pragma endregion
 
 
 		////Building* rubble2 = new Building(XMFLOAT3(-220, 0, 330), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2);
@@ -1021,22 +1289,16 @@ public:
 
 
 
-		XMFLOAT2 mapDimensions = { 1200 , 2380 };
-		float minionWidth = 20;
+		XMFLOAT2 mapDimensions = { 1200 , 2400 };
+		float minionWidth = 12;
 
-		ADAI::ADPathfinding::Instance()->Initialize(&planeModel->vertices, mapDimensions, minionWidth, 15.f);
+		ADAI::ADPathfinding::Instance()->Initialize(&planeModel->vertices, mapDimensions, minionWidth, 0.f, &forcedCollisions);
 
 		if (!engine->Initialize())
 		{
 			return;
 		}
 		game->LoadGameUserInterface(engine->GetUI(), audioEngine);
-
-
-
-
-		//rubble1->Remove();
-		//rubble1->RemoveFromScene();
 
 		//---Run		
 		// String shit

@@ -291,6 +291,10 @@ public:
 					{
 						trigger->modelName = (rhs);
 					}
+					else if (lhs == "Model_Mat")
+					{
+						trigger->matName = (rhs);
+					}
 					else if (lhs == "Model_Width")
 					{
 						trigger->modelScale.x = std::stof(rhs);
@@ -361,12 +365,12 @@ public:
 				}
 				trigger->colScale = scale;
 				XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
-				trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, XMFLOAT3(1, 1, 1));  //trigger->colScale);
+				trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, trigger->colScale); //XMFLOAT3(1, 1, 1)); 
 				//trigger->collider.AxisX.x = trigger->colScale.x;
 				//trigger->collider.AxisY.y = trigger->colScale.y;
 				//trigger->collider.AxisZ.z = trigger->colScale.z;
 				trigger->collider.trigger = true;
-				trigger->SetScale(scale);  // (trigger->modelScale);
+				trigger->SetScale(trigger->modelScale);//(scale);  
 				trigger->colliderPtr = &trigger->collider;
 				DefinitionDatabase::Instance()->hitboxDatabase[mid] = trigger;
 				//Needs an ID from a map.

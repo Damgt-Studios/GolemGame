@@ -545,7 +545,17 @@ void ADResource::ADGameplay::Golem::Kick()
 void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
 {
 	targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
-
+	if (commandTargetGroup == 4)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			minionGroups[i]->SetTarget(targetMarker);
+		}
+	}
+	else
+	{
+		minionGroups[commandTargetGroup]->SetTarget(targetMarker);
+	}
 }
 
 void ADResource::ADGameplay::Golem::SendToCommandTarget(float delta_time)

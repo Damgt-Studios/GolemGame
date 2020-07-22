@@ -47,7 +47,7 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 			{
 				if (OBJS[i]->colliderPtr->type != ADPhysics::ColliderType::Plane)
 				{
-					XMFLOAT4 colliderQuad(((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) - OBJS[i]->colliderPtr->GetWidth() / 2.f),
+					XMFLOAT4 colliderQuad(((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) - OBJS[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap / 2.f),
 						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) - (OBJS[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f),
 						((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + (OBJS[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap) / 2.f),
 						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + (OBJS[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f));
@@ -69,6 +69,38 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 			}
 		}
 	}
+
+	for (int i = 0; i < extraCollidables->size(); i++)
+	{
+		if ((*extraCollidables)[i]->colliderPtr != nullptr)
+		{
+			if ((*extraCollidables)[i]->physicsType == ADResource::ADGameplay::STATIC)
+			{
+				if ((*extraCollidables)[i]->colliderPtr->type != ADPhysics::ColliderType::Plane)
+				{
+					XMFLOAT4 colliderQuad((((*extraCollidables)[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) - (*extraCollidables)[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap / 2.f),
+						(((*extraCollidables)[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) - ((*extraCollidables)[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f),
+						(((*extraCollidables)[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + ((*extraCollidables)[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap) / 2.f),
+						(((*extraCollidables)[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + ((*extraCollidables)[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f));
+
+					for (int r = 0; r < tileMap.yDivisions; r++)
+					{
+						for (int c = 0; c < tileMap.xDivisions; c++)
+						{
+							if (colliderQuad.x < pointGrid[(c + (tileMap.xDivisions * r))].position.x &&
+								colliderQuad.y < pointGrid[(c + (tileMap.xDivisions * r))].position.z &&
+								colliderQuad.z > pointGrid[(c + (tileMap.xDivisions * r))].position.x &&
+								colliderQuad.w > pointGrid[(c + (tileMap.xDivisions * r))].position.z)
+							{
+								pointGrid[(c + (tileMap.xDivisions * r))].walkable = false;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
 
 void ADAI::ADPathfinding::CleanUpPointGrid()
@@ -76,7 +108,7 @@ void ADAI::ADPathfinding::CleanUpPointGrid()
 	pointGrid.clear();
 }
 
-void ADAI::ADPathfinding::SetNeighbors(ADAI::ADPathfinding::SearchNode* searchNode)
+void ADAI::ADPathfinding::SetNeighbors(ADAI::SearchNode* searchNode)
 {
 	PathingNode* pathNode = searchNode->tile;
 
@@ -224,8 +256,10 @@ ADAI::ADPathfinding* ADAI::ADPathfinding::Instance()
 }
 
 
-void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
+void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap, std::vector<ADResource::ADGameplay::GameObject*>* _extraCollidables)
 {
+
+	extraCollidables = _extraCollidables;
 	done = true;
 	tileMap.Initializing(_planeVertices, _mapSize, _agentSize, _agentToWallGap);
 	CreatePointGrid(_planeVertices);
@@ -384,48 +418,196 @@ void ADAI::ADPathfinding::Initialize(std::vector<SimpleVertex>* _planeVertices, 
 		SetNeighbors(it->second);
 	}
 	CleanUpPointGrid();
+
+	xAdjust = (tileMap.columns / 2.f) * tileMap.cellSize.x;
+	zAdjust = (tileMap.rows / 2.f) * tileMap.cellSize.y;
+}
+
+
+//return 0 on succcess, 1 on out of bounds, 2 on no valid neighbors
+int ADAI::ADPathfinding::findAcceptablePoint(UINT& goalColumn, UINT& goalRow)
+{
+	//Order mattered so I didn't loop them.
+	SearchNode* temp = GetTile(goalColumn, goalRow);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn -1, goalRow);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			--goalColumn;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn + 1, goalRow);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			++goalColumn;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn , goalRow-1);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			--goalRow;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn, goalRow + 1);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			++goalRow;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn-1 , goalRow-1);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			--goalColumn;
+			--goalRow;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn+1, goalRow + 1);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			++goalColumn;
+			++goalRow;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn-1, goalRow + 1);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			--goalColumn;
+			++goalRow;
+			return 0;
+		}
+	}
+	temp = GetTile(goalColumn+1, goalRow - 1);
+	if (temp)
+	{
+		if (temp->tile->walkable)
+		{
+			++goalColumn;
+			--goalRow;
+			return 0;
+		}
+	}
+			//int c = -1;
+			//int r = -1;
+			//int c2 = 0;
+			//int r2 = 0;
+
+			//do
+			//{
+			//	if (c != 0 && r != 0)
+			//	{
+			//		temp = GetTile(goalColumn + c, goalRow + r);
+			//	}
+
+			//	if (temp)
+			//	{
+			//		if (temp->tile->walkable)
+			//		{
+			//			goalColumn = goalColumn + c;
+			//			goalRow = goalRow + r;
+			//			return 0;
+			//		}
+			//	}
+
+			//		++c;
+			//		if (r == 2)
+			//		{
+			//			temp = GetTile(goalColumn -2, goalRow);
+
+			//			if (temp)
+			//			{
+			//				if (temp->tile->walkable)
+			//				{
+			//					goalColumn = goalColumn -2;
+			//					goalRow = goalRow ;
+			//					return 0;
+			//				}
+			//			}
+
+			//			temp = GetTile(goalColumn + 2, goalRow);
+
+			//			if (temp)
+			//			{
+			//				if (temp->tile->walkable)
+			//				{
+			//					goalColumn = goalColumn + 2;
+			//					goalRow = goalRow;
+			//					return 0;
+			//				}
+			//			}
+
+			//			temp = GetTile(goalColumn, goalRow + 2);
+
+			//			if (temp)
+			//			{
+			//				if (temp->tile->walkable)
+			//				{
+			//					goalColumn = goalColumn;
+			//					goalRow = goalRow + 2;
+			//					return 0;
+			//				}
+			//			}
+			//			temp = GetTile(goalColumn, goalRow - 2);
+
+			//			if (temp)
+			//			{
+			//				if (temp->tile->walkable)
+			//				{
+			//					goalColumn = goalColumn;
+			//					goalRow = goalRow - 2;
+			//					return 0;
+			//				}
+			//			}
+			//		}
+			//		else if (c == 2)
+			//		{
+			//			++r;
+			//			c = -1;
+			//		}
+			//	
+			//} while (r != 2);
+		//}
+	//}
+	else
+	{
+		return 1;
+	}
+	return 2;
 }
 
 
 int ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, int goalRow)
 {
 	//Setup the search process
-	int rvalue = 0;
-	ClearDebug();
-	done = false;
-	solution.clear();
-	visited_map.clear();
-	pHeap.clear();
-	target = nullptr;
-	int c = -1;
-	int r = -1;
-	while (!target)
+	SearchNode* start = GetTile(startColumn, startRow);
+	if (start)
 	{
-		c++;
-		if (c == 2)
-		{
-			c = 0;
-			r++;
-		}
-		if (r == 2)
-		{
-			return 2;
-		}
-		SearchNode* temp = GetTile(goalColumn + c, goalRow + r);
-		if (temp)
-		{
-			target = GetTile(goalColumn + c, goalRow + r)->tile;
-			if (!target->walkable)
-			{
-				target = nullptr;
-			}
-		}
-
-	}
-	SearchNode* tempNode = GetTile(startColumn, startRow);
-	if (tempNode)
-	{
-		if (tempNode->tile->walkable == false)
+		if (!start->tile->walkable)
 		{
 			return 1;
 		}
@@ -435,16 +617,40 @@ int ADAI::ADPathfinding::enter(int startColumn, int startRow, int goalColumn, in
 		return 1;
 	}
 
+	SearchNode* targetNode = GetTile(goalColumn, goalRow);
+	if (targetNode)
+	{
+		if (!targetNode->tile->walkable)
+		{
+			return 2;
+		}
+		else 
+		{
+			target = targetNode->tile;
+		}
+	}
+	else
+	{
+		return 2;
+	}
+
+	//}
+	ClearDebug();
+	done = false;
+	solution.positions.clear();
+	solution.totalLength.clear();
+	visited_map.clear();
+	pHeap.clear();
 	PlannerNode* first = new PlannerNode();
 	first->parent = NULL;
-	first->searchNode = tempNode;
+	first->searchNode = start;
 	first->givenCost = 0;
 	first->heuristicCost = DistanceCalculation(first->searchNode->tile);
 	first->finalCost = first->givenCost + first->heuristicCost * hWeight;
 	std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
 	pHeap.push_back(first);
 	visited_map[GetTile(startColumn, startRow)] = first;
-	return rvalue;
+	return 0;
 }
 
 void ADAI::ADPathfinding::update(float timeslice)
@@ -469,15 +675,18 @@ void ADAI::ADPathfinding::update(float timeslice)
 		current->searchNode->tile->displayState = 1;
 		if (current->searchNode->tile == target)
 		{
-			solution.clear();
+			solution.positions.clear();
+			solution.totalLength.clear();
 			retracer = current;
 			while (retracer->parent != NULL)
 			{
-				solution.push_back(retracer->searchNode->tile);
+				solution.positions.push_back(XMFLOAT3(retracer->searchNode->tile->position.x - xAdjust, 0, retracer->searchNode->tile->position.z - zAdjust));
+				solution.totalLength.push_back(retracer->finalCost);
 				retracer->searchNode->tile->displayState = 2;
 				retracer = retracer->parent;
 			}
-			solution.push_back(retracer->searchNode->tile);
+			solution.positions.push_back(XMFLOAT3(retracer->searchNode->tile->position.x - xAdjust, 0, retracer->searchNode->tile->position.z - zAdjust));
+			solution.totalLength.push_back(retracer->finalCost);
 
 			done = true;
 			return;
@@ -562,7 +771,8 @@ void ADAI::ADPathfinding::exit()
 	//	pQueue.pop();
 	//}
 
-	solution.clear();
+	solution.positions.clear();
+	solution.totalLength.clear();
 	previousTrace.clear();
 }
 
@@ -592,7 +802,8 @@ void ADAI::ADPathfinding::shutdown()
 	//{
 	//	pQueue.pop();
 	//}
-	solution.clear();
+	solution.positions.clear();
+	solution.totalLength.clear();
 	previousTrace.clear();
 	done = false;
 }
@@ -601,20 +812,20 @@ bool ADAI::ADPathfinding::isDone() const
 {
 	return done;
 }
+//
+//std::vector<const ADAI::PathingNode*> const ADAI::ADPathfinding::getSolution() const
+//{
+//	return solution;
+//}
 
-std::vector<const ADAI::PathingNode*> const ADAI::ADPathfinding::getSolution() const
+ADAI::Solution ADAI::ADPathfinding::getSolutionPoints() const
 {
 	return solution;
-}
-
-std::vector<XMFLOAT3> ADAI::ADPathfinding::getSolutionPoints() const
-{
-	std::vector<XMFLOAT3> points;
-	float xAdjust = (tileMap.columns / 2.f) * tileMap.cellSize.x;
-	float zAdjust = (tileMap.rows / 2.f) * tileMap.cellSize.y;
-	for (auto& solPoint : solution)
-	{
-		points.push_back(XMFLOAT3(solPoint->position.x - xAdjust, 0, solPoint->position.z - zAdjust));
-	}
-	return points;
+	//Solution points;
+	//for (auto& solPoint : solution.positions)
+	//{
+	//	points.positions.push_back(XMFLOAT3(solPoint.x - xAdjust, 0, solPoint.z - zAdjust)); 
+	//	points.totalLength.push_back(solPoint->);
+	//}
+	//return points;
 }

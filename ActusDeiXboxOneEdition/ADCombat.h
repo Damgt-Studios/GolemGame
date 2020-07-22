@@ -73,7 +73,7 @@ namespace ADResource
 			HitBox* Clone()
 			{
 				HitBox* nBox = new HitBox();
-				XMFLOAT3 scale = XMFLOAT3(1, 1, 1);
+				XMFLOAT3 scale = modelScale; //XMFLOAT3(1, 1, 1);
 				nBox->SetScale(scale);
 				nBox->SetRotation(scale);
 				nBox->SetPosition(scale);
@@ -125,12 +125,12 @@ namespace ADResource
 
 
 				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
-				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, XMFLOAT3(1, 1, 1));// nBox->colScale);
+				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
 				//nBox->collider.AxisX.x = nBox->colScale.x;
 				//nBox->collider.AxisY.y = nBox->colScale.y;
 				//nBox->collider.AxisZ.z = nBox->colScale.z;
 				nBox->collider.trigger = true;
-				nBox->SetScale(colScale);  //nBox->modelScale);
+				nBox->SetScale(nBox->modelScale);	//colScale);  
 				nBox->colliderPtr = &nBox->collider;
 
 				ResourceManager::AddGameObject(nBox);

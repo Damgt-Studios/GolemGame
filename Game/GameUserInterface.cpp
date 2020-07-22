@@ -1178,7 +1178,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* villagerCountLabel = new ADUI::Label2D();
 		villagerCountLabel->SetFont(myUI->GetFont(2));
-		villagerCountLabel->SetText("10", { 3550, 250 });// XMFLOAT2(1920, 1080));
+		villagerCountLabel->SetText("50", { 3550, 250 });// XMFLOAT2(1920, 1080));
 		villagerCountLabel->active = true;
 		villagerCountLabel->visible = true;
 		myUI->AddUIComponent("VillagerCountLabel", villagerCountLabel);
@@ -1321,7 +1321,7 @@ namespace GolemGameUISetup
 		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 100, 100, 3540, 1816 });
 		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 1, emptyAnimation);
 		consoleBox->active = true;
-		consoleBox->visible = true;
+		consoleBox->visible = false;
 		consoleBox->stretched = true;
 		myUI->AddUIComponent("mapbg", consoleBox);
 		myUI->overlays[pathingID]->AddComponent(consoleBox);
@@ -1332,7 +1332,7 @@ namespace GolemGameUISetup
 		for (int i = 0; i < grid->nodeGrid.size(); i++)
 		{
 
-			ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2000.f - (grid->nodeGrid[i]->position.x + 300.f) , 1800 - grid->nodeGrid[i]->position.z, 2000.f - (grid->nodeGrid[i]->position.x + 300.f),  1800 - grid->nodeGrid[i]->position.z });
+			ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2000.f - (grid->nodeGrid[i]->position.x + 300.f) , 2100 - grid->nodeGrid[i]->position.z, 2000.f - (grid->nodeGrid[i]->position.x + 300.f),  2100 - grid->nodeGrid[i]->position.z });
 			long heightValue = int((grid->nodeGrid)[i]->position.y * 100.f);
 			if (heightValue < -4)
 			{

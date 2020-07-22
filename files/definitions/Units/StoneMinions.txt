@@ -47,8 +47,8 @@ SingleHit=false
 ;
 
 Action=StoneMinionPunch:
-Cooldown=2.0
-Duration=1.0
+Cooldown=1.0
+Duration=1.75
 AddHitBox=StoneMinionPunchHB
 SetHitboxDelay=0.75
 ;

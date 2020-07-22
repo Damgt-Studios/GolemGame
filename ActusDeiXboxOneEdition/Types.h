@@ -312,6 +312,7 @@ namespace ADResource
 		class Stat
 		{
 		public:
+			std::string name = "";
 			std::string eventName = "";
 			int currentValue = 0;
 			int maxValue = 0;
@@ -619,6 +620,7 @@ namespace ADResource
 		public:
 			bool active = true;
 			float safeRadius = 5.0f;
+			float avoidRadius = 5.0f;
 			float attackRadius = 5.0f;
 			float desirability = 0;
 

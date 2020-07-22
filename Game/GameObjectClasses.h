@@ -150,7 +150,9 @@ namespace ADResource
 			void SetRubble(Building* _rubble)
 			{
 				rubble = _rubble;
-				rubble->safeRadius = 30.0f;
+				rubble->active = false;
+				rubble->safeRadius = 25.0f;
+				rubble->avoidRadius = 10.0f;
 			};
 
 			void SetTurret(Building* _turret)
@@ -161,6 +163,11 @@ namespace ADResource
 			Building* GetTurret()
 			{
 				return turret;
+			};
+
+			XMFLOAT3 GetColliderScale()
+			{
+				return colliderScale;
 			};
 
 			Building* GetRubble()
@@ -308,28 +315,207 @@ namespace ADResource
 					}
 					else
 					{
-						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z })->tile->walkable = true;
-						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 12.5f, pos.z + 12.5f })->tile->walkable = true;
-						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 12.5f, pos.z - 12.5f })->tile->walkable = true;
-						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 12.5f, pos.z - 12.5f })->tile->walkable = true;
-						ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 12.5f, pos.z + 12.5f })->tile->walkable = true;
-						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z }));
-						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 15, pos.z + 15 }));
-						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 15, pos.z - 15 }));
-						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 15, pos.z - 15 }));
-						ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 15, pos.z + 15 }));
-						if (collider.GetWidth() > 27.5f || collider.GetLength() > 27.5f)
+						ADAI::SearchNode* temp1 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z });
+						if (temp1)
 						{
-							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z })->tile->walkable = true;
-							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z + 32.f })->tile->walkable = true;
-							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z - 32.f })->tile->walkable = true;
-							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z - 32.f })->tile->walkable = true;
-							ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z + 32.f })->tile->walkable = true;
-							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z }));
-							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z + 32.f }));
-							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 32.f, pos.z - 32.f }));
-							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z - 32.f }));
-							ADAI::ADPathfinding::Instance()->EnableTile(ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 32.f, pos.z + 32.f }));
+							temp1->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp2 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 10.f, pos.z + 10.f });
+						if (temp2)
+						{
+							temp2->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp3 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 10.f, pos.z - 10.f });
+						if (temp3)
+						{
+							temp3->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp4 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 10.f, pos.z - 10.f });
+						if (temp4)
+						{
+							temp4->tile->walkable = true;
+						}
+						ADAI::SearchNode* temp5 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 10.f, pos.z + 10.f });
+						if (temp5)
+						{
+							temp5->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp6 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 10.f, pos.z });
+						if (temp6)
+						{
+							temp6->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp7 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x , pos.z - 10.f });
+						if (temp7)
+						{
+							temp7->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp8 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 10.f, pos.z });
+						if (temp8)
+						{
+							temp8->tile->walkable = true;
+						}
+						ADAI::SearchNode* temp9 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z + 10.f });
+						if (temp9)
+						{
+							temp9->tile->walkable = true;
+						};
+
+						ADAI::SearchNode* temp10 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 20.f, pos.z });
+						if (temp10)
+						{
+							temp10->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp11 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x , pos.z - 20.f });
+						if (temp11)
+						{
+							temp11->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp12 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 20.f, pos.z });
+						if (temp12)
+						{
+							temp12->tile->walkable = true;
+						}
+						ADAI::SearchNode* temp14 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z + 20.f });
+						if (temp14)
+						{
+							temp14->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp15 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 20.f, pos.z + 20.f });
+						if (temp15)
+						{
+							temp15->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp16 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 20.f, pos.z - 20.f });
+						if (temp16)
+						{
+							temp16->tile->walkable = true;
+						};
+						ADAI::SearchNode* temp17 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 20.f, pos.z - 20.f });
+						if (temp17)
+						{
+							temp17->tile->walkable = true;
+						}
+						ADAI::SearchNode* temp18 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 20.f, pos.z + 20.f });
+						if (temp18)
+						{
+							temp18->tile->walkable = true;
+						}
+						if (temp1)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp1);
+						}
+						if (temp2)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp2);
+						}
+						if (temp3)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp3);
+						}
+						if (temp4)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp4);
+						}
+						if (temp5)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp5);
+						}
+						if (temp6)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp6);
+						}
+						if (temp7)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp7);
+						}
+						if (temp8)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp8);
+						}
+						if (temp9)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp9);
+						}
+						if (temp10)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp10);
+						}
+						if (temp11)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp11);
+						}
+						if (temp12)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp12); //Skipped 13 oops oh well.
+						}
+						if (temp14)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp14);
+						}
+						if (temp15)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp15);
+						}
+						if (temp16)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp16);
+						}
+						if (temp17)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp17);
+						}
+						if (temp18)
+						{
+							ADAI::ADPathfinding::Instance()->EnableTile(temp18);
+						}
+						if (collider.GetWidth() > 37.5f || collider.GetLength() > 37.5f)
+						{
+							temp1 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x, pos.z });
+							if (temp1)
+							{
+								temp1->tile->walkable = true;
+							}
+							temp2 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 30.f, pos.z + 30.f });
+							if (temp2)
+							{
+								temp2->tile->walkable = true;
+							}
+							temp3 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x + 30.f, pos.z - 30.f });
+							if (temp3)
+							{
+								temp3->tile->walkable = true;
+							}
+							temp4 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 30.f, pos.z - 30.f });
+							if (temp4)
+							{
+								temp4->tile->walkable = true;
+							}
+							temp5 = ADAI::ADPathfinding::Instance()->GetTileFromPosition({ pos.x - 30.f, pos.z + 30.f });
+							if (temp5)
+							{
+								temp5->tile->walkable = true;
+							}							
+							if (temp1)
+							{
+								ADAI::ADPathfinding::Instance()->EnableTile(temp1);
+							}
+							if (temp2)
+							{
+								ADAI::ADPathfinding::Instance()->EnableTile(temp2);
+							}
+							if (temp3)
+							{
+								ADAI::ADPathfinding::Instance()->EnableTile(temp3);
+							}
+							if (temp4)
+							{
+								ADAI::ADPathfinding::Instance()->EnableTile(temp4);
+							}
+							if (temp5)
+							{
+								ADAI::ADPathfinding::Instance()->EnableTile(temp5);
+							}
 						}
 
 					}
