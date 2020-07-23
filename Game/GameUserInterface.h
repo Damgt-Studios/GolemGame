@@ -53,7 +53,7 @@ namespace GolemGameUISetup
             "Up and down on the control pad will let you change which groups",
             "will respond to your command.  Once minions have selected a    ", 
             "target it may be hard to call them back.  Hold the left bumper ",
-            "to force them to return.                                       "
+            "to force them to return.                                       ",
 
             "Villagers and structuers will drop essence. Use the        ",
             "right control pad to summon new minions. The minions born                  ", 
