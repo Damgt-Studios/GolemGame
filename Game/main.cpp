@@ -282,7 +282,7 @@ public:
 		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
 		GameUtilities::AddGameObject(physicsPlane);
 
-		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, -3600), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), false);
+		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, 3600), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), false);
 		mountainRange->colliderPtr = nullptr;
 		GameUtilities::AddGameObject(mountainRange);
 
