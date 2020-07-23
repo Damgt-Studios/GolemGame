@@ -79,7 +79,7 @@ namespace ADResource
 			StatSheet* stats;
 			Building* rubble = nullptr;
 			Building* turret = nullptr;
-
+			Action* Essence = nullptr;
 
 			void AddToScene()
 			{
@@ -153,6 +153,8 @@ namespace ADResource
 				rubble->active = false;
 				rubble->safeRadius = 25.0f;
 				rubble->avoidRadius = 10.0f;
+			//	rubble->Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceS"];
+
 			};
 
 			void SetTurret(Building* _turret)
@@ -312,6 +314,9 @@ namespace ADResource
 					{
 						rubble->active = true;
 						rubble->AddToScene();
+
+						//rubble->Essence->StartAction(&rubble->transform);
+
 					}
 					else
 					{
