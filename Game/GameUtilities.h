@@ -3,9 +3,11 @@
 #include <string>
 
 #include "Golem.h"
-//#include "GameObjectClasses.h"
+#include "GameplayAI.h"
+#include "GameObjectClasses.h"
 //#include "GameEffects.h"
 //#include "ADAI.h"
+#include "Engine.h"
 
 class GameUtilities
 {
@@ -19,12 +21,17 @@ public:
 	static Trigger* AddEndGameTriggerFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);*/
 	//static HitBox* AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
-	static Destructable* AddDestructableFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static Trigger* AddTriggerFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static Destructable* AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	static ADAI::AIUnit* AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType);
+	//static ADAI::AIUnit* AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType);
+	
 	//static void InitializeMinionModels();
 	//static ADAI::AIUnit* BirthStoneMinion(ADAI::FlockingGroup* _commandGroup);
-	static ADAI::AIUnit* AttachVillagerAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup);
+
+	static ADAI::VillagerAI* AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* engine);
+	static ADAI::MinionAI* AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType);
+	static ADAI::TowerAI* AttachTowerAI(Building* _destructable, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup);
+
 	//static Destructable* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	//static Enemy* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
@@ -67,6 +74,9 @@ public:
 	static std::vector<Renderable*> GenerateRockWall3(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateRockWall4(XMFLOAT3 pos, XMFLOAT3 rotation);
 	static std::vector<Renderable*> GenerateRockWall5(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GeneratePathway1(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GeneratePathway2(XMFLOAT3 pos, XMFLOAT3 rotation);
+	static std::vector<Renderable*> GeneratePathway3(XMFLOAT3 pos, XMFLOAT3 rotation);
 
 public:
 	// Game object shit

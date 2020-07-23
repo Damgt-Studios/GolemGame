@@ -110,6 +110,7 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 
 	//Get Data Driven Components
 	golem->stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
+	golem->has_stats = true;
 
 	golem->consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
 
@@ -245,9 +246,9 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 //}
 
 
-Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
+	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
 
 	// Transform data
@@ -271,7 +272,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
+	//temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
 
 
 	return temp;
@@ -291,10 +292,11 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
+	temp->anim_controller->Initialize(temp);
 
-	scale.x *= 100.0f;
-	scale.y *= 100.0f;
-	scale.z *= 100.0f;
+	scale.x *= (1.f / scale.x);
+	scale.y *= (1.f / scale.y);
+	scale.z *= (1.f / scale.z);
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
@@ -306,42 +308,42 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 }
 
 
-
-ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType)
-{
-	ADAI::AIUnit* temp = new ADAI::AIUnit;
-	temp->owner = _destructable;
-	_destructable->gamePlayType = _minionType;
-	_destructable->deathEvent = "MinionDeath";
-	_destructable->desirability = 0.5f;
-	switch (_destructable->gamePlayType)
-	{
-	case STONE_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
-		break;
-	case WATER_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
-		break;
-	case FIRE_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
-		break;
-	case WOOD_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
-		break;
-	}
-	_destructable->team = 0;
-	ADAI::IdleState* idling = new ADAI::IdleState();
-	ADAI::FlockingState* charging = new ADAI::FlockingState();
-	idling->owner = temp;
-	charging->owner = temp;
-	temp->states.push_back(idling);
-	temp->states.push_back(charging);
-	temp->currentState = idling;
-
-	_commandGroup->AddUnitToGroup(temp, charging);
-
-	return temp;
-}
+//
+//ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType)
+//{
+//	ADAI::AIUnit* temp = new ADAI::AIUnit;
+//	temp->owner = _destructable;
+//	_destructable->gamePlayType = _minionType;
+//	_destructable->deathEvent = "MinionDeath";
+//	_destructable->desirability = 0.5f;
+//	switch (_destructable->gamePlayType)
+//	{
+//	case STONE_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
+//		break;
+//	case WATER_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
+//		break;
+//	case FIRE_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
+//		break;
+//	case WOOD_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
+//		break;
+//	}
+//	_destructable->team = 0;
+//	ADAI::IdleState* idling = new ADAI::IdleState();
+//	ADAI::FlockingState* charging = new ADAI::FlockingState();
+//	idling->owner = temp;
+//	charging->owner = temp;
+//	temp->states.push_back(idling);
+//	temp->states.push_back(charging);
+//	temp->currentState = idling;
+//
+//	_commandGroup->AddUnitToGroup(temp, charging);
+//
+//	return temp;
+//}
 //
 //void GameUtilities::InitializeMinionModels()
 //{
@@ -440,25 +442,160 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 //	return nullptr;
 //}
 
-ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI::FlockingGroup* _fearGroup)
+ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* _engine)
 {
-	ADAI::AIUnit* temp = new ADAI::AIUnit;
-	temp->owner = _destructable;
+	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
 	_destructable->gamePlayType = OBJECT_TAG::PEASANT;
 	_destructable->deathEvent = "VillagerDeath";
 	_destructable->team = 1;
-	ADAI::IdleState* idling = new ADAI::IdleState();
-	ADAI::FlockingState* fleeing = new ADAI::FlockingState();
-	ADAI::FlockingState* chasingFleeing = new ADAI::FlockingState();
-	idling->owner = temp;
-	fleeing->owner = temp;
+	_destructable->colScale.x *= 5;
+	_destructable->colScale.y *= 5;
+	_destructable->colScale.z *= 5;
+	_destructable->anim_controller->SetNamebyIndex(0, "Idle");
+	_destructable->anim_controller->SetNamebyIndex(1, "Run");
+	_destructable->anim_controller->SetNamebyIndex(2, "Cower");
+	_destructable->anim_controller->SetNamebyIndex(3, "Death");
+	_destructable->safeRadius = 5.f;
+	_destructable->attackRadius = 8.f;
+	_destructable->villagerBlood = _engine->bloodEmitters;
 
-	temp->states.push_back(idling);
-	temp->states.push_back(fleeing);
-	temp->currentState = idling;
+	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
+	temp->mySSM.gameObject = _destructable;
+	temp->destructable = _destructable;
 
-	_fearGroup->AddUnitToGroup(temp, fleeing);
-	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
+	ADAI::FlockingState* waypoint = new ADAI::FlockingState();
+	waypoint->mySSM = &temp->mySSM;
+	temp->mySSM.states.push_back(waypoint);
+
+	ADAI::FleeingState* fleeing = new ADAI::FleeingState();
+	fleeing->mySSM = &temp->mySSM;
+	fleeing->villager = temp;
+	fleeing->fearedObjects = _fearGroup;
+
+
+	//fleeing->safetyStructures = _safetyGroup;
+	//for (auto& unit : _fearGroup)
+	//{
+	//	fleeing->fearedObjects.push_back(unit);
+	////}
+
+	for (auto& unit : *_safetyGroup)
+	{
+		fleeing->safetyStructures.push_back(unit);
+	}
+	temp->mySSM.states.push_back(fleeing);
+	temp->mySSM.currentState = fleeing;
+	_localGroup->AddUnitToGroup(temp, fleeing);
+	//_localGroup->AddUnitToGroup(temp, waypoint);
+
+
+	ADAI::AttackingState* attacking = new ADAI::AttackingState();
+	attacking->mySSM = &temp->mySSM;
+	attacking->returnIndex = 1;
+	attacking->myAttack = DefinitionDatabase::Instance()->actionDatabase["VillagerCower"];
+	temp->mySSM.states.push_back(attacking);
+
+
+	return temp;
+}
+
+ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType)
+{
+	_destructable->gamePlayType = _minionType;
+	_destructable->deathEvent = "MinionDeath";
+	_destructable->desirability = 0.5f;
+	_destructable->team = 0;
+	_destructable->colScale.x *= 8;
+	_destructable->colScale.y *= 10;
+	_destructable->colScale.z *= 8;
+	_destructable->anim_controller->SetNamebyIndex(0, "Idle");
+	_destructable->anim_controller->SetNamebyIndex(1, "Run");
+	_destructable->anim_controller->SetNamebyIndex(2, "Attack");
+	_destructable->anim_controller->SetNamebyIndex(3, "Born");
+	_destructable->anim_controller->SetNamebyIndex(4, "Flinch");
+	_destructable->anim_controller->SetNamebyIndex(5, "Death");
+
+
+	ADAI::MinionAI* temp = new ADAI::MinionAI;
+	temp->mySSM.gameObject = _destructable;
+	temp->destructable = _destructable;
+
+
+	ADAI::FlockingState* idling = new ADAI::FlockingState();
+	idling->mySSM = &temp->mySSM;
+	temp->mySSM.states.push_back(idling);
+
+	ADAI::CommandState* charging = new ADAI::CommandState();
+	charging->mySSM = &temp->mySSM;
+	charging->minion = temp;
+	charging->targets = _killGroup;
+	temp->mySSM.states.push_back(charging);
+
+	ADAI::AttackingState* attacking = new ADAI::AttackingState();
+	attacking->mySSM = &temp->mySSM;
+	attacking->returnIndex = 1;
+	temp->mySSM.states.push_back(attacking);
+
+	switch (_destructable->gamePlayType)
+	{
+	case STONE_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
+		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = temp->myAttack;
+
+		break;
+	case WATER_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
+		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = temp->myAttack;
+		break;
+	case FIRE_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
+		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = temp->myAttack;
+		break;
+	case WOOD_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
+		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = temp->myAttack;
+		break;
+	}
+
+	temp->mySSM.currentState = charging;
+
+	_localGroup->AddUnitToGroup(temp, charging);
+
+	return temp;
+}
+
+ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup)
+{
+	_tower->gamePlayType = BALLISTA;
+	_tower->deathEvent = "BuildingDeath";
+	_tower->desirability = 2.0f;
+	_tower->team = 1;
+
+	ADAI::TowerAI* temp = new ADAI::TowerAI;
+	temp->mySSM.gameObject = _tower;
+	temp->building = _tower;
+
+	ADAI::TowerState* targeting = new ADAI::TowerState();
+	targeting->tower = temp;
+	targeting->targets = _killGroup;
+	temp->mySSM.states.push_back(targeting);
+
+	ADAI::AttackingState* attacking = new ADAI::AttackingState();
+	attacking->mySSM = &temp->mySSM;
+	temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["BallistaBoltFire"]->Clone();
+	attacking->myAttack = temp->myAttack;
+	attacking->returnIndex = 0;
+	temp->mySSM.states.push_back(attacking);
+
+	temp->mySSM.currentState = targeting;
 
 	return temp;
 }
@@ -985,8 +1122,8 @@ std::vector<Renderable*> GameUtilities::GenerateAttackTower(XMFLOAT3 pos, XMFLOA
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/AttackTower.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation, true));
-	temp.push_back(AddSimpleAsset("files/models/Shed.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 25, pos.z), XMFLOAT3(25, 25, 25), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/AttackTower.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation, false));
+	temp.push_back(AddSimpleAsset("files/models/Shed.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 25, pos.z), XMFLOAT3(25, 25, 25), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1020,7 +1157,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall1(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1037,7 +1174,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall2(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1054,7 +1191,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall3(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1071,7 +1208,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall4(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1088,7 +1225,58 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall5(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_5.mesh", "files/textures/Cliff_5.mat", XMFLOAT3(pos.x, pos.y + 10, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_5.mesh", "files/textures/Cliff_5.mat", XMFLOAT3(pos.x, pos.y + 10, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GeneratePathway1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Pathway1.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.1, 0.1, 0.1), rotation, false));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GeneratePathway2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Pathway2.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.1, 0.1, 0.1), rotation, false));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GeneratePathway3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Pathway3.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.125, 0.125, 0.125), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{

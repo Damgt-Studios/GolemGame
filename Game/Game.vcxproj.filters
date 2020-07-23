@@ -38,6 +38,7 @@
     <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="TheGreatGolem.cpp" />
     <ClCompile Include="MinionManager.cpp" />
+    <ClCompile Include="GamePlayAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -243,5 +244,6 @@
     <ClInclude Include="Listeners.h" />
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="MinionManager.h" />
+    <ClInclude Include="GamePlayAI.h" />
   </ItemGroup>
 </Project>

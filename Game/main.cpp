@@ -173,13 +173,13 @@ public:
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
-		currentScene.LoadScene("files/scenes/TestScene.scenery");
+		currentScene.LoadScene("files/scenes/TestScene.scenery", engine);
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		
+
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		
+
 		GameUtilities::AddGameObject(engine->GetOrbitCamera());
 		golem->bigPuffs[STONE] = &engine->bigStonePuff;
 		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
@@ -188,8 +188,8 @@ public:
 
 
 
-		std::vector<std::string> bucketheadanims;
-		bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
+		//std::vector<std::string> bucketheadanims;
+		//bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
 
 
 
@@ -220,30 +220,33 @@ public:
 		Renderable* rock_wallCollider = GameUtilities::AddRenderableCollider();
 
 #ifdef ShowColliders
-		GameUtilities::AddGameObject(minionCollider);
+		//GameUtilities::AddGameObject(minionCollider);
 
 		GameUtilities::AddGameObject(golemCollider);
-		GameUtilities::AddGameObject(house1Collider);
-		GameUtilities::AddGameObject(house2Collider);
-		GameUtilities::AddGameObject(house3Collider);
-		GameUtilities::AddGameObject(house4Collider);
-		GameUtilities::AddGameObject(barn1Collider);
-		GameUtilities::AddGameObject(barn2Collider);
-		GameUtilities::AddGameObject(gatewayCollider);
-		GameUtilities::AddGameObject(towerCollider);
-		GameUtilities::AddGameObject(scaffoldingCollider);
-		GameUtilities::AddGameObject(wallCollider);
-		GameUtilities::AddGameObject(wellCollider);
-		GameUtilities::AddGameObject(tavernCollider);
-		GameUtilities::AddGameObject(rockCollider);
-		GameUtilities::AddGameObject(meeting_hallCollider);
-		GameUtilities::AddGameObject(cartCollider);
+		//GameUtilities::AddGameObject(house1Collider);
+		//GameUtilities::AddGameObject(house2Collider);
+		//GameUtilities::AddGameObject(house3Collider);
+		//GameUtilities::AddGameObject(house4Collider);
+		//GameUtilities::AddGameObject(barn1Collider);
+		//GameUtilities::AddGameObject(barn2Collider);
+		//GameUtilities::AddGameObject(gatewayCollider);
+		//GameUtilities::AddGameObject(towerCollider);
+		//GameUtilities::AddGameObject(scaffoldingCollider);
+		//GameUtilities::AddGameObject(wallCollider);
+		//GameUtilities::AddGameObject(wellCollider);
+		//GameUtilities::AddGameObject(tavernCollider);
+		//GameUtilities::AddGameObject(rockCollider);
+		//GameUtilities::AddGameObject(meeting_hallCollider);
+		//GameUtilities::AddGameObject(cartCollider);
 
-		GameUtilities::AddGameObject(rubbleCollider1);
-		GameUtilities::AddGameObject(rubbleCollider2);
-		GameUtilities::AddGameObject(rubbleCollider3);
+		//GameUtilities::AddGameObject(rubbleCollider1);
+		//GameUtilities::AddGameObject(rubbleCollider2);
+		//GameUtilities::AddGameObject(rubbleCollider3);
 
-		GameUtilities::AddGameObject(rock_wallCollider);
+		//GameUtilities::AddGameObject(rock_wallCollider1);
+		//GameUtilities::AddGameObject(rock_wallCollider2);
+		//GameUtilities::AddGameObject(rock_wallCollider3);
+		//GameUtilities::AddGameObject(rock_wallCollider4);
 
 #endif
 #endif
@@ -251,12 +254,12 @@ public:
 		//ADAI::FlockingGroup commandFlock;
 		//ADAI::FlockingGroup idleFlock;
 
-		//std::vector<Destructable*> stoneMinions;
-		//std::vector<Destructable*> waterMinions;
-		//std::vector<Destructable*> fireMinions;
-		//std::vector<Destructable*> woodMinions;
+		std::vector<Destructable*> stoneMinions;
+		std::vector<Destructable*> waterMinions;
+		std::vector<Destructable*> fireMinions;
+		std::vector<Destructable*> woodMinions;
 
-		//currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
+		currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
 
 		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
 
@@ -270,7 +273,8 @@ public:
 
 		//animationFiles[0] = "files/models/BattleMage.animfile";
 
-		golem->transform.r[3] = XMVectorSet(500, 0, -1100, 1);
+		golem->transform.r[3] = XMVectorSet(0, 0, 0, 1);
+		//golem->transform.r[3] = XMVectorSet(500, 0, -1125, 1);
 
 		engine->GetOrbitCamera()->SetClippingPlanes(0.1f, 10000.0f);
 
@@ -278,7 +282,7 @@ public:
 		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
 		GameUtilities::AddGameObject(physicsPlane);
 
-		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), true);
+		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, -3600), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), false);
 		mountainRange->colliderPtr = nullptr;
 		GameUtilities::AddGameObject(mountainRange);
 
@@ -320,13 +324,13 @@ public:
 
 #pragma endregion
 
-//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+		//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
 #pragma region Level Boundary
 
 		GameObject* object1 = new GameObject();
 		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(22.5, 100, 2000));
-		
+		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
+
 		GameObject* object2 = new GameObject();
 		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(22.5, 100, 2000));
@@ -341,11 +345,10 @@ public:
 
 		GameObject* object5 = new GameObject();
 		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -675), XMFLOAT3(22.5, 100, 1125));
+		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -625), XMFLOAT3(22.5, 100, 1400));
 
-		//rock_wallCollider->transform = XMMatrixMultiply(XMMatrixScaling(20, 100, 1125), XMMatrixTranslation(400,0,-675));
-
-		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
+		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
+		//std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
 
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 10), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 50), XMFLOAT3(0, 0, 0));
@@ -355,14 +358,14 @@ public:
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 240), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 290), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 340), XMFLOAT3(0, 180, 0));
-												   
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 390), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 430), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(630, 0, 480), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(630, 0, 530), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 580), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 620), XMFLOAT3(0, 0, 0));
-		
+
 		GameUtilities::GenerateRockWall3(XMFLOAT3(580, 0, 630), XMFLOAT3(0, 90, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(530, 0, 630), XMFLOAT3(0, 90, 0));
 		GameUtilities::GenerateRockWall1(XMFLOAT3(480, 0, 630), XMFLOAT3(0, 90, 0));
@@ -517,32 +520,58 @@ public:
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1210), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -1160), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -1110), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -1060), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -1020), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -970), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -920), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -870), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -830), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -780), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -730), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -680), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -640), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -590), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -540), XMFLOAT3(0, 0, 0));
-											
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -490), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -450), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -400), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -350), XMFLOAT3(0, 0, 0));
-												
+
 		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -300), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -260), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -210), XMFLOAT3(0, 0, 0));
 		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, -160), XMFLOAT3(0, 0, 0));
-												  
+
+		GameUtilities::GenerateRockWall1(XMFLOAT3(400, 0, -110), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall2(XMFLOAT3(400, 0, -70), XMFLOAT3(0, 180, 0));
+		GameUtilities::GenerateRockWall3(XMFLOAT3(400, 0, -20), XMFLOAT3(0, 0, 0));
+		GameUtilities::GenerateRockWall4(XMFLOAT3(400, 0, 30), XMFLOAT3(0, 0, 0));
+
+		Building* rock_wall1 = new Building(XMFLOAT3(380, 0, 80), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+		Building* rock_wall2 = new Building(XMFLOAT3(360, 0, 100), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
+		Building* rock_wall3 = new Building(XMFLOAT3(340, 0, 120), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
+		Building* rock_wall4 = new Building(XMFLOAT3(320, 0, 140), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+
+		GameUtilities::AddGameObject(rock_wall1);
+		GameUtilities::AddGameObject(rock_wall2);
+		GameUtilities::AddGameObject(rock_wall3);
+		GameUtilities::AddGameObject(rock_wall4);
+
+		Building* rock_wall5 = new Building(XMFLOAT3(300, 0, 160), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+		Building* rock_wall6 = new Building(XMFLOAT3(280, 0, 180), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall2, "Rubble");
+		Building* rock_wall7 = new Building(XMFLOAT3(260, 0, 200), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall3, "Rubble");
+		Building* rock_wall8 = new Building(XMFLOAT3(240, 0, 220), XMFLOAT3(0, -30, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 1, 0), GameUtilities::GenerateRockWall1, "Rubble");
+
+		GameUtilities::AddGameObject(rock_wall5);
+		GameUtilities::AddGameObject(rock_wall6);
+		GameUtilities::AddGameObject(rock_wall7);
+		GameUtilities::AddGameObject(rock_wall8);
+
+		
 #pragma endregion
 
 #pragma region Level
@@ -612,12 +641,6 @@ public:
 		//	housey->SetRubble(rubble2);
 
 		//}
-
-		//Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
-		//GameUtilities::AddGameObject(attackTower);
-
-		//Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
-		//GameUtilities::AddGameObject(ballista);
 
 		////Building* house2 = new Building(XMFLOAT3(-500, 0, 30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 25, 35), XMFLOAT3(0, 0.5, 0.15), GameUtilities::GenerateHouse2);
 		////GameUtilities::AddGameObject(house2);
@@ -835,11 +858,11 @@ public:
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
-	
+
 			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
-	
+
 
 			golem->GetView(view);
 
@@ -856,28 +879,28 @@ public:
 
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
 
-			XMFLOAT4X4 persPass; 
+			XMFLOAT4X4 persPass;
 			XMStoreFloat4x4(&persPass, pers);
-			
+
 
 #ifdef _DEBUG
-			minionCollider->transform = XMMatrixScaling(20, 5, 20);
-			minionCollider->transform.r[3] = { 20,10,20, 1 };
+			//minionCollider->transform = XMMatrixScaling(20, 5, 20);
+			//minionCollider->transform.r[3] = { 20,10,20, 1 };
 
 			//golemCollider->transform = golem->GetColliderInfo();
 
-			/*house1Collider->transform = house1->GetColliderInfo();
-			house2Collider->transform = house2->GetColliderInfo();
-			house3Collider->transform = house3->GetColliderInfo();
-			house4Collider->transform = house4->GetColliderInfo();
+			///*house1Collider->transform = house1->GetColliderInfo();
+			//house2Collider->transform = house2->GetColliderInfo();
+			//house3Collider->transform = house3->GetColliderInfo();
+			//house4Collider->transform = house4->GetColliderInfo();
 
-			barn1Collider->transform = barn1->GetColliderInfo();
+			//barn1Collider->transform = barn1->GetColliderInfo();
 
-			barn2Collider->transform = barn2->GetColliderInfo();
+			//barn2Collider->transform = barn2->GetColliderInfo();
 
-			gatewayCollider->transform = gateway->GetColliderInfo();
+			//gatewayCollider->transform = gateway->GetColliderInfo();
 
-			towerCollider->transform = tower->GetColliderInfo();*/
+			//towerCollider->transform = tower->GetColliderInfo();*/
 
 			//scaffoldingCollider->transform = scaffolding->GetColliderInfo();
 
@@ -937,7 +960,7 @@ public:
 						}
 					}
 				}*/
-				
+
 				//----------------------------------New Physics System-------------------------------
 				for (int i = 0; i < OBJ_COUNT; i++)
 				{
@@ -977,13 +1000,13 @@ public:
 				//Resolve all collisions that occurred this frame
 				ADResource::ADGameplay::ResolveCollisions();
 
-				/*for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 1; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
 					GroundClamping(waterMinions[i], tree, delta_time);
 					GroundClamping(fireMinions[i], tree, delta_time);
 					GroundClamping(woodMinions[i], tree, delta_time);
-				}*/
+				}
 
 			}
 
@@ -1059,11 +1082,6 @@ public:
 			if (Input::QueryButtonDown(GamepadButtons::LeftThumbstick) && Input::QueryButtonDown(GamepadButtons::RightThumbstick))
 			{
 				shutdown = true;
-			}
-			else if (Input::QueryButtonDown(GamepadButtons::RightThumbstick))
-			{
-				yaw = default_yaw;
-				pitch = default_pitch;
 			}
 		}
 	}

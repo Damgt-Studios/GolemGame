@@ -17,25 +17,27 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	InitAnims();
 
-	flockingGroups = new ADAI::FlockingGroup * [5];
+	minionGroups = new ADAI::MinionGroup * [5];
 	for (int i = 0; i < 5; ++i)
 	{
-		flockingGroups[i] = new ADAI::FlockingGroup();
-		flockingGroups[i]->groupTarget = &transform;
+		minionGroups[i] = new ADAI::MinionGroup();
+		minionGroups[i]->player = &transform;
 	}
 
 	desirability = 0.2f;
 
 	playerElement = 0;
+
+	isAlive = true;
 }
 
 ADResource::ADGameplay::Golem::~Golem()
 {
 	for (int i = 0; i < 5; ++i)
 	{
-		delete flockingGroups[i];
+		delete minionGroups[i];
 	}
-	delete[] flockingGroups;
+	delete[] minionGroups;
 }
 
 
@@ -57,7 +59,7 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 
 	for (int i = 0; i < 5; ++i)
 	{
-		flockingGroups[i]->Update(delta_time);
+		minionGroups[i]->Update(delta_time);
 	}
 
 	// Physics
@@ -96,9 +98,9 @@ void ADResource::ADGameplay::Golem::ProcessEffects(float _deltaTime)
 			i--;
 		}
 	}
-	if (stats->RequestStats("Health")->currentValue <= 0)
+	if (stats->RequestStats("Health")->currentValue <= 0 && isAlive)
 	{
-		//Death();
+		Die();
 	}
 }
 
@@ -107,7 +109,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 {
 	Manifold m;
 
-	if (obj->active)
+	if (obj->active && this != obj)
 	{
 		if (obj->colliderPtr->isCollision(&collider, m))
 		{
@@ -208,7 +210,7 @@ void ADResource::ADGameplay::Golem::OnCollision(GameObject* other, Manifold& m)
 		}
 		XMFLOAT4 pos;
 		XMStoreFloat4(&pos, transform.r[3]);
-		bigPuffs[playerElement]->Activate({pos.x, pos.y + 15, pos.z, pos.w});
+		bigPuffs[playerElement]->Activate({ pos.x, pos.y + 15, pos.z, pos.w });
 	}
 }
 
@@ -217,6 +219,18 @@ void ADResource::ADGameplay::Golem::Remove()
 
 }
 
+void ADResource::ADGameplay::Golem::Death()
+{
+	//Put a timer here to let the death animation play.
+	active = false;
+	//stop input and other processes now that your aren't active or however you want to do it.
+
+	ADUI::UIMessage eventUIMessage;
+	eventUIMessage.targetID = 1;
+	eventUIMessage.externalMsg = true;
+	eventUIMessage.commandID = 0;
+	ADUI::MessageReceiver::SendMessage(&eventUIMessage);
+}
 
 // Accessors
 void ADResource::ADGameplay::Golem::GetView(XMMATRIX& view)
@@ -265,120 +279,130 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 // Private Methods
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
-	// Idle Animation
-	if (!isActing)
+	if (isAlive)
 	{
-		if (idleTime > 10.0)
-			anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idleLook.c_str());
-		else
-			anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idle.c_str());
-		idleTime += delta_time;
+		// Idle Animation
+		if (!isActing)
+		{
+			if (idleTime > 10.0)
+				anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idleLook.c_str());
+			else
+				anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].idle.c_str());
+			idleTime += delta_time;
+		}
+
+		XMFLOAT3 pos(0, 0, 0);
+
+		responseTimer -= delta_time;
+		currentAnimTime -= delta_time;
+
+		if (currentAnimTime < -1000000 || currentAnimTime > 1000000)
+			currentAnimTime = 0.0;
+
+		if (currentAnimTime <= 0.0)
+			isActing = false;
+
+		// Golem Tower Punch
+		if (Input::QueryButtonDown(GamepadButtons::X) && !isActing && responseTimer < 0)
+		{
+			TowerPunch();
+		}
+
+		// Golem Ground Slam
+		if (Input::QueryButtonDown(GamepadButtons::A) && !isActing && responseTimer < 0)
+		{
+			GroundSlam();
+		}
+
+		// Golem Kick
+		if (Input::QueryButtonDown(GamepadButtons::B) && !isActing && responseTimer < 0)
+		{
+			Kick();
+		}
+
+		// Golem Special Move
+		if (Input::QueryButtonDown(GamepadButtons::Y) && !isActing && responseTimer < 0 && stats->RequestStats("Token")->currentValue > stats->RequestStats("Token")->minValue)
+		{
+			PerformSpecial();
+		}
+
+		// Increment Player Element
+		if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && !isActing && responseTimer < 0)
+		{
+			ChangeElement(true);
+		}
+
+		// Decrement Player Element
+		if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && !isActing && responseTimer < 0)
+		{
+			ChangeElement(false);
+		}
+
+		// Move up minions list
+		if (Input::QueryButtonDown(GamepadButtons::DPadDown) && responseTimer < 0)
+		{
+			ChangeMinionGroup(true);
+		}
+
+		// Move down minions list
+		if (Input::QueryButtonDown(GamepadButtons::DPadUp) && responseTimer < 0)
+		{
+			ChangeMinionGroup(false);
+		}
+
+		// Consume Minion
+		if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing && responseTimer < 0)
+		{
+			ConsumeMinion();
+		}
+
+		// Summon Minion
+		if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing && responseTimer < 0)
+		{
+			SummonMinions();
+		}
+
+		// Recall Minions
+		if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
+		{
+			RecallMinions();
+		}
+
+		// Send Minions Ahead
+		if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
+		{
+			commandDistanceTimer += delta_time;
+			CastCommandTarget(commandDistanceTimer * 500);
+		}
+		else if (commandDistanceTimer > 0)
+		{
+			CommandMinions();
+			commandDistanceTimer = 0;
+		}
+
+
+
+
+		// Golem Movement
+		XMFLOAT4 forward;
+		XMStoreFloat4(&forward, Golem::transform.r[2]);
+		if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK)) && !isActing)
+		{
+			MoveGolem(forward, delta_time);
+		}
+
+		AddToPositionVector((XMFLOAT3&)Velocity);
+
+		Velocity.x = 0;
+		Velocity.z = 0;
 	}
-
-	XMFLOAT3 pos(0, 0, 0);
-
-	responseTimer -= delta_time;
-	currentAnimTime -= delta_time;
-
-	if (currentAnimTime < -1000000 || currentAnimTime > 1000000)
-		currentAnimTime = 0.0;
-
-	if (currentAnimTime <= 0.0)
-		isActing = false;
-
-	// Golem Tower Punch
-	if (Input::QueryButtonDown(GamepadButtons::X) && !isActing && responseTimer < 0)
+	else
 	{
-		TowerPunch();
+		currentAnimTime -= delta_time;
+
+		if (currentAnimTime <= 0.0)
+			Death();
 	}
-
-	// Golem Ground Slam
-	if (Input::QueryButtonDown(GamepadButtons::A) && !isActing && responseTimer < 0)
-	{
-		GroundSlam();
-	}
-
-	// Golem Kick
-	if (Input::QueryButtonDown(GamepadButtons::B) && !isActing && responseTimer < 0)
-	{
-		Kick();
-	}
-
-	// Golem Special Move
-	if (Input::QueryButtonDown(GamepadButtons::Y) && !isActing && responseTimer < 0 && stats->RequestStats("Token")->currentValue > stats->RequestStats("Token")->minValue)
-	{
-		PerformSpecial();
-	}
-
-	// Increment Player Element
-	if (Input::QueryButtonDown(GamepadButtons::RightShoulder) && !isActing && responseTimer < 0)
-	{
-		ChangeElement(true);
-	}
-
-	// Decrement Player Element
-	if (Input::QueryButtonDown(GamepadButtons::LeftShoulder) && !isActing && responseTimer < 0)
-	{
-		ChangeElement(false);
-	}
-
-	// Move up minions list
-	if (Input::QueryButtonDown(GamepadButtons::DPadDown) && responseTimer < 0)
-	{
-		ChangeMinionGroup(true);
-	}
-
-	// Move down minions list
-	if (Input::QueryButtonDown(GamepadButtons::DPadUp) && responseTimer < 0)
-	{
-		ChangeMinionGroup(false);
-	}
-
-	// Consume Minion
-	if (Input::QueryButtonDown(GamepadButtons::DPadLeft) && !isActing && responseTimer < 0)
-	{
-		ConsumeMinion();
-	}
-
-	// Summon Minion
-	if (Input::QueryButtonDown(GamepadButtons::DPadRight) && !isActing && responseTimer < 0)
-	{
-		SummonMinions();
-	}
-
-	// Recall Minions
-	if (Input::QueryTriggerUpDown(Input::TRIGGERS::LEFT_TRIGGER, 0.1f))
-	{
-		RecallMinions();
-	}
-
-	// Send Minions Ahead
-	if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
-	{
-		commandDistanceTimer += delta_time;
-		CastCommandTarget(commandDistanceTimer * 500);
-	}
-	else if (commandDistanceTimer > 0)
-	{
-		CommandMinions();
-		commandDistanceTimer = 0;
-	}
-
-
-
-
-	// Golem Movement
-	XMFLOAT4 forward;
-	XMStoreFloat4(&forward, Golem::transform.r[2]);
-	if ((Input::QueryThumbStickUpDownY(Input::THUMBSTICKS::LEFT_THUMBSTICK) || Input::QueryThumbStickLeftRightX(Input::THUMBSTICKS::LEFT_THUMBSTICK)) && !isActing)
-	{
-		MoveGolem(forward, delta_time);
-	}
-
-	AddToPositionVector((XMFLOAT3&)Velocity);
-
-	Velocity.x = 0;
-	Velocity.z = 0;
 }
 
 void ADResource::ADGameplay::Golem::InitAnims()
@@ -520,15 +544,18 @@ void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
 {
 	if (commandTargetGroup == 4)
 	{
-		for (int i = 0; i < 3; ++i)
+		targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
+		minionGroups[0]->SetDestination(targetMarker);
+		for (int i = 1; i < 4; ++i)
 		{
-			flockingGroups[i]->SetCommandDirection(camera, delta_time);
+			//minionGroups[i]->SetCommandDirection(camera, delta_time);
+			minionGroups[i]->SetDestination(targetMarker);
 		}
-		targetMarker->SetPosition(flockingGroups[3]->SetCommandDirection(camera, delta_time));
 	}
 	else
 	{
-		targetMarker->SetPosition(flockingGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
+		targetMarker->SetPosition(minionGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
+		minionGroups[commandTargetGroup]->SetDestination(targetMarker);
 	}
 }
 
@@ -550,12 +577,14 @@ void ADResource::ADGameplay::Golem::RecallMinions()
 	{
 		for (int i = 0; i < 4; ++i)
 		{
-			flockingGroups[i]->ReturnCall();
+			//minionGroups[i]->ReturnCall();
+			minionGroups[i]->SetTarget(this);
 		}
 	}
 	else
 	{
-		flockingGroups[commandTargetGroup]->ReturnCall();
+		minionGroups[commandTargetGroup]->SetTarget(this);
+		//minionGroups[commandTargetGroup]->ReturnCall();
 	}
 }
 
@@ -653,6 +682,15 @@ void ADResource::ADGameplay::Golem::FlinchFromRight()
 {
 	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].heavyHitRight.c_str());
 	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].heavyHitRight.c_str()) / 2700.0;
+	isActing = true;
+	idleTime = 0.0;
+}
+
+void ADResource::ADGameplay::Golem::Die()
+{
+	isAlive = false;
+	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].death.c_str());
+	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].death.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 }

@@ -1,5 +1,6 @@
 #pragma once
-#include "ADAI.h"
+//#include "ADAI.h"
+#include "GameplayAI.h"
 #include "AnimationStateMachine.h"
 #include "GameEffects.h"
 #include <ADCombat.h>
@@ -36,6 +37,7 @@ namespace ADResource
 			void CheckCollision(GameObject* obj);
 			virtual void OnCollision(GameObject* other, Manifold& m);
 			void Remove();
+			void Death();
 			void InitializeController();
 
 
@@ -51,8 +53,9 @@ namespace ADResource
 			// Public Data Members
 			// AI
 			GameObject* targetMarker;
+
 			float commandDistanceTimer = 0;
-			ADAI::FlockingGroup** flockingGroups;
+			ADAI::MinionGroup** minionGroups;
 			int commandTargetGroup = 0;
 
 
@@ -96,12 +99,13 @@ namespace ADResource
 			void FlinchFromBack();
 			void FlinchFromLeft();
 			void FlinchFromRight();
+			void Die();
 
 
 
 			// Private Data Members
 			// Golem Stats
-
+			bool isAlive;
 			int health;
 
 

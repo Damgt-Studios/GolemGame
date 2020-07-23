@@ -17,7 +17,6 @@ namespace ADResource
 		class Building : public GameObject
 		{
 			StatSheet* stats;
-			std::string deathEvent;
 			Building* rubble = nullptr;
 
 
@@ -31,6 +30,9 @@ namespace ADResource
 
 
 		public:
+			std::string name;
+			std::string deathEvent;
+
 			Building()
 			{
 				//team = 1;
@@ -39,25 +41,14 @@ namespace ADResource
 			~Building() { delete stats; };
 			Building(Building&) = delete;
 			Building(const Building&) = delete;
-			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3))
-			{
-				pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
-				models = Generator(position, rotation);
-
-				for (size_t i = 0; i < models.size(); i++)
-				{
-					models[i]->colliderPtr = nullptr;
-				}
-
-				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
-				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-				colliderPtr = &collider;
-				team = 1;
-
-				stats = nullptr;
-			}
 			Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3), std::string statSheet)
 			{
+				//temp->SetScale(scale);
+				SetScale(collider_scale);
+				SetRotation(rotation);
+				SetPosition(position);
+				//pmat.InvMass = 0.01;
+
 				pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
 				models = Generator(position, rotation);
 
@@ -70,9 +61,30 @@ namespace ADResource
 				physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 				colliderPtr = &collider;
 				team = 1;
-
-				SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
+				desirability = 1;
+				safeRadius = min((colliderScale.x / 2.f), (colliderScale.z / 2.f)) - 1;
+				attackRadius = 18.f;
+				if (statSheet != "Inv")
+					SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			}
+
+			//Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3), std::string statSheet)
+			//{
+			//	pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
+			//	models = Generator(position, rotation);
+
+			//	for (size_t i = 0; i < models.size(); i++)
+			//	{
+			//		models[i]->colliderPtr = nullptr;
+			//	}
+
+			//	collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+			//	physicsType = OBJECT_PHYSICS_TYPE::STATIC;
+			//	colliderPtr = &collider;
+			//	team = 1;
+
+			//	SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
+			//}
 
 			void SetRubble(Building* _rubble)
 			{
@@ -81,22 +93,24 @@ namespace ADResource
 
 			void RemoveFromScene()
 			{
+				desirability = -5;
 				for (size_t i = 0; i < models.size(); i++)
 				{
 					ResourceManager::RemoveGameObject(models[i]);
 				}
-				if (destructionEmitter && destructionEmitter2)
-				{
-					if (!destructionEmitter->GetActive())
-						destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
-					else
-						destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
-				}
+				//if (destructionEmitter && destructionEmitter2)
+				//{
+				//	if (!destructionEmitter->GetActive())
+				//		destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+				//	else
+				//		destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+				//}
 			};
 
 			virtual void Update(float delta_time)
 			{
 				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
+				SetPosition(pos);
 				//collider.Pos = VectorToFloat3(XMVector3Transform(Float3ToVector(collider.Pos), XMMatrixScaling(25, 25, 25)));
 
 				physicsType = COLLIDABLE;
@@ -138,6 +152,11 @@ namespace ADResource
 				}
 			}
 
+			Renderable* GetModelByIndex(int _index)
+			{
+				return models[_index];
+			}
+
 			virtual StatSheet* GetStatSheet() override
 			{
 				return stats;
@@ -145,6 +164,7 @@ namespace ADResource
 
 			void SetStatSheet(StatSheet* statSheet)
 			{
+				has_stats = true;
 				stats = statSheet;
 			};
 

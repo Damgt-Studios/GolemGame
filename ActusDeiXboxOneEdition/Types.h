@@ -279,7 +279,7 @@ namespace ADResource
 			XMFLOAT4   CameraPosition;
 		};
 
-		struct LVP 
+		struct LVP
 		{
 			XMFLOAT4X4 ViewMatrix;
 			XMFLOAT4X4 ProjectionMatrix;
@@ -538,6 +538,10 @@ namespace ADResource
 			}
 			void RotationYBasedOnView(XMMATRIX& cam, float angle, float PI)
 			{
+				XMVECTOR camRot = GetRotation(cam);
+				bool isStraight = false;
+				if (((angle > -0.75f && angle < 0.75f) || ((angle > 2.39f && angle < 3.89f) || (angle < -2.39f && angle > -3.89f))) && ((camRot.m128_f32[1] > 1.57 && camRot.m128_f32[1] < 1.58)|| (camRot.m128_f32[1] > -0.1f && camRot.m128_f32[1] < 0.1f)))
+					isStraight = true;
 				angle *= (180.0f / PI);
 
 				cam = XMMatrixInverse(nullptr, cam);
@@ -545,7 +549,8 @@ namespace ADResource
 				cam = XMMatrixInverse(nullptr, cam);
 				cameulerAngles.m128_f32[1] *= (180.0f / PI);
 
-				angle += -cameulerAngles.m128_f32[1];
+				if (!isStraight)
+					angle += -cameulerAngles.m128_f32[1];
 				angle *= (PI / 180.0f);
 
 				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
@@ -614,11 +619,13 @@ namespace ADResource
 		public:
 			bool active = true;
 			float safeRadius = 5.0f;
+			float attackRadius = 5.0f;
 			float desirability = 0;
 
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
+			UINT actionLevel = 0;
 			AD_ULONG meshID;
 			//OBJECT_DEFENSE defenseType;
 			XMFLOAT4 Velocity = { 0,0,0,0 };
@@ -630,6 +637,7 @@ namespace ADResource
 
 		public:
 			bool has_mesh = false;
+			bool has_stats = false;
 		};
 
 		struct CollisionPacket
