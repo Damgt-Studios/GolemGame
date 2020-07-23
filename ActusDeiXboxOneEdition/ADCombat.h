@@ -2,6 +2,7 @@
 #include "Renderable.h"
 #include <AnimationStateMachine.h>
 #include <unordered_map>
+#include "ADParticles.h"
 
 
 namespace ADResource
@@ -447,6 +448,7 @@ namespace ADResource
 			AnimationStateMachine* anim_controller;
 			ADPhysics::AABB collider;
 			std::string deathEvent;
+			BloodEmitter* villagerBlood = nullptr;
 
 			Destructable()
 			{
@@ -530,6 +532,29 @@ namespace ADResource
 			{
 				ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
 				//Death Time
+				if (villagerBlood)
+				{
+					if (!villagerBlood[0].GetActive())
+						villagerBlood[0].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[1].GetActive())
+						villagerBlood[1].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[2].GetActive())
+						villagerBlood[2].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[3].GetActive())
+						villagerBlood[3].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[4].GetActive())
+						villagerBlood[4].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[5].GetActive())
+						villagerBlood[5].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[6].GetActive())
+						villagerBlood[6].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[7].GetActive())
+						villagerBlood[7].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[8].GetActive())
+						villagerBlood[8].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else
+						villagerBlood[9].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+				}
 				DropLoot();
 				Remove();
 			}

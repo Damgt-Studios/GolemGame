@@ -140,7 +140,7 @@ namespace ADGameplay
 
 		}
 
-		void InitializeScene()
+		void InitializeScene(Engine* _engine)
 		{
 #pragma region oldshit
 
@@ -1386,7 +1386,7 @@ namespace ADGameplay
 			for (int i = 0; i < 10; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3((i - 5) * 10, 0, -245), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
-				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1, &villagerThreats, &buildings));
+				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1, &villagerThreats, &buildings, _engine));
 			}
 			for (int i = 10; i < 20; i++)
 			{
@@ -1504,7 +1504,7 @@ namespace ADGameplay
 
 
 	public:
-		void LoadScene(const char* filename)
+		void LoadScene(const char* filename, Engine* _engine)
 		{
 			//InitializeScene();
 			std::fstream file{ filename, std::ios_base::in | std::ios_base::binary };
@@ -1684,7 +1684,7 @@ namespace ADGameplay
 			allMinionCountstr = new std::string();
 			villagerCountstr = new std::string();
 
-			InitializeScene();
+			InitializeScene(_engine);
 		}
 
 		ADResource::ADGameplay::Golem* GetGolem()

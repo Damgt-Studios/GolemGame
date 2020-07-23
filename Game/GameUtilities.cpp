@@ -488,7 +488,7 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 //	return nullptr;
 //}
 
-ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup)
+ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* _engine)
 {
 	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
 	_destructable->gamePlayType = OBJECT_TAG::PEASANT;
@@ -503,6 +503,7 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	_destructable->anim_controller->SetNamebyIndex(3, "Death");
 	_destructable->safeRadius = 5.f;
 	_destructable->attackRadius = 8.f;
+	_destructable->villagerBlood = _engine->bloodEmitters;
 	_destructable->desirability = 1.2f;
 
 	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
