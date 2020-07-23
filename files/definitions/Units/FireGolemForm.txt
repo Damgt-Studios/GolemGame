@@ -126,6 +126,7 @@ Model_Mat=files/textures/Fireball.mat
 Model_Width=1
 Model_Height=1
 Model_Length=1
+YRotation=180
 ZVelocity=10
 Team=0
 SingleHit=false

@@ -60,6 +60,7 @@ namespace ADResource
 			float offsetZ;
 			float offsetY = 0;
 			float lifespan;
+			XMFLOAT3 rotation;
 			
 			ADPhysics::OBB collider;
 
@@ -92,6 +93,7 @@ namespace ADResource
 				nBox->colScale = colScale;
 				nBox->modelScale = modelScale;
 				nBox->modelName = modelName;
+				nBox->matName = matName;
 				nBox->vel = vel;
 				nBox->lifespan = lifespan;
 				nBox->team = team;
@@ -113,7 +115,7 @@ namespace ADResource
 				//temp->SetPosition(position);
 				if (nBox->modelName != "")
 				{
-					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, XMFLOAT3(0, 0, 0)); // trigger->modelScale
+					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, { 0,0,0 }); // trigger->modelScale
 					nBox->SetMeshID(id);
 					//GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
 				}
@@ -123,14 +125,15 @@ namespace ADResource
 					nBox->SetMeshID(id);
 				}
 
-
+				//nBox->rotation = rotation;
+				//nBox->transform = XMMatrixRotationX(nBox->rotation.x);
 				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
 				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
 				//nBox->collider.AxisX.x = nBox->colScale.x;
 				//nBox->collider.AxisY.y = nBox->colScale.y;
 				//nBox->collider.AxisZ.z = nBox->colScale.z;
-				nBox->collider.trigger = true;
 				nBox->SetScale(nBox->modelScale);	//colScale);  
+				nBox->collider.trigger = true;
 				nBox->colliderPtr = &nBox->collider;
 
 				ResourceManager::AddGameObject(nBox);
@@ -152,7 +155,7 @@ namespace ADResource
 				if (active)
 				{
 					// Physics
-					collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));  //colScale);
+					collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));  //colScale); //
 					//collider.AxisX.x = colScale.x;
 					//collider.AxisY.y = colScale.y;
 					//collider.AxisZ.z = colScale.z;
@@ -276,6 +279,7 @@ namespace ADResource
 						//hitboxes[currentHitBox]->transform.r[2].m128_f32[0] = _casterTransform->r[2].m128_f32[2];
 						if (hitboxes[currentHitBox]->modelName == "")
 						{
+						//	hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(90.f), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection)));
 							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection));
 						}
 						else

@@ -307,6 +307,18 @@ public:
 					{
 						trigger->modelScale.z = std::stof(rhs);
 					}
+					else if (lhs == "XRotation")
+					{
+						trigger->rotation.x = std::stof(rhs);
+					}
+					else if (lhs == "YRotation")
+					{
+						trigger->rotation.y = std::stof(rhs);
+					}
+					else if (lhs == "ZRotation")
+					{
+						trigger->rotation.z = std::stof(rhs);
+					}
 					else if (lhs == "XVelocity")
 					{
 						trigger->vel.x = std::stof(rhs);
@@ -354,16 +366,17 @@ public:
 
 				if (trigger->modelName != "")
 				{
-					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0)); // trigger->modelScale
+					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, { 0,0,0 }); // trigger->modelScale
 					trigger->SetMeshID(id);
-					//GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
+					////GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
 				}
 				else
 				{
-					AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+					AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), { 0,0,0 });
 					trigger->SetMeshID(id);
 				}
 				trigger->colScale = scale;
+				//trigger->transform = XMMatrixRotationX(trigger->rotation.x);// trigger->rotation);
 				XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
 				trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, trigger->colScale); //XMFLOAT3(1, 1, 1)); 
 				//trigger->collider.AxisX.x = trigger->colScale.x;

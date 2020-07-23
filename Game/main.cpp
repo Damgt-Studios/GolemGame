@@ -1257,7 +1257,7 @@ public:
 		//Trigger* ww1 = GameUtilities::AddTriggerFromModelFile("files/models/WaterWave.mesh", "files/textures/WaterWave.mat", XMFLOAT3(10, 1, 10), XMFLOAT3(1.f, 1.05f, 1.05f), XMFLOAT3(0, 0, 0));
 		//GameUtilities::AddGameObject(ww1, true);
 
-		//Trigger* ar1 = GameUtilities::AddTriggerFromModelFile("files/models/Arrow.mesh", "", XMFLOAT3(-10, 1, 100), XMFLOAT3(1.05f, 1.05f, 1.05f), XMFLOAT3(0, 0, 0));
+		//Trigger* ar1 = GameUtilities::AddTriggerFromModelFile("files/models/Arrow.mesh", "files/textures/Bark.mat", XMFLOAT3(500, 1, -1000), XMFLOAT3(0.01f, 0.01f, 0.01f), XMFLOAT3(90, 0, 0));
 		//GameUtilities::AddGameObject(ar1, true);
 
 
@@ -1450,10 +1450,10 @@ public:
 								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
 						}
 
-						for (auto& object : forcedCollisions)
-						{
-							OBJS[i]->CheckCollision(object);
-						}
+						//for (auto& object : forcedCollisions)
+						//{
+						//	OBJS[i]->CheckCollision(object);
+						//}
 					}
 				}
 				//---------------------------------------------End New Physics System------------------------------------------
