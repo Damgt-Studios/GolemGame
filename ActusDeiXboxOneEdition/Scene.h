@@ -962,7 +962,7 @@ namespace ADGameplay
 			Building* ballista29 = new Building(XMFLOAT3(50, 20, -75), XMFLOAT3(0, -45, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, -5, 0), GameUtilities::GenerateBallista, "BallistaTower");
 			GameUtilities::AddGameObject(ballista29);
 
-			/*//Details
+			//Details
 
 			GameUtilities::GeneratePathway2(XMFLOAT3(0, 0, 10), XMFLOAT3(0, 0, 0));
 			GameUtilities::GeneratePathway3(XMFLOAT3(-17.5, 0, 62.5), XMFLOAT3(0, 180, 0));
@@ -1022,10 +1022,18 @@ namespace ADGameplay
 			GameUtilities::GeneratePathway2(XMFLOAT3(201, 0, 292.5), XMFLOAT3(0, 90, 0));
 			GameUtilities::GeneratePathway2(XMFLOAT3(255, 0, 297.5), XMFLOAT3(0, 80, 0));
 
-			GameUtilities::GeneratePathway2(XMFLOAT3(20, 0, -40), XMFLOAT3(0, -45, 0));
-			GameUtilities::GeneratePathway2(XMFLOAT3(-20, 0, -40), XMFLOAT3(0, 45, 0));
+			GameUtilities::GeneratePathway2(XMFLOAT3(18, 0, -35), XMFLOAT3(0, -45, 0));
+			GameUtilities::GeneratePathway2(XMFLOAT3(62, 0, -55), XMFLOAT3(0, 90, 0));
+			GameUtilities::GeneratePathway1(XMFLOAT3(116, 0, -61), XMFLOAT3(0, 90, 0));
+			GameUtilities::GeneratePathway3(XMFLOAT3(168, 0, -57), XMFLOAT3(0, 180, 0));
 
-			
+			GameUtilities::GeneratePathway2(XMFLOAT3(-18, 0, -35), XMFLOAT3(0, 45, 0));
+			GameUtilities::GeneratePathway2(XMFLOAT3(-62, 0, -55), XMFLOAT3(0, 90, 0));
+			GameUtilities::GeneratePathway2(XMFLOAT3(-116, 0, -55), XMFLOAT3(0, 90, 0));
+			GameUtilities::GeneratePathway1(XMFLOAT3(-177, 0, -49), XMFLOAT3(0, -90, 0));
+			GameUtilities::GeneratePathway3(XMFLOAT3(-234, 0, -60), XMFLOAT3(0, 90, 0));
+
+			/*
 
 			//Trees Collidable and Non-collidable
 			XMFLOAT3 renderable_tree_positions[] = {
