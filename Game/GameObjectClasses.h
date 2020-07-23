@@ -213,10 +213,10 @@ namespace ADResource
 				}
 				if (destructionEmitter && destructionEmitter2)
 				{
-					//if (!destructionEmitter->GetActive())
-					//	destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
-					//else
-					//	destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+					if (!destructionEmitter->GetActive())
+						destructionEmitter->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
+					else
+						destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
 				}
 
 				if (Essence)

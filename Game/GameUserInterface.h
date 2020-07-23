@@ -56,13 +56,14 @@ namespace GolemGameUISetup
             "to force them to return.                                       ",
 
             "Villagers and structuers will drop essence. Use the        ",
-            "right control pad to summon new minions. The minions born                  ", 
-            "will match the form that raised them. Fire, Earth and Water              ",
+            "right control pad to summon new minions. The minions born   ", 
+            "will match the form that raised them. Fire, Earth and Water ",
             "minions cost 50 Essence.  Wood minions cost 30 Essence.",
 
             "Stone Minions have increased Health.        ",
             "Water Minions have increased Movement Speed.                   ", 
             "Fire Minions have increased Attack Power.       ",
+            " ",
         };
 
     public:

@@ -7,6 +7,7 @@
 #include "ADCombat.h"
 #include "ADEventSystem.h"
 #include "ADUserInterface.h"
+#include "Engine.h"
 
 #include <iostream>
 #include <fstream>
@@ -110,7 +111,7 @@ namespace ADGameplay
 		ADAI::VillagerGroup villageFlock4;
 		ADAI::VillagerGroup villageFlock5;
 
-		void AddRubble(ADResource::ADGameplay::Building* _building, int _rubbleID, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset)
+		void AddRubble(ADResource::ADGameplay::Building* _building, int _rubbleID, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, Engine* _engine)
 		{
 			Building* rubble;
 			switch (_rubbleID)
@@ -131,6 +132,8 @@ namespace ADGameplay
 			rubble->active = false;
 			GameUtilities::AddGameObject(rubble);
 			_building->SetRubble(rubble);
+			_building->destructionEmitter = &_engine->destructionCloud;
+			_building->destructionEmitter2 = &_engine->destructionCloud;
 			//I don't feel like pasting this 3000s times.... so here it is.
 			AddBuilding(_building);
 		}
@@ -455,563 +458,563 @@ namespace ADGameplay
 
 			Building* tower1 = new Building(XMFLOAT3(271.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			GameUtilities::AddGameObject(tower1);
-			AddRubble(tower1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0));
+			AddRubble(tower1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			Building* tower2 = new Building(XMFLOAT3(271.5, 0, -826.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			GameUtilities::AddGameObject(tower2);
-			AddRubble(tower2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0));
+			AddRubble(tower2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			Building* tower3 = new Building(XMFLOAT3(-474, 0, -826.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			GameUtilities::AddGameObject(tower3);
-			AddRubble(tower3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0));
+			AddRubble(tower3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			Building* tower4 = new Building(XMFLOAT3(-474, 0, -364.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			GameUtilities::AddGameObject(tower4);
-			AddRubble(tower4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0));
+			AddRubble(tower4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			Building* tower5 = new Building(XMFLOAT3(-255, 0, -364.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			GameUtilities::AddGameObject(tower5);
-			AddRubble(tower5, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0));
+			AddRubble(tower5, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			Building* tower6 = new Building(XMFLOAT3(-255, 0, -145.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			GameUtilities::AddGameObject(tower6);
-			AddRubble(tower6, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0));
+			AddRubble(tower6, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			//========================================================Houses
 
 			Building* tutorial_home1 = new Building(XMFLOAT3(570, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home1);
-			AddRubble(tutorial_home1, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home1, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home2 = new Building(XMFLOAT3(570, 0, -1100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home2);
-			AddRubble(tutorial_home2, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home2, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home3 = new Building(XMFLOAT3(460, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home3);
-			AddRubble(tutorial_home3, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home3, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home4 = new Building(XMFLOAT3(460, 0, -1100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home4);
-			AddRubble(tutorial_home4, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home4, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home5 = new Building(XMFLOAT3(570, 0, -750), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home5);
-			AddRubble(tutorial_home5, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home5, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home6 = new Building(XMFLOAT3(570, 0, -850), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home6);
-			AddRubble(tutorial_home6, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home6, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home7 = new Building(XMFLOAT3(460, 0, -750), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home7);
-			AddRubble(tutorial_home7, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home7, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home8 = new Building(XMFLOAT3(460, 0, -850), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home8);
-			AddRubble(tutorial_home8, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home8, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home9 = new Building(XMFLOAT3(570, 0, -100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home9);
-			AddRubble(tutorial_home9, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home9, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home10 = new Building(XMFLOAT3(570, 0, -200), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home10);
-			AddRubble(tutorial_home10, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home10, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home11 = new Building(XMFLOAT3(460, 0, -100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home11);
-			AddRubble(tutorial_home11, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home11, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* tutorial_home12 = new Building(XMFLOAT3(460, 0, -200), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(tutorial_home12);
-			AddRubble(tutorial_home12, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(tutorial_home12, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home1 = new Building(XMFLOAT3(575, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home1);
-			AddRubble(home1, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home1, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home2 = new Building(XMFLOAT3(525, 0, 250), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home2);
-			AddRubble(home2, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home2, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home3 = new Building(XMFLOAT3(475, 0, 300), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home3);
-			AddRubble(home3, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home3, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home4 = new Building(XMFLOAT3(475, 0, 350), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home4);
-			AddRubble(home4, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home4, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home5 = new Building(XMFLOAT3(475, 0, 400), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home5);
-			AddRubble(home5, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home5, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home6 = new Building(XMFLOAT3(525, 0, 450), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home6);
-			AddRubble(home6, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home6, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home7 = new Building(XMFLOAT3(575, 0, 500), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home7);
-			AddRubble(home7, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home7, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home8 = new Building(XMFLOAT3(200, 0, 575), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home8);
-			AddRubble(home8, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home8, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home9 = new Building(XMFLOAT3(250, 0, 525), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home9);
-			AddRubble(home9, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home9, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home10 = new Building(XMFLOAT3(300, 0, 475), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home10);
-			AddRubble(home10, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home10, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home11 = new Building(XMFLOAT3(350, 0, 475), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home11);
-			AddRubble(home11, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home11, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home12 = new Building(XMFLOAT3(400, 0, 475), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home12);
-			AddRubble(home12, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home12, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home13 = new Building(XMFLOAT3(450, 0, 525), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home13);
-			AddRubble(home13, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home13, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home14 = new Building(XMFLOAT3(500, 0, 575), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home14);
-			AddRubble(home14, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home14, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home15 = new Building(XMFLOAT3(440, 0, 80), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home15);
-			AddRubble(home15, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home15, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home16 = new Building(XMFLOAT3(400, 0, 120), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home16);
-			AddRubble(home16, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home16, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home17 = new Building(XMFLOAT3(360, 0, 160), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home17);
-			AddRubble(home17, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home17, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home18 = new Building(XMFLOAT3(320, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home18);
-			AddRubble(home18, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home18, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home19 = new Building(XMFLOAT3(280, 0, 240), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home19);
-			AddRubble(home19, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home19, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home20 = new Building(XMFLOAT3(240, 0, 280), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home20);
-			AddRubble(home20, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home20, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home21 = new Building(XMFLOAT3(180, 0, 275), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home21);
-			AddRubble(home21, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home21, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home22 = new Building(XMFLOAT3(120, 0, 270), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home22);
-			AddRubble(home22, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home22, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home23 = new Building(XMFLOAT3(60, 0, 265), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home23);
-			AddRubble(home23, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home23, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home24 = new Building(XMFLOAT3(0, 0, 260), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home24);
-			AddRubble(home24, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home24, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home25 = new Building(XMFLOAT3(-60, 0, 255), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home25);
-			AddRubble(home25, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home25, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home26 = new Building(XMFLOAT3(-120, 0, 250), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home26);
-			AddRubble(home26, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home26, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home27 = new Building(XMFLOAT3(180, 0, 500), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home27);
-			AddRubble(home27, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home27, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home28 = new Building(XMFLOAT3(120, 0, 495), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home28);
-			AddRubble(home28, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home28, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home29 = new Building(XMFLOAT3(60, 0, 490), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home29);
-			AddRubble(home29, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home29, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home30 = new Building(XMFLOAT3(0, 0, 485), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home30);
-			AddRubble(home30, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home30, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home31 = new Building(XMFLOAT3(-60, 0, 480), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home31);
-			AddRubble(home31, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home31, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home32 = new Building(XMFLOAT3(-120, 0, 475), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home32);
-			AddRubble(home32, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home32, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home33 = new Building(XMFLOAT3(-180, 0, 465), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home33);
-			AddRubble(home33, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home33, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home34 = new Building(XMFLOAT3(-220, 0, 435), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home34);
-			AddRubble(home34, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home34, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home35 = new Building(XMFLOAT3(-250, 0, 395), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home35);
-			AddRubble(home35, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home35, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home36 = new Building(XMFLOAT3(-270, 0, 345), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home36);
-			AddRubble(home36, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home36, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home37 = new Building(XMFLOAT3(-270, 0, 165), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home37);
-			AddRubble(home37, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home37, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home38 = new Building(XMFLOAT3(-250, 0, 115), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home38);
-			AddRubble(home38, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home38, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home39 = new Building(XMFLOAT3(-220, 0, 75), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home39);
-			AddRubble(home39, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home39, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home40 = new Building(XMFLOAT3(-180, 0, 45), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home40);
-			AddRubble(home40, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home40, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home41 = new Building(XMFLOAT3(300, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home41);
-			AddRubble(home41, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home41, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home42 = new Building(XMFLOAT3(250, 0, -1050), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home42);
-			AddRubble(home42, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home42, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home43 = new Building(XMFLOAT3(200, 0, -1100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home43);
-			AddRubble(home43, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home43, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home44 = new Building(XMFLOAT3(150, 0, -1050), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home44);
-			AddRubble(home44, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home44, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home45 = new Building(XMFLOAT3(100, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home45);
-			AddRubble(home45, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home45, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home46 = new Building(XMFLOAT3(0, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home46);
-			AddRubble(home46, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home46, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home47 = new Building(XMFLOAT3(-50, 0, -1050), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home47);
-			AddRubble(home47, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home47, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home48 = new Building(XMFLOAT3(-100, 0, -1100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home48);
-			AddRubble(home48, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home48, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home49 = new Building(XMFLOAT3(-150, 0, -1050), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home49);
-			AddRubble(home49, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home49, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home50 = new Building(XMFLOAT3(-200, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home50);
-			AddRubble(home50, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home50, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home51 = new Building(XMFLOAT3(-300, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home51);
-			AddRubble(home51, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home51, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home52 = new Building(XMFLOAT3(-350, 0, -1050), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home52);
-			AddRubble(home52, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home52, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home53 = new Building(XMFLOAT3(-400, 0, -1100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home53);
-			AddRubble(home53, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home53, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home54 = new Building(XMFLOAT3(-450, 0, -1050), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home54);
-			AddRubble(home54, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home54, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home55 = new Building(XMFLOAT3(-500, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home55);
-			AddRubble(home55, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home55, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home56 = new Building(XMFLOAT3(-200, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home56);
-			AddRubble(home56, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home56, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home57 = new Building(XMFLOAT3(-125, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home57);
-			AddRubble(home57, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home57, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home58 = new Building(XMFLOAT3(-50, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home58);
-			AddRubble(home58, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home58, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home59 = new Building(XMFLOAT3(50, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home59);
-			AddRubble(home59, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home59, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home60 = new Building(XMFLOAT3(125, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home60);
-			AddRubble(home60, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home60, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home61 = new Building(XMFLOAT3(200, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home61);
-			AddRubble(home61, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home61, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home62 = new Building(XMFLOAT3(-275, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home62);
-			AddRubble(home62, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home62, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home63 = new Building(XMFLOAT3(-350, 0, -30), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home63);
-			AddRubble(home63, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home63, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home64 = new Building(XMFLOAT3(-275, 0, -125), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home64);
-			AddRubble(home64, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home64, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home65 = new Building(XMFLOAT3(-350, 0, -125), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home65);
-			AddRubble(home65, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home65, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home66 = new Building(XMFLOAT3(225, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home66);
-			AddRubble(home66, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home66, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home67 = new Building(XMFLOAT3(225, 0, -150), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home67);
-			AddRubble(home67, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home67, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home68 = new Building(XMFLOAT3(225, 0, -225), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home68);
-			AddRubble(home68, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home68, 2, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home69 = new Building(XMFLOAT3(225, 0, -300), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home69);
-			AddRubble(home69, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home69, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home70 = new Building(XMFLOAT3(225, 0, -375), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home70);
-			AddRubble(home70, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home70, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home71 = new Building(XMFLOAT3(225, 0, -450), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home71);
-			AddRubble(home71, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home71, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home72 = new Building(XMFLOAT3(225, 0, -525), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home72);
-			AddRubble(home72, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home72, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home73 = new Building(XMFLOAT3(225, 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home73);
-			AddRubble(home73, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home73, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home74 = new Building(XMFLOAT3(225, 0, -675), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home74);
-			AddRubble(home74, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home74, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home75 = new Building(XMFLOAT3(225, 0, -750), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home75);
-			AddRubble(home75, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home75, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home76 = new Building(XMFLOAT3(-225, 0, -150), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home76);
-			AddRubble(home76, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home76, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home77 = new Building(XMFLOAT3(-187.5, 0, -187.5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home77);
-			AddRubble(home77, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home77, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home78 = new Building(XMFLOAT3(-150, 0, -225), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home78);
-			AddRubble(home78, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home78, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home79 = new Building(XMFLOAT3(-112.5, 0, -262.5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home79);
-			AddRubble(home79, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home79, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home80 = new Building(XMFLOAT3(-75, 0, -300), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home80);
-			AddRubble(home80, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home80, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home81 = new Building(XMFLOAT3(-225, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home81);
-			AddRubble(home81, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home81, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home82 = new Building(XMFLOAT3(-187.5, 0, -387.5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home82);
-			AddRubble(home82, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home82, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home83 = new Building(XMFLOAT3(-150, 0, -425), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home83);
-			AddRubble(home83, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home83, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home84 = new Building(XMFLOAT3(-112.5, 0, -462.5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home84);
-			AddRubble(home84, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home84, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home85 = new Building(XMFLOAT3(-75, 0, -500), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home85);
-			AddRubble(home85, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home85, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home86 = new Building(XMFLOAT3(150, 0, -550), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home86);
-			AddRubble(home86, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home86, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home87 = new Building(XMFLOAT3(125, 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home87);
-			AddRubble(home87, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home87, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home88 = new Building(XMFLOAT3(100, 0, -650), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home88);
-			AddRubble(home88, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home88, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home89 = new Building(XMFLOAT3(75, 0, -700), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home89);
-			AddRubble(home89, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home89, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home90 = new Building(XMFLOAT3(50, 0, -750), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home90);
-			AddRubble(home90, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home90, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home91 = new Building(XMFLOAT3(-25, 0, -375), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home91);
-			AddRubble(home91, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home91, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home92 = new Building(XMFLOAT3(12.5, 0, -337.5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home92);
-			AddRubble(home92, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home92, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home93 = new Building(XMFLOAT3(50, 0, -300), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home93);
-			AddRubble(home93, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home93, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home94 = new Building(XMFLOAT3(87.5, 0, -337.5), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home94);
-			AddRubble(home94, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home94, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home95 = new Building(XMFLOAT3(125, 0, -375), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home95);
-			AddRubble(home95, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home95, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home96 = new Building(XMFLOAT3(-200, 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home96);
-			AddRubble(home96, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home96, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home97 = new Building(XMFLOAT3(-350, 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home97);
-			AddRubble(home97, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home97, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home98 = new Building(XMFLOAT3(-275, 0, -525), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home98);
-			AddRubble(home98, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home98, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home99 = new Building(XMFLOAT3(-275, 0, -675), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home99);
-			AddRubble(home99, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home99, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home100 = new Building(XMFLOAT3(-225, 0, -550), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home100);
-			AddRubble(home100, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home100, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home101 = new Building(XMFLOAT3(-325, 0, -550), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home101);
-			AddRubble(home101, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home101, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home102 = new Building(XMFLOAT3(-225, 0, -650), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home102);
-			AddRubble(home102, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home102, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home103 = new Building(XMFLOAT3(-325, 0, -650), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home103);
-			AddRubble(home103, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home103, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home104 = new Building(XMFLOAT3(0, 0, -650), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home104);
-			AddRubble(home104, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home104, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home105 = new Building(XMFLOAT3(-75, 0, -675), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home105);
-			AddRubble(home105, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home105, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home106 = new Building(XMFLOAT3(-150, 0, -700), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home106);
-			AddRubble(home106, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home106, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home107 = new Building(XMFLOAT3(-225, 0, -725), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home107);
-			AddRubble(home107, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home107, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home108 = new Building(XMFLOAT3(-300, 0, -750), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home108);
-			AddRubble(home108, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home108, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home109 = new Building(XMFLOAT3(-375, 0, -775), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home109);
-			AddRubble(home109, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home109, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home110 = new Building(XMFLOAT3(-275, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home110);
-			AddRubble(home110, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home110, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home111 = new Building(XMFLOAT3(-325, 0, -425), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home111);
-			AddRubble(home111, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home111, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home112 = new Building(XMFLOAT3(-375, 0, -475), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home112);
-			AddRubble(home112, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home112, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			Building* home113 = new Building(XMFLOAT3(-425, 0, -550), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home113);
-			AddRubble(home113, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5));
+			AddRubble(home113, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
 
 			//========================================Large Buildings
 
 			Building* tavern1 = new Building(XMFLOAT3(-400, 0, 250), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			GameUtilities::AddGameObject(tavern1);
-			AddRubble(tavern1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0));
+			AddRubble(tavern1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* tavern2 = new Building(XMFLOAT3(-400, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			GameUtilities::AddGameObject(tavern2);
-			AddRubble(tavern2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0));
+			AddRubble(tavern2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* tavern3 = new Building(XMFLOAT3(200, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			GameUtilities::AddGameObject(tavern3);
-			AddRubble(tavern3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0));
+			AddRubble(tavern3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* tavern4 = new Building(XMFLOAT3(200, 0, 375), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			GameUtilities::AddGameObject(tavern4);
-			AddRubble(tavern4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0));
+			AddRubble(tavern4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* meeting_hall1 = new Building(XMFLOAT3(-100, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			GameUtilities::AddGameObject(meeting_hall1);
-			AddRubble(meeting_hall1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0));
+			AddRubble(meeting_hall1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* meeting_hall2 = new Building(XMFLOAT3(50, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			GameUtilities::AddGameObject(meeting_hall2);
-			AddRubble(meeting_hall2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0));
+			AddRubble(meeting_hall2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* meeting_hall3 = new Building(XMFLOAT3(-275, 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			GameUtilities::AddGameObject(meeting_hall3);
-			AddRubble(meeting_hall3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0));
+			AddRubble(meeting_hall3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
 
 			Building* meeting_hall4 = new Building(XMFLOAT3(-475, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			GameUtilities::AddGameObject(meeting_hall4);
-			AddRubble(meeting_hall4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0));
+			AddRubble(meeting_hall4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
 			//Building* rubble1 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			//GameUtilities::AddGameObject(rubble1);
 			//meeting_hall4->SetRubble(rubble1);
@@ -1391,22 +1394,22 @@ namespace ADGameplay
 			for (int i = 10; i < 20; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3((i - 5) * 10, 0, -400), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
-				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock2, &villagerThreats, &buildings));
+				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock2, &villagerThreats, &buildings, _engine));
 			}
 			for (int i = 20; i < 30; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3((i - 5) * 10, 0, -700), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
-				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock3, &villagerThreats, &buildings));
+				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock3, &villagerThreats, &buildings, _engine));
 			}
 			for (int i = 30; i < 40; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3((i - 5) * 10, 0, -900), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
-				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock4, &villagerThreats, &buildings));
+				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock4, &villagerThreats, &buildings, _engine));
 			}
 			for (int i = 40; i < 50; i++)
 			{
 				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*-200.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
-				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock5, &villagerThreats, &buildings));
+				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock5, &villagerThreats, &buildings, _engine));
 			}
 
 			villagerThreats.push_back(golem);
@@ -1826,6 +1829,7 @@ namespace ADGameplay
 
 			if (_building->HasRubble())
 			{
+				_building->GetRubble()->active = false;
 				minionAvoids.push_back(_building->GetRubble());
 			}
 		}

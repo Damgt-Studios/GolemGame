@@ -276,7 +276,7 @@ public:
 
 		//animationFiles[0] = "files/models/BattleMage.animfile";
 
-		golem->transform.r[3] = XMVectorSet(0, 0, 0, 1);
+		//golem->transform.r[3] = XMVectorSet(0, 0, 0, 1);
 		//golem->transform.r[3] = XMVectorSet(500, 0, -1125, 1);
 
 		engine->GetOrbitCamera()->SetClippingPlanes(0.1f, 10000.0f);
@@ -808,159 +808,159 @@ public:
 		////GameUtilities::AddGameObject(rubble6);
 
 #pragma endregion
-
-		// Initialize the engine
-		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
-		currentScene.LoadScene("files/scenes/TestScene.scenery");
-		golem = currentScene.GetGolem();
-		game->LoadListeners(golem, &currentScene);
-		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		
-		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		
-		GameUtilities::AddGameObject(engine->GetOrbitCamera());
-		golem->bigPuffs[STONE] = &engine->bigStonePuff;
-		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
-		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
-		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
-
-
-
-		//std::vector<std::string> bucketheadanims;
-		//bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
-
-
-
-#ifdef _DEBUG
-
-		Renderable* golemCollider = GameUtilities::AddRenderableCollider();
-		Renderable* house1Collider = GameUtilities::AddRenderableCollider();
-		Renderable* house2Collider = GameUtilities::AddRenderableCollider();
-		Renderable* house3Collider = GameUtilities::AddRenderableCollider();
-		Renderable* house4Collider = GameUtilities::AddRenderableCollider();
-		Renderable* barn1Collider = GameUtilities::AddRenderableCollider();
-		Renderable* barn2Collider = GameUtilities::AddRenderableCollider();
-		Renderable* gatewayCollider = GameUtilities::AddRenderableCollider();
-		Renderable* towerCollider = GameUtilities::AddRenderableCollider();
-		Renderable* scaffoldingCollider = GameUtilities::AddRenderableCollider();
-		Renderable* wallCollider = GameUtilities::AddRenderableCollider();
-		Renderable* wellCollider = GameUtilities::AddRenderableCollider();
-		Renderable* tavernCollider = GameUtilities::AddRenderableCollider();
-		Renderable* rockCollider = GameUtilities::AddRenderableCollider();
-		Renderable* meeting_hallCollider = GameUtilities::AddRenderableCollider();
-		Renderable* cartCollider = GameUtilities::AddRenderableCollider();
-
-		Renderable* rubbleCollider1 = GameUtilities::AddRenderableCollider();
-		Renderable* rubbleCollider2 = GameUtilities::AddRenderableCollider();
-		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
-
-		Renderable* rock_wallCollider1 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider2 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider3 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider4 = GameUtilities::AddRenderableCollider();
-
-#ifdef ShowColliders
-
-		//GameUtilities::AddGameObject(golemCollider);
-		//GameUtilities::AddGameObject(house1Collider);
-		//GameUtilities::AddGameObject(house2Collider);
-		//GameUtilities::AddGameObject(house3Collider);
-		//GameUtilities::AddGameObject(house4Collider);
-		//GameUtilities::AddGameObject(barn1Collider);
-		//GameUtilities::AddGameObject(barn2Collider);
-		//GameUtilities::AddGameObject(gatewayCollider);
-		//GameUtilities::AddGameObject(towerCollider);
-		//GameUtilities::AddGameObject(scaffoldingCollider);
-		//GameUtilities::AddGameObject(wallCollider);
-		//GameUtilities::AddGameObject(wellCollider);
-		//GameUtilities::AddGameObject(tavernCollider);
-		//GameUtilities::AddGameObject(rockCollider);
-		//GameUtilities::AddGameObject(meeting_hallCollider);
-		//GameUtilities::AddGameObject(cartCollider);
-
-		//GameUtilities::AddGameObject(rubbleCollider1);
-		//GameUtilities::AddGameObject(rubbleCollider2);
-		//GameUtilities::AddGameObject(rubbleCollider3);
-
-		//GameUtilities::AddGameObject(rock_wallCollider1);
-		//GameUtilities::AddGameObject(rock_wallCollider2);
-		//GameUtilities::AddGameObject(rock_wallCollider3);
-		//GameUtilities::AddGameObject(rock_wallCollider4);
-
-#endif
-#endif
-
-		//ADAI::FlockingGroup commandFlock;
-		//ADAI::FlockingGroup idleFlock;
-
-		std::vector<Destructable*> stoneMinions;
-		std::vector<Destructable*> waterMinions;
-		std::vector<Destructable*> fireMinions;
-		std::vector<Destructable*> woodMinions;
-
-		currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
-
-		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-
-		//Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
-		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
-
-		//golem->targetMarker = m1;
-		//golemEatingEvent.SetTarget(golem);
-
-		//m1->colliderPtr = nullptr;
-
-		//animationFiles[0] = "files/models/BattleMage.animfile";
-
-		//wtf is this!?
-		//golem->transform.r[3] = XMVectorSet(0, 0, 0, 1);
-		//golem->transform.r[3] = XMVectorSet(500, 0, -1125, 1);
-
-		engine->GetOrbitCamera()->SetClippingPlanes(0.1f, 10000.0f);
-
-		//Renderable* tempPlane = currentScene.GetPlane();
-		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
-		GameUtilities::AddGameObject(physicsPlane);
-
-		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), true);
-		mountainRange->colliderPtr = nullptr;
-		GameUtilities::AddGameObject(mountainRange);
-
-#pragma region PhysicsSetup
-
-		//Physics Setup--------------------------------
-		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(physicsPlane->GetMeshId());
-		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
-		std::vector<ADPhysics::Triangle> ground;
-		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
-		XMMATRIX groundWorld = XMMatrixIdentity();
-		physicsPlane->GetWorldMatrix(groundWorld);
-		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
-		{
-			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
-			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
-			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
-
-			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
-			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
-			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
-
-			ADPhysics::Triangle* tri = new Triangle(A, B, C);
-
-			ground.push_back(*tri);
-
-			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
-			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
-			treePoints.push_back(point);
-		}
-
-		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
-		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
-
-		for (unsigned int i = 0; i < treePoints.size(); i++)
-		{
-			tree->Insert(treePoints[i]);
-		}
+//
+//		// Initialize the engine
+//		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
+//		currentScene.LoadScene("files/scenes/TestScene.scenery");
+//		golem = currentScene.GetGolem();
+//		game->LoadListeners(golem, &currentScene);
+//		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
+//		
+//		engine->GetOrbitCamera()->Rotate(yaw, pitch);
+//		
+//		GameUtilities::AddGameObject(engine->GetOrbitCamera());
+//		golem->bigPuffs[STONE] = &engine->bigStonePuff;
+//		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
+//		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
+//		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
+//
+//
+//
+//		//std::vector<std::string> bucketheadanims;
+//		//bucketheadanims.push_back("files/models/Bucket_Fear.animfile");
+//
+//
+//
+//#ifdef _DEBUG
+//
+//		Renderable* golemCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* house1Collider = GameUtilities::AddRenderableCollider();
+//		Renderable* house2Collider = GameUtilities::AddRenderableCollider();
+//		Renderable* house3Collider = GameUtilities::AddRenderableCollider();
+//		Renderable* house4Collider = GameUtilities::AddRenderableCollider();
+//		Renderable* barn1Collider = GameUtilities::AddRenderableCollider();
+//		Renderable* barn2Collider = GameUtilities::AddRenderableCollider();
+//		Renderable* gatewayCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* towerCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* scaffoldingCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* wallCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* wellCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* tavernCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* rockCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* meeting_hallCollider = GameUtilities::AddRenderableCollider();
+//		Renderable* cartCollider = GameUtilities::AddRenderableCollider();
+//
+//		Renderable* rubbleCollider1 = GameUtilities::AddRenderableCollider();
+//		Renderable* rubbleCollider2 = GameUtilities::AddRenderableCollider();
+//		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
+//
+//		Renderable* rock_wallCollider1 = GameUtilities::AddRenderableCollider();
+//		Renderable* rock_wallCollider2 = GameUtilities::AddRenderableCollider();
+//		Renderable* rock_wallCollider3 = GameUtilities::AddRenderableCollider();
+//		Renderable* rock_wallCollider4 = GameUtilities::AddRenderableCollider();
+//
+//#ifdef ShowColliders
+//
+//		//GameUtilities::AddGameObject(golemCollider);
+//		//GameUtilities::AddGameObject(house1Collider);
+//		//GameUtilities::AddGameObject(house2Collider);
+//		//GameUtilities::AddGameObject(house3Collider);
+//		//GameUtilities::AddGameObject(house4Collider);
+//		//GameUtilities::AddGameObject(barn1Collider);
+//		//GameUtilities::AddGameObject(barn2Collider);
+//		//GameUtilities::AddGameObject(gatewayCollider);
+//		//GameUtilities::AddGameObject(towerCollider);
+//		//GameUtilities::AddGameObject(scaffoldingCollider);
+//		//GameUtilities::AddGameObject(wallCollider);
+//		//GameUtilities::AddGameObject(wellCollider);
+//		//GameUtilities::AddGameObject(tavernCollider);
+//		//GameUtilities::AddGameObject(rockCollider);
+//		//GameUtilities::AddGameObject(meeting_hallCollider);
+//		//GameUtilities::AddGameObject(cartCollider);
+//
+//		//GameUtilities::AddGameObject(rubbleCollider1);
+//		//GameUtilities::AddGameObject(rubbleCollider2);
+//		//GameUtilities::AddGameObject(rubbleCollider3);
+//
+//		//GameUtilities::AddGameObject(rock_wallCollider1);
+//		//GameUtilities::AddGameObject(rock_wallCollider2);
+//		//GameUtilities::AddGameObject(rock_wallCollider3);
+//		//GameUtilities::AddGameObject(rock_wallCollider4);
+//
+//#endif
+//#endif
+//
+//		//ADAI::FlockingGroup commandFlock;
+//		//ADAI::FlockingGroup idleFlock;
+//
+//		std::vector<Destructable*> stoneMinions;
+//		std::vector<Destructable*> waterMinions;
+//		std::vector<Destructable*> fireMinions;
+//		std::vector<Destructable*> woodMinions;
+//
+//		currentScene.GetMinions(&stoneMinions, &waterMinions, &fireMinions, &woodMinions);
+//
+//		//Renderable* m1 = GameUtilities::AddSimpleAsset("files/models/Target.mesh", "files/textures/Target.mesh", XMFLOAT3(0, 5, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+//
+//		//Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
+//		//Destructable* m2 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", minionAnimations, XMFLOAT3(50, 5, 30), XMFLOAT3(0.02f, 0.02f, 0.02f), XMFLOAT3(0, 0, 0));
+//
+//		//golem->targetMarker = m1;
+//		//golemEatingEvent.SetTarget(golem);
+//
+//		//m1->colliderPtr = nullptr;
+//
+//		//animationFiles[0] = "files/models/BattleMage.animfile";
+//
+//		//wtf is this!?
+//		//golem->transform.r[3] = XMVectorSet(0, 0, 0, 1);
+//		//golem->transform.r[3] = XMVectorSet(500, 0, -1125, 1);
+//
+//		engine->GetOrbitCamera()->SetClippingPlanes(0.1f, 10000.0f);
+//
+//		//Renderable* tempPlane = currentScene.GetPlane();
+//		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
+//		GameUtilities::AddGameObject(physicsPlane);
+//
+//		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), true);
+//		mountainRange->colliderPtr = nullptr;
+//		GameUtilities::AddGameObject(mountainRange);
+//
+//#pragma region PhysicsSetup
+//
+//		//Physics Setup--------------------------------
+//		SimpleModel** tempPlaneModel = ResourceManager::GetSimpleModelPtrFromMeshId(physicsPlane->GetMeshId());
+//		SimpleStaticModel* planeModel = static_cast<SimpleStaticModel*>(*tempPlaneModel);
+//		std::vector<ADPhysics::Triangle> ground;
+//		std::vector<ADQuadTreePoint<ADPhysics::Triangle>> treePoints;
+//		XMMATRIX groundWorld = XMMatrixIdentity();
+//		physicsPlane->GetWorldMatrix(groundWorld);
+//		for (unsigned int i = 0; i < (*planeModel).indices.size(); i += 3)
+//		{
+//			XMFLOAT3 A = planeModel->vertices[(*planeModel).indices[i]].Position;
+//			XMFLOAT3 B = planeModel->vertices[(*planeModel).indices[i + 1]].Position;
+//			XMFLOAT3 C = planeModel->vertices[(*planeModel).indices[i + 2]].Position;
+//
+//			A = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(A), groundWorld));
+//			B = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(B), groundWorld));
+//			C = (XMFLOAT3&)(XMVector3Transform(Float3ToVector(C), groundWorld));
+//
+//			ADPhysics::Triangle* tri = new Triangle(A, B, C);
+//
+//			ground.push_back(*tri);
+//
+//			XMFLOAT3 centroid = (XMFLOAT3&)((Float3ToVector(tri->a) + Float3ToVector(tri->b) + Float3ToVector(tri->c)) / 3);
+//			ADQuadTreePoint<ADPhysics::Triangle> point = ADQuadTreePoint<ADPhysics::Triangle>(centroid.x, centroid.z, *tri);
+//			treePoints.push_back(point);
+//		}
+//
+//		ADQuad boundary = ADQuad((*planeModel).position.x, (*planeModel).position.z, 1000, 1000);
+//		QuadTree<ADPhysics::Triangle>* tree = new QuadTree<ADPhysics::Triangle>(boundary);
+//
+//		for (unsigned int i = 0; i < treePoints.size(); i++)
+//		{
+//			tree->Insert(treePoints[i]);
+//		}
 
 
 		// Construct physics stuff
@@ -1438,7 +1438,7 @@ public:
 		tb->active = true;
 		GameUtilities::AddGameObject(tb, false);
 		eventUIMessage.targetID = 1;
-		MessageTrigger* tb2 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -900), XMFLOAT3(500, 50, 500), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb2 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -950), XMFLOAT3(500, 50, 500), XMFLOAT3(0, 0, 0));
 		tb2->active = true;
 		GameUtilities::AddGameObject(tb2, false);
 		eventUIMessage.targetID = 2;
@@ -1454,7 +1454,7 @@ public:
 		tb5->active = true;
 		GameUtilities::AddGameObject(tb5, false);
 		eventUIMessage.targetID = 5;
-		MessageTrigger* tb6 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -550), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb6 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -400), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
 		tb6->active = true;		
 		GameUtilities::AddGameObject(tb6, false);
 

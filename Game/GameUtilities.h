@@ -5,6 +5,7 @@
 #include "GameObjectClasses.h"
 #include "GameEffects.h"
 #include "ADAI.h"
+#include "Engine.h"
 
 #include <string>
 
@@ -28,7 +29,7 @@ public:
 	//static void InitializeMinionModels();
 	//static ADAI::AIUnit* BirthStoneMinion(ADAI::FlockingGroup* _commandGroup);
 
-	static ADAI::VillagerAI* AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup);
+	static ADAI::VillagerAI* AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* _engine);
 	static ADAI::MinionAI* AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType, ADAI::PathersQueue* _pathingQueue);
 	static ADAI::TowerAI* AttachTowerAI(Building* _destructable, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup);
 
