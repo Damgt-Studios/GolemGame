@@ -12,6 +12,7 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	collider = OBB(transform * translateToMiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
+	gamePlayType = 0;
 
 	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
@@ -514,32 +515,40 @@ void ADResource::ADGameplay::Golem::PerformSpecial()
 
 void ADResource::ADGameplay::Golem::TowerPunch()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].towerPunch.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].punch->StartAction(&transform);
+	if (gActions[playerElement].punch->StartAction(&transform))
+	{
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].towerPunch.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+	}
 }
 
 void ADResource::ADGameplay::Golem::GroundSlam()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].groundSlam.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].slam->StartAction(&transform);
+	if (gActions[playerElement].slam->StartAction(&transform))
+	{
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].groundSlam.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+	}
+
 }
 
 void ADResource::ADGameplay::Golem::Kick()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].kick.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].kick->StartAction(&transform);
+	if (gActions[playerElement].kick->StartAction(&transform))
+	{
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].kick.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+	}
+
 }
 
 void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
@@ -653,12 +662,14 @@ void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
 
 void ADResource::ADGameplay::Golem::ConsumeMinion()
 {
+	if (consume->StartAction(&transform))
+	{
 	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].eat.c_str());
 	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].eat.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	consume->StartAction(&transform);
+	}
 }
 
 void ADResource::ADGameplay::Golem::SummonMinions()

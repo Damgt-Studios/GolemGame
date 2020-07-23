@@ -177,22 +177,22 @@ public:
 		GameObject* object1 = new GameObject();
 		object1->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object1->team = 4;
-		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(20, 100, 2000));
+		object1->colliderPtr = new AABB(XMFLOAT3(630, 0, -270), XMFLOAT3(30, 100, 2000));
 
 		GameObject* object2 = new GameObject();
 		object2->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object2->team = 4;
-		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(20, 100, 2000));
+		object2->colliderPtr = new AABB(XMFLOAT3(-630, 0, -270), XMFLOAT3(30, 100, 2000));
 
 		GameObject* object3 = new GameObject();
 		object3->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object3->team = 4;
-		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 20));
+		object3->colliderPtr = new AABB(XMFLOAT3(0, 0, 630), XMFLOAT3(2000, 100, 30));
 
 		GameObject* object4 = new GameObject();
 		object4->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
 		object4->team = 4;
-		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 22.5));
+		object4->colliderPtr = new AABB(XMFLOAT3(0, 0, -1250), XMFLOAT3(2000, 100, 30));
 
 		GameObject* object5 = new GameObject();
 		object5->physicsType = OBJECT_PHYSICS_TYPE::STATIC;
@@ -1260,30 +1260,37 @@ public:
 		//Trigger* ar1 = GameUtilities::AddTriggerFromModelFile("files/models/Arrow.mesh", "files/textures/Bark.mat", XMFLOAT3(500, 1, -1000), XMFLOAT3(0.01f, 0.01f, 0.01f), XMFLOAT3(90, 0, 0));
 		//GameUtilities::AddGameObject(ar1, true);
 
+		//Trigger* ar1 = GameUtilities::AddTriggerFromModelFile("files/models/Essence.mesh", "files/textures/Essence.mat", XMFLOAT3(500, 1, -1000), XMFLOAT3(0.01f, 0.01f, 0.01f), XMFLOAT3(90, 0, 0));
+		//GameUtilities::AddGameObject(ar1, true);
+
 
 		ADUI::UIMessage eventUIMessage;
 		eventUIMessage.targetID = 0;
 		eventUIMessage.externalMsg = true;
 		eventUIMessage.commandID = 1;
-		MessageTrigger* tb = GameUtilities::AddMessageTrigger(eventUIMessage ,XMFLOAT3(40, 0, 20), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb = GameUtilities::AddMessageTrigger(eventUIMessage ,XMFLOAT3(500, 0, -1100), XMFLOAT3(500, 50, 500), XMFLOAT3(0, 0, 0));
 		tb->active = true;
 		GameUtilities::AddGameObject(tb, false);
 		eventUIMessage.targetID = 1;
-		MessageTrigger* tb2 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(80, 0, 20), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb2 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -900), XMFLOAT3(500, 50, 500), XMFLOAT3(0, 0, 0));
 		tb2->active = true;
 		GameUtilities::AddGameObject(tb2, false);
 		eventUIMessage.targetID = 2;
-		MessageTrigger* tb3 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(120, 0, 20), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb3 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -700), XMFLOAT3(500, 50, 500), XMFLOAT3(0, 0, 0));
 		tb3->active = true;
 		GameUtilities::AddGameObject(tb3, false);
-		//eventUIMessage.targetID = 3;
-		//MessageTrigger* tb4 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(140, 0, 20), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		//tb4->active = true;
-		//GameUtilities::AddGameObject(tb4, false);
-		//eventUIMessage.targetID = 4;
-		//MessageTrigger* tb5 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(160, 0, 20), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		//tb5->active = true;
-		//GameUtilities::AddGameObject(tb5, false);
+		eventUIMessage.targetID = 3;
+		MessageTrigger* tb4 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -600), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		tb4->active = true;
+		GameUtilities::AddGameObject(tb4, false);
+		eventUIMessage.targetID = 4;
+		MessageTrigger* tb5 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -500), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		tb5->active = true;
+		GameUtilities::AddGameObject(tb5, false);
+		eventUIMessage.targetID = 5;
+		MessageTrigger* tb6 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -550), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
+		tb6->active = true;		
+		GameUtilities::AddGameObject(tb6, false);
 
 		ResourceManager::FinalizedStatics();
 
@@ -1450,10 +1457,10 @@ public:
 								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
 						}
 
-						//for (auto& object : forcedCollisions)
-						//{
-						//	OBJS[i]->CheckCollision(object);
-						//}
+						for (auto& object : forcedCollisions)
+						{
+							OBJS[i]->CheckCollision(object);
+						}
 					}
 				}
 				//---------------------------------------------End New Physics System------------------------------------------
@@ -1479,7 +1486,7 @@ public:
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 			// D3d11 shit
-			if (!engine->Update()) break;
+			if (!engine->Update(delta_time)) break;
 			currentScene.Update(engine->GetEngineDeltaTime());
 			if (!engine->Render()) break;
 

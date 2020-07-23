@@ -78,6 +78,10 @@ public:
 					{
 						statSheet->SetEventVal(currentStat, std::stof(rhs));
 					}
+					else if (lhs == "SetEventType")
+					{
+						statSheet->SetEventType(currentStat, std::stoi(rhs));
+					}
 					else if (lhs == "StatCurrent")
 					{
 						statSheet->SetCurrent(currentStat, std::stoi(rhs));

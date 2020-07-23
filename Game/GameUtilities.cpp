@@ -555,62 +555,65 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	_destructable->anim_controller->SetNamebyIndex(5, "Death");
 
 
-	ADAI::MinionAI* temp = new ADAI::MinionAI;
-	temp->mySSM.gameObject = _destructable;
-	temp->destructable = _destructable;
+	ADAI::MinionAI* ai = new ADAI::MinionAI;
+	ai->mySSM.gameObject = _destructable;
+	ai->destructable = _destructable;
 
 
 	ADAI::FlockingState* idling = new ADAI::FlockingState();
-	idling->mySSM = &temp->mySSM;
-	temp->mySSM.states.push_back(idling);
+	idling->mySSM = &ai->mySSM;
+	ai->mySSM.states.push_back(idling);
 
 	ADAI::CommandState* charging = new ADAI::CommandState();
-	charging->mySSM = &temp->mySSM;
-	charging->minion = temp;
+	charging->mySSM = &ai->mySSM;
+	charging->minion = ai;
 	charging->targets = _killGroup;
 	charging->pathingQueue = _pathingQueue;
 	//charging->myGroup = _localGroup;
-	temp->mySSM.states.push_back(charging);
+	ai->mySSM.states.push_back(charging);
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
-	attacking->mySSM = &temp->mySSM;
+	attacking->mySSM = &ai->mySSM;
 	attacking->returnIndex = 1;
-	temp->mySSM.states.push_back(attacking);
+	ai->mySSM.states.push_back(attacking);
 
 	switch (_destructable->gamePlayType)
 	{
 	case STONE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
-
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
 		break;
 	case WATER_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
 		break;
 	case FIRE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
 		break;
 	case WOOD_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
 		break;
 	}
 
-	temp->mySSM.currentState = charging;
+	ai->mySSM.currentState = charging;
 
-	_localGroup->AddUnitToGroup(temp, charging);
+	_localGroup->AddUnitToGroup(ai, charging);
 
-	return temp;
+	return ai;
 }
 
 ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup)

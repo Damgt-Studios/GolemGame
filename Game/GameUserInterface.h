@@ -35,20 +35,34 @@ namespace GolemGameUISetup
         ADResource::ADGameplay::Golem* player;
         UINT& uiState;
         std::vector<std::string> tutorialMessages = {
-            "Use A,X or B to Attack.",
-            "Use Y to unleash a special attack.",
-            "You only have three special attack charges available.",
-            "Use R and L to change forms.",
+            "Welcome to The Great Golem.",
+            "Your objective is to eliminate of the human population.",
+            "Use A, B and X to attack structures.",
+            "Use A or B to attack villagers.",
 
-            "This will change your currently available special.             ", 
-            "Find Spawners to summon minions.                               ",
-            "Use Up and Down on the D-Pad to select minion groups by type.  ",
-            "The final group marked by the A commands all four groups.      ", 
+            "You also have special abilities tied to X.             ", 
+            "Use them sparingly as you only have three casts.        ",
+            "You can change element by using the right and left shoulder  ",
+            "buttons.  Each form has a different special ability.      ", 
 
-            "Destroy homes and people to gain essence.                      ",
-            "Essence allows you to summon more minions.                     ", 
-            "When the human population reaches zero you win.                ",
-            "Beware of towers as they will attack you and your minions.     "
+            "Towers with ballista's in them will attack you on sight.         ",
+            "You minions will also attack anything they are close to.                     ", 
+            "Call them to you using the left bumper.  Send them toward a                ",
+            "target with your right bumper.     ",
+
+            "Up and down on the control pad will let you change which groups",
+            "will respond to your command.  Once minions have selected a    ", 
+            "target it may be hard to call them back.  Hold the left bumper ",
+            "to force them to return.                                       "
+
+            "Villagers and structuers will drop essence. Use the        ",
+            "right control pad to summon new minions. The minions born                  ", 
+            "will match the form that raised them. Fire, Earth and Water              ",
+            "minions cost 50 Essence.  Wood minions cost 30 Essence.",
+
+            "Stone Minions have increased Health.        ",
+            "Water Minions have increased Movement Speed.                   ", 
+            "Fire Minions have increased Attack Power.       ",
         };
 
     public:

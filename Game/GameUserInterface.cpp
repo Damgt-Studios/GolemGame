@@ -181,17 +181,17 @@ namespace GolemGameUISetup
 						buttonPressed = true;
 						break;
 					}
-					case 1: //saves
-						buttonPressed = true;
-						break;
-					case 2: //credits
+					//case 1: //saves
+					//	buttonPressed = true;
+					//	break;
+					case 1: //credits
 						componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
 						overlays[overlaysNameToID["CreditsScreen"]]->Enable();
 						overlays[overlaysNameToID["TitleScreen"]]->Disable();
 						uiState = ADUI::UISTATE::MENUSTATE;
 						buttonPressed = true;
 						break;
-					case 3:
+					case 2:
 						uiState = ADUI::UISTATE::QUIT;
 						buttonPressed = true;
 						break;
@@ -558,11 +558,11 @@ namespace GolemGameUISetup
 		lbl->active = true;
 		lbl->visible = true;
 		ADUI::Button2D* btn = new ADUI::Button2D(position, buttonIcon, lbl, true, true, false);
-		buttonList->Generate(btn, position, spacing, 4, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
+		buttonList->Generate(btn, position, spacing, 3, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
 		buttonList->visible = true;
-		buttonList->components[1]->SetText("Load");
-		buttonList->components[2]->SetText("Credits");
-		buttonList->components[3]->SetText("Quit");
+		//buttonList->components[1]->SetText("Load");
+		buttonList->components[1]->SetText("Credits");
+		buttonList->components[2]->SetText("Quit");
 		myUI->AddUIComponent("TitleMenu", buttonList);
 		myUI->overlays[titleid]->AddComponent(buttonList);
 
@@ -992,7 +992,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* essenceLabel = new ADUI::Label2D();
 		essenceLabel->SetFont(myUI->GetFont(2));
-		essenceLabel->SetText("1000", { 200, 140 });// XMFLOAT2(1920, 1080));
+		essenceLabel->SetText("200", { 200, 140 });// XMFLOAT2(1920, 1080));
 		essenceLabel->active = true;
 		essenceLabel->visible = true;
 		myUI->AddUIComponent("EssenceLabel", essenceLabel);
@@ -1365,7 +1365,7 @@ namespace GolemGameUISetup
 		UINT messageID = myUI->AddNewOverlay("MessageBox", false, true);
 
 		ADUI::Image2D* messageBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 400, 1000, 3400, 2000 });
-		messageBox->BuildAnimation({ 710, 1190, 840, 1300 }, 1, 1, emptyAnimation);
+		messageBox->BuildAnimation({ 2315, 1080, 3825, 1970 }, 1, 1, emptyAnimation);
 		messageBox->active = true;
 		messageBox->visible = true;
 		messageBox->stretched = true;

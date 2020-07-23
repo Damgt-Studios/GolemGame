@@ -29,7 +29,7 @@ namespace ADResource
 			ADUI::UIMessage eventUIMessage;
 
 
-			MessageTrigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			MessageTrigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; gamePlayType = EVENT_TRIGGER; };
 
 			void Enable()
 			{
@@ -153,8 +153,9 @@ namespace ADResource
 				rubble->active = false;
 				rubble->safeRadius = 25.0f;
 				rubble->avoidRadius = 10.0f;
-			//	rubble->Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceS"];
 
+				Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceS"]->Clone();
+				Essence->active = false;
 			};
 
 			void SetTurret(Building* _turret)
@@ -217,6 +218,11 @@ namespace ADResource
 					//else
 					//	destructionEmitter2->Activate(1.0f, { pos.x,pos.y,pos.z,1 });
 				}
+
+				if (Essence)
+				{
+					Essence->StartAction(&transform);
+				}
 			};
 
 			virtual void Update(float delta_time)
@@ -232,6 +238,10 @@ namespace ADResource
 				{	
 					if (stats != nullptr)
 						ProcessEffects(delta_time);
+				}
+				if (Essence)
+				{
+					Essence->Update(delta_time);
 				}
 			}
 
@@ -315,7 +325,6 @@ namespace ADResource
 						rubble->active = true;
 						rubble->AddToScene();
 
-						//rubble->Essence->StartAction(&rubble->transform);
 
 					}
 					else

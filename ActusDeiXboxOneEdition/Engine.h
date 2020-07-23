@@ -30,7 +30,7 @@ public:
 	~Engine() = default;
 
 	bool Initialize();
-	bool Update();
+	bool Update(float _delta);
 	bool Render();
 	bool ShutDown();
 
@@ -73,6 +73,7 @@ private:
 	// Timing
 	XTime engine_time;
 	float delta_time_sf;
+	float engine_time_sf;
 	double delta_time_sd;
 
 	// Temp

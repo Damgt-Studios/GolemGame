@@ -22,6 +22,7 @@ StatMax=99999
 StatCurrent=200
 SetEventVal=-1
 SetEvent=ChangeEssence
+SetEventType=1
 
 AddStat=MovementSpeed
 StatMin=1

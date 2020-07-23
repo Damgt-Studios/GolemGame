@@ -29,19 +29,23 @@ public:
 
 	virtual UINT OnApply(ADResource::ADGameplay::StatSheet* _targetsStatSheet) override
 	{
-		if (_targetsStatSheet->RequestStats(statsAffected[0]))
+		for (auto& stat : statsAffected)
 		{
-			targetedStats.push_back(_targetsStatSheet->RequestStats(statsAffected[0]));
+			if (_targetsStatSheet->RequestStats(stat))
+			{
+				targetedStats.push_back(_targetsStatSheet->RequestStats(stat));
+			}
+			else
+			{
+				isFinished = true;
+			}
+			if (tickOnEnter)
+			{
+				Tick();
+			}
+			tickTimer = tickDuration;
 		}
-		else
-		{
-			isFinished = true;
-		}
-		if (tickOnEnter)
-		{
-			Tick();
-		}
-		tickTimer = tickDuration;
+
 		return 0;
 	};
 

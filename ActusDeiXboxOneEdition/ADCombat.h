@@ -68,7 +68,7 @@ namespace ADResource
 			std::string modelName;
 			std::string matName;
 
-			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER;	gamePlayType = ADResource::ADGameplay::ALLY_HITBOX; colliderPtr->trigger = true; };
 			~HitBox() = default;
 
 			HitBox* Clone()
@@ -97,6 +97,7 @@ namespace ADResource
 				nBox->vel = vel;
 				nBox->lifespan = lifespan;
 				nBox->team = team;
+
 				if (nBox->team == 3)
 				{
 					nBox->gamePlayType = ADResource::ADGameplay::CONSUMPTION_HITBOX;
@@ -125,8 +126,8 @@ namespace ADResource
 					nBox->SetMeshID(id);
 				}
 
-				//nBox->rotation = rotation;
-				//nBox->transform = XMMatrixRotationX(nBox->rotation.x);
+				nBox->rotation = rotation;
+				nBox->transform = XMMatrixRotationX(nBox->rotation.x);
 				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
 				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
 				//nBox->collider.AxisX.x = nBox->colScale.x;
@@ -422,6 +423,7 @@ namespace ADResource
 				action->removeHbIfEnd = removeHbIfEnd;
 				action->scaleCorrection = scaleCorrection;
 
+
 				for (auto& evnt : eventName)
 				{
 					action->eventName.push_back(evnt);
@@ -558,7 +560,7 @@ namespace ADResource
 			//ADUI::UIMessage eventUIMessage;
 
 
-			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; gamePlayType = ADResource::ADGameplay::EVENT_TRIGGER; colliderPtr->trigger = true; };
 
 			void Enable()
 			{

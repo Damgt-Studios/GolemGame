@@ -128,6 +128,7 @@ namespace ADGameplay
 				return;
 				break;
 			}
+			rubble->active = false;
 			GameUtilities::AddGameObject(rubble);
 			_building->SetRubble(rubble);
 			//I don't feel like pasting this 3000s times.... so here it is.
@@ -1011,6 +1012,9 @@ namespace ADGameplay
 			Building* meeting_hall4 = new Building(XMFLOAT3(-475, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			GameUtilities::AddGameObject(meeting_hall4);
 			AddRubble(meeting_hall4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0));
+			//Building* rubble1 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
+			//GameUtilities::AddGameObject(rubble1);
+			//meeting_hall4->SetRubble(rubble1);
 
 			//===================================================Ballista Towers
 
@@ -1401,7 +1405,7 @@ namespace ADGameplay
 			}
 			for (int i = 40; i < 50; i++)
 			{
-				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*200.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*-200.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock5, &villagerThreats, &buildings));
 			}
 
@@ -1666,7 +1670,7 @@ namespace ADGameplay
 
 
 			//Dan added this:
-			m1 = GameUtilities::AddTriggerFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(-145, 5, -145), XMFLOAT3(3, 3, 3), XMFLOAT3(0, 0, 0));
+			m1 = GameUtilities::AddTriggerFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(-145, 10, -145), XMFLOAT3(3, 3, 3), XMFLOAT3(0, 0, 0));
 
 			//m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-145, 5, -145), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 			golem->targetMarker = m1;

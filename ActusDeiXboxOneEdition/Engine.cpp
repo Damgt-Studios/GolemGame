@@ -52,7 +52,7 @@ bool Engine::Initialize()
 	return true;
 }
 
-bool Engine::Update()
+bool Engine::Update(float _delta)
 {
 	// Tick timer
 	engine_time.Signal();
@@ -61,15 +61,45 @@ bool Engine::Update()
 
 	if (*userInterface.GetUIState() == 0)
 	{
-
+		engine_time_sf = delta_time_sf;
 		// For each game object, call update
 		int OBJ_COUNT = ResourceManager::GetGameObjectCount();
 		ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 
 		for (int i = 0; i < OBJ_COUNT; i++)
 		{
-			OBJS[i]->Update(delta_time_sf);
+			OBJS[i]->Update(engine_time_sf);
+
+
 		}
+
+		Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
+		float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
+		XMFLOAT4X4 view;
+		XMFLOAT4X4 proj;
+		XMFLOAT4 camPos;
+		XMMATRIX temp;
+		ocamera->GetViewMatrix(temp);
+		XMStoreFloat4x4(&view, temp);
+		temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
+		XMStoreFloat4x4(&proj, temp);
+		camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
+		bigCloud.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		recoveryEmitter.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		smallCloud.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		waterWave.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		ironSkin.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		fireball.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		bigWoodPuff.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		bigFirePuff.UpdateParticles		(engine_time_sf, view, proj, camPos);
+		bigWaterPuff.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		bigStonePuff.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		woodCylinder.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		fireCylinder.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		waterCylinder.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		stoneCylinder.UpdateParticles	(engine_time_sf, view, proj, camPos);
+		destructionCloud.UpdateParticles(engine_time_sf, view, proj, camPos);
+		destructionCloud2.UpdateParticles(engine_time_sf, view, proj, camPos);
 
 		//Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 		//float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
@@ -89,13 +119,17 @@ bool Engine::Update()
 	{
 		return false;
 	}
+	else
+	{
+		engine_time_sf = 0;
+	}
 
 	// Move the light
 	/*ResourceManager::GetLightPtr()[1].position.x += .1 * lightdir;
 	if (fabs(ResourceManager::GetLightPtr()[1].position.x) > 10)
 		lightdir *= -1;*/
 
-	userInterface.Update(delta_time_sf);
+	userInterface.Update(_delta);
 	/*Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
 	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
 	XMFLOAT4X4 view;
@@ -108,34 +142,6 @@ bool Engine::Update()
 	XMStoreFloat4x4(&proj, temp);
 	camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
 	bigCloud.UpdateParticles(engine_time.SmoothDelta(), view, proj, camPos);*/
-
-	Windows::UI::Core::CoreWindow^ Window = Windows::UI::Core::CoreWindow::GetForCurrentThread();
-	float aspectRatio = Window->Bounds.Width / Window->Bounds.Height;
-	XMFLOAT4X4 view;
-	XMFLOAT4X4 proj;
-	XMFLOAT4 camPos;
-	XMMATRIX temp;
-	ocamera->GetViewMatrix(temp);
-	XMStoreFloat4x4(&view, temp);
-	temp = XMMatrixPerspectiveFovLH(ocamera->GetFOV(), aspectRatio, 0.1f, 3000);
-	XMStoreFloat4x4(&proj, temp);
-	camPos = XMFLOAT4(ocamera->GetPosition().x, ocamera->GetPosition().y, ocamera->GetPosition().z, 1);
-	bigCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
-	recoveryEmitter.UpdateParticles(delta_time_sf, view, proj, camPos);
-	smallCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
-	waterWave.UpdateParticles(delta_time_sf, view, proj, camPos);
-	ironSkin.UpdateParticles(delta_time_sf, view, proj, camPos);
-	fireball.UpdateParticles(delta_time_sf, view, proj, camPos);
-	bigWoodPuff.UpdateParticles(delta_time_sf, view, proj, camPos);
-	bigFirePuff.UpdateParticles(delta_time_sf, view, proj, camPos);
-	bigWaterPuff.UpdateParticles(delta_time_sf, view, proj, camPos);
-	bigStonePuff.UpdateParticles(delta_time_sf, view, proj, camPos);
-	woodCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
-	fireCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
-	waterCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
-	stoneCylinder.UpdateParticles(delta_time_sf, view, proj, camPos);
-	destructionCloud.UpdateParticles(delta_time_sf, view, proj, camPos);
-	destructionCloud2.UpdateParticles(delta_time_sf, view, proj, camPos);
 
 	return true;
 }
@@ -150,7 +156,7 @@ bool Engine::Render()
 		OBJS[i]->Render();
 	}
 
-	pbr.Render(camera, ocamera, delta_time_sf);
+	pbr.Render(camera, ocamera, engine_time_sf);
 	bigCloud.RenderParticles(pbr.renderer_resources.context.Get());
 	recoveryEmitter.RenderParticles(pbr.renderer_resources.context.Get());
 	smallCloud.RenderParticles(pbr.renderer_resources.context.Get());
@@ -237,5 +243,5 @@ ADResource::ADRenderer::PBRRenderer* Engine::GetPBRRenderer()
 
 float Engine::GetEngineDeltaTime()
 {
-	return delta_time_sf;
+	return engine_time_sf;
 }

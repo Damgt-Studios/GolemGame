@@ -314,10 +314,14 @@ namespace ADResource
 		public:
 			std::string name = "";
 			std::string eventName = "";
+			std::string eventMessage="";
+			int eventDataType = 0;
 			int currentValue = 0;
 			int maxValue = 0;
 			int minValue = 0;
 			int eventValue = 0;
+
+
 
 			void Set(int _val)
 			{
@@ -327,7 +331,16 @@ namespace ADResource
 				{
 					if (eventValue == -1 || currentValue == eventValue)
 					{
-						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)(currentValue));
+						if (eventDataType == 0)
+						{
+							ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)(currentValue));	//Allow me to send an int or string based on dd.
+						}
+						else if (eventDataType == 1)
+						{
+							eventMessage.clear();
+							eventMessage.append(to_string(currentValue));
+							ADEvents::ADEventSystem::Instance()->SendEvent(eventName, static_cast<void*>(&eventMessage));
+						}
 					}
 				}
 			}
@@ -360,6 +373,10 @@ namespace ADResource
 			void SetEvent(std::string _name, std::string _eventName)
 			{
 				stats[_name].eventName = _eventName;
+			};
+			void SetEventType(std::string _name, int _eventDT)
+			{
+				stats[_name].eventDataType = _eventDT;
 			};
 			void SetEventVal(std::string _name, int _val)
 			{
@@ -440,6 +457,7 @@ namespace ADResource
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
+				gamePlayType = -1;
 			}
 			virtual ~GameObject() = default;
 
