@@ -173,6 +173,7 @@ public:
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
+		engine->GetCamera()->SetClippingPlanes(0.1, 5000);
 		currentScene.LoadScene("files/scenes/TestScene.scenery", engine);
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
@@ -572,40 +573,6 @@ public:
 		GameUtilities::AddGameObject(rock_wall8);
 
 		
-#pragma endregion
-
-#pragma region Level
-
-		for (unsigned int i = 0; i < 5; i++)
-		{
-			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, -900), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
-			GameUtilities::AddGameObject(tutorialWall);
-		}
-		
-		for (unsigned int i = 0; i < 5; i++)
-		{
-			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
-			GameUtilities::AddGameObject(tutorialWall);
-		}
-
-		for (unsigned int i = 0; i < 5; i++)
-		{
-			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, -300), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
-			GameUtilities::AddGameObject(tutorialWall);
-		}
-		
-		for (unsigned int i = 0; i < 5; i++)
-		{
-			Building* tutorialWall = new Building(XMFLOAT3(432.5 + (40.5 * i), 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
-			GameUtilities::AddGameObject(tutorialWall);
-		}
-
-		Building* tower = new Building(XMFLOAT3(407.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.75, 0), GameUtilities::GenerateTower, "Tower");
-		GameUtilities::AddGameObject(tower);
-
-		Building* towerWall = new Building(XMFLOAT3(407.5, 0, -25), XMFLOAT3(0, 90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateWall, "Wall");
-		GameUtilities::AddGameObject(towerWall);
-
 #pragma endregion
 
 		/*Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");

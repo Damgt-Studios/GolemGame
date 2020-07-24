@@ -86,6 +86,14 @@ namespace ADResource
 			//	SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			//}
 
+			void AddObject(XMFLOAT3 position, XMFLOAT3 rotation, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3)) 
+			{
+				std::vector<Renderable*> temp = Generator(position, rotation);
+				
+				for (auto& r : temp)
+					models.push_back(r);
+			}
+
 			void SetRubble(Building* _rubble)
 			{
 				rubble = _rubble;

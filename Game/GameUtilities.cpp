@@ -1286,6 +1286,23 @@ std::vector<Renderable*> GameUtilities::GeneratePathway3(XMFLOAT3 pos, XMFLOAT3 
 	return temp;
 }
 
+std::vector<Renderable*> GameUtilities::GenerateBanner(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Banner.mesh", "files/textures/Banner.mat", XMFLOAT3(pos.x, pos.y + 20, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
 void GameUtilities::AddGameObject(GameObject* obj, bool has_mesh)
 {
 	obj->has_mesh = has_mesh;
