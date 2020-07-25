@@ -238,6 +238,8 @@ namespace ADResource
 				{	
 					if (stats != nullptr)
 						ProcessEffects(delta_time);
+					if (actionLevel > 0)
+						actionLevel -= delta_time;
 				}
 				if (Essence)
 				{

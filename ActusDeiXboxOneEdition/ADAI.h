@@ -130,6 +130,7 @@ namespace ADAI
 						currentTarget = _searchGroup[i];
 						currentTargetDistance = distance * (2 - (_searchGroup[i]->desirability * desirabilityWeight));
 					}
+
 				}
 			}
 		}

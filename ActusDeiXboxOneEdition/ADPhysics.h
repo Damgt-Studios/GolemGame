@@ -882,6 +882,11 @@ namespace ADPhysics
 		}
 
 		//Manifold Setup
+		if (AxisOfMinimumCollision < 0 || AxisOfMinimumCollision > 15)
+		{
+			AxisOfMinimumCollision = 0;
+		}
+
 		m.Normal = Axises[AxisOfMinimumCollision];
 
 

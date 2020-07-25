@@ -585,28 +585,32 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
 		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = ai->myAttack;
-		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	case WATER_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
-		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["WaterMinionPunch"]->Clone();
 		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = ai->myAttack;
-		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	case FIRE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
-		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["FireMinionPunch"]->Clone();
 		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = ai->myAttack;
-		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	case WOOD_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
-		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["WoodMinionPunch"]->Clone();
 		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
 		attacking->myAttack = ai->myAttack;
-		ai->maxSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	}
 
@@ -1152,10 +1156,10 @@ std::vector<Renderable*> GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 r
 	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 
-	for (size_t i = 0; i < temp.size(); i++)
-	{
-		AddGameObject(temp[i]);
-	}
+	//for (size_t i = 0; i < temp.size(); i++)
+	//{
+	//	AddGameObject(temp[i]);
+	//}
 
 	return temp;
 }

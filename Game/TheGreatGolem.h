@@ -243,7 +243,7 @@ public:
 				//AD_ULONG id = ResourceManager::AddAnimatedModel("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 				//trigger->SetScale(XMFLOAT3(0.1f, 0.1f, 0.1f)); 
 				//trigger->SetMeshID(id);
-
+				trigger->rotation = { 0,0,0 };
 				trigger->active = false;
 				trigger->team = 1;
 
@@ -370,24 +370,27 @@ public:
 
 				if (trigger->modelName != "")
 				{
-					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, { 0,0,0 }); // trigger->modelScale
+					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, { 0,0,0 });// trigger->rotation); // trigger->modelScale
 					trigger->SetMeshID(id);
 					////GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
 				}
-				else
-				{
-					AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), { 0,0,0 });
-					trigger->SetMeshID(id);
-				}
+				//else
+				//{
+				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), { 0,0,0 });
+				//	trigger->SetMeshID(id);
+				//}
 				trigger->colScale = scale;
 				//trigger->transform = XMMatrixRotationX(trigger->rotation.x);// trigger->rotation);
-				XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
-				trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, trigger->colScale); //XMFLOAT3(1, 1, 1)); 
+				//XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
+				//trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, trigger->colScale); //XMFLOAT3(1, 1, 1)); 
+				trigger->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(trigger->rotation.y)) * XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ), trigger->colScale);
+
+				//trigger->collider = ADPhysics::OBB(XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ) * XMMatrixScaling(trigger->colScale.x, trigger->colScale.y, trigger->colScale.z) * XMMatrixRotationY(XMConvertToRadians(trigger->rotation.y)), trigger->colScale);
 				//trigger->collider.AxisX.x = trigger->colScale.x;
 				//trigger->collider.AxisY.y = trigger->colScale.y;
 				//trigger->collider.AxisZ.z = trigger->colScale.z;
 				trigger->collider.trigger = true;
-				trigger->SetScale(trigger->modelScale);//(scale);  
+				//trigger->SetScale(trigger->modelScale);//(scale);  
 				trigger->colliderPtr = &trigger->collider;
 				DefinitionDatabase::Instance()->hitboxDatabase[mid] = trigger;
 				//Needs an ID from a map.

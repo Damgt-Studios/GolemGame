@@ -115,22 +115,34 @@ namespace ADResource
 				//temp->SetScale(scale);
 				//temp->SetRotation(rotation);
 				//temp->SetPosition(position);
+				nBox->rotation = rotation;
 				if (nBox->modelName != "")
 				{
 					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, { 0,0,0 }); // trigger->modelScale
+
+					//AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 10, 1), nBox->modelScale, { 0,0,0 }); //nBox->rotation); // trigger->modelScale
 					nBox->SetMeshID(id);
 					//GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
 				}
-				else
-				{
-					AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-					nBox->SetMeshID(id);
-				}
+				//else
+				//{
+				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				//	nBox->SetMeshID(id);
+				//}
+
 
 				nBox->rotation = rotation;
 				nBox->transform = XMMatrixRotationX(nBox->rotation.x);
 				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
 				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+
+
+
+
+				////nBox->transform = XMMatrixRotationX(nBox->rotation.x);
+				//XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
+				////nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+				//nBox->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(nBox->rotation.y)) * XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ), nBox->colScale);
 				//nBox->collider.AxisX.x = nBox->colScale.x;
 				//nBox->collider.AxisY.y = nBox->colScale.y;
 				//nBox->collider.AxisZ.z = nBox->colScale.z;
@@ -157,7 +169,7 @@ namespace ADResource
 				if (active)
 				{
 					// Physics
-					collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));  //colScale); //
+					collider = ADPhysics::OBB(transform, colScale); //
 					//collider.AxisX.x = colScale.x;
 					//collider.AxisY.y = colScale.y;
 					//collider.AxisZ.z = colScale.z;
@@ -192,7 +204,9 @@ namespace ADResource
 								if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 								{
 									if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+									{
 										PassEffects(obj);
+									}
 								}
 							}
 
@@ -287,7 +301,9 @@ namespace ADResource
 						else
 						{
 							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform));
+							//hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(hitboxes[currentHitBox]->rotation.x)), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform)));
 
+							hitboxes[currentHitBox]->SetRotation(hitboxes[currentHitBox]->rotation, RotationType::yxz);
 						}
 						XMVECTOR castSideNormal = _casterTransform->r[0];
 						XMVECTOR castUpNormal = _casterTransform->r[1];
@@ -318,7 +334,7 @@ namespace ADResource
 						hitboxes[currentHitBox]->Velocity.x = (casterFN.x * hitboxes[currentHitBox]->vel.z) + (casterUN.x * hitboxes[currentHitBox]->vel.y) + (casterSN.x * hitboxes[currentHitBox]->vel.x);
 						hitboxes[currentHitBox]->Velocity.y = (casterFN.y * hitboxes[currentHitBox]->vel.z) + (casterUN.y * hitboxes[currentHitBox]->vel.y) + (casterSN.y * hitboxes[currentHitBox]->vel.x);
 						hitboxes[currentHitBox]->Velocity.z = (casterFN.z * hitboxes[currentHitBox]->vel.z) + (casterUN.z * hitboxes[currentHitBox]->vel.y) + (casterSN.z * hitboxes[currentHitBox]->vel.x);
-
+						
 					}
 					for (int i = 0; i < eventDelay.size(); i++)
 					{

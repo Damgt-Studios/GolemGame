@@ -7,9 +7,9 @@ StatCurrent=200
 
 AddStat=MovementSpeed
 StatMin=1
-StatMax=100
+StatMax=3
 StatFail=0
-StatCurrent=35
+StatCurrent=1.2
 
 AddStat=Hate
 StatMin=0
@@ -30,8 +30,8 @@ TickDuration=0
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
-MinValue=-18
-MaxValue=-18
+MinValue=-10
+MaxValue=-10
 ;
 
 Hitbox=WoodMinionPunchHB:
@@ -45,7 +45,7 @@ SingleHit=false
 ;
 
 Action=WoodMinionPunch:
-Cooldown=1.0
-Duration=0.5
+Cooldown=1.75
+Duration=1.75
 AddHitBox=WoodMinionPunchHB
 ;

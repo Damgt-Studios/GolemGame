@@ -7,9 +7,9 @@ StatCurrent= 180
 
 AddStat=MovementSpeed
 StatMin=1
-StatMax=100
+StatMax=3
 StatFail=0
-StatCurrent=60
+StatCurrent=3
 
 AddStat=Hate
 StatMin=0
@@ -30,8 +30,8 @@ TickDuration=0
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
-MinValue=-15
-MaxValue=-15
+MinValue=-8
+MaxValue=-8
 ;
 
 Hitbox=WaterMinionPunchHB:
@@ -45,7 +45,7 @@ SingleHit=true
 ;
 
 Action=WaterMinionPunch:
-Cooldown=1.0
-Duration=0.5
+Cooldown=1.75
+Duration=1.75
 AddHitBox=WaterMinionPunchHB
 ;

@@ -21,6 +21,10 @@ namespace ADAI
 		virtual XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit, XMFLOAT3 _currentTarget) = 0;
 	};
 
+
+
+
+
 	class VillagerAI
 	{
 	public:
@@ -38,7 +42,7 @@ namespace ADAI
 		float desirableTargetCohesionStrength = 1.0f;
 
 		//Danger for Fleeing
-		float fleeingTargetSeperationStrength = 0.00f;
+		float fleeingTargetSeperationStrength = 1.00f;
 
 		void Update(float _deltaTime)
 		{
@@ -47,432 +51,6 @@ namespace ADAI
 				mySSM.Update(_deltaTime);
 			}
 		};
-	};
-
-	class MinionAI
-	{
-	public:
-		ADResource::ADGameplay::Destructable* destructable;
-		SimpleStateMachine mySSM;
-
-		bool turning = false;
-
-		XMFLOAT3 currentTargetLocation;
-		ADAI::Solution myPath;
-		XMFLOAT3 currentPointInPath = { 0,0,0 };
-		XMFLOAT3 lastKnownGoodLocation = { 0,0,0 };
-		bool pathingFailed = false;
-		bool cancelPath = false;
-		bool waitingForPath = false;
-		bool hasPath = false;
-		bool donePathing = true;
-		UINT currentPointIndex = UINT_MAX;
-		ADResource::ADGameplay::GameObject* currentTarget;
-		ADResource::ADGameplay::GameObject* potentialTarget;
-		float moveSpeed = 1.0f;
-		float maxSpeed = 10.0f;
-
-		ADResource::ADGameplay::Action* myAttack;
-
-		//Waypoints (both direct and pathing)
-		float directionalStrength = 0.00f;
-
-		//Safety for Fleeing and Cowering
-		float desirableTargetCohesionStrength = 1.0f;
-
-		//Danger for Fleeing
-		//float fleeingTargetSeperationStrength = 0.00f;
-
-		void Update(float _deltaTime)
-		{
-			if (mySSM.gameObject->active)
-			{
-
-				mySSM.Update(_deltaTime);
-				myAttack->Update(_deltaTime);
-			}
-		};
-	};
-
-	class TowerAI
-	{
-	public:
-		SimpleStateMachine mySSM;
-		XMFLOAT3 currentTargetLocation;
-		ADResource::ADGameplay::Action* myAttack;
-		ADResource::ADGameplay::Building* building;
-		ADResource::ADGameplay::GameObject* currentTarget;
-
-		void Update(float _deltaTime)
-		{
-			if (mySSM.gameObject->active)
-			{
-				mySSM.Update(_deltaTime);
-				myAttack->Update(_deltaTime);
-			}
-		};
-	};
-
-	struct queuePair {
-		MinionAI* currentUnit;
-		XMFLOAT3 currentTarget;
-	};
-
-	class PathersQueue
-	{
-	public:
-		std::queue<queuePair> pathingQueue;
-		MinionAI* minion = nullptr;
-		XMFLOAT3 currentTarget = { 0,0,0 };
-
-		void Update(float _deltaTime)
-		{
-			if (_deltaTime > 0)
-			{
-				ADAI::ADPathfinding::Instance()->update(0.005f);
-				if (ADAI::ADPathfinding::Instance()->isDone())
-				{
-					if (minion)
-					{
-						if (!minion->cancelPath)
-						{
-							Solution tempSolution = ADAI::ADPathfinding::Instance()->getSolutionPoints();
-							//minion->myPath 
-							if (tempSolution.positions.size() > 0)
-							{	
-								if (!minion->hasPath)
-								{
-									//Set new target
-									minion->myPath = tempSolution;
-									if (minion->potentialTarget)
-									{
-										minion->currentTarget = minion->potentialTarget;
-										minion->currentTargetLocation = minion->potentialTarget->GetPosition();
-										minion->potentialTarget == nullptr;
-									}
-							//		minion->donePathing = false;
-									minion->hasPath = true;
-									minion->currentPointIndex = (minion->myPath.positions.size() - 1);
-									minion->currentPointInPath = minion->myPath.positions[minion->currentPointIndex];
-									minion = nullptr;
-								}
-								else if (tempSolution.totalLength[tempSolution.totalLength.size() - 1] < minion->myPath.totalLength[minion->currentPointIndex])
-								{
-									//Set new target
-									minion->myPath = tempSolution;
-									if (minion->potentialTarget)
-									{
-										minion->currentTarget = minion->potentialTarget;
-										minion->currentTargetLocation = minion->potentialTarget->GetPosition();
-										minion->potentialTarget == nullptr;
-									}
-							//		minion->donePathing = false;
-									minion->hasPath = true;
-									minion->currentPointIndex = (minion->myPath.positions.size() - 1);
-									minion->currentPointInPath = minion->myPath.positions[minion->currentPointIndex];
-									minion = nullptr;
-								}
-
-							}
-							else if (!minion->hasPath)
-							{
-								minion->pathingFailed = true;
-							//	minion->donePathing = true;
-								minion->hasPath = false;
-								minion->cancelPath = false;
-								minion = nullptr;
-							}
-						}
-						else
-						{
-					//		minion->donePathing = true;
-							minion->hasPath = false;
-							minion->cancelPath = false;
-							minion = nullptr;
-						}
-					}
-					if (pathingQueue.size() > 0)
-					{
-						bool nextMinion = true;
-						while (nextMinion && pathingQueue.size() > 0)
-						{
-							minion = pathingQueue.front().currentUnit;
-							currentTarget = pathingQueue.front().currentTarget;
-							minion->currentTargetLocation = currentTarget;
-							pathingQueue.pop();
-							minion->waitingForPath = false;
-							if (minion->cancelPath)
-							{
-								minion->cancelPath = false;
-								nextMinion = true;;
-							}
-							else
-							{
-								nextMinion = false;
-							}
-						} 
-
-						UINT srow;
-						UINT scolumn;
-						UINT drow;
-						UINT dcolumn;
-						ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(minion->destructable->GetPosition().x, minion->destructable->GetPosition().z), scolumn, srow);
-						ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(currentTarget.x, currentTarget.z), dcolumn, drow);
-						//rather than just enter we need to check the end state for the group when we first assign the destination.  If its not good find alternative, store it then reuse it.
-						int start = ADAI::ADPathfinding::Instance()->findAcceptablePoint(scolumn, srow);
-						if (start == 0)
-						{
-							int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(dcolumn, drow);
-							if (end == 0)
-							{
-								ADAI::ADPathfinding::Instance()->enter(scolumn, srow, dcolumn, drow);
-								minion->pathingFailed = false;
-								minion->cancelPath = false;
-								return;
-							}
-						}
-						//path fail.
-						minion->currentTarget = nullptr;
-						minion->pathingFailed = true;
-						minion->cancelPath = true;
-					}
-				
-				}
-			}
-			
-		}
-
-		void AddToQueueLimited(MinionAI* _currentUnit, XMFLOAT3 _currentTarget)
-		{
-			if (!_currentUnit->waitingForPath && pathingQueue.size() < 41)
-			{
-				pathingQueue.push(queuePair{ _currentUnit, _currentTarget });
-				_currentUnit->waitingForPath = true;
-			}
-		}
-
-		void AddToQueue(MinionAI* _currentUnit, XMFLOAT3 _currentTarget)
-		{
-			if (!_currentUnit->waitingForPath)
-			{
-				pathingQueue.push(queuePair{ _currentUnit, _currentTarget });
-				_currentUnit->waitingForPath = true;
-			}
-		}
-
-		void AddToQueueNoCheck(MinionAI* _currentUnit, XMFLOAT3 _currentTarget)
-		{
-			pathingQueue.push(queuePair{ _currentUnit, _currentTarget });
-			_currentUnit->waitingForPath = true;
-		}
-	};
-
-
-
-
-	class TowerState : public State
-	{
-	public:
-		TowerAI* tower;
-		std::vector<ADResource::ADGameplay::GameObject*>* targets;
-		float timer = 0;
-		const float waitDuration = 0.2f;
-
-		virtual void Update(float _deltaTime)
-		{
-			if (!tower->currentTarget)
-			{
-				timer += _deltaTime;
-				if (timer > waitDuration)
-				{
-					tower->currentTarget = ADAI::FindNearest(tower->building, *targets, 200.f, 1.f);
-				}
-			}
-			else
-			{
-				if (!tower->currentTarget->active || DistanceCalculation(tower->currentTarget->GetPosition(), tower->building->GetPosition()) > 300.f)
-				{
-					tower->currentTarget = nullptr;
-
-				}
-				else
-				{
-					tower->mySSM.SwitchState(1, _deltaTime);
-
-					XMVECTOR pos = tower->building->transform.r[3];
-
-					XMVECTOR distanceToPlane = XMVector3Dot({ 0,1,0 }, (tower->currentTarget->transform.r[3] - tower->building->GetModelByIndex(0)->transform.r[3]));
-					XMVECTOR pointOnPlane = tower->currentTarget->transform.r[3] - (XMVECTOR{ 0.f,1.f,0.f } *distanceToPlane.m128_f32[0]);
-
-					XMVECTOR forward = XMVector3Normalize(tower->building->GetModelByIndex(0)->transform.r[3] - pointOnPlane);
-
-					XMVECTOR right = XMVector3Cross(XMVector3Normalize({ 0.f,1.f,0.f }), forward);
-					XMVECTOR up = XMVector3Cross(forward, right);
-
-					tower->building->GetModelByIndex(0)->transform.r[0] = right;
-					tower->building->GetModelByIndex(0)->transform.r[1] = up;
-					tower->building->GetModelByIndex(0)->transform.r[2] = -forward;
-
-
-					tower->building->GetModelByIndex(0)->SetScale({ 0.05,0.05,0.05 });
-					tower->building->GetModelByIndex(0)->SetPosition({ pos.m128_f32[0], pos.m128_f32[1], pos.m128_f32[2] });
-					tower->building->transform = tower->building->GetModelByIndex(0)->transform;
-				}
-			}
-		};
-	};
-
-	class CohesionGroup : public MovementGroup
-	{
-		XMFLOAT3 averagePosition = { 0,0,0 };
-		float groupCohesionStrength = 0.05f;
-		float cohesionRadius = 20.0;
-		float cohesionLimitRadius = 400.0;
-
-		void CalculateAverages()
-		{
-			averagePosition = { 0,0,0 };
-			UINT count = 0;
-			for (auto& member : members)
-			{
-				if (member->active)
-				{
-					//XMVECTOR memberTransform = member->transform.r[3];
-					//XMVECTOR aPos = Float3ToVector(averagePosition);
-					//aPos += memberTransform;
-					//XMStoreFloat3(&averagePosition, aPos);
-
-					XMFLOAT4X4 memberTransform = MatrixToFloat4x4(member->transform);
-					memberTransform.m[3];
-					averagePosition.x += memberTransform.m[3][0];
-					averagePosition.y += memberTransform.m[3][1];
-					averagePosition.z += memberTransform.m[3][2];
-					count++;
-				}
-			}
-			averagePosition.x /= count;
-			averagePosition.y /= count;
-			averagePosition.z /= count;
-		};
-
-	public:
-		std::vector<ADResource::ADGameplay::GameObject*> members;
-
-		void Update(float _deltaTime)
-		{
-			CalculateAverages();
-		}
-
-		XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit) override
-		{
-			XMVECTOR cuPos = Float3ToVector(_currentUnit->GetPosition());
-			XMVECTOR aPos = Float3ToVector(averagePosition);
-			cuPos = aPos - cuPos;
-
-			XMFLOAT4 length;
-			XMStoreFloat4(&length, XMVector4Length(cuPos));
-
-			if (length.x > cohesionLimitRadius)
-			{
-				if (length.x < cohesionRadius)
-				{
-					cuPos = XMVector4Normalize(cuPos);
-					cuPos *= (length.x / cohesionRadius);
-				}
-				else
-				{
-					cuPos = XMVector4Normalize(cuPos);
-				}
-				cuPos *= groupCohesionStrength;
-				return cuPos;
-			}
-			return { 0,0,0 };
-		}
-	};
-
-	class SeperationGroup : public MovementGroup
-	{
-		float groupSeperationStrength = 0.7f;
-		//Seperation is calculated by the safe radius of each unit. This value increases that seperation radius.
-		float additionalSeperation = 0.0f;
-
-	public:
-		std::vector<ADResource::ADGameplay::GameObject*> members;
-
-		void Update(float _deltaTime)
-		{
-		}
-
-		XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit) override
-		{
-			XMVECTOR changeFromTarget = { 0,0,0 };
-			XMVECTOR targetPos = { 0,0,0 };
-			XMVECTOR velocity = { 0, 0, 0 };
-			XMVECTOR distance = { 0, 0, 0 };
-			XMFLOAT4 length = { 0,0,0,0 };
-			XMVECTOR curentPos = Float3ToVector(_currentUnit->GetPosition());
-
-			for (auto& member : members)
-			{
-				if (member->active)
-				{
-					targetPos = Float3ToVector(member->GetPosition());
-					distance = targetPos - curentPos;
-
-					float threshold = member->safeRadius + _currentUnit->safeRadius + additionalSeperation;
-
-					XMStoreFloat4(&length, XMVector4Length(distance));
-					if (length.x < threshold)
-					{
-						changeFromTarget = curentPos - targetPos;
-						changeFromTarget = XMVector4Normalize(changeFromTarget);
-						changeFromTarget *= (threshold - length.x) / threshold;
-						velocity += changeFromTarget;
-					}
-				}
-
-			}
-			velocity = XMVector4Normalize(velocity);
-			velocity *= groupSeperationStrength;
-			return velocity;
-		}
-	};
-
-	class TargetingGroup : public TargetedMovementGroup
-	{
-		float groupTargetingStrength = 2.0f;
-
-	public:
-		//std::vector<ADResource::ADGameplay::GameObject*> members;
-		//std::vector<ADResource::ADGameplay::GameObject*> targets;
-
-		void Update(float _deltaTime)
-		{
-
-		}
-
-		XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit, XMFLOAT3 _currentTarget) override
-		{
-			XMVECTOR minionPos = ADMath::Float3ToVector(_currentUnit->GetPosition());
-			XMVECTOR targetPos = ADMath::Float3ToVector(_currentTarget);
-			XMVECTOR velocity = targetPos - minionPos;
-
-			XMFLOAT4 length;
-			XMStoreFloat4(&length, XMVector4Length(velocity));
-
-			if (length.x < 20.f)
-			{
-				velocity = XMVector4Normalize(velocity);
-				velocity *= (length.x / 20.f);
-			}
-			else
-			{
-				velocity = XMVector4Normalize(velocity);
-			}
-
-			velocity *= groupTargetingStrength;
-			return velocity;
-		}
 	};
 
 	class VillagerGroup
@@ -711,7 +289,6 @@ namespace ADAI
 						{
 							if (tempTarget->gamePlayType != ADResource::ADGameplay::OBJECT_TAG::PLAYER)
 							{
-								tempTarget->actionLevel += 5;
 								villager->mySSM.SwitchState(2, _deltaTime);
 								villager->destructable->anim_controller->PlayAnimationByName("Cower");
 
@@ -751,6 +328,7 @@ namespace ADAI
 							if (!villager->currentFear)
 							{
 								villager->fleeingTargetSeperationStrength = 0.0f;
+								villager->currentFear->actionLevel + 1.f;
 							}
 						}
 					}
@@ -763,6 +341,7 @@ namespace ADAI
 						if (villager->currentFear)
 						{
 							villager->fleeingTargetSeperationStrength = 1.0f;
+							villager->currentFear->actionLevel + 1.f;
 						}
 					}
 				}
@@ -772,6 +351,7 @@ namespace ADAI
 					if (timer > waitDuration)
 					{
 						villager->currentStructure = ADAI::FindNearest(mySSM->gameObject, safetyStructures, 700.f, 1.f);
+						villager->currentStructure->actionLevel + 1.f;
 					}
 				}
 				else
@@ -781,6 +361,7 @@ namespace ADAI
 						villager->currentStructure = ADAI::FindNearest(mySSM->gameObject, safetyStructures, 700.f, 1.f);
 						if (villager->currentStructure)
 						{
+							villager->currentStructure->actionLevel + 1.f;
 							villager->desirableTargetCohesionStrength = 0.5f;
 						}
 					}
@@ -806,6 +387,364 @@ namespace ADAI
 
 			}
 		};
+	};
+
+
+
+
+	class MinionAI
+	{
+	public:
+		ADResource::ADGameplay::Destructable* destructable;
+		SimpleStateMachine mySSM;
+
+		bool turning = false;
+
+		XMFLOAT3 currentTargetLocation;
+		ADAI::Solution myPath;
+		XMFLOAT3 currentPointInPath = { 0,0,0 };
+		XMFLOAT3 lastKnownGoodLocation = { 0,0,0 };
+		UINT validDestinationX = 0;
+		UINT validDestinationZ = 0;
+		bool pathingFailed = false;
+		bool cancelPath = false;
+		bool waitingForPath = false;
+		bool hasPath = false;
+		bool donePathing = true;
+		UINT currentPointIndex = UINT_MAX;
+		ADResource::ADGameplay::GameObject* currentTarget;
+		ADResource::ADGameplay::GameObject* potentialTarget;
+		float moveSpeed = 1.0f;
+		float maxSpeed = 10.0f;
+
+		ADResource::ADGameplay::Action* myAttack;
+
+		//Waypoints (both direct and pathing)
+		float directionalStrength = 0.00f;
+
+		//Safety for Fleeing and Cowering
+		float desirableTargetCohesionStrength = 1.0f;
+
+		//Danger for Fleeing
+		//float fleeingTargetSeperationStrength = 0.00f;
+
+		void Update(float _deltaTime)
+		{
+			if (mySSM.gameObject->active)
+			{
+
+				mySSM.Update(_deltaTime);
+				myAttack->Update(_deltaTime);
+			}
+		};
+	};
+
+	struct queuePair {
+		MinionAI* currentUnit;
+		XMFLOAT3 currentTarget;
+	};
+
+	class PathersQueue
+	{
+	public:
+		std::queue<queuePair> pathingQueue;
+		MinionAI* minion = nullptr;
+		XMFLOAT3 currentTarget = { 0,0,0 };
+
+		void Update(float _deltaTime)
+		{
+			if (_deltaTime > 0)
+			{
+				ADAI::ADPathfinding::Instance()->update(0.005f);
+				if (ADAI::ADPathfinding::Instance()->isDone())
+				{
+					if (minion)
+					{
+						if (!minion->cancelPath)
+						{
+							Solution tempSolution = ADAI::ADPathfinding::Instance()->getSolutionPoints();
+							//minion->myPath 
+							if (tempSolution.positions.size() > 0)
+							{	
+								if (!minion->hasPath)
+								{
+									//Set new target
+									minion->myPath = tempSolution;
+									if (minion->potentialTarget)
+									{
+										minion->currentTarget = minion->potentialTarget;
+										minion->currentTargetLocation = minion->potentialTarget->GetPosition();
+										minion->potentialTarget == nullptr;
+									}
+							//		minion->donePathing = false;
+									minion->hasPath = true;
+									minion->currentPointIndex = (minion->myPath.positions.size() - 1);
+									minion->currentPointInPath = minion->myPath.positions[minion->currentPointIndex];
+									minion = nullptr;
+								}
+								else if (tempSolution.totalLength[tempSolution.totalLength.size() - 1] < minion->myPath.totalLength[minion->currentPointIndex])
+								{
+									//Set new target
+									minion->myPath = tempSolution;
+									if (minion->potentialTarget)
+									{
+										minion->currentTarget = minion->potentialTarget;
+										minion->currentTargetLocation = minion->potentialTarget->GetPosition();
+										minion->potentialTarget == nullptr;
+									}
+							//		minion->donePathing = false;
+									minion->hasPath = true;
+									minion->currentPointIndex = (minion->myPath.positions.size() - 1);
+									minion->currentPointInPath = minion->myPath.positions[minion->currentPointIndex];
+									minion = nullptr;
+								}
+
+							}
+							else if (!minion->hasPath)
+							{
+								minion->pathingFailed = true;
+							//	minion->donePathing = true;
+								minion->hasPath = false;
+								minion->cancelPath = false;
+								minion = nullptr;
+							}
+						}
+						else
+						{
+					//		minion->donePathing = true;
+							minion->hasPath = false;
+							minion->cancelPath = false;
+							minion = nullptr;
+						}
+					}
+					if (pathingQueue.size() > 0)
+					{
+						bool nextMinion = true;
+						while (nextMinion && pathingQueue.size() > 0)
+						{
+							minion = pathingQueue.front().currentUnit;
+							currentTarget = pathingQueue.front().currentTarget;
+							minion->currentTargetLocation = currentTarget;
+							pathingQueue.pop();
+							minion->waitingForPath = false;
+							if (minion->cancelPath)
+							{
+								minion->cancelPath = false;
+								nextMinion = true;;
+							}
+							else
+							{
+								nextMinion = false;
+							}
+						} 
+
+						UINT srow;
+						UINT scolumn;
+						UINT drow;
+						UINT dcolumn;
+						ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(minion->destructable->GetPosition().x, minion->destructable->GetPosition().z), scolumn, srow);
+						ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(currentTarget.x, currentTarget.z), dcolumn, drow);
+						//rather than just enter we need to check the end state for the group when we first assign the destination.  If its not good find alternative, store it then reuse it.
+						int start = ADAI::ADPathfinding::Instance()->findAcceptablePoint(scolumn, srow);
+						if (start == 0)
+						{
+							//int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(dcolumn, drow);
+							//if (end == 0)
+							//{
+								//ADAI::ADPathfinding::Instance()->enter(scolumn, srow, dcolumn, drow);
+								ADAI::ADPathfinding::Instance()->enter(scolumn, srow, minion->validDestinationX, minion->validDestinationZ);
+								minion->pathingFailed = false;
+								minion->cancelPath = false;
+								return;
+							//}
+						}
+						//path fail.
+						minion->currentTarget = nullptr;
+						minion->pathingFailed = true;
+						minion->cancelPath = true;
+					}
+				
+				}
+			}
+			
+		}
+
+		void AddToQueueLimited(MinionAI* _currentUnit, XMFLOAT3 _currentTarget)
+		{
+			if (!_currentUnit->waitingForPath && pathingQueue.size() < 62)
+			{
+				pathingQueue.push(queuePair{ _currentUnit, _currentTarget });
+				_currentUnit->waitingForPath = true;
+			}
+		}
+
+		void AddToQueue(MinionAI* _currentUnit, XMFLOAT3 _currentTarget)
+		{
+			if (!_currentUnit->waitingForPath)
+			{
+				pathingQueue.push(queuePair{ _currentUnit, _currentTarget });
+				_currentUnit->waitingForPath = true;
+			}
+		}
+
+		void AddToQueueNoCheck(MinionAI* _currentUnit, XMFLOAT3 _currentTarget)
+		{
+			pathingQueue.push(queuePair{ _currentUnit, _currentTarget });
+			_currentUnit->waitingForPath = true;
+		}
+	};
+
+	class CohesionGroup : public MovementGroup
+	{
+		XMFLOAT3 averagePosition = { 0,0,0 };
+		float groupCohesionStrength = 0.02f;
+		float cohesionRadius = 20.0;
+		float cohesionLimitRadius = 400.0;
+
+		void CalculateAverages()
+		{
+			averagePosition = { 0,0,0 };
+			UINT count = 0;
+			for (auto& member : members)
+			{
+				if (member->active)
+				{
+					//XMVECTOR memberTransform = member->transform.r[3];
+					//XMVECTOR aPos = Float3ToVector(averagePosition);
+					//aPos += memberTransform;
+					//XMStoreFloat3(&averagePosition, aPos);
+
+					XMFLOAT4X4 memberTransform = MatrixToFloat4x4(member->transform);
+					memberTransform.m[3];
+					averagePosition.x += memberTransform.m[3][0];
+					averagePosition.y += memberTransform.m[3][1];
+					averagePosition.z += memberTransform.m[3][2];
+					count++;
+				}
+			}
+			averagePosition.x /= count;
+			averagePosition.y /= count;
+			averagePosition.z /= count;
+		};
+
+	public:
+		std::vector<ADResource::ADGameplay::GameObject*> members;
+
+		void Update(float _deltaTime)
+		{
+			CalculateAverages();
+		}
+
+		XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit) override
+		{
+			XMVECTOR cuPos = Float3ToVector(_currentUnit->GetPosition());
+			XMVECTOR aPos = Float3ToVector(averagePosition);
+			cuPos = aPos - cuPos;
+
+			XMFLOAT4 length;
+			XMStoreFloat4(&length, XMVector4Length(cuPos));
+
+			if (length.x > cohesionLimitRadius)
+			{
+				if (length.x < cohesionRadius)
+				{
+					cuPos = XMVector4Normalize(cuPos);
+					cuPos *= (length.x / cohesionRadius);
+				}
+				else
+				{
+					cuPos = XMVector4Normalize(cuPos);
+				}
+				cuPos *= groupCohesionStrength;
+				return cuPos;
+			}
+			return { 0,0,0 };
+		}
+	};
+
+	class SeperationGroup : public MovementGroup
+	{
+		float groupSeperationStrength = 1.2f;
+		//Seperation is calculated by the safe radius of each unit. This value increases that seperation radius.
+		float additionalSeperation = 0.0f;
+
+	public:
+		std::vector<ADResource::ADGameplay::GameObject*> members;
+
+		void Update(float _deltaTime)
+		{
+		}
+
+		XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit) override
+		{
+			XMVECTOR changeFromTarget = { 0,0,0 };
+			XMVECTOR targetPos = { 0,0,0 };
+			XMVECTOR velocity = { 0, 0, 0 };
+			XMVECTOR distance = { 0, 0, 0 };
+			XMFLOAT4 length = { 0,0,0,0 };
+			XMVECTOR curentPos = Float3ToVector(_currentUnit->GetPosition());
+
+			for (auto& member : members)
+			{
+				if (member->active)
+				{
+					targetPos = Float3ToVector(member->GetPosition());
+					distance = targetPos - curentPos;
+
+					float threshold = member->safeRadius + _currentUnit->safeRadius + additionalSeperation;
+
+					XMStoreFloat4(&length, XMVector4Length(distance));
+					if (length.x < threshold)
+					{
+						changeFromTarget = curentPos - targetPos;
+						changeFromTarget = XMVector4Normalize(changeFromTarget);
+						changeFromTarget *= (threshold - length.x) / threshold;
+						velocity += changeFromTarget;
+					}
+				}
+
+			}
+			velocity = XMVector4Normalize(velocity);
+			velocity *= groupSeperationStrength;
+			return velocity;
+		}
+	};
+
+	class TargetingGroup : public TargetedMovementGroup
+	{
+		float groupTargetingStrength = 2.0f;
+
+	public:
+		//std::vector<ADResource::ADGameplay::GameObject*> members;
+		//std::vector<ADResource::ADGameplay::GameObject*> targets;
+
+		void Update(float _deltaTime)
+		{
+
+		}
+
+		XMVECTOR GetVelocityValue(ADResource::ADGameplay::GameObject* _currentUnit, XMFLOAT3 _currentTarget) override
+		{
+			XMVECTOR minionPos = ADMath::Float3ToVector(_currentUnit->GetPosition());
+			XMVECTOR targetPos = ADMath::Float3ToVector(_currentTarget);
+			XMVECTOR velocity = targetPos - minionPos;
+
+			XMFLOAT4 length;
+			XMStoreFloat4(&length, XMVector4Length(velocity));
+
+			if (length.x < 20.f)
+			{
+				velocity = XMVector4Normalize(velocity);
+				velocity *= (length.x / 20.f);
+			}
+			else
+			{
+				velocity = XMVector4Normalize(velocity);
+			}
+
+			velocity *= groupTargetingStrength;
+			return velocity;
+		}
 	};
 
 	class CommandState : public FlockingState
@@ -851,8 +790,7 @@ namespace ADAI
 				}
 
 
-
-				if (minion->hasPath) //minion->donePathing == false && 
+				if (minion->hasPath) 
 				{
 					float distance2 = DistanceCalculation(minion->mySSM.gameObject->GetPosition(), minion->currentPointInPath);
 					if (distance2 < 15)
@@ -864,10 +802,7 @@ namespace ADAI
 						else
 						{
 							VelocityWhenFlocking = { 0,0,0,0 };
-							//minion->donePathing = true;
 							minion->hasPath = false;
-							minion->pathingFailed = false;
-							//minion->waitingForPath = false;
 						}
 					}
 					else if (distance2 > 300)
@@ -876,10 +811,7 @@ namespace ADAI
 						if (minion->currentPointIndex == 0)
 						{
 							VelocityWhenFlocking = { 0,0,0,0 };
-							//minion->donePathing = true;
 							minion->hasPath = false;
-							minion->pathingFailed = false;
-							//minion->waitingForPath = false;
 						}
 					}
 				}
@@ -896,11 +828,13 @@ namespace ADAI
 							{
 								if (minion->potentialTarget != minion->currentTarget)
 								{
+									minion->potentialTarget->actionLevel += 1.5f;
 									pathingQueue->AddToQueueLimited(minion, minion->potentialTarget->GetPosition());
 								}
 							}
 							else
 							{
+								minion->potentialTarget->actionLevel += 1.5f;
 								pathingQueue->AddToQueueLimited(minion, minion->potentialTarget->GetPosition());
 							}
 						}
@@ -930,11 +864,11 @@ namespace ADAI
 									minion->mySSM.SwitchState(2, _deltaTime);
 									minion->destructable->anim_controller->PlayAnimationByName("Attack");
 
-									if (minion->currentTarget->gamePlayType == ADResource::ADGameplay::OBJECT_TAG::PEASANT)
-									{
+									//if (minion->currentTarget->gamePlayType == ADResource::ADGameplay::OBJECT_TAG::PEASANT)
+									//{
 										//use a function to engage the target this isn't working well
-										minion->currentTarget->actionLevel += 25;
-									}
+										minion->currentTarget->actionLevel += 5;
+									//}
 
 									minion->donePathing = true;
 									minion->hasPath = false;
@@ -1027,7 +961,7 @@ namespace ADAI
 
 		float flockRadius = 10.0;
 		float maxSpeed = 10.0f;
-		float moveSpeed = 0.2f;
+		float moveSpeed = 0.5f;
 
 		//XMVECTOR groupTarget;
 		//XMMATRIX* player;
@@ -1056,33 +990,48 @@ namespace ADAI
 
 		void SetTarget(ADResource::ADGameplay::GameObject* _target)
 		{
-			for (auto& flocker : flockers)
+			UINT dColumn = 0;
+			UINT dRow = 0;
+			ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(_target->GetPosition().x, _target->GetPosition().z), dColumn, dRow);
+			int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(dColumn, dRow);
+			if (end == 0)
 			{
-				flocker->mySSM.currentState = flocker->mySSM.states[1];
-				flocker->potentialTarget = nullptr;
-				flocker->currentTarget = _target;
-				flocker->currentTargetLocation = _target->GetPosition();
-				pathingQueue->AddToQueue(flocker, flocker->currentTargetLocation);
+				for (auto& flocker : flockers)
+				{
+					flocker->mySSM.currentState = flocker->mySSM.states[1];
+					flocker->potentialTarget = nullptr;
+					flocker->currentTarget = _target;
+					flocker->currentTargetLocation = _target->GetPosition();
+					flocker->validDestinationX = dColumn;
+					flocker->validDestinationZ = dRow;
+					pathingQueue->AddToQueue(flocker, flocker->currentTargetLocation);
+				}
+
 			}
 		}
 
 		void SetDestination(ADResource::ADGameplay::GameObject* _target)
 		{
-			for (auto& flocker : flockerState)
+			UINT dColumn = 0;
+			UINT dRow = 0;
+			ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(_target->GetPosition().x, _target->GetPosition().z), dColumn, dRow);
+			int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(dColumn, dRow);
+			if (end == 0)
 			{
-				flocker->targetCheckTimer = -0.5f;
-			}
-			for (auto& flocker : flockers)
-			{
-				flocker->mySSM.currentState = flocker->mySSM.states[1];
-				flocker->potentialTarget = nullptr;
-				flocker->currentTarget = nullptr;
-				flocker->hasPath = false;
-				flocker->pathingFailed = false;
-				flocker->donePathing = false;
-				
-				flocker->currentTargetLocation = _target->GetPosition();
-				pathingQueue->AddToQueueNoCheck(flocker, flocker->currentTargetLocation);
+				for (auto& flocker : flockers)
+				{
+					flocker->mySSM.currentState = flocker->mySSM.states[1];
+					flocker->potentialTarget = nullptr;
+					flocker->currentTarget = nullptr;
+					flocker->hasPath = false;
+					flocker->pathingFailed = false;
+					flocker->donePathing = false;
+					flocker->validDestinationX = dColumn;
+					flocker->validDestinationZ = dRow;
+
+					flocker->currentTargetLocation = _target->GetPosition();
+					pathingQueue->AddToQueueNoCheck(flocker, flocker->currentTargetLocation);
+				}
 			}
 		}
 
@@ -1392,7 +1341,7 @@ namespace ADAI
 						//base speed figured out from facing and motion//
 
 
-						if(flockers[i]->hasPath) 
+						if (flockers[i]->hasPath)
 						{
 							if (flockers[i]->currentTarget) //Path and Target
 							{
@@ -1400,10 +1349,20 @@ namespace ADAI
 								if (distance > 50.f)
 								{
 									//Make sure I didn't chase target too far from path.  If distance to nearest path node is too far repath otherwise return to path at that node.
+
+									for (auto& group : myGroups)
+									{
+										velocity += group->GetVelocityValue(flockers[i]->destructable);
+									}
 									velocity += CalculatePathingAcceleration(flockers[i]);
 									if (distance > 300.f)
 									{
-										pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTarget->GetPosition());
+										ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(flockers[i]->currentTarget->GetPosition().x, flockers[i]->currentTarget->GetPosition().z), flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+										int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+										if (end == 0)
+										{
+											pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTarget->GetPosition());
+										}
 									}
 								}
 								else						//Has target but is close enough to chase.
@@ -1416,6 +1375,10 @@ namespace ADAI
 							}
 							else
 							{
+								for (auto& group : myGroups)
+								{
+									velocity += group->GetVelocityValue(flockers[i]->destructable);
+								}
 								velocity += CalculatePathingAcceleration(flockers[i]);
 							}
 						}
@@ -1434,11 +1397,23 @@ namespace ADAI
 								//flockers[i]->currentTargetLocation = flockers[i]->currentTarget->GetPosition();
 								if (flockers[i]->currentTarget)
 								{
-									pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTarget->GetPosition());
+									ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(flockers[i]->currentTarget->GetPosition().x, flockers[i]->currentTarget->GetPosition().z), flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+
+									int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+									if (end == 0)
+									{
+										pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTarget->GetPosition());
+									}
 								}
 								else
 								{
-									pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTargetLocation);
+									ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(flockers[i]->currentTargetLocation.x, flockers[i]->currentTargetLocation.z), flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+
+									int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+									if (end == 0)
+									{
+										pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTargetLocation);
+									}
 								}
 
 								//groupAvoidanceStrength = 2.0f;
@@ -1449,7 +1424,14 @@ namespace ADAI
 								float distance = DistanceCalculation(flockers[i]->destructable->GetPosition(), flockers[i]->currentTarget->GetPosition());
 								if (distance > 30.f)
 								{
-									pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTarget->GetPosition());
+
+									ADAI::ADPathfinding::Instance()->tileMap.GetColumnRowFromPosition(XMFLOAT2(flockers[i]->currentTargetLocation.x, flockers[i]->currentTargetLocation.z), flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+
+									int end = ADAI::ADPathfinding::Instance()->findAcceptablePoint(flockers[i]->validDestinationX, flockers[i]->validDestinationZ);
+									if (end == 0)
+									{
+										pathingQueue->AddToQueueLimited(flockers[i], flockers[i]->currentTarget->GetPosition());
+									}
 								}
 								if (distance < 50.f)
 								{
@@ -1457,6 +1439,7 @@ namespace ADAI
 									{
 										velocity += group->GetVelocityValue(flockers[i]->destructable, flockers[i]->currentTarget->GetPosition());
 									}
+
 								}
 							}
 							for (auto& group : myGroups)
@@ -1486,8 +1469,8 @@ namespace ADAI
 
 
 						velocity *= (moveSpeed * _deltaTime);
-						velocity += XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
 						float decellerationRate = (1.0f * _deltaTime) + 1.0f;
+						velocity += XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
 						velocity /= decellerationRate;
 
 						XMFLOAT4 yCancel;
@@ -1500,7 +1483,7 @@ namespace ADAI
 
 						if (flockers[i]->pathingFailed && length.x < 0.01f)
 						{
-							velocity += {RandFloat(-0.2f, 0.2f), 0, RandFloat(-0.2f, 0.2f)};
+							velocity += {RandFloat(-0.1f, 0.1f), 0, RandFloat(-0.1f, 0.1f)};
 							flockers[i]->pathingFailed = false;
 						}
 
@@ -1514,7 +1497,82 @@ namespace ADAI
 					}
 				}
 			}
-			
+
+		};
+	};
+
+
+
+
+
+	class TowerAI
+	{
+	public:
+		SimpleStateMachine mySSM;
+		XMFLOAT3 currentTargetLocation;
+		ADResource::ADGameplay::Action* myAttack;
+		ADResource::ADGameplay::Building* building;
+		ADResource::ADGameplay::GameObject* currentTarget;
+
+		void Update(float _deltaTime)
+		{
+			if (mySSM.gameObject->active)
+			{
+				mySSM.Update(_deltaTime);
+				myAttack->Update(_deltaTime);
+			}
+		};
+	};
+
+	class TowerState : public State
+	{
+	public:
+		TowerAI* tower;
+		std::vector<ADResource::ADGameplay::GameObject*>* targets;
+		float timer = 0;
+		const float waitDuration = 0.2f;
+
+		virtual void Update(float _deltaTime)
+		{
+			if (!tower->currentTarget)
+			{
+				timer += _deltaTime;
+				if (timer > waitDuration)
+				{
+					tower->currentTarget = ADAI::FindNearest(tower->building, *targets, 200.f, 1.f);
+				}
+			}
+			else
+			{
+				if (!tower->currentTarget->active || DistanceCalculation(tower->currentTarget->GetPosition(), tower->building->GetPosition()) > 300.f)
+				{
+					tower->currentTarget = nullptr;
+
+				}
+				else
+				{
+					tower->mySSM.SwitchState(1, _deltaTime);
+
+					XMVECTOR pos = tower->building->transform.r[3];
+
+					XMVECTOR distanceToPlane = XMVector3Dot({ 0,1,0 }, (tower->currentTarget->transform.r[3] - tower->building->GetModelByIndex(0)->transform.r[3]));
+					XMVECTOR pointOnPlane = tower->currentTarget->transform.r[3] - (XMVECTOR{ 0.f,1.f,0.f } *distanceToPlane.m128_f32[0]);
+
+					XMVECTOR forward = XMVector3Normalize(tower->building->GetModelByIndex(0)->transform.r[3] - pointOnPlane);
+
+					XMVECTOR right = XMVector3Cross(XMVector3Normalize({ 0.f,1.f,0.f }), forward);
+					XMVECTOR up = XMVector3Cross(forward, right);
+
+					tower->building->GetModelByIndex(0)->transform.r[0] = right;
+					tower->building->GetModelByIndex(0)->transform.r[1] = up;
+					tower->building->GetModelByIndex(0)->transform.r[2] = -forward;
+
+
+					tower->building->GetModelByIndex(0)->SetScale({ 0.05,0.05,0.05 });
+					tower->building->GetModelByIndex(0)->SetPosition({ pos.m128_f32[0], pos.m128_f32[1], pos.m128_f32[2] });
+					tower->building->transform = tower->building->GetModelByIndex(0)->transform;
+				}
+			}
 		};
 	};
 
