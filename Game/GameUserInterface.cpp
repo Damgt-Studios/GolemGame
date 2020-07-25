@@ -947,6 +947,9 @@ namespace GolemGameUISetup
 		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
 		buttonAnimation[0] = { 0, 1, 1 };
 		buttonAnimation[1] = { 0, 2, 6 };
+		ADUI::AnimationData* healthFlash = new ADUI::AnimationData[2];
+		healthFlash[0] = { 0, 1, 1 };
+		healthFlash[1] = { 0, 2, 4 };
 		ADUI::AnimationData* faceButtons = new ADUI::AnimationData[2];
 		faceButtons[0] = { 0, 1, 24 };
 		faceButtons[1] = { 1, 1, 24 };
@@ -969,7 +972,8 @@ namespace GolemGameUISetup
 		_hUDController->AddComponent(healthBar);
 
 		ADUI::Image2D* healthUnits = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 141, 38, 153, 111 });
-		healthUnits->BuildAnimation({ 494, 961, 580, 1034 }, 1, 1, emptyAnimation);
+		healthUnits->BuildAnimation({ 494, 961, 580, 1034 }, 1, 2, healthFlash);
+		healthUnits->controlFocusAnimation = 1;
 		healthUnits->tiled = 100;
 		myUI->AddUIComponent("HealhBarUnit", healthUnits);
 		myUI->overlays[hudID]->AddComponent(healthUnits);

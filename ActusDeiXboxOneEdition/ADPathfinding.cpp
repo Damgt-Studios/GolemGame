@@ -14,8 +14,6 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 	//Get Heighmap for visuals
 	for (int i = 0; i < _planeVertices->size(); i++)
 	{
-		//UINT pointColumn = (((*_planeVertices)[i].Position.x - (tileMap.mapSize.x / 2.f)) * tileMap.mapSize.x) / tileMap.cellSize.x;
-		//UINT pointRow = (((*_planeVertices)[i].Position.z - tileMap.planeLows.y) * tileMap.mapSize.y) / tileMap.cellSize.y;
 		UINT pointColumn = ((*_planeVertices)[i].Position.x + (tileMap.mapSize.x / 2.f)) / tileMap.cellSize.x;
 		UINT pointRow = ((*_planeVertices)[i].Position.y + (tileMap.mapSize.y / 2.f)) / tileMap.cellSize.y;
 		if (pointColumn < tileMap.xDivisions && pointRow < tileMap.yDivisions)
@@ -64,35 +62,6 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 							{
 								pointGrid[(c + (tileMap.xDivisions * r))].walkable = false;
 							}
-
-
-							//XMFLOAT3 Difference;
-							//Difference = XMFLOAT3(OBJS[i]->colliderPtr->Pos.x - point.x, OBJS[i]->colliderPtr->Pos.y - point.y, OBJS[i]->colliderPtr->Pos.z - point.z);
-
-							//(fabs(VectorDot(Difference, Axis)) >
-							//	(fabs(VectorDot((Float3Multiply(OBJS[i]->colliderPtr->AxisX, box1.HalfSize.x)), Axis)) +
-							//		fabs(VectorDot((Float3Multiply(box1.AxisY, box1.HalfSize.y)), Axis)) +
-							//		fabs(VectorDot((Float3Multiply(box1.AxisZ, box1.HalfSize.z)), Axis)) +
-							//		fabs(VectorDot(box1.AxisX, Axis)) +
-							//		fabs(VectorDot(box1.AxisY, Axis)) +
-							//		fabs(VectorDot(box1.AxisZ, Axis))));
-
-
-
-							//XMFLOAT3 rot = OBJS[i]->GetRotationDegrees();
-							////XMStoreFloat3(&rot, );
-							//float newy = std::sin(XMConvertToRadians(rot.y)) * (point.z - OBJS[i]->colliderPtr->Pos.z) + std::cos(XMConvertToRadians(rot.y)) * (point.x - OBJS[i]->colliderPtr->Pos.x);
-							//float newx = std::cos(XMConvertToRadians(rot.y)) * (point.x - OBJS[i]->colliderPtr->Pos.x) - std::sin(XMConvertToRadians(rot.y)) * (point.z - OBJS[i]->colliderPtr->Pos.z);
-
-							//if (colliderQuad.x < newx &&
-							//	colliderQuad.y < newy &&
-							//	colliderQuad.z > newx &&
-							//	colliderQuad.w > newy)
-							//{
-							//	pointGrid[(c + (tileMap.xDivisions * r))].walkable = false;
-							//}		
-
-					
 						}
 					}
 				}
@@ -266,11 +235,6 @@ float ADAI::ADPathfinding::DistanceCalculation(PathingNode* _a, PathingNode* _b)
 
 void ADAI::ADPathfinding::UpdatePlayerNode(float _x, float _z, float _mapWidth, float _mapHeight)
 {
-	//float x = _x + ((tileMap.mapSize.x / 2) * _mapWidth);
-	//float z = _z + ((tileMap.mapSize.y / 2) * _mapHeight);
-	//int column = int(x/ tileMap.cellSize.x);
-	//int row = int(z/ tileMap.cellSize.y);
-
 	UINT column = (_x + (tileMap.mapSize.x / 2.f)) / tileMap.cellSize.x;
 	UINT row = (_z + (tileMap.mapSize.y / 2.f)) / tileMap.cellSize.y;
 
