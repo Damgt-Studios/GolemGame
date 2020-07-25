@@ -9,7 +9,7 @@ AddStat=MovementSpeed
 StatMin=1
 StatMax=3
 StatFail=0
-StatCurrent=1.2
+StatCurrent=1.3
 
 AddStat=Hate
 StatMin=0

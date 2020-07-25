@@ -330,6 +330,7 @@ namespace ADPhysics
 	static float maxDownwardVelocity = -20.0f;
 
 	//------------------------------------------Seperating Axes
+
 	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const OBB& box1, const OBB& box2)
 	{
 		return (fabs(VectorDot(Difference, Axis)) >

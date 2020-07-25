@@ -960,8 +960,6 @@ namespace ADAI
 		//float returnDirectionalStrength = 0.f;
 
 		float flockRadius = 10.0;
-		float maxSpeed = 10.0f;
-		float moveSpeed = 0.5f;
 
 		//XMVECTOR groupTarget;
 		//XMMATRIX* player;
@@ -1468,9 +1466,9 @@ namespace ADAI
 						//}
 
 
-						velocity *= (moveSpeed * _deltaTime);
-						float decellerationRate = (1.0f * _deltaTime) + 1.0f;
+						velocity *= (flockers[i]->moveSpeed * _deltaTime);
 						velocity += XMLoadFloat4(&flockers[i]->mySSM.gameObject->Velocity);
+						float decellerationRate = (5.f * _deltaTime) + 1.f;
 						velocity /= decellerationRate;
 
 						XMFLOAT4 yCancel;
@@ -1488,9 +1486,9 @@ namespace ADAI
 						}
 
 
-						if (length.x > maxSpeed)
+						if (length.x > flockers[i]->maxSpeed)
 						{
-							velocity = ShortenLength(velocity, maxSpeed);
+							velocity = ShortenLength(velocity, flockers[i]->maxSpeed);
 						}
 
 						XMStoreFloat4(&flockerState[i]->VelocityWhenFlocking, velocity);

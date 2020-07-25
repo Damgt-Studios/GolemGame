@@ -45,23 +45,77 @@ void ADAI::ADPathfinding::CreatePointGrid(std::vector<SimpleVertex>* _planeVerti
 		{
 			if (OBJS[i]->physicsType == ADResource::ADGameplay::STATIC)
 			{
-				if (OBJS[i]->colliderPtr->type != ADPhysics::ColliderType::Plane)
+				if (OBJS[i]->colliderPtr->type == ADPhysics::ColliderType::Aabb)
 				{
 					XMFLOAT4 colliderQuad(((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) - OBJS[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap / 2.f),
 						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) - (OBJS[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f),
 						((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f) + (OBJS[i]->colliderPtr->GetWidth() + tileMap.agentToWallGap) / 2.f),
 						((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f) + (OBJS[i]->colliderPtr->GetLength() + tileMap.agentToWallGap) / 2.f));
-
+					
 					for (int r = 0; r < tileMap.yDivisions; r++)
 					{
 						for (int c = 0; c < tileMap.xDivisions; c++)
 						{
-							if (colliderQuad.x < pointGrid[(c + (tileMap.xDivisions * r))].position.x &&
-								colliderQuad.y < pointGrid[(c + (tileMap.xDivisions * r))].position.z &&
-								colliderQuad.z > pointGrid[(c + (tileMap.xDivisions * r))].position.x &&
-								colliderQuad.w > pointGrid[(c + (tileMap.xDivisions * r))].position.z)
+							XMFLOAT3 point = pointGrid[(c + (tileMap.xDivisions * r))].position;
+							if (colliderQuad.x < point.x &&
+								colliderQuad.y < point.z &&
+								colliderQuad.z > point.x &&
+								colliderQuad.w > point.z)
 							{
 								pointGrid[(c + (tileMap.xDivisions * r))].walkable = false;
+							}
+
+
+							//XMFLOAT3 Difference;
+							//Difference = XMFLOAT3(OBJS[i]->colliderPtr->Pos.x - point.x, OBJS[i]->colliderPtr->Pos.y - point.y, OBJS[i]->colliderPtr->Pos.z - point.z);
+
+							//(fabs(VectorDot(Difference, Axis)) >
+							//	(fabs(VectorDot((Float3Multiply(OBJS[i]->colliderPtr->AxisX, box1.HalfSize.x)), Axis)) +
+							//		fabs(VectorDot((Float3Multiply(box1.AxisY, box1.HalfSize.y)), Axis)) +
+							//		fabs(VectorDot((Float3Multiply(box1.AxisZ, box1.HalfSize.z)), Axis)) +
+							//		fabs(VectorDot(box1.AxisX, Axis)) +
+							//		fabs(VectorDot(box1.AxisY, Axis)) +
+							//		fabs(VectorDot(box1.AxisZ, Axis))));
+
+
+
+							//XMFLOAT3 rot = OBJS[i]->GetRotationDegrees();
+							////XMStoreFloat3(&rot, );
+							//float newy = std::sin(XMConvertToRadians(rot.y)) * (point.z - OBJS[i]->colliderPtr->Pos.z) + std::cos(XMConvertToRadians(rot.y)) * (point.x - OBJS[i]->colliderPtr->Pos.x);
+							//float newx = std::cos(XMConvertToRadians(rot.y)) * (point.x - OBJS[i]->colliderPtr->Pos.x) - std::sin(XMConvertToRadians(rot.y)) * (point.z - OBJS[i]->colliderPtr->Pos.z);
+
+							//if (colliderQuad.x < newx &&
+							//	colliderQuad.y < newy &&
+							//	colliderQuad.z > newx &&
+							//	colliderQuad.w > newy)
+							//{
+							//	pointGrid[(c + (tileMap.xDivisions * r))].walkable = false;
+							//}		
+
+					
+						}
+					}
+				}
+				else if(OBJS[i]->colliderPtr->type == ADPhysics::ColliderType::Obb)
+				{
+					ADPhysics::OBB* box1 = dynamic_cast<ADPhysics::OBB*>(OBJS[i]->colliderPtr);
+					if (box1)
+					{
+						XMFLOAT3 colliderVec((OBJS[i]->colliderPtr->Pos.x + tileMap.mapSize.x / 2.f),
+							(0),
+							((OBJS[i]->colliderPtr->Pos.z + tileMap.mapSize.y / 2.f)));
+
+						for (int r = 0; r < tileMap.yDivisions; r++)
+						{
+							for (int c = 0; c < tileMap.xDivisions; c++)
+							{
+								XMFLOAT3 point = pointGrid[(c + (tileMap.xDivisions * r))].position; 
+								XMVECTOR diff = XMLoadFloat3(&point) - XMLoadFloat3(&colliderVec);
+								if (std::fabs(VectorDot(diff, XMLoadFloat3(&box1->AxisX))) <= box1->HalfSize.x &&
+									std::fabs(VectorDot(diff, XMLoadFloat3(&box1->AxisZ))) <= box1->HalfSize.z)
+								{
+									pointGrid[(c + (tileMap.xDivisions * r))].walkable = false;
+								}
 							}
 						}
 					}

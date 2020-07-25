@@ -394,8 +394,6 @@ namespace ADResource
 
 		class Effect
 		{
-		protected:
-
 		public:
 			std::string name;
 			std::vector<Stat*> targetedStats;
@@ -577,6 +575,11 @@ namespace ADResource
 				SetRotationMatrix(RotationY);
 
 			}
+			XMFLOAT3 GetRotationDegrees()
+			{
+				return rot;
+			}
+
 			XMVECTOR GetRotation()
 			{
 				float Yaw; float Pitch; float Roll;
@@ -634,6 +637,8 @@ namespace ADResource
 			{
 				mat = transform;
 			}
+		protected:
+			XMFLOAT3 rot;
 
 		public:
 			bool active = true;

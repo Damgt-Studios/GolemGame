@@ -240,7 +240,11 @@ namespace ADResource
 					if (stats != nullptr)
 						ProcessEffects(delta_time);
 					if (actionLevel > 0)
+					{
+						if (actionLevel > 10)
+							actionLevel = 2;
 						actionLevel -= delta_time;
+					}
 				}
 				if (Essence)
 				{
@@ -541,8 +545,8 @@ namespace ADResource
 
 			UpwardCloudEmitter* destructionEmitter;
 			UpwardCloudEmitter* destructionEmitter2;
-		private:
-			XMFLOAT3 pos, rot, off, colliderScale;
+		private: 
+			XMFLOAT3 pos, off, colliderScale;
 			std::vector<Renderable*> models;
 			ADPhysics::OBB collider;
 		};
