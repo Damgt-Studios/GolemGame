@@ -65,6 +65,7 @@ namespace ADResource
 			
 			ADPhysics::OBB collider;
 
+			ADResource::ADGameplay::GameObject* target;
 			std::string eventName;
 			std::string modelName;
 			std::string matName;
@@ -168,11 +169,14 @@ namespace ADResource
 
 				if (active)
 				{
+					if (target)
+					{
+						XMVECTOR vel = XMLoadFloat3(&target->GetPosition()) - XMLoadFloat3(&GetPosition());
+						vel = XMVector3Normalize(vel) * 5;
+						XMStoreFloat4(&Velocity, vel);
+					}
 					// Physics
-					collider = ADPhysics::OBB(transform, colScale); //
-					//collider.AxisX.x = colScale.x;
-					//collider.AxisY.y = colScale.y;
-					//collider.AxisZ.z = colScale.z;
+					collider = ADPhysics::OBB(transform, colScale); 
 					colliderPtr = &collider;
 					collider.trigger = true;
 
@@ -196,21 +200,24 @@ namespace ADResource
 				{
 					if (!obj->colliderPtr->trigger)
 					{
-						ADPhysics::Manifold m;
-						if (obj->colliderPtr->isCollision(&collider, m))
+						if (!target || target == obj)
 						{
-							if (obj->has_stats)
+							ADPhysics::Manifold m;
+							if (obj->colliderPtr->isCollision(&collider, m))
 							{
-								if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+								if (obj->has_stats)
 								{
-									if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+									if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 									{
-										PassEffects(obj);
+										if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+										{
+											PassEffects(obj);
+										}
 									}
 								}
 							}
-
 						}
+						
 					}
 				}
 			}

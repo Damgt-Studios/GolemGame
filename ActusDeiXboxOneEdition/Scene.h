@@ -131,7 +131,7 @@ namespace ADGameplay
 			}
 			rubble->active = false;
 			GameUtilities::AddGameObject(rubble);
-			_building->SetRubble(rubble);
+			_building->SetRubble(rubble, golem);
 			_building->destructionEmitter = &_engine->destructionCloud;
 			_building->destructionEmitter2 = &_engine->destructionCloud;
 			//I don't feel like pasting this 3000s times.... so here it is.
@@ -284,17 +284,17 @@ namespace ADGameplay
 			//villageFlock1.groupTarget = &golem->transform;
 
 			villageFlock1.groupCohesionStrength = 0.01f;
-			villageFlock1.groupSeparationStrength = 0.6f;
+			villageFlock1.groupSeparationStrength = 1.0;
 			villageFlock2.groupCohesionStrength = 0.01f;
-			villageFlock2.groupSeparationStrength = 0.6f;
+			villageFlock2.groupSeparationStrength = 1.0;
 			villageFlock3.groupCohesionStrength = 0.01f;
-			villageFlock3.groupSeparationStrength = 0.6f;
+			villageFlock3.groupSeparationStrength = 1.0;
 			villageFlock3.groupCohesionStrength = 0.01f;
-			villageFlock3.groupSeparationStrength = 0.6f;
+			villageFlock3.groupSeparationStrength = 1.0;
 			villageFlock4.groupCohesionStrength = 0.01f;
-			villageFlock4.groupSeparationStrength = 0.6f;
+			villageFlock4.groupSeparationStrength = 1.0;
 			villageFlock5.groupCohesionStrength = 0.01f;
-			villageFlock5.groupSeparationStrength = 0.6f;
+			villageFlock5.groupSeparationStrength = 1.0;
 
 			std::vector<std::string> bucketheadAnimations;
 			bucketheadAnimations.push_back("files/models/Bucket_Idle.animfile");
@@ -1041,7 +1041,7 @@ namespace ADGameplay
 			Building* rubble1 = new Building(XMFLOAT3(450, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			rubble1->active = false;
 			GameUtilities::AddGameObject(rubble1);
-			attackTower1->SetRubble(rubble1);
+			attackTower1->SetRubble(rubble1, golem);
 			attackTower1->SetTurret(ballista1);
 			AddBuilding(attackTower1);
 
@@ -1052,7 +1052,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista2);
 			Building* rubble2 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble2);
-			attackTower2->SetRubble(rubble2);
+			attackTower2->SetRubble(rubble2, golem);
 			attackTower2->SetTurret(ballista2);
 			AddBuilding(attackTower2);
 
@@ -1063,7 +1063,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista3);	
 			Building* rubble3 = new Building(XMFLOAT3(515, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble3);
-			attackTower3->SetRubble(rubble3);
+			attackTower3->SetRubble(rubble3, golem);
 			attackTower3->SetTurret(ballista3);
 			AddBuilding(attackTower3);
 
@@ -1074,7 +1074,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista4);
 			Building* rubble4 = new Building(XMFLOAT3(550, 0, 350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble4);
-			attackTower4->SetRubble(rubble4);
+			attackTower4->SetRubble(rubble4, golem);
 			attackTower4->SetTurret(ballista4);
 			AddBuilding(attackTower4);
 
@@ -1085,7 +1085,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista5);
 			Building* rubble5 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble5);
-			attackTower5->SetRubble(rubble5);
+			attackTower5->SetRubble(rubble5, golem);
 			attackTower5->SetTurret(ballista5);
 			AddBuilding(attackTower5);
 
@@ -1096,7 +1096,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista6);
 			Building* rubble6 = new Building(XMFLOAT3(250, 0, 375), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble6);
-			attackTower6->SetRubble(rubble6);
+			attackTower6->SetRubble(rubble6, golem);
 			attackTower6->SetTurret(ballista6);
 			AddBuilding(attackTower6);
 
@@ -1107,7 +1107,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista7);
 			Building* rubble7 = new Building(XMFLOAT3(-25, 0, 450), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble7);
-			attackTower7->SetRubble(rubble7);
+			attackTower7->SetRubble(rubble7, golem);
 			attackTower7->SetTurret(ballista7);
 			AddBuilding(attackTower7);
 
@@ -1118,7 +1118,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista8);
 			Building* rubble8 = new Building(XMFLOAT3(-25, 0, 300), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble8);
-			attackTower8->SetRubble(rubble8);
+			attackTower8->SetRubble(rubble8, golem);
 			attackTower8->SetTurret(ballista8);
 			AddBuilding(attackTower8);
 
@@ -1129,7 +1129,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista9);
 			Building* rubble9 = new Building(XMFLOAT3(-275, 0, 212.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble9);
-			attackTower9->SetRubble(rubble9);
+			attackTower9->SetRubble(rubble9, golem);
 			attackTower9->SetTurret(ballista9);
 			AddBuilding(attackTower9);
 
@@ -1140,7 +1140,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista10);
 			Building* rubble10 = new Building(XMFLOAT3(-275, 0, 287.5), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble10);
-			attackTower10->SetRubble(rubble10);
+			attackTower10->SetRubble(rubble10, golem);
 			attackTower10->SetTurret(ballista10);
 			AddBuilding(attackTower10);
 
@@ -1151,7 +1151,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista11);
 			Building* rubble11 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble11);
-			attackTower11->SetRubble(rubble11);
+			attackTower11->SetRubble(rubble11, golem);
 			attackTower11->SetTurret(ballista11);
 			AddBuilding(attackTower11);
 
@@ -1162,7 +1162,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista12);
 			Building* rubble12 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble12);
-			attackTower12->SetRubble(rubble12);
+			attackTower12->SetRubble(rubble12, golem);
 			attackTower12->SetTurret(ballista12);
 			AddBuilding(attackTower12);
 
@@ -1173,7 +1173,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista13);
 			Building* rubble13 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble13);
-			attackTower13->SetRubble(rubble13);
+			attackTower13->SetRubble(rubble13, golem);
 			attackTower13->SetTurret(ballista13);
 			AddBuilding(attackTower13);
 
@@ -1184,7 +1184,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista14);
 			Building* rubble14 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble14);
-			attackTower14->SetRubble(rubble14);
+			attackTower14->SetRubble(rubble14, golem);
 			attackTower14->SetTurret(ballista14);
 			AddBuilding(attackTower14);
 
@@ -1195,7 +1195,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista15);
 			Building* rubble15 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble15);
-			attackTower15->SetRubble(rubble15);
+			attackTower15->SetRubble(rubble15, golem);
 			attackTower15->SetTurret(ballista15);
 			AddBuilding(attackTower15);
 
@@ -1206,7 +1206,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista16);
 			Building* rubble16 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble16);
-			attackTower16->SetRubble(rubble16);
+			attackTower16->SetRubble(rubble16, golem);
 			attackTower16->SetTurret(ballista16);
 			AddBuilding(attackTower16);
 
@@ -1217,7 +1217,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista17);
 			Building* rubble17 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble17);
-			attackTower17->SetRubble(rubble17);
+			attackTower17->SetRubble(rubble17, golem);
 			attackTower17->SetTurret(ballista17);
 			AddBuilding(attackTower17);
 
@@ -1228,7 +1228,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista18);
 			Building* rubble18 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble18);
-			attackTower18->SetRubble(rubble18);
+			attackTower18->SetRubble(rubble18, golem);
 			attackTower18->SetTurret(ballista18);
 			AddBuilding(attackTower18);
 
@@ -1239,7 +1239,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista19);
 			Building* rubble19 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble19);
-			attackTower19->SetRubble(rubble19);
+			attackTower19->SetRubble(rubble19, golem);
 			attackTower19->SetTurret(ballista19);
 			AddBuilding(attackTower19);
 
@@ -1250,7 +1250,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista20);
 			Building* rubble20 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble20);
-			attackTower20->SetRubble(rubble20);
+			attackTower20->SetRubble(rubble20, golem);
 			attackTower20->SetTurret(ballista20);
 			AddBuilding(attackTower20);
 
@@ -1261,7 +1261,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista21);
 			Building* rubble21 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble21);
-			attackTower21->SetRubble(rubble21);
+			attackTower21->SetRubble(rubble21, golem);
 			attackTower21->SetTurret(ballista21);
 			AddBuilding(attackTower21);
 
@@ -1272,7 +1272,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista22);
 			Building* rubble22 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble22);
-			attackTower22->SetRubble(rubble22);
+			attackTower22->SetRubble(rubble22, golem);
 			attackTower22->SetTurret(ballista22);
 			AddBuilding(attackTower22);
 
@@ -1283,7 +1283,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista23);
 			Building* rubble23 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble23);
-			attackTower23->SetRubble(rubble23);
+			attackTower23->SetRubble(rubble23, golem);
 			attackTower23->SetTurret(ballista23);
 			AddBuilding(attackTower23);
 
@@ -1294,7 +1294,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista24);
 			Building* rubble24 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble24);
-			attackTower24->SetRubble(rubble24);
+			attackTower24->SetRubble(rubble24, golem);
 			attackTower24->SetTurret(ballista24);
 			AddBuilding(attackTower24);
 
@@ -1305,7 +1305,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista25);
 			Building* rubble25 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble25);
-			attackTower25->SetRubble(rubble25);
+			attackTower25->SetRubble(rubble25, golem);
 			attackTower25->SetTurret(ballista25);
 			AddBuilding(attackTower25);
 
@@ -1316,7 +1316,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista26);
 			Building* rubble26 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble26);
-			attackTower26->SetRubble(rubble26);
+			attackTower26->SetRubble(rubble26, golem);
 			attackTower26->SetTurret(ballista26);
 			AddBuilding(attackTower26);
 
@@ -1327,7 +1327,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista27);
 			Building* rubble27 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble27);
-			attackTower27->SetRubble(rubble27);
+			attackTower27->SetRubble(rubble27, golem);
 			attackTower27->SetTurret(ballista27);
 			AddBuilding(attackTower27);
 
@@ -1339,7 +1339,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista28);
 			Building* rubble28 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble28);
-			attackTower28->SetRubble(rubble28);
+			attackTower28->SetRubble(rubble28, golem);
 			attackTower28->SetTurret(ballista28);
 			AddBuilding(attackTower28);
 
@@ -1350,7 +1350,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista29);
 			Building* rubble29 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble29);
-			attackTower29->SetRubble(rubble29);
+			attackTower29->SetRubble(rubble29, golem);
 			attackTower29->SetTurret(ballista29);
 			AddBuilding(attackTower29);
 
@@ -1361,7 +1361,7 @@ namespace ADGameplay
 			GameUtilities::AddGameObject(ballista30);
 			Building* rubble30 = new Building(XMFLOAT3(350, 0, 550), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			GameUtilities::AddGameObject(rubble30);
-			attackTower30->SetRubble(rubble30);
+			attackTower30->SetRubble(rubble30, golem);
 			attackTower30->SetTurret(ballista30);
 			AddBuilding(attackTower30);
 
@@ -1420,7 +1420,7 @@ namespace ADGameplay
 			}
 			for (int i = 40; i < 50; i++)
 			{
-				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*-200.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*-10.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock5, &villagerThreats, &buildings, _engine));
 			}
 

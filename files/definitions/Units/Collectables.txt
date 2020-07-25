@@ -20,9 +20,7 @@ MaxValue=40
 
 Hitbox=EssenceCollectableSHB:
 AddEffect=EssenceCollectS
-OffsetX=25
-OffsetY=10
-OffsetZ=25
+OffsetY=20
 Model_Name=files/models/Essence.mesh
 Model_Mat=files/textures/Essence.mat
 Model_Width=0.01
@@ -36,9 +34,7 @@ SingleHit=true
 
 Hitbox=EssenceCollectableLHB:
 AddEffect=EssenceCollectL
-OffsetX=25
-OffsetY=10
-OffsetZ=25
+OffsetY=20
 Model_Name=files/models/Essence.mesh
 Model_Mat=files/textures/Essence.mat
 Model_Width=0.05

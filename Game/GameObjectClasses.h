@@ -147,7 +147,7 @@ namespace ADResource
 			//	SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			//}
 
-			void SetRubble(Building* _rubble)
+			void SetRubble(Building* _rubble, ADResource::ADGameplay::GameObject* _player)
 			{
 				rubble = _rubble;
 				rubble->active = false;
@@ -155,6 +155,7 @@ namespace ADResource
 				rubble->avoidRadius = 10.0f;
 
 				Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceS"]->Clone();
+				Essence->hitboxes[0]->target = _player;
 				Essence->active = false;
 			};
 
