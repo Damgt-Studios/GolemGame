@@ -412,12 +412,13 @@ namespace GolemGameUISetup
 								componentTypeMap[componentsNameToID["AudioMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
-							case 1: //Video
+							case 1: //Controls
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
+								componentTypeMap[componentsNameToID["ControlsBG"]]->Enable();
 								componentTypeMap[componentsNameToID["ControlsMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
-							case 2: //Controls
+							case 2: //Video
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
 								componentTypeMap[componentsNameToID["VideoMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
@@ -443,10 +444,11 @@ namespace GolemGameUISetup
 		if (Input::QueryButtonDown(GamepadButtons::B))
 		{
 			ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
-			if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)// || componentTypeMap[componentsNameToID["ControlsMenu"]]->active || componentTypeMap[componentsNameToID["VideoMenu"]]->active)
+			if (componentTypeMap[componentsNameToID["AudioMenu"]]->active || componentTypeMap[componentsNameToID["ControlsMenu"]]->active)// || componentTypeMap[componentsNameToID["VideoMenu"]]->active)
 			{
 				componentTypeMap[componentsNameToID["AudioMenu"]]->Disable();
-				//componentTypeMap[componentsNameToID["ControlsMenu"]]->Disable();
+				componentTypeMap[componentsNameToID["ControlsBG"]]->Disable();
+				componentTypeMap[componentsNameToID["ControlsMenu"]]->Disable();
 				//componentTypeMap[componentsNameToID["VideoMenu"]]->Disable();
 				componentTypeMap[componentsNameToID["OptionsMenu"]]->Enable();
 				buttonPressed = true;
@@ -859,8 +861,19 @@ namespace GolemGameUISetup
 		////controlsList->Initialize();
 		////controlsList->Disable();
 
-		//myUI->AddUIComponent("ControlsMenu", slideImage);
-		//myUI->overlays[optionsID]->AddComponent(slideImage);
+		ADUI::Image2D* controlScreenBG = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 125, 400, 3720, 1820 });
+		controlScreenBG->BuildAnimation({ 2315, 1080, 3825, 1970 }, 1, 1, emptyAnimation);
+		controlScreenBG->active = true;
+		controlScreenBG->visible = true;
+		controlScreenBG->stretched = true;
+		myUI->AddUIComponent("ControlsBG", controlScreenBG);
+		myUI->overlays[optionsID]->AddComponent(controlScreenBG);
+
+		ADUI::Image2D* controlsScreenControls = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 175, 550, 3400, 2000 });
+		controlsScreenControls->BuildAnimation({ 210, 3550, 3705, 4800 }, 1, 1, emptyAnimation);
+		controlsScreenControls->active = true;
+		myUI->AddUIComponent("ControlsMenu", controlsScreenControls);
+		myUI->overlays[optionsID]->AddComponent(controlsScreenControls);
 		//////myUI->AddUIComponent("ControlsMenu", controlsList);
 		//////myUI->overlays[optionsID]->AddComponent(controlsList);
 
@@ -882,6 +895,8 @@ namespace GolemGameUISetup
 
 		_optionsMenuUIController->AddComponent(sliderList);
 		_optionsMenuUIController->AddComponent(buttonList3);
+		_optionsMenuUIController->AddComponent(controlScreenBG);
+		_optionsMenuUIController->AddComponent(controlsScreenControls);
 		_optionsMenuUIController->AddOverlay(myUI->overlays[optionsID]);
 
 		return optionsID;

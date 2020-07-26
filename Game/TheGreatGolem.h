@@ -131,19 +131,21 @@ public:
 							if (rhs == "true")
 								effect->tickOnExit = true; 
 						}
+						else if (lhs == "MinValue")
+						{
+							effect->minimumChange.push_back(std::stoi(rhs));
+						}
+						else if (lhs == "MaxValue")
+						{
+							effect->maximumChange.push_back(std::stoi(rhs));
+						}
 						else if (lhs == "Stat")
 						{
 							effect->statsAffected.push_back(rhs);
 						}
-						else if (lhs == "MinValue")
+						else if (lhs == "CounterStat")
 						{
-							int min = std::stoi(rhs);
-							effect->minimumChange.push_back(min);
-						}
-						else if (lhs == "MaxValue")
-						{
-							int min = std::stoi(rhs);
-							effect->maximumChange.push_back(min);
+							effect->counterStatsIncluded.push_back(rhs);
 						}
 						else
 						{
@@ -161,7 +163,7 @@ public:
 				else if (rhs == "StatBuff")
 				{
 					_entityStr.erase(0, endPos + 1);
-					StatChange* effect = new StatChange();
+					StatBuff* effect = new StatBuff();
 					while (endPos != std::string::npos)
 					{
 						midPos = _entityStr.find('=');

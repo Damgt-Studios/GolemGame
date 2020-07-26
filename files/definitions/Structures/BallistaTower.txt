@@ -30,6 +30,7 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
+CounterStat=Armor
 MinValue=-45
 MaxValue=-45
 ;

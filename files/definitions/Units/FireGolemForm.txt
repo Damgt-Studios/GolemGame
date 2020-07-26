@@ -10,8 +10,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-250
+MaxValue=-250
 ;
 
 Hitbox=FireGolemPunchHB:
@@ -43,8 +44,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-300
+MaxValue=-300
 ;
 
 Hitbox=FireGolemKickHB:
@@ -54,7 +56,7 @@ OffsetY=5
 OffsetZ=5
 Collider_Width=10
 Collider_Height=10
-Collider_Length=30
+Collider_Length=50
 Team=0
 SingleHit=false
 ;
@@ -62,7 +64,7 @@ SingleHit=false
 Action=FireGolemKick:
 Cooldown=1
 Duration=1.0
-AddHitBox=WoodGolemKickHB
+AddHitBox=FireGolemKickHB
 AddEvent=Sfx_GolemKick
 SetEventsDelay=0
 SetHitboxDelay=0.75
@@ -76,8 +78,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-225
+MaxValue=-225
 ;
 
 Hitbox=FireGolemSlamHB:

@@ -15,15 +15,15 @@ StatCurrent=500
 StatSheet=House1:
 AddStat=Health
 StatMin=0
-StatMax=400
+StatMax=390
 StatFail=0
-StatCurrent= 400
+StatCurrent= 390
 
 AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=0
+StatCurrent=5
 ;
 
 StatSheet=House2:
@@ -99,9 +99,9 @@ StatCurrent=4
 StatSheet=Tavern:
 AddStat=Health
 StatMin=0
-StatMax=1000
+StatMax=700
 StatFail=0
-StatCurrent= 1000
+StatCurrent= 700
 
 AddStat=Armor
 StatMin=1
@@ -141,15 +141,15 @@ StatCurrent=10
 StatSheet=Tower:
 AddStat=Health
 StatMin=0
-StatMax=600
+StatMax=550
 StatFail=0
-StatCurrent= 600
+StatCurrent= 550
 
 AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=8
+StatCurrent=20
 ;
 
 StatSheet=Gate:
@@ -183,9 +183,9 @@ StatCurrent=8
 StatSheet=Wall:
 AddStat=Health
 StatMin=0
-StatMax=600
+StatMax=500
 StatFail=0
-StatCurrent= 600
+StatCurrent= 500
 
 AddStat=Armor
 StatMin=1

@@ -1,17 +1,20 @@
 Effect=StoneArmorBuff:StatBuff
 Stat=Armor
-MinValue=5
-MaxValue=5
+Duration=300
+MinValue=200
+MaxValue=200
 ;
 
 Effect=IronHideBuffArmor:StatBuff
 Stat=Armor
+Duration=3
 MinValue=752
 MaxValue=752
 ;
 
 Effect=IronHideBuffHate:StatBuff
 Stat=Hate
+Duration=3
 MinValue=100
 MaxValue=100
 ;
@@ -22,8 +25,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-190
+MaxValue=-190
 ;
 
 Hitbox=StoneGolemPunchHB:
@@ -55,8 +59,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-210
+MaxValue=-210
 ;
 
 Hitbox=StoneGolemKickHB:
@@ -66,7 +71,7 @@ OffsetY=5
 OffsetZ=5
 Collider_Width=10
 Collider_Height=10
-Collider_Length=30
+Collider_Length=50
 Team=0
 SingleHit=false
 ;
@@ -88,8 +93,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-180
+MaxValue=-180
 ;
 
 Hitbox=StoneGolemSlamHB:

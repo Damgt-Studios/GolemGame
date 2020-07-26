@@ -30,7 +30,7 @@ StatMax=100
 StatCurrent=50
 
 AddStat=Armor
-StatMin=1
+StatMin=0
 StatMax=500
 StatCurrent=0
 

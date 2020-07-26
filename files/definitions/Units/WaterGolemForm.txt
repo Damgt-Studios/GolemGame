@@ -16,8 +16,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-205
+MaxValue=-205
 ;
 
 Hitbox=WaterGolemPunchHB:
@@ -49,8 +50,9 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+CounterStat=Armor
+MinValue=-210
+MaxValue=-210
 ;
 
 Hitbox=WaterGolemKickHB:
@@ -60,7 +62,7 @@ OffsetY=5
 OffsetZ=5
 Collider_Width=10
 Collider_Height=10
-Collider_Length=30
+Collider_Length=50
 Team=0
 SingleHit=false
 ;
@@ -82,6 +84,7 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
+CounterStat=Armor
 MinValue=-200
 MaxValue=-200
 ;
