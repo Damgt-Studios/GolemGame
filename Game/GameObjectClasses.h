@@ -19,6 +19,7 @@ namespace ADResource
 			StatSheet* stats;
 			std::string deathEvent;
 			Building* rubble = nullptr;
+			Building* destructionCrumblingBuilding = nullptr;
 
 
 			void AddToScene()
@@ -78,6 +79,10 @@ namespace ADResource
 			{
 				rubble = _rubble;
 			};
+			void SetCrumblingBuilding(Building* _crumblingBuilding)
+			{
+				destructionCrumblingBuilding = _crumblingBuilding;
+			}
 
 			void RemoveFromScene()
 			{
@@ -85,6 +90,7 @@ namespace ADResource
 				{
 					ResourceManager::RemoveGameObject(models[i]);
 				}
+			
 				if (destructionEmitter && destructionEmitter2)
 				{
 					if (!destructionEmitter->GetActive())
@@ -173,7 +179,19 @@ namespace ADResource
 						i--;
 					}
 				}
-				if (stats->RequestStats("Health")->currentValue <= 0)
+				if (stats->RequestStats("Health")->currentValue < (stats->RequestStats("Health")->maxValue / 2) && (stats->RequestStats("Health")->currentValue != 0))
+				{
+					ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
+					active = false;
+					RemoveFromScene();
+					if (destructionCrumblingBuilding)
+					{
+						destructionCrumblingBuilding->AddToScene();
+					}
+
+				}
+			
+				if (stats->RequestStats("Health")->currentValue <= 0 && active == true)
 				{
 					ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
 					active = false;
