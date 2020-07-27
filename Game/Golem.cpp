@@ -279,6 +279,7 @@ int ADResource::ADGameplay::Golem::GetCurrentElement()
 // Private Methods
 void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 {
+	movementParticles[playerElement].SetActive(false);
 	if (isAlive)
 	{
 		// Idle Animation
@@ -478,6 +479,10 @@ void ADResource::ADGameplay::Golem::InitAnims()
 
 void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_time)
 {
+	XMFLOAT4 pos;
+	XMStoreFloat4(&pos, transform.r[3]);
+	movementParticles[playerElement].SetMovementPosition(XMFLOAT4(pos.x, pos.y, pos.z, 1));
+	movementParticles[playerElement].SetActive(true);
 	idleTime = 0.0;
 	float angle = atan2(Input::QueryThumbStickValueExactX(Input::THUMBSTICKS::LEFT_THUMBSTICK),
 		Input::QueryThumbStickValueExactY(Input::THUMBSTICKS::LEFT_THUMBSTICK));

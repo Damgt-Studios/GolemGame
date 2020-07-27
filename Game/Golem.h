@@ -78,6 +78,7 @@ namespace ADResource
 			AD_ULONG meshIDs[4];
 
 			BigElementalPuffEmitter* bigPuffs[4];
+			MovementEmitter* movementParticles;
 
 		private:
 			// Private Methods

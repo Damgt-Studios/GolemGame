@@ -186,6 +186,8 @@ public:
 		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
 		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
 
+		golem->movementParticles = engine->golemMovementParticles;
+
 
 
 		//std::vector<std::string> bucketheadanims;

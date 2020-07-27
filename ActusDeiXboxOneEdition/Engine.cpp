@@ -46,6 +46,10 @@ bool Engine::Initialize()
 	{
 		bloodEmitters[i].Initialize(pbr.renderer_resources.device.Get(), { 0,25,25,1 }, L"files/textures/Particle_Blood_Sheet.dds");
 	}
+	golemMovementParticles[0].Initialize(pbr.renderer_resources.device.Get(), 500, { 0,2,0,1 }, L"files/textures/Particle_Stone.dds");
+	golemMovementParticles[1].Initialize(pbr.renderer_resources.device.Get(), 500, { 0,2,0,1 }, L"files/textures/Particle_Water.dds");
+	golemMovementParticles[2].Initialize(pbr.renderer_resources.device.Get(), 500, { 0,2,0,1 }, L"files/textures/Particle_Fire_Cylinder.dds");
+	golemMovementParticles[3].Initialize(pbr.renderer_resources.device.Get(), 500, { 0,2,0,1 }, L"files/textures/Particle_Grass.dds");
 
 	woodCylinder.Activate(15.0f, { 0,-1000,0,0 }, 15.0f);
 	fireCylinder.Activate(15.0f, { 0,-1000,0,0 }, 15.0f);
@@ -144,6 +148,10 @@ bool Engine::Update()
 	{
 		bloodEmitters[i].UpdateParticles(delta_time_sf, view, proj, camPos);
 	}
+	for (int i = 0; i < 4; ++i)
+	{
+		golemMovementParticles[i].UpdateParticles(delta_time_sf, view, proj, camPos);
+	}
 
 	return true;
 }
@@ -178,6 +186,10 @@ bool Engine::Render()
 	for (int i = 0; i < 10; ++i)
 	{
 		bloodEmitters[i].RenderParticles(pbr.renderer_resources.context.Get());
+	}
+	for (int i = 0; i < 4; ++i)
+	{
+		golemMovementParticles[i].RenderParticles(pbr.renderer_resources.context.Get());
 	}
 	userInterface.Render();
 	pbr.Frame();

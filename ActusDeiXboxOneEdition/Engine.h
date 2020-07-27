@@ -95,4 +95,5 @@ public:
 	UpwardCloudEmitter destructionCloud;
 	UpwardCloudEmitter destructionCloud2;
 	BloodEmitter bloodEmitters[10];
+	MovementEmitter golemMovementParticles[4];
 };
