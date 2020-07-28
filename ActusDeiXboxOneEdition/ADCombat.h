@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderable.h"
+#include <AnimationStateMachine.h>
 #include <unordered_map>
+#include "ADParticles.h"
 
 
 namespace ADResource
@@ -10,6 +12,7 @@ namespace ADResource
 		enum OBJECT_TAG
 		{
 			PLAYER = 0,
+			COMMAND_MARKER,
 			UNTYPED_MINION,
 			WOOD_MINION,
 			WATER_MINION,
@@ -49,7 +52,8 @@ namespace ADResource
 		{
 
 		public:
-			XMFLOAT3 colScale;
+			XMFLOAT3 colScale = { 1,1,1 };
+			XMFLOAT3 modelScale = { 1,1,1 };
 			XMFLOAT3 vel;
 
 			bool isDeactivateOnFirstApplication = false;
@@ -57,13 +61,99 @@ namespace ADResource
 			float offsetZ;
 			float offsetY = 0;
 			float lifespan;
+			XMFLOAT3 rotation;
+			
 			ADPhysics::OBB collider;
 
+			ADResource::ADGameplay::GameObject* target;
 			std::string eventName;
+			std::string modelName;
+			std::string matName;
 
-			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER;	gamePlayType = ADResource::ADGameplay::ALLY_HITBOX; colliderPtr->trigger = true; };
 			~HitBox() = default;
 
+			HitBox* Clone()
+			{
+				HitBox* nBox = new HitBox();
+				XMFLOAT3 scale = modelScale; //XMFLOAT3(1, 1, 1);
+				nBox->SetScale(scale);
+				nBox->SetRotation(scale);
+				nBox->SetPosition(scale);
+				nBox->active = false;
+
+				int cnt = 0;
+				for (auto& effect : effects)
+				{
+					nBox->effects.push_back(effect->clone());
+					nBox->effects[cnt].get()->sourceID = ResourceManager::GenerateEffectID();
+					cnt++;
+				}
+				nBox->offsetX = offsetX;
+				nBox->offsetZ = offsetZ;
+				nBox->offsetY = offsetY;
+				nBox->colScale = colScale;
+				nBox->modelScale = modelScale;
+				nBox->modelName = modelName;
+				nBox->matName = matName;
+				nBox->vel = vel;
+				nBox->lifespan = lifespan;
+				nBox->team = team;
+
+				if (nBox->team == 3)
+				{
+					nBox->gamePlayType = ADResource::ADGameplay::CONSUMPTION_HITBOX;
+				}
+				nBox->isDeactivateOnFirstApplication = isDeactivateOnFirstApplication;
+				nBox->eventName = eventName;
+
+				//AD_ULONG id = ResourceManager::AddSimpleModel("files/models/Fireball.mesh", "files/textures/Fireball.mat", nBox->GetPosition(), {0.01f, 0.01f, 0.01f}, { 1,1,1 });
+				//nBox->SetMeshID(id);
+				//AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				//nBox->SetMeshID(id);
+				//GameUtilities::AttachModelToHitbox(nBox, "files/models/Fireball.mesh", "files/textures/Fireball.mat", XMFLOAT3(100, 1, 100), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+				//// Transform data
+				//temp->SetScale(scale);
+				//temp->SetRotation(rotation);
+				//temp->SetPosition(position);
+				nBox->rotation = rotation;
+				if (nBox->modelName != "")
+				{
+					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, { 0,0,0 }); // trigger->modelScale
+
+					//AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 10, 1), nBox->modelScale, { 0,0,0 }); //nBox->rotation); // trigger->modelScale
+					nBox->SetMeshID(id);
+					//GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
+				}
+				//else
+				//{
+				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				//	nBox->SetMeshID(id);
+				//}
+
+
+				nBox->rotation = rotation;
+				nBox->transform = XMMatrixRotationX(nBox->rotation.x);
+				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
+				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+
+
+
+
+				////nBox->transform = XMMatrixRotationX(nBox->rotation.x);
+				//XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
+				////nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+				//nBox->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(nBox->rotation.y)) * XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ), nBox->colScale);
+				//nBox->collider.AxisX.x = nBox->colScale.x;
+				//nBox->collider.AxisY.y = nBox->colScale.y;
+				//nBox->collider.AxisZ.z = nBox->colScale.z;
+				nBox->SetScale(nBox->modelScale);	//colScale);  
+				nBox->collider.trigger = true;
+				nBox->colliderPtr = &nBox->collider;
+
+				ResourceManager::AddGameObject(nBox);
+				return nBox;
+			}
 
 			void Enable()
 			{
@@ -76,21 +166,31 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				// Physics
-				collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
-				colliderPtr = &collider;
-				collider.trigger = true;
 
-				if (lifespan > 0)
+				if (active)
 				{
-					lifespan -= _deltaTime;
-					if (lifespan <= 0)
+					if (target)
 					{
-						active = false;
+						XMVECTOR vel = XMLoadFloat3(&target->GetPosition()) - XMLoadFloat3(&GetPosition());
+						vel = XMVector3Normalize(vel) * 5;
+						XMStoreFloat4(&Velocity, vel);
 					}
-				}
+					// Physics
+					collider = ADPhysics::OBB(transform, colScale); 
+					colliderPtr = &collider;
+					collider.trigger = true;
 
-				AddToPositionVector((XMFLOAT3&)Velocity);
+					if (lifespan > 0)
+					{
+						lifespan -= _deltaTime;
+						if (lifespan <= 0)
+						{
+							active = false;
+						}
+					}
+
+					AddToPositionVector((XMFLOAT3&)Velocity);
+				}
 			}
 
 
@@ -98,14 +198,26 @@ namespace ADResource
 			{
 				if (active && obj->active)
 				{
-					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
+					if (!obj->colliderPtr->trigger)
 					{
-						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						if (!target || target == obj)
 						{
-							if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
-								PassEffects(obj);
+							ADPhysics::Manifold m;
+							if (obj->colliderPtr->isCollision(&collider, m))
+							{
+								if (obj->has_stats)
+								{
+									if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+									{
+										if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+										{
+											PassEffects(obj);
+										}
+									}
+								}
+							}
 						}
+						
 					}
 				}
 			}
@@ -139,12 +251,14 @@ namespace ADResource
 			float attackDuration;
 			float attackTimer;
 			float hitboxDelay = 0;
-			HitBox* hitbox;
-			UINT hitboxCount;
+			float scaleCorrection = 1;
+			std::vector<HitBox*> hitboxes;
+			UINT currentHitBox = 0;
+			UINT hitboxCount = 0;
 
 			bool removeHbIfEnd = true;
 			bool movesToPlayer = true;
-			bool hitboxFired = false;
+			std::vector<bool> hitboxFired;
 
 			std::vector<bool> eventFired;
 			std::vector<float> eventDelay;
@@ -155,70 +269,98 @@ namespace ADResource
 			//If the attack doesn't own the hitbox this needs to change.
 			~Action()
 			{
-				delete hitbox;
-				if (hbpos)
+				for (auto& hb : hitboxes)
 				{
-					delete hbpos;
+					delete hb;
 				}
+				hitboxes.clear();
 			};
 
 			bool StartAction(XMMATRIX* _casterTransform)
 			{
-				if (movesToPlayer)
-				{
-					hitbox->transform = *_casterTransform;
-					hitbox->transform = XMMatrixMultiply(XMMatrixScaling(hitbox->colScale.x * 10, hitbox->colScale.y * 10, hitbox->colScale.z * 10), hitbox->transform);
-					XMVECTOR castSideNormal = _casterTransform->r[0];
-					XMVECTOR castUpNormal = _casterTransform->r[1];
-					XMVECTOR castHeadingNormal = _casterTransform->r[2];
-					XMVECTOR targetLocation = _casterTransform->r[3];
-
-					castUpNormal = XMVector4Normalize(castUpNormal);
-					XMFLOAT3 casterUN;
-					XMStoreFloat3(&casterUN, castUpNormal);
-
-					castSideNormal = XMVector4Normalize(castSideNormal);
-					XMFLOAT3 casterSN;
-					XMStoreFloat3(&casterSN, castSideNormal);
-
-
-					castHeadingNormal = XMVector4Normalize(castHeadingNormal);
-					XMFLOAT3 casterFN;
-					XMStoreFloat3(&casterFN, castHeadingNormal);
-					XMFLOAT3 targetPos;
-					XMStoreFloat3(&targetPos, targetLocation);
-
-					targetPos.x += (casterFN.x * hitbox->offsetZ) + (casterUN.x * hitbox->offsetY) + (casterSN.x * hitbox->offsetX);
-					targetPos.y += (casterFN.y * hitbox->offsetZ) + (casterUN.y * hitbox->offsetY) + (casterSN.y * hitbox->offsetX);
-					targetPos.z += (casterFN.z * hitbox->offsetZ) + (casterUN.z * hitbox->offsetY) + (casterSN.z * hitbox->offsetX);
-
-					hitbox->SetPosition(targetPos);
-
-					hitbox->Velocity.x = (casterFN.x * hitbox->vel.z) + (casterUN.x * hitbox->vel.y) + (casterSN.x * hitbox->vel.x);
-					hitbox->Velocity.y = (casterFN.y * hitbox->vel.z) + (casterUN.y * hitbox->vel.y) + (casterSN.y * hitbox->vel.x);
-					hitbox->Velocity.z = (casterFN.z * hitbox->vel.z) + (casterUN.z * hitbox->vel.y) + (casterSN.z * hitbox->vel.x);
-
-				}
 				if (cooldownTimer <= 0 && attackTimer <= 0)
 				{
+					currentHitBox++;
+					if (currentHitBox >= hitboxCount)
+					{
+						currentHitBox = 0;
+						for (auto& hb : hitboxFired)
+						{
+							hb = false;
+						}
+					}
+					if (hitboxes.size() > 0 && movesToPlayer)
+					{
+						//hitboxes[currentHitBox]->transform = *_casterTransform;
+						//hitboxes[currentHitBox]->transform.r[0].m128_f32[0] = hitboxes[currentHitBox]->modelScale.x;
+						//hitboxes[currentHitBox]->transform.r[1].m128_f32[1] = hitboxes[currentHitBox]->modelScale.y;
+						//hitboxes[currentHitBox]->transform.r[2].m128_f32[2] = hitboxes[currentHitBox]->modelScale.z;
+
+						//hitboxes[currentHitBox]->transform = XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z);
+						//hitboxes[currentHitBox]->transform.r[0].m128_f32[0] = _casterTransform->r[0].m128_f32[0];
+						//hitboxes[currentHitBox]->transform.r[1].m128_f32[0] = _casterTransform->r[1].m128_f32[1];
+						//hitboxes[currentHitBox]->transform.r[2].m128_f32[0] = _casterTransform->r[2].m128_f32[2];
+						if (hitboxes[currentHitBox]->modelName == "")
+						{
+						//	hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(90.f), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection)));
+							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection));
+						}
+						else
+						{
+							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform));
+							//hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(hitboxes[currentHitBox]->rotation.x)), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform)));
+
+							hitboxes[currentHitBox]->SetRotation(hitboxes[currentHitBox]->rotation, RotationType::yxz);
+						}
+						XMVECTOR castSideNormal = _casterTransform->r[0];
+						XMVECTOR castUpNormal = _casterTransform->r[1];
+						XMVECTOR castHeadingNormal = _casterTransform->r[2];
+						XMVECTOR targetLocation = _casterTransform->r[3];
+						hitboxes[currentHitBox]->transform.r[3] = targetLocation;
+
+						castUpNormal = XMVector4Normalize(castUpNormal);
+						XMFLOAT3 casterUN;
+						XMStoreFloat3(&casterUN, castUpNormal);
+
+						castSideNormal = XMVector4Normalize(castSideNormal);
+						XMFLOAT3 casterSN;
+						XMStoreFloat3(&casterSN, castSideNormal);
+
+
+						castHeadingNormal = XMVector4Normalize(castHeadingNormal);
+						XMFLOAT3 casterFN;
+						XMStoreFloat3(&casterFN, castHeadingNormal);
+						XMFLOAT3 targetPos;
+						XMStoreFloat3(&targetPos, targetLocation);
+
+						targetPos.x += (casterFN.x * hitboxes[currentHitBox]->offsetZ) + (casterUN.x * hitboxes[currentHitBox]->offsetY) + (casterSN.x * hitboxes[currentHitBox]->offsetX);
+						targetPos.y += (casterFN.y * hitboxes[currentHitBox]->offsetZ) + (casterUN.y * hitboxes[currentHitBox]->offsetY) + (casterSN.y * hitboxes[currentHitBox]->offsetX);
+						targetPos.z += (casterFN.z * hitboxes[currentHitBox]->offsetZ) + (casterUN.z * hitboxes[currentHitBox]->offsetY) + (casterSN.z * hitboxes[currentHitBox]->offsetX);
+
+						hitboxes[currentHitBox]->SetPosition(targetPos);
+						hitboxes[currentHitBox]->Velocity.x = (casterFN.x * hitboxes[currentHitBox]->vel.z) + (casterUN.x * hitboxes[currentHitBox]->vel.y) + (casterSN.x * hitboxes[currentHitBox]->vel.x);
+						hitboxes[currentHitBox]->Velocity.y = (casterFN.y * hitboxes[currentHitBox]->vel.z) + (casterUN.y * hitboxes[currentHitBox]->vel.y) + (casterSN.y * hitboxes[currentHitBox]->vel.x);
+						hitboxes[currentHitBox]->Velocity.z = (casterFN.z * hitboxes[currentHitBox]->vel.z) + (casterUN.z * hitboxes[currentHitBox]->vel.y) + (casterSN.z * hitboxes[currentHitBox]->vel.x);
+						
+					}
 					for (int i = 0; i < eventDelay.size(); i++)
 					{
 						eventFired[i] = false;
 					}
-					if (hitbox)
+					if (hitboxes.size() > 0)
 					{
 						cooldownTimer = cooldownDuration;
 						attackTimer = attackDuration;
-						for (int i = 0; i < hitboxCount; ++i)
+						//for (auto& hb:hitboxes)
+						//{
+						if (hitboxDelay <= 0)
 						{
-							if (hitboxDelay <= 0)
-							{
-								hitboxFired = true;
-								hitbox[i].Enable();
-							}
-							active = true;
-							return true;
+							hitboxFired[currentHitBox] = true;
+							hitboxes[currentHitBox]->Enable();
 						}
+						active = true;
+						return true;
+						//}
 					}
 				}
 				return false;
@@ -232,25 +374,25 @@ namespace ADResource
 				}
 				if (active)
 				{
+					if (hitboxFired[currentHitBox] == false && attackDuration - attackTimer > hitboxDelay)
+					{
+						//for (auto& hb : hitboxes)
+						//{
+						hitboxFired[currentHitBox] = true;
+						hitboxes[currentHitBox]->Enable();
+						//}
+					}
 					if (attackTimer > 0)
 					{
-						if (hitboxFired == false && attackDuration - attackTimer > hitboxDelay)
-						{
-							for (int i = 0; i < hitboxCount; ++i)
-							{
-								hitboxFired = true;
-								hitbox[i].Enable();
-							}
-						}
 						for (int i = 0; i < eventDelay.size(); i++)
 						{
 							if (eventFired[i] == false && attackDuration - attackTimer > eventDelay[i])
 							{
-								if (hbpos != nullptr)
+								if (hbpos)
 								{
 									delete hbpos;
 								}
-								hbpos = new XMFLOAT3(hitbox->GetPosition());
+								hbpos = new XMFLOAT3(hitboxes[currentHitBox]->GetPosition());
 								ADEvents::ADEventSystem::Instance()->SendEvent(eventName[i], (void*)hbpos);
 								eventFired[i] = true;
 							}
@@ -261,8 +403,12 @@ namespace ADResource
 							EndAction();
 						}
 					}
+					else
+					{
+						EndAction();
+					}
 
-					hitbox->collider.Pos = hitbox->GetPosition();
+					hitboxes[currentHitBox]->collider.Pos = hitboxes[currentHitBox]->GetPosition();
 				}
 
 			}
@@ -270,15 +416,49 @@ namespace ADResource
 			void EndAction()
 			{
 				//Some hit boxes would turn off this way, others require they burn out or collide.
-				if (hitbox && removeHbIfEnd)
+				if (hitboxes[currentHitBox])
 				{
 					active = false;
-					hitboxFired = false;
-					for (int i = 0; i < hitboxCount; ++i)
+					//hitboxFired[currentHitBox] = false;
+					//for (auto& hb : hitboxes)
+					//{
+					if (removeHbIfEnd)
 					{
-						hitbox[i].active = false;
+						hitboxes[currentHitBox]->active = false;
+						hitboxFired[currentHitBox] = false;
 					}
+					//}
 				}
+			}
+
+			Action* Clone()
+			{
+				Action* action = new Action();
+				//action->hitboxCount = 0;
+				for (auto& hb : hitboxes)
+				{
+					action->hitboxes.push_back(hb->Clone());
+					action->hitboxFired.push_back(false);
+				}
+				//action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
+				action->hitboxCount = hitboxCount;
+				action->cooldownDuration = cooldownDuration;
+				action->attackDuration = attackDuration;
+				action->removeHbIfEnd = removeHbIfEnd;
+				action->scaleCorrection = scaleCorrection;
+
+
+				for (auto& evnt : eventName)
+				{
+					action->eventName.push_back(evnt);
+					action->eventFired.push_back(false);
+				}
+				for (auto& evnt : eventDelay)
+				{
+					action->eventDelay.push_back(evnt);
+				}
+				action->hitboxDelay = hitboxDelay;
+				return action;
 			}
 		};
 
@@ -288,10 +468,17 @@ namespace ADResource
 			StatSheet* stats;
 		public:
 			XMFLOAT3 colScale;
+			AnimationStateMachine* anim_controller;
 			ADPhysics::AABB collider;
 			std::string deathEvent;
+			BloodEmitter* villagerBlood = nullptr;
 
-			Destructable() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE; }
+			Destructable()
+			{
+				colliderPtr = &collider;
+				physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
+				anim_controller = new AnimationStateMachine();
+			}
 			~Destructable() override
 			{
 				delete stats;
@@ -306,6 +493,7 @@ namespace ADResource
 					colliderPtr = &collider;
 					physicsType = OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
+					anim_controller->SetModel_To_CurrentAnimation();
 				}
 			};
 
@@ -325,6 +513,7 @@ namespace ADResource
 
 			void SetStatSheet(StatSheet* statSheet)
 			{
+				has_stats = true;
 				stats = statSheet;
 			};
 
@@ -335,7 +524,10 @@ namespace ADResource
 					ADPhysics::Manifold m;
 					if (obj->colliderPtr->isCollision(&collider, m))
 					{
-						collisionQueue.push(CollisionPacket(this, obj, m));
+						if (!obj->colliderPtr->trigger && obj->team != team)
+						{
+							collisionQueue.push(CollisionPacket(this, obj, m));
+						}
 					}
 				}
 			}
@@ -345,9 +537,6 @@ namespace ADResource
 				for (int i = 0; i < effects.size(); ++i)
 				{
 					effects[i].get()->Update(_deltaTime);
-
-					//std::string msg = std::to_string(effects[i].get()->tickTimer);
-					//ADUI::MessageReceiver::Log(msg);
 
 					if (effects[i].get()->isFinished)
 					{
@@ -366,6 +555,29 @@ namespace ADResource
 			{
 				ADEvents::ADEventSystem::Instance()->SendEvent(deathEvent, (void*)(gamePlayType));
 				//Death Time
+				if (villagerBlood)
+				{
+					if (!villagerBlood[0].GetActive())
+						villagerBlood[0].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[1].GetActive())
+						villagerBlood[1].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[2].GetActive())
+						villagerBlood[2].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[3].GetActive())
+						villagerBlood[3].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[4].GetActive())
+						villagerBlood[4].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[5].GetActive())
+						villagerBlood[5].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[6].GetActive())
+						villagerBlood[6].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[7].GetActive())
+						villagerBlood[7].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else if (!villagerBlood[8].GetActive())
+						villagerBlood[8].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+					else
+						villagerBlood[9].Activate({ transform.r[3].m128_f32[0],transform.r[3].m128_f32[1] + 10,transform.r[3].m128_f32[2],transform.r[3].m128_f32[4] });
+				}
 				DropLoot();
 				Remove();
 			}
@@ -396,7 +608,7 @@ namespace ADResource
 			//ADUI::UIMessage eventUIMessage;
 
 
-			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; gamePlayType = ADResource::ADGameplay::EVENT_TRIGGER; colliderPtr->trigger = true; };
 
 			void Enable()
 			{
@@ -409,37 +621,42 @@ namespace ADResource
 
 			virtual void Update(float _deltaTime)
 			{
-				// Physics
-				XMFLOAT3 dang;
-				XMStoreFloat3(&dang, transform.r[3]);
-				collider = ADPhysics::AABB(dang, colScale);
-				colliderPtr = &collider;
-				collider.trigger = true;
+				if (active)
+				{
+					// Physics
+					XMFLOAT3 dang;
+					XMStoreFloat3(&dang, transform.r[3]);
+					collider = ADPhysics::AABB(dang, colScale);
+					colliderPtr = &collider;
+					collider.trigger = true;
+				}
 			};
 
 			void CheckCollision(GameObject* obj) override
 			{
 				if (active && obj->active)
 				{
-					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
+					if (!obj->colliderPtr->trigger)
 					{
-						if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+						ADPhysics::Manifold m;
+						if (obj->colliderPtr->isCollision(&collider, m))
 						{
-							if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
+							if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
 							{
-								CallEvent();
-								if (isDeactivateOnFirstApplication)
+								if (gamePlayType == EVENT_TRIGGER && obj->gamePlayType == PLAYER)
 								{
-									active = false;
+									CallEvent();
+									if (isDeactivateOnFirstApplication)
+									{
+										active = false;
+									}
+								}
+								else
+								{
+									PassEffects(obj);
 								}
 							}
-							else
-							{
-								PassEffects(obj);
-							}
 						}
-
 					}
 				}
 			}

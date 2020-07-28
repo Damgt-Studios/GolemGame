@@ -1,19 +1,19 @@
 #pragma once
-//#include "ADAudio.h"
-//#include "ADEventSystem.h"
-//#include "Listeners.h"
+#include "ADAudio.h"
+#include "ADEventSystem.h"
+#include "Listeners.h"
 #include <Types.h>
 #include "GameEffects.h"
-//#include "GameObjectClasses.h"
+#include "GameObjectClasses.h"
 #include "GameUtilities.h"
-//#include "ADUserInterface.h"
+#include "ADUserInterface.h"
 #include "GameUserInterface.h"
-////#include "AudioManager.h"
-//#include "MeshLoader.h"
-//#include "ADAI.h"
-//#include "ADPathfinding.h"
-//#include "AnimationStateMachine.h"
-//#include "Listeners.h"
+//#include "AudioManager.h"
+#include "MeshLoader.h"
+#include "ADAI.h"
+#include "ADPathfinding.h"
+#include "AnimationStateMachine.h"
+#include "Listeners.h"
 
 
 
@@ -78,6 +78,10 @@ public:
 					{
 						statSheet->SetEventVal(currentStat, std::stof(rhs));
 					}
+					else if (lhs == "SetEventType")
+					{
+						statSheet->SetEventType(currentStat, std::stoi(rhs));
+					}
 					else if (lhs == "StatCurrent")
 					{
 						statSheet->SetCurrent(currentStat, std::stoi(rhs));
@@ -120,26 +124,28 @@ public:
 						else if (lhs == "TickOnEnter")
 						{
 							if (rhs == "true")
-								effect->tickOnEnter = true; \
+								effect->tickOnEnter = true; 
 						}
 						else if (lhs == "TickOnExit")
 						{
 							if (rhs == "true")
-								effect->tickOnExit = true; \
+								effect->tickOnExit = true; 
+						}
+						else if (lhs == "MinValue")
+						{
+							effect->minimumChange.push_back(std::stoi(rhs));
+						}
+						else if (lhs == "MaxValue")
+						{
+							effect->maximumChange.push_back(std::stoi(rhs));
 						}
 						else if (lhs == "Stat")
 						{
 							effect->statsAffected.push_back(rhs);
 						}
-						else if (lhs == "MinValue")
+						else if (lhs == "CounterStat")
 						{
-							int min = std::stoi(rhs);
-							effect->minimumChange.push_back(min);
-						}
-						else if (lhs == "MaxValue")
-						{
-							int min = std::stoi(rhs);
-							effect->maximumChange.push_back(min);
+							effect->counterStatsIncluded.push_back(rhs);
 						}
 						else
 						{
@@ -157,7 +163,7 @@ public:
 				else if (rhs == "StatBuff")
 				{
 					_entityStr.erase(0, endPos + 1);
-					StatChange* effect = new StatChange();
+					StatBuff* effect = new StatBuff();
 					while (endPos != std::string::npos)
 					{
 						midPos = _entityStr.find('=');
@@ -229,7 +235,6 @@ public:
 				_entityStr.erase(0, endPos + 1);
 				ADResource::ADGameplay::HitBox* trigger = new ADResource::ADGameplay::HitBox();
 				XMFLOAT3 scale = XMFLOAT3(1, 1, 1);
-				XMFLOAT3 modelScale = XMFLOAT3(1, 1, 1);
 				trigger->SetScale(scale);
 				trigger->SetRotation(scale);
 				trigger->SetPosition(scale);
@@ -240,12 +245,12 @@ public:
 				//AD_ULONG id = ResourceManager::AddAnimatedModel("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
 				//trigger->SetScale(XMFLOAT3(0.1f, 0.1f, 0.1f)); 
 				//trigger->SetMeshID(id);
-
+				trigger->rotation = { 0,0,0 };
 				trigger->active = false;
 				trigger->team = 1;
 
 
-			std:string currentEffect;
+				std:string currentEffect;
 				while (endPos != std::string::npos)
 				{
 					midPos = _entityStr.find('=');
@@ -288,17 +293,37 @@ public:
 					{
 						scale.z = std::stof(rhs);
 					}
-					else if (lhs == "Model_Scale_Width")
+					else if (lhs == "Model_Name")
 					{
-						modelScale.x = std::stof(rhs);
+						trigger->modelName = (rhs);
 					}
-					else if (lhs == "Model_Scale_Height")
+					else if (lhs == "Model_Mat")
 					{
-						modelScale.y = std::stof(rhs);
+						trigger->matName = (rhs);
 					}
-					else if (lhs == "Model_Scale_Length")
+					else if (lhs == "Model_Width")
 					{
-						modelScale.z = std::stof(rhs);
+						trigger->modelScale.x = std::stof(rhs);
+					}
+					else if (lhs == "Model_Height")
+					{
+						trigger->modelScale.y = std::stof(rhs);
+					}
+					else if (lhs == "Model_Length")
+					{
+						trigger->modelScale.z = std::stof(rhs);
+					}
+					else if (lhs == "XRotation")
+					{
+						trigger->rotation.x = std::stof(rhs);
+					}
+					else if (lhs == "YRotation")
+					{
+						trigger->rotation.y = std::stof(rhs);
+					}
+					else if (lhs == "ZRotation")
+					{
+						trigger->rotation.z = std::stof(rhs);
 					}
 					else if (lhs == "XVelocity")
 					{
@@ -344,13 +369,30 @@ public:
 					_entityStr.erase(0, endPos + 1);
 				}
 
-				AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-				trigger->SetMeshID(id);
+
+				if (trigger->modelName != "")
+				{
+					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, { 0,0,0 });// trigger->rotation); // trigger->modelScale
+					trigger->SetMeshID(id);
+					////GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
+				}
+				//else
+				//{
+				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), { 0,0,0 });
+				//	trigger->SetMeshID(id);
+				//}
 				trigger->colScale = scale;
-				XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
-				trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, XMFLOAT3(1, 1, 1));
+				//trigger->transform = XMMatrixRotationX(trigger->rotation.x);// trigger->rotation);
+				//XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
+				//trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, trigger->colScale); //XMFLOAT3(1, 1, 1)); 
+				trigger->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(trigger->rotation.y)) * XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ), trigger->colScale);
+
+				//trigger->collider = ADPhysics::OBB(XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ) * XMMatrixScaling(trigger->colScale.x, trigger->colScale.y, trigger->colScale.z) * XMMatrixRotationY(XMConvertToRadians(trigger->rotation.y)), trigger->colScale);
+				//trigger->collider.AxisX.x = trigger->colScale.x;
+				//trigger->collider.AxisY.y = trigger->colScale.y;
+				//trigger->collider.AxisZ.z = trigger->colScale.z;
 				trigger->collider.trigger = true;
-				trigger->SetScale(scale);
+				//trigger->SetScale(trigger->modelScale);//(scale);  
 				trigger->colliderPtr = &trigger->collider;
 				DefinitionDatabase::Instance()->hitboxDatabase[mid] = trigger;
 				//Needs an ID from a map.
@@ -366,6 +408,7 @@ public:
 					lhs = _entityStr.substr(0, midPos);
 					rhs = _entityStr.substr(midPos + 1, endPos - (midPos + 1));
 
+
 					if (lhs == "AddHitBox")
 					{
 						//auto tFoundIt = DefinitionDatabase::Instance()->hitboxDatabase.find(rhs);
@@ -373,8 +416,22 @@ public:
 						//{
 						//	int a = 0;
 						//}
-						action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
+
+						action->hitboxes.push_back(DefinitionDatabase::Instance()->hitboxDatabase[rhs]);
+						//ResourceManager::AddGameObject(action->hitboxes[0]);
+						action->hitboxFired.push_back(false);
+						//HitBox* temp = action->hitbox->Clone();
+						//action->hitbox = temp;
 						action->hitboxCount++;
+					}
+					else if (lhs == "HitboxDuplicates")
+					{
+						action->hitboxCount = std::stoi(rhs);
+						for (int i = 1; i < action->hitboxCount; ++i)
+						{
+							action->hitboxes.push_back(action->hitboxes[0]->Clone());
+							action->hitboxFired.push_back(false);
+						}
 					}
 					else if (lhs == "Cooldown")
 					{
@@ -420,6 +477,7 @@ public:
 				//	msg.append(rhs);
 				//	ADUI::MessageReceiver::Log(msg);
 				//}
+
 				DefinitionDatabase::Instance()->actionDatabase[mid] = action;
 				//Needs an ID from a map.
 			}
@@ -581,7 +639,7 @@ class TheGreatGolem
 		// This is adding the hitboxes for all the spells to the game.  If the hitbox is not a single instance hitbox this will cause issues.  So change this.
 		for (auto it = DefinitionDatabase::Instance()->hitboxDatabase.begin(), itEnd = DefinitionDatabase::Instance()->hitboxDatabase.end(); it != itEnd; ++it)
 		{
-			GameUtilities::AddGameObject(it->second, false);
+			GameUtilities::AddGameObject(it->second, it->second->has_mesh);
 		}
 		return true;
 	};
@@ -753,9 +811,9 @@ public:
 		return true;
 	};
 
-	bool LoadGameUserInterface(ADUI::ADUI* _userInterface, AD_AUDIO::ADAudio* _audioEngine, ADAI::PathingGrid* _grid)
+	bool LoadGameUserInterface(ADUI::ADUI* _userInterface, AD_AUDIO::ADAudio* _audioEngine)
 	{
-		gameUI.SetupUI(_userInterface, _audioEngine, _grid);
+		gameUI.SetupUI(_userInterface, _audioEngine);
 
 		return true;
 	};

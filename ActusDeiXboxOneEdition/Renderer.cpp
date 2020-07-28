@@ -548,7 +548,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	ID3D11Buffer* lightCbuffers[] = { renderer_resources.lightBuffer.Get() };
 	renderer_resources.context->PSSetConstantBuffers(0, 1, lightCbuffers);
 
-	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 300, 350), 0, 0);
+	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 600, 700), 0, 0);
+	shadowCamera->SetClippingPlanes(0.001f, 3000);
 
 	XMFLOAT3 campos;
 	XMFLOAT3 pos, rot, scale;

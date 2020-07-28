@@ -1,5 +1,5 @@
 #pragma once
-//#include "Types.h"
+#include "Types.h"
 #include "ResourceManager.h"
 
 namespace ADResource
@@ -11,7 +11,7 @@ namespace ADResource
 		public:
 			void Render()
 			{
-				if (this->active) 
+				if (this->active && this->has_mesh) 
 				{
 					ResourceManager::AddModelToRenderQueue(dynamic_cast<GameObject*>(this));
 					ResourceManager::AddModelToShadowQueue(dynamic_cast<GameObject*>(this));

@@ -1,9 +1,9 @@
 StatSheet=Rubble:
 AddStat=Health
 StatMin=1
-StatMax=1000
+StatMax=99999
 StatFail=0
-StatCurrent= 1000
+StatCurrent= 99999
 
 AddStat=Armor
 StatMin=500
@@ -15,9 +15,23 @@ StatCurrent=500
 StatSheet=House1:
 AddStat=Health
 StatMin=0
-StatMax=1000
+StatMax=390
 StatFail=0
-StatCurrent= 1000
+StatCurrent= 390
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=5
+;
+
+StatSheet=House2:
+AddStat=Health
+StatMin=0
+StatMax=400
+StatFail=0
+StatCurrent= 400
 
 AddStat=Armor
 StatMin=1
@@ -26,54 +40,40 @@ StatFail=0
 StatCurrent=0
 ;
 
-StatSheet=House2:
-AddStat=Health
-StatMin=0
-StatMax=1200
-StatFail=0
-StatCurrent= 1200
-
-AddStat=Armor
-StatMin=1
-StatMax=500
-StatFail=0
-StatCurrent=3
-;
-
 StatSheet=House3:
 AddStat=Health
 StatMin=0
-StatMax=2000
+StatMax=400
 StatFail=0
-StatCurrent= 2000
+StatCurrent= 400
 
 AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=3
+StatCurrent=0
 ;
 
 StatSheet=House4:
 AddStat=Health
 StatMin=0
-StatMax=5000
+StatMax=400
 StatFail=0
-StatCurrent= 5000
+StatCurrent= 400
 
 AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=3
+StatCurrent=0
 ;
 
 StatSheet=Barn1:
 AddStat=Health
 StatMin=0
-StatMax=2000
+StatMax=400
 StatFail=0
-StatCurrent= 2000
+StatCurrent= 400
 
 AddStat=Armor
 StatMin=1
@@ -85,9 +85,9 @@ StatCurrent=4
 StatSheet=Barn2:
 AddStat=Health
 StatMin=0
-StatMax=5000
+StatMax=400
 StatFail=0
-StatCurrent= 5000
+StatCurrent= 400
 
 AddStat=Armor
 StatMin=1
@@ -99,9 +99,23 @@ StatCurrent=4
 StatSheet=Tavern:
 AddStat=Health
 StatMin=0
-StatMax=10000
+StatMax=700
 StatFail=0
-StatCurrent= 10000
+StatCurrent= 700
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=6
+;
+
+StatSheet=Hall:
+AddStat=Health
+StatMin=0
+StatMax=1000
+StatFail=0
+StatCurrent= 1000
 
 AddStat=Armor
 StatMin=1
@@ -127,23 +141,23 @@ StatCurrent=10
 StatSheet=Tower:
 AddStat=Health
 StatMin=0
-StatMax=15000
+StatMax=550
 StatFail=0
-StatCurrent= 15000
+StatCurrent= 550
 
 AddStat=Armor
 StatMin=1
 StatMax=500
 StatFail=0
-StatCurrent=8
+StatCurrent=20
 ;
 
 StatSheet=Gate:
 AddStat=Health
 StatMin=0
-StatMax=15000
+StatMax=600
 StatFail=0
-StatCurrent= 15000
+StatCurrent= 600
 
 AddStat=Armor
 StatMin=1
@@ -155,9 +169,9 @@ StatCurrent=8
 StatSheet=Scaffolding:
 AddStat=Health
 StatMin=0
-StatMax=15000
+StatMax=200
 StatFail=0
-StatCurrent= 15000
+StatCurrent= 200
 
 AddStat=Armor
 StatMin=1
@@ -169,9 +183,9 @@ StatCurrent=8
 StatSheet=Wall:
 AddStat=Health
 StatMin=0
-StatMax=15000
+StatMax=500
 StatFail=0
-StatCurrent= 15000
+StatCurrent= 500
 
 AddStat=Armor
 StatMin=1
@@ -183,9 +197,9 @@ StatCurrent=8
 StatSheet=Cart:
 AddStat=Health
 StatMin=0
-StatMax=15000
+StatMax=200
 StatFail=0
-StatCurrent= 15000
+StatCurrent= 200
 
 AddStat=Armor
 StatMin=1

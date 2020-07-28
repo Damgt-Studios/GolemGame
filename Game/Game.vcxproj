@@ -357,6 +357,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="GameEffects.h" />
     <ClInclude Include="GameObjectClasses.h" />
+    <ClInclude Include="GamePlayAI.h" />
     <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameUtilities.h" />
@@ -364,6 +365,7 @@
     <ClInclude Include="Listeners.h" />
     <ClInclude Include="MinionManager.h" />
     <ClInclude Include="pchgame.h" />
+    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
@@ -371,6 +373,7 @@
     <ClCompile Include="ADAudio.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="GameObjectClasses.cpp" />
+    <ClCompile Include="GamePlayAI.cpp" />
     <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
     <ClCompile Include="GameUtilities.cpp" />

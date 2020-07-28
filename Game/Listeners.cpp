@@ -179,6 +179,22 @@ void SetUITilingListener::HandleEvent(ADEvents::ADEvent* _event)
         cvalue = minimum;
     if (cvalue > maximum)
         cvalue = maximum;
+    if (cvalue < 35)
+    {
+        image->Focus();
+    }
+    else
+    {
+        image->Focus(false);
+    }
+    if (cvalue < 25)
+    {
+        image->SetTint({ 1.f, 0.1f, 0.1f, 1 });
+    }
+    else
+    {
+        image->SetTint({ 1.f, 1.f, 1.f, 1 });
+    }
     image->tiled = cvalue;
 }
 

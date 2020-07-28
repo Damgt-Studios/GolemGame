@@ -280,7 +280,7 @@ namespace ADResource
 			XMFLOAT4   CameraPosition;
 		};
 
-		struct LVP 
+		struct LVP
 		{
 			XMFLOAT4X4 ViewMatrix;
 			XMFLOAT4X4 ProjectionMatrix;
@@ -313,11 +313,16 @@ namespace ADResource
 		class Stat
 		{
 		public:
+			std::string name = "";
 			std::string eventName = "";
+			std::string eventMessage="";
+			int eventDataType = 0;
 			int currentValue = 0;
 			int maxValue = 0;
 			int minValue = 0;
 			int eventValue = 0;
+
+
 
 			void Set(int _val)
 			{
@@ -327,7 +332,16 @@ namespace ADResource
 				{
 					if (eventValue == -1 || currentValue == eventValue)
 					{
-						ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)(currentValue));
+						if (eventDataType == 0)
+						{
+							ADEvents::ADEventSystem::Instance()->SendEvent(eventName, (void*)(currentValue));	//Allow me to send an int or string based on dd.
+						}
+						else if (eventDataType == 1)
+						{
+							eventMessage.clear();
+							eventMessage.append(to_string(currentValue));
+							ADEvents::ADEventSystem::Instance()->SendEvent(eventName, static_cast<void*>(&eventMessage));
+						}
 					}
 				}
 			}
@@ -361,6 +375,10 @@ namespace ADResource
 			{
 				stats[_name].eventName = _eventName;
 			};
+			void SetEventType(std::string _name, int _eventDT)
+			{
+				stats[_name].eventDataType = _eventDT;
+			};
 			void SetEventVal(std::string _name, int _val)
 			{
 				stats[_name].eventValue = _val;
@@ -377,8 +395,6 @@ namespace ADResource
 
 		class Effect
 		{
-		protected:
-
 		public:
 			std::string name;
 			std::vector<Stat*> targetedStats;
@@ -440,6 +456,7 @@ namespace ADResource
 			GameObject()
 			{
 				transform = postTransform = XMMatrixIdentity();
+				gamePlayType = -1;
 			}
 			virtual ~GameObject() = default;
 
@@ -499,7 +516,7 @@ namespace ADResource
 
 		public:
 			// Setters/ Getters
-			void SetMeshID(AD_ULONG id) { meshID = id; };
+			void SetMeshID(AD_ULONG id) { meshID = id; has_mesh = true; };
 			AD_ULONG GetMeshId() { return meshID; }
 			// Rotations in degrees
 			void SetRotation(XMFLOAT3 rotation, RotationType type = RotationType::xyz)
@@ -539,6 +556,10 @@ namespace ADResource
 			}
 			void RotationYBasedOnView(XMMATRIX& cam, float angle, float PI)
 			{
+				XMVECTOR camRot = GetRotation(cam);
+				bool isStraight = false;
+				if (((angle > -0.75f && angle < 0.75f) || ((angle > 2.39f && angle < 3.89f) || (angle < -2.39f && angle > -3.89f))) && ((camRot.m128_f32[1] > 1.57 && camRot.m128_f32[1] < 1.58)|| (camRot.m128_f32[1] > -0.1f && camRot.m128_f32[1] < 0.1f)))
+					isStraight = true;
 				angle *= (180.0f / PI);
 
 				cam = XMMatrixInverse(nullptr, cam);
@@ -546,7 +567,8 @@ namespace ADResource
 				cam = XMMatrixInverse(nullptr, cam);
 				cameulerAngles.m128_f32[1] *= (180.0f / PI);
 
-				angle += -cameulerAngles.m128_f32[1];
+				if (!isStraight)
+					angle += -cameulerAngles.m128_f32[1];
 				angle *= (PI / 180.0f);
 
 				XMMATRIX RotationY = XMMatrixRotationAxis({ 0,1,0 }, angle);
@@ -554,6 +576,11 @@ namespace ADResource
 				SetRotationMatrix(RotationY);
 
 			}
+			XMFLOAT3 GetRotationDegrees()
+			{
+				return rot;
+			}
+
 			XMVECTOR GetRotation()
 			{
 				float Yaw; float Pitch; float Roll;
@@ -611,15 +638,20 @@ namespace ADResource
 			{
 				mat = transform;
 			}
+		protected:
+			XMFLOAT3 rot;
 
 		public:
 			bool active = true;
 			float safeRadius = 5.0f;
+			float avoidRadius = 5.0f;
+			float attackRadius = 5.0f;
 			float desirability = 0;
 
 			UINT physicsType;
 			UINT gamePlayType;
 			UINT team = 0;
+			UINT actionLevel = 0;
 			AD_ULONG meshID;
 			//OBJECT_DEFENSE defenseType;
 			XMFLOAT4 Velocity = { 0,0,0,0 };
@@ -631,6 +663,7 @@ namespace ADResource
 
 		public:
 			bool has_mesh = false;
+			bool has_stats = false;
 		};
 
 		struct CollisionPacket

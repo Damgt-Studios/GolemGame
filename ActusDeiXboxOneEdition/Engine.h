@@ -12,9 +12,9 @@
 #include "Renderer.h"
 #include "Input.h"
 #include "ResourceManager.h"
-//#include "XTime.h"
+#include "XTime.h"
 
-//#include "Types.h"
+#include "Types.h"
 #include "ADUserInterface.h"
 #include "ADParticles.h"
 
@@ -31,7 +31,7 @@ public:
 	~Engine() = default;
 
 	bool Initialize();
-	bool Update();
+	bool Update(float _delta);
 	bool Render();
 	bool ShutDown();
 
@@ -78,6 +78,7 @@ private:
 	// Timing
 	XTime engine_time;
 	float delta_time_sf;
+	float engine_time_sf;
 	double delta_time_sd;
 
 	// Temp
@@ -99,4 +100,5 @@ public:
 	CylinderEmitter stoneCylinder;
 	UpwardCloudEmitter destructionCloud;
 	UpwardCloudEmitter destructionCloud2;
+	BloodEmitter bloodEmitters[10];
 };

@@ -1,9 +1,9 @@
 StatSheet=BallistaTower:
 AddStat=Health
 StatMin=0
-StatMax=1000
+StatMax=400
 StatFail=0
-StatCurrent=1000
+StatCurrent=400
 
 AddStat=Hate
 StatMin=0
@@ -19,17 +19,18 @@ StatCurrent=8
 
 AddStat=TargetingRange
 StatMin=1
-StatMax=2000
+StatMax=5
 StatFail=0
-StatCurrent=450
+StatCurrent=5
 ;
 
 Effect=BallistaBoltHit:StatChange
-TickCount=1
-TickDuration=0
-TickOnEnter=false
+TickCount=0
+TickDuration=2
+TickOnEnter=true
 TickOnExit=false
 Stat=Health
+CounterStat=Armor
 MinValue=-45
 MaxValue=-45
 ;
@@ -37,15 +38,27 @@ MaxValue=-45
 Hitbox=BallistaBoltHB:
 AddEffect=BallistaBoltHit
 OffsetX=0
+OffsetY=10
 OffsetZ=30
-Collider_Width=20
-Collider_Height=20
-Collider_Length=20
+Collider_Width=15
+Collider_Height=100
+Collider_Length=15
+Model_Name=files/models/Arrow.mesh
+Model_Mat=files/textures/Bark.mat
+Model_Width=1
+Model_Height=1
+Model_Length=1
+XRotation=-80
+YVelocity=-0.8
+ZVelocity=7.5
+Team=1
 SingleHit=true
 ;
 
 Action=BallistaBoltFire:
-Cooldown=1.8
+Cooldown=1
 Duration=0.5
 AddHitBox=BallistaBoltHB
+HitboxDuplicates=3
+Persist_After_Attack=true
 ;

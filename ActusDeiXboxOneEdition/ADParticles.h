@@ -1487,6 +1487,10 @@ public:
 	{
 		return emitterPos;
 	}
+	bool GetActive()
+	{
+		return isActive;
+	}
 private:
 	ParticleRenderer renderer;
 	Particle particle;

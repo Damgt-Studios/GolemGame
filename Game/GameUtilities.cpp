@@ -110,36 +110,62 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 
 	//Get Data Driven Components
 	golem->stats = DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"];
+	golem->has_stats = true;
 
 	golem->consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+	golem->consume->scaleCorrection = 10;
 
 	golem->gActions[STONE].kick = DefinitionDatabase::Instance()->actionDatabase["StoneGolemKick"];
+	golem->gActions[STONE].kick->scaleCorrection = 10;
 	golem->gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
+	golem->gActions[STONE].punch->scaleCorrection = 10;
 	golem->gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
+	golem->gActions[STONE].slam->scaleCorrection = 10;
 	golem->gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golem->gActions[STONE].special->scaleCorrection = 10;
 	golem->gActions[STONE].nextForm = DefinitionDatabase::Instance()->actionDatabase["StoneNextForm"];
+	golem->gActions[STONE].nextForm->scaleCorrection = 10;
 	golem->gActions[STONE].prevForm = DefinitionDatabase::Instance()->actionDatabase["StonePreviousForm"];
+	golem->gActions[STONE].prevForm->scaleCorrection = 10;
 
 	golem->gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
+	golem->gActions[WATER].kick->scaleCorrection = 10;
 	golem->gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
+	golem->gActions[WATER].punch->scaleCorrection = 10;
 	golem->gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
+	golem->gActions[WATER].slam->scaleCorrection = 10;
 	golem->gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golem->gActions[WATER].special->scaleCorrection = 5;
 	golem->gActions[WATER].nextForm = DefinitionDatabase::Instance()->actionDatabase["WaterNextForm"];
+	golem->gActions[WATER].nextForm->scaleCorrection = 10;
 	golem->gActions[WATER].prevForm = DefinitionDatabase::Instance()->actionDatabase["WaterPreviousForm"];
+	golem->gActions[WATER].prevForm->scaleCorrection = 10;
 
 	golem->gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
+	golem->gActions[FIRE].kick->scaleCorrection = 10;
 	golem->gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
+	golem->gActions[FIRE].punch->scaleCorrection = 10;
 	golem->gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
+	golem->gActions[FIRE].slam->scaleCorrection = 10;
 	golem->gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golem->gActions[FIRE].special->scaleCorrection = 10;
 	golem->gActions[FIRE].nextForm = DefinitionDatabase::Instance()->actionDatabase["FireNextForm"];
+	golem->gActions[FIRE].nextForm->scaleCorrection = 10;
 	golem->gActions[FIRE].prevForm = DefinitionDatabase::Instance()->actionDatabase["FirePreviousForm"];
+	golem->gActions[FIRE].prevForm->scaleCorrection = 10;
 
 	golem->gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golem->gActions[WOOD].kick->scaleCorrection = 10;
 	golem->gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golem->gActions[WOOD].punch->scaleCorrection = 10;
 	golem->gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golem->gActions[WOOD].slam->scaleCorrection = 10;
 	golem->gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+	golem->gActions[WOOD].special->scaleCorrection = 10;
 	golem->gActions[WOOD].nextForm = DefinitionDatabase::Instance()->actionDatabase["WoodNextForm"];
+	golem->gActions[WOOD].nextForm->scaleCorrection = 10;
 	golem->gActions[WOOD].prevForm = DefinitionDatabase::Instance()->actionDatabase["WoodPreviousForm"];
+	golem->gActions[WOOD].prevForm->scaleCorrection = 10;
 
 	golem->consume->active = false;
 	for (int i = 0; i < 4; ++i)
@@ -245,10 +271,9 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 //}
 
 
-Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
 {
-	ADResource::ADGameplay::Destructable* temp = new ADResource::ADGameplay::Destructable;
-
+	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
 	// Transform data
 	temp->SetScale(scale);
@@ -268,12 +293,34 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	//scale.x *= 0.5f;
 	//scale.y *= 0.5f;
 	//scale.z *= 0.5f;
+
+	//scale.x *= (1.f / scale.x);
+	//scale.y *= (1.f / scale.y);
+	//scale.z *= (1.f / scale.z);
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
+	//temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
+
+	return temp;
+}
+
+MessageTrigger* GameUtilities::AddMessageTrigger(ADUI::UIMessage _message, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::MessageTrigger* temp = new ADResource::ADGameplay::MessageTrigger;
 
 
+	// Transform data
+	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
+	temp->team = 1;
+	temp->colScale = scale;
+	temp->collider = ADPhysics::AABB(position, temp->colScale);
+	temp->colliderPtr = &temp->collider;
+	temp->eventUIMessage = _message;
+	temp->has_mesh = false;
+	temp->gamePlayType = EVENT_TRIGGER;
 	return temp;
 }
 
@@ -291,10 +338,11 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
+	temp->anim_controller->Initialize(temp);
 
-	scale.x *= 100.0f;
-	scale.y *= 100.0f;
-	scale.z *= 100.0f;
+	scale.x *= (1.f / scale.x) * 1.2;
+	scale.y *= (1.f / scale.y) * 1.2;
+	scale.z *= (1.f / scale.z) * 1.2;
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
@@ -306,42 +354,42 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 }
 
 
-
-ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType)
-{
-	ADAI::AIUnit* temp = new ADAI::AIUnit;
-	temp->owner = _destructable;
-	_destructable->gamePlayType = _minionType;
-	_destructable->deathEvent = "MinionDeath";
-	_destructable->desirability = 0.5f;
-	switch (_destructable->gamePlayType)
-	{
-	case STONE_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
-		break;
-	case WATER_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
-		break;
-	case FIRE_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
-		break;
-	case WOOD_MINION:
-		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
-		break;
-	}
-	_destructable->team = 0;
-	ADAI::IdleState* idling = new ADAI::IdleState();
-	ADAI::FlockingState* charging = new ADAI::FlockingState();
-	idling->owner = temp;
-	charging->owner = temp;
-	temp->states.push_back(idling);
-	temp->states.push_back(charging);
-	temp->currentState = idling;
-
-	_commandGroup->AddUnitToGroup(temp, charging);
-
-	return temp;
-}
+//
+//ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType)
+//{
+//	ADAI::AIUnit* temp = new ADAI::AIUnit;
+//	temp->owner = _destructable;
+//	_destructable->gamePlayType = _minionType;
+//	_destructable->deathEvent = "MinionDeath";
+//	_destructable->desirability = 0.5f;
+//	switch (_destructable->gamePlayType)
+//	{
+//	case STONE_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
+//		break;
+//	case WATER_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
+//		break;
+//	case FIRE_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
+//		break;
+//	case WOOD_MINION:
+//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
+//		break;
+//	}
+//	_destructable->team = 0;
+//	ADAI::IdleState* idling = new ADAI::IdleState();
+//	ADAI::FlockingState* charging = new ADAI::FlockingState();
+//	idling->owner = temp;
+//	charging->owner = temp;
+//	temp->states.push_back(idling);
+//	temp->states.push_back(charging);
+//	temp->currentState = idling;
+//
+//	_commandGroup->AddUnitToGroup(temp, charging);
+//
+//	return temp;
+//}
 //
 //void GameUtilities::InitializeMinionModels()
 //{
@@ -440,25 +488,164 @@ ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::F
 //	return nullptr;
 //}
 
-ADAI::AIUnit* GameUtilities::AttachVillagerAI(Destructable* _destructable, ADAI::FlockingGroup* _fearGroup)
+ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* _engine)
 {
-	ADAI::AIUnit* temp = new ADAI::AIUnit;
-	temp->owner = _destructable;
+	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
 	_destructable->gamePlayType = OBJECT_TAG::PEASANT;
 	_destructable->deathEvent = "VillagerDeath";
 	_destructable->team = 1;
-	ADAI::IdleState* idling = new ADAI::IdleState();
-	ADAI::FlockingState* fleeing = new ADAI::FlockingState();
-	ADAI::FlockingState* chasingFleeing = new ADAI::FlockingState();
-	idling->owner = temp;
-	fleeing->owner = temp;
+	_destructable->colScale.x *= 5;
+	_destructable->colScale.y *= 5;
+	_destructable->colScale.z *= 5;
+	_destructable->anim_controller->SetNamebyIndex(0, "Idle");
+	_destructable->anim_controller->SetNamebyIndex(1, "Run");
+	_destructable->anim_controller->SetNamebyIndex(2, "Cower");
+	_destructable->anim_controller->SetNamebyIndex(3, "Death");
+	_destructable->safeRadius = 5.f;
+	_destructable->attackRadius = 8.f;
+	_destructable->villagerBlood = _engine->bloodEmitters;
+	_destructable->desirability = 1.2f;
 
-	temp->states.push_back(idling);
-	temp->states.push_back(fleeing);
-	temp->currentState = idling;
+	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
+	temp->mySSM.gameObject = _destructable;
+	temp->destructable = _destructable;
 
-	_fearGroup->AddUnitToGroup(temp, fleeing);
-	_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Villager"]));
+	ADAI::FlockingState* waypoint = new ADAI::FlockingState();
+	waypoint->mySSM = &temp->mySSM;
+	temp->mySSM.states.push_back(waypoint);
+
+	ADAI::FleeingState* fleeing = new ADAI::FleeingState();
+	fleeing->mySSM = &temp->mySSM;
+	fleeing->villager = temp;
+	fleeing->fearedObjects = _fearGroup;
+
+	for (auto& unit : *_safetyGroup)
+	{
+		fleeing->safetyStructures.push_back(unit);
+	}
+	temp->mySSM.states.push_back(fleeing);
+	temp->mySSM.currentState = fleeing;
+	_localGroup->AddUnitToGroup(temp, fleeing);
+	//_localGroup->AddUnitToGroup(temp, waypoint);
+
+
+	ADAI::AttackingState* attacking = new ADAI::AttackingState();
+	attacking->mySSM = &temp->mySSM;
+	attacking->returnIndex = 1;
+	attacking->myAttack = DefinitionDatabase::Instance()->actionDatabase["VillagerCower"];
+	temp->mySSM.states.push_back(attacking);
+
+
+	return temp;
+}
+
+ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType, ADAI::PathersQueue* _pathingQueue)
+{
+	_destructable->gamePlayType = _minionType;
+	_destructable->deathEvent = "MinionDeath";
+	_destructable->desirability = 1.0f;
+	_destructable->team = 0;
+	_destructable->colScale.x *= 8;
+	_destructable->colScale.y *= 10;
+	_destructable->colScale.z *= 8;
+	_destructable->anim_controller->SetNamebyIndex(0, "Idle");
+	_destructable->anim_controller->SetNamebyIndex(1, "Run");
+	_destructable->anim_controller->SetNamebyIndex(2, "Attack");
+	_destructable->anim_controller->SetNamebyIndex(3, "Born");
+	_destructable->anim_controller->SetNamebyIndex(4, "Flinch");
+	_destructable->anim_controller->SetNamebyIndex(5, "Death");
+
+
+	ADAI::MinionAI* ai = new ADAI::MinionAI;
+	ai->mySSM.gameObject = _destructable;
+	ai->destructable = _destructable;
+
+
+	ADAI::FlockingState* idling = new ADAI::FlockingState();
+	idling->mySSM = &ai->mySSM;
+	ai->mySSM.states.push_back(idling);
+
+	ADAI::CommandState* charging = new ADAI::CommandState();
+	charging->mySSM = &ai->mySSM;
+	charging->minion = ai;
+	charging->targets = _killGroup;
+	charging->pathingQueue = _pathingQueue;
+	//charging->myGroup = _localGroup;
+	ai->mySSM.states.push_back(charging);
+
+	ADAI::AttackingState* attacking = new ADAI::AttackingState();
+	attacking->mySSM = &ai->mySSM;
+	attacking->returnIndex = 1;
+	ai->mySSM.states.push_back(attacking);
+
+	switch (_destructable->gamePlayType)
+	{
+	case STONE_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
+		break;
+	case WATER_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["WaterMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
+		break;
+	case FIRE_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["FireMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
+		break;
+	case WOOD_MINION:
+		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["WoodMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
+		break;
+	}
+
+	ai->mySSM.currentState = charging;
+
+	_localGroup->AddUnitToGroup(ai, charging);
+
+	return ai;
+}
+
+ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup)
+{
+	_tower->gamePlayType = BALLISTA;
+	_tower->deathEvent = "BuildingDeath";
+	_tower->desirability = 2.0f;
+	_tower->team = 1;
+
+	ADAI::TowerAI* temp = new ADAI::TowerAI;
+	temp->mySSM.gameObject = _tower;
+	temp->building = _tower;
+
+	ADAI::TowerState* targeting = new ADAI::TowerState();
+	targeting->tower = temp;
+	targeting->targets = _killGroup;
+	temp->mySSM.states.push_back(targeting);
+
+	ADAI::AttackingState* attacking = new ADAI::AttackingState();
+	attacking->mySSM = &temp->mySSM;
+	temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["BallistaBoltFire"]->Clone();
+	temp->myAttack->scaleCorrection = 10;
+	attacking->myAttack = temp->myAttack;
+	attacking->returnIndex = 0;
+	temp->mySSM.states.push_back(attacking);
+
+	temp->mySSM.currentState = targeting;
 
 	return temp;
 }
@@ -480,7 +667,6 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation, instanced);
 	temp->SetMeshID(id);
-
 
 	return temp;
 }
@@ -652,7 +838,7 @@ std::vector<Renderable*> GameUtilities::GenerateGateway(XMFLOAT3 pos, XMFLOAT3 r
 	temp.push_back(AddSimpleAsset("files/models/GateWayStoneWindows.mesh", "files/textures/Stones2A.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 	temp.push_back(AddSimpleAsset("files/models/GateWayWooden.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
 	temp.push_back(AddSimpleAsset("files/models/GateWayWoodenStructure.mesh", "files/textures/Planks.mat", pos, XMFLOAT3(25, 25, 25), rotation));
-	temp.push_back(AddSimpleAsset("files/models/GateWayLattice.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/GateWayLattice.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 5, pos.z), XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -970,10 +1156,10 @@ std::vector<Renderable*> GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 r
 	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 
-	for (size_t i = 0; i < temp.size(); i++)
-	{
-		AddGameObject(temp[i]);
-	}
+	//for (size_t i = 0; i < temp.size(); i++)
+	//{
+	//	AddGameObject(temp[i]);
+	//}
 
 	return temp;
 }
@@ -1004,6 +1190,91 @@ std::vector<Renderable*> GameUtilities::GenerateBallista(XMFLOAT3 pos, XMFLOAT3 
 #endif
 
 	temp.push_back(AddSimpleAsset("files/models/Ballista.mesh", "files/textures/Ballista.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, false));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateRockWall1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateRockWall2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateRockWall3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateRockWall4(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateRockWall5(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Cliff_5.mesh", "files/textures/Cliff_5.mat", XMFLOAT3(pos.x, pos.y + 10, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{

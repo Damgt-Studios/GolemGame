@@ -8,16 +8,16 @@ namespace ADPhysics
 	struct AABB;
 	struct OBB;
 	struct Sphere;
-	struct Plane;
+	struct _Plane;
 	struct Triangle;
 	struct Manifold;
 
 	static bool SphereToAabbCollision(const Sphere& sphere, const AABB& aabb, Manifold& m);
 	static bool AabbToAabbCollision(const AABB& box1, const AABB& box2, Manifold& m);
 	static bool AabbToObbCollision(const AABB& aabb, const OBB& obb, Manifold& m);
-	static bool AabbToPlaneCollision(const AABB& aabb, const Plane& plane, Manifold& m);
-	static bool SphereToPlaneCollision(const Sphere& sphere, const Plane& plane, Manifold& m);
-	static bool ObbToPlaneCollision(const OBB& obb, const Plane& plane, Manifold& m);
+	static bool AabbToPlaneCollision(const AABB& aabb, const _Plane& plane, Manifold& m);
+	static bool SphereToPlaneCollision(const Sphere& sphere, const _Plane& plane, Manifold& m);
+	static bool ObbToPlaneCollision(const OBB& obb, const _Plane& plane, Manifold& m);
 	static bool SphereToObbCollision(const Sphere& sphere, const OBB& obb, Manifold& m);
 	static bool ObbToObbCollision(const OBB& box1, const OBB& box2, Manifold& m);
 	static bool TriangleToSphereCollision(const Triangle& tri, const Sphere& sphere, Manifold& m);
@@ -48,7 +48,7 @@ namespace ADPhysics
 			return false;
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) {
+		virtual bool isCollision(_Plane* other, Manifold& m) {
 			return false;
 		}
 
@@ -100,7 +100,7 @@ namespace ADPhysics
 			return AabbToObbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) override {
+		virtual bool isCollision(_Plane* other, Manifold& m) override {
 			return AabbToPlaneCollision(*this, *other, m);
 		}
 
@@ -151,7 +151,7 @@ namespace ADPhysics
 			return ObbToObbCollision(*this, *other, m);
 		}
 
-		virtual bool isCollision(Plane* other, Manifold& m) override {
+		virtual bool isCollision(_Plane* other, Manifold& m) override {
 			return ObbToPlaneCollision(*this, *other, m);
 		}
 
@@ -194,10 +194,10 @@ namespace ADPhysics
 		}
 	};
 
-	struct Plane : Collider
+	struct _Plane : Collider
 	{
 		XMFLOAT3 Normal, AxisX, AxisY, AxisZ, HalfSize;
-		Plane()
+		_Plane()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
 			Normal = XMFLOAT3(0, 1, 0);
@@ -208,7 +208,7 @@ namespace ADPhysics
 			type = ColliderType::Plane;
 		}
 
-		Plane(XMMATRIX Transform, XMFLOAT3 Size)
+		_Plane(XMMATRIX Transform, XMFLOAT3 Size)
 		{
 			Pos = (XMFLOAT3&)Transform.r[3];
 			AxisX = (XMFLOAT3&)Transform.r[0];
@@ -330,6 +330,7 @@ namespace ADPhysics
 	static float maxDownwardVelocity = -20.0f;
 
 	//------------------------------------------Seperating Axes
+
 	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const OBB& box1, const OBB& box2)
 	{
 		return (fabs(VectorDot(Difference, Axis)) >
@@ -341,7 +342,7 @@ namespace ADPhysics
 				fabs(VectorDot((Float3Multiply(box2.AxisZ, box2.HalfSize.z)), Axis))));
 	}
 
-	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const Sphere& sphere, const Plane& plane)
+	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const Sphere& sphere, const _Plane& plane)
 	{
 		return (fabs(VectorDot(Difference, Axis)) >
 			(fabs(VectorDot((Float3Multiply(XMFLOAT3(1, 0, 0), sphere.Radius)), Axis)) +
@@ -352,7 +353,7 @@ namespace ADPhysics
 				fabs(VectorDot((Float3Multiply(plane.AxisZ, plane.HalfSize.z)), Axis))));
 	}
 
-	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const AABB& box1, const Plane& plane)
+	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const AABB& box1, const _Plane& plane)
 	{
 		return (fabs(VectorDot(Difference, Axis)) >
 			(fabs(VectorDot((Float3Multiply(XMFLOAT3(1, 0, 0), box1.HalfSize.x)), Axis)) +
@@ -363,7 +364,7 @@ namespace ADPhysics
 				fabs(VectorDot((Float3Multiply(plane.AxisZ, plane.HalfSize.z)), Axis))));
 	}
 
-	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const OBB& box1, const Plane& plane)
+	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const OBB& box1, const _Plane& plane)
 	{
 		return (fabs(VectorDot(Difference, Axis)) >
 			(fabs(VectorDot((Float3Multiply(box1.AxisX, box1.HalfSize.x)), Axis)) +
@@ -480,6 +481,7 @@ namespace ADPhysics
 			return false;
 		}
 		else if (w1 + w2 > 1.0f)
+			return false;
 
 		return true;
 	}
@@ -775,7 +777,7 @@ namespace ADPhysics
 			PenetrationDepth = Overlap.z;
 		}
 
-		XMVECTOR Vector = (XMVECTOR&)(box2.Pos) - (XMVECTOR&)(box1.Pos);
+		XMVECTOR Vector = Float3ToVector(box2.Pos) - Float3ToVector(box1.Pos);
 		XMFLOAT4 FloatVector = VectorToFloat4(Vector);
 
 		float dot = FloatVector.x * ContactNormal.x + FloatVector.y * ContactNormal.y + FloatVector.z * ContactNormal.z;
@@ -840,7 +842,7 @@ namespace ADPhysics
 			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisZ), Float3ToVector(box2.AxisZ)))
 		};
 
-		int AxisOfMinimumCollision;
+		int AxisOfMinimumCollision = 0;
 		float MinOverlap = 100;
 
 		//Floating Point "Fix"
@@ -881,6 +883,11 @@ namespace ADPhysics
 		}
 
 		//Manifold Setup
+		if (AxisOfMinimumCollision < 0 || AxisOfMinimumCollision > 15)
+		{
+			AxisOfMinimumCollision = 0;
+		}
+
 		m.Normal = Axises[AxisOfMinimumCollision];
 
 
@@ -896,7 +903,7 @@ namespace ADPhysics
 
 	//------------------------------------------Plane Collision
 
-	static bool SphereToPlaneCollision(const Sphere& sphere, const Plane& plane, Manifold& m)
+	static bool SphereToPlaneCollision(const Sphere& sphere, const _Plane& plane, Manifold& m)
 	{
 		static XMFLOAT3 Difference;
 		Difference = XMFLOAT3(plane.Pos.x - sphere.Pos.x, plane.Pos.y - sphere.Pos.y, plane.Pos.z - sphere.Pos.z);
@@ -927,7 +934,7 @@ namespace ADPhysics
 		return true;
 	}
 
-	static bool AabbToPlaneCollision(const AABB& box, const Plane& plane, Manifold& m)
+	static bool AabbToPlaneCollision(const AABB& box, const _Plane& plane, Manifold& m)
 	{
 		static XMFLOAT3 Difference;
 		Difference = XMFLOAT3(box.Pos.x - plane.Pos.x, box.Pos.y - plane.Pos.y, box.Pos.z - plane.Pos.z);
@@ -960,7 +967,7 @@ namespace ADPhysics
 		return true;
 	}
 
-	static bool ObbToPlaneCollision(const OBB& obb, const Plane& plane, Manifold& m)
+	static bool ObbToPlaneCollision(const OBB& obb, const _Plane& plane, Manifold& m)
 	{
 		static XMFLOAT3 Difference;
 		Difference = XMFLOAT3(plane.Pos.x - obb.Pos.x, plane.Pos.y - obb.Pos.y, plane.Pos.z - obb.Pos.z);
@@ -1294,7 +1301,7 @@ namespace ADPhysics
 			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)))
 		};
 
-		int AxisOfMinimumCollision ;
+		int AxisOfMinimumCollision = 0;
 		float MinOverlap = 100;
 
 		//Floating Point "Fix"
