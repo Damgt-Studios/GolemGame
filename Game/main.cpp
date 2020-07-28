@@ -108,6 +108,8 @@ void MainPhysics(void* args, int index)
 			}
 		}
 	}
+
+	ADResource::ADGameplay::ResolveCollisions();
 }
 
 // the class definition for the core "framework" of our app
@@ -647,6 +649,96 @@ public:
 			ProcessInput();
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
+			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
+			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
+
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+			PhysicsArguments->OBJ_COUNT = OBJ_COUNT;
+			PhysicsArguments->OBJS = OBJS;
+			PhysicsArguments->collisionTree = collisionTree;
+
+			physics_timer += delta_time;
+			if (physics_timer > physics_rate)
+			{
+				physics_timer = 0;
+				//--------------------------------------------------------------------------------------------------------
+				/*for (int i = 0; i < OBJ_COUNT; i++)
+				{
+					for (unsigned int j = 0; j < OBJ_COUNT; j++)
+					{
+						if (i != j)
+						{
+							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+							{
+								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+								{
+									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
+									{
+										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+										{
+											OBJS[i]->CheckCollision(OBJS[j]);
+										}
+									}
+								}
+							}
+						}
+					}
+				}*/
+
+				//----------------------------------New Physics System-------------------------------
+				/*for (int i = 0; i < OBJ_COUNT; i++)
+				{
+
+					if (OBJS[i]->colliderPtr)
+					{
+						int* index = new int(i);
+						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
+						{
+							int somethingswrong = 0;
+							somethingswrong++;
+						}
+					}
+				}
+
+				for (unsigned int i = 0; i < OBJ_COUNT; i++)
+				{
+					if (OBJS[i]->colliderPtr)
+					{
+						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
+						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
+
+						for (unsigned int j = 0; j < collisionVector.size(); j++)
+						{
+							if (OBJS[*collisionVector[j].data]->colliderPtr)
+								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
+						}
+					}
+				}*/
+				jobManagerTest->AddJob(&MainPhysics, (void*)PhysicsArguments, 0);
+				//---------------------------------------------End New Physics System------------------------------------------
+
+				//Resolve all collisions that occurred this frame
+				//ADResource::ADGameplay::ResolveCollisions();
+				//jobManagerTest->AddJob(&ADResource::ADGameplay::ResolveCollisionsWrapper, testingthread, 0);
+
+				for (int i = 0; i < 10; i++)
+				{
+					GroundClamping(stoneMinions[i], tree, delta_time);
+					GroundClamping(waterMinions[i], tree, delta_time);
+					GroundClamping(fireMinions[i], tree, delta_time);
+					GroundClamping(woodMinions[i], tree, delta_time);
+				}
+
+				clampArgs->golem = golem;
+				clampArgs->tree = tree;
+				clampArgs->time = delta_time;
+
+
+				//GroundClamping(golem, tree, delta_time);
+				jobManagerTest->AddJob(&ADResource::ADGameplay::GroundClampingWrapper, (void*)clampArgs, 0);
+			}
+
 			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
 			{
 				//minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
@@ -734,96 +826,8 @@ public:
 			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
 
 			//	Works the exact same as the commented code above
-			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
-			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
-
-			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
-			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
-			PhysicsArguments->OBJ_COUNT = OBJ_COUNT;
-			PhysicsArguments->OBJS = OBJS;
-			PhysicsArguments->collisionTree = collisionTree;
-
-			physics_timer += delta_time;
-			if (physics_timer > physics_rate)
-			{
-				physics_timer = 0;
-				//--------------------------------------------------------------------------------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-					for (unsigned int j = 0; j < OBJ_COUNT; j++)
-					{
-						if (i != j)
-						{
-							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
-							{
-								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
-								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
-									{
-										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
-										{
-											OBJS[i]->CheckCollision(OBJS[j]);
-										}
-									}
-								}
-							}
-						}
-					}
-				}*/
-				
-				//----------------------------------New Physics System-------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-
-					if (OBJS[i]->colliderPtr)
-					{
-						int* index = new int(i);
-						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
-						{
-							int somethingswrong = 0;
-							somethingswrong++;
-						}
-					}
-				}
-
-				for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				{
-					if (OBJS[i]->colliderPtr)
-					{
-						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
-
-						for (unsigned int j = 0; j < collisionVector.size(); j++)
-						{
-							if (OBJS[*collisionVector[j].data]->colliderPtr)
-								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-						}
-					}
-				}*/
-				jobManagerTest->AddJob(&MainPhysics, (void*)PhysicsArguments, 0);
-				//---------------------------------------------End New Physics System------------------------------------------
-
-				//Resolve all collisions that occurred this frame
-				//ADResource::ADGameplay::ResolveCollisions();
-				jobManagerTest->AddJob(&ADResource::ADGameplay::ResolveCollisionsWrapper, testingthread, 0);
-
-				for (int i = 0; i < 10; i++)
-				{
-					GroundClamping(stoneMinions[i], tree, delta_time);
-					GroundClamping(waterMinions[i], tree, delta_time);
-					GroundClamping(fireMinions[i], tree, delta_time);
-					GroundClamping(woodMinions[i], tree, delta_time);
-				}
-
-			}
-
-			clampArgs->golem = golem;
-			clampArgs->tree = tree;
-			clampArgs->time = delta_time;
 			
 
-			//GroundClamping(golem, tree, delta_time);
-			jobManagerTest->AddJob(&ADResource::ADGameplay::GroundClampingWrapper, (void*)clampArgs, 0);
 			//GroundClamping(cube, tree, delta_time);
 			//cube->transform.r[3].m128_f32[1] += 5;
 
