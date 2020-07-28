@@ -80,6 +80,7 @@ namespace ADResource
 			Building* rubble = nullptr;
 			Building* turret = nullptr;
 			Action* Essence = nullptr;
+			bool tokenRecovery = false;
 
 			void AddToScene()
 			{
@@ -123,8 +124,8 @@ namespace ADResource
 				colliderPtr = &collider;
 				team = 1;
 				desirability = 1.0f;
-				safeRadius = min((colliderScale.x / 2.f), (colliderScale.z / 2.f)) - 1;
-				attackRadius = 12.f;
+				safeRadius = min((colliderScale.x / 2.f), (colliderScale.z / 2.f));
+				attackRadius = 14.f;
 
 				SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			}
@@ -147,14 +148,21 @@ namespace ADResource
 			//	SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			//}
 
-			void SetRubble(Building* _rubble, ADResource::ADGameplay::GameObject* _player)
+			void SetRubble(Building* _rubble, ADResource::ADGameplay::GameObject* _player, bool _townHall = false)
 			{
 				rubble = _rubble;
 				rubble->active = false;
 				rubble->safeRadius = 25.0f;
 				rubble->avoidRadius = 10.0f;
 
-				Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceS"]->Clone();
+				if (_townHall)
+				{
+					Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceL"]->Clone();
+				}
+				else
+				{
+					Essence = DefinitionDatabase::Instance()->actionDatabase["SpawnEssenceS"]->Clone();
+				}
 				Essence->hitboxes[0]->target = _player;
 				Essence->active = false;
 			};
@@ -241,8 +249,8 @@ namespace ADResource
 						ProcessEffects(delta_time);
 					if (actionLevel > 0)
 					{
-						if (actionLevel > 10)
-							actionLevel = 2;
+						if (actionLevel > 40)
+							actionLevel -= 10 * delta_time;
 						actionLevel -= delta_time;
 					}
 				}

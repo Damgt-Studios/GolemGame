@@ -13,9 +13,9 @@ TickCount=0
 TickDuration=2
 TickOnEnter=true
 TickOnExit=false
-Stat=Essence
-MinValue=40
-MaxValue=40
+Stat=Token
+MinValue=1
+MaxValue=1
 ;
 
 Hitbox=EssenceCollectableSHB:
@@ -37,12 +37,12 @@ AddEffect=EssenceCollectL
 OffsetY=20
 Model_Name=files/models/Essence.mesh
 Model_Mat=files/textures/Essence.mat
-Model_Width=0.05
-Model_Height=0.05
-Model_Length=0.05
-Collider_Width=40
-Collider_Height=40
-Collider_Length=40
+Model_Width=0.2
+Model_Height=0.2
+Model_Length=0.2
+Collider_Width=2000
+Collider_Height=2000
+Collider_Length=2000
 SingleHit=true
 ;
 

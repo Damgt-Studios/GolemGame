@@ -112,8 +112,8 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-400
-MaxValue=-450
+MinValue=-600
+MaxValue=-600
 ;
 
 Hitbox=GolemFireballHB:
@@ -121,9 +121,9 @@ AddEffect=GolemFireball
 OffsetX=0
 OffsetY=10
 OffsetZ=10
-Collider_Width=15
-Collider_Height=20
-Collider_Length=15
+Collider_Width=30
+Collider_Height=30
+Collider_Length=30
 Model_Name=files/models/Fireball.mesh
 Model_Mat=files/textures/Fireball.mat
 Model_Width=1

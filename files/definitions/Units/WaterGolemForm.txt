@@ -118,8 +118,8 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-200
-MaxValue=-200
+MinValue=-800
+MaxValue=-800
 ;
 
 Hitbox=GolemWaterWaveHB:
@@ -131,9 +131,9 @@ Collider_Height=30
 Collider_Length= 30
 Model_Name=files/models/WaterWave.mesh
 Model_Mat=files/textures/WaterWave.mat
-Model_Width=7
+Model_Width=6
 Model_Height=3
-Model_Length=7
+Model_Length=6
 YRotation=90
 ZVelocity=2
 Team=0

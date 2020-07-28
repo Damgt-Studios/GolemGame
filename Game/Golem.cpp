@@ -505,11 +505,23 @@ void ADResource::ADGameplay::Golem::PerformSpecial()
 		idleTime = 0.0;
 		responseTimer = 0.2f;
 		stats->RequestStats("Token")->currentValue--;
-		if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
-		{
-			stats->RequestStats("Token")->currentValue = 0;
-		}
+		//if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+		//{
+		//	stats->RequestStats("Token")->currentValue = 0;
+		//}
 		ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
+		if (playerElement == WOOD)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				minionGroups[i]->ReviveAll(this);
+			}
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)3);
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)4);
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)5);
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)6);
+		}
+
 	}
 }
 

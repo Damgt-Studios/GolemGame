@@ -8,8 +8,11 @@ SetEvent=ChangedHealth
 
 AddStat=Token
 StatMin=0
-StatMax=9
-StatCurrent=9
+StatMax=3
+StatCurrent=3
+SetEventVal=-1
+SetEvent=TokensChanged
+SetEventType=0
 
 AddStat=Hate
 StatMin=0

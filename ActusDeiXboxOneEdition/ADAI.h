@@ -125,10 +125,10 @@ namespace ADAI
 				float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
 				if (distance < distnaceLimit)
 				{
-					if (distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
+					if (distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance && _searchGroup[i]->actionLevel < 80)
 					{
 						currentTarget = _searchGroup[i];
-						currentTargetDistance = distance * (2 - (_searchGroup[i]->desirability * desirabilityWeight));
+						currentTargetDistance = distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight));
 					}
 
 				}
@@ -136,6 +136,30 @@ namespace ADAI
 		}
 		return currentTarget;
 	}
+
+	static ADResource::ADGameplay::GameObject* FindNearestSafe(ADResource::ADGameplay::GameObject* _gameObject, std::vector<ADResource::ADGameplay::GameObject*> _searchGroup, float distnaceLimit, float desirabilityWeight)
+	{
+		float currentTargetDistance = 9999999;
+		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
+		for (int i = 0; i < _searchGroup.size(); i++)
+		{
+			if (_searchGroup[i]->active)
+			{
+				float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
+				if (distance < distnaceLimit)
+				{
+					if (distance * ((2 + _searchGroup[i]->desirability)) <= currentTargetDistance && _searchGroup[i]->actionLevel < 20)
+					{
+						currentTarget = _searchGroup[i];
+						currentTargetDistance = distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight));
+					}
+
+				}
+			}
+		}
+		return currentTarget;
+	}
+
 
 	static XMFLOAT3 FindNearestPoint(ADResource::ADGameplay::GameObject* _gameObject, std::vector<XMFLOAT3>* _searchGroup, float distnaceLimit, float desirabilityWeight, UINT& index)
 	{

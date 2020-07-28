@@ -111,7 +111,7 @@ namespace ADGameplay
 		ADAI::VillagerGroup villageFlock4;
 		ADAI::VillagerGroup villageFlock5;
 
-		void AddRubble(ADResource::ADGameplay::Building* _building, int _rubbleID, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, Engine* _engine)
+		void AddRubble(ADResource::ADGameplay::Building* _building, int _rubbleID, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, Engine* _engine, bool _townhall = false)
 		{
 			Building* rubble;
 			switch (_rubbleID)
@@ -131,7 +131,7 @@ namespace ADGameplay
 			}
 			rubble->active = false;
 			GameUtilities::AddGameObject(rubble);
-			_building->SetRubble(rubble, golem);
+			_building->SetRubble(rubble, golem, _townhall);
 			_building->destructionEmitter = &_engine->destructionCloud;
 			_building->destructionEmitter2 = &_engine->destructionCloud;
 			//I don't feel like pasting this 3000s times.... so here it is.
@@ -988,45 +988,45 @@ namespace ADGameplay
 			tavern1->safeRadius = safeRad2;
 			tavern1->attackRadius = 18.f;
 			GameUtilities::AddGameObject(tavern1);
-			AddRubble(tavern1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(tavern1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* tavern2 = new Building(XMFLOAT3(-400, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 50), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			tavern2->safeRadius = safeRad2;
 			tavern2->attackRadius = 18.f;
 			GameUtilities::AddGameObject(tavern2);
-			AddRubble(tavern2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(tavern2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* tavern3 = new Building(XMFLOAT3(200, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 50), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			tavern3->safeRadius = safeRad2;
 			tavern3->attackRadius = 18.f;
 			GameUtilities::AddGameObject(tavern3);
-			AddRubble(tavern3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(tavern3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* tavern4 = new Building(XMFLOAT3(200, 0, 375), XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 50), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
 			tavern4->safeRadius = safeRad2;
 			tavern4->attackRadius = 18.f;
 			GameUtilities::AddGameObject(tavern4);
-			AddRubble(tavern4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(tavern4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* meeting_hall1 = new Building(XMFLOAT3(-100, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			meeting_hall1->safeRadius = safeRad2;
 			GameUtilities::AddGameObject(meeting_hall1);
-			AddRubble(meeting_hall1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(meeting_hall1, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* meeting_hall2 = new Building(XMFLOAT3(50, 0, -400), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			meeting_hall2->safeRadius = safeRad2;
 			GameUtilities::AddGameObject(meeting_hall2);
-			AddRubble(meeting_hall2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(meeting_hall2, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* meeting_hall3 = new Building(XMFLOAT3(-275, 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			meeting_hall3->safeRadius = safeRad2;
 			GameUtilities::AddGameObject(meeting_hall3);
-			AddRubble(meeting_hall3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(meeting_hall3, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine, true);
 
 			Building* meeting_hall4 = new Building(XMFLOAT3(-475, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "Hall");
 			meeting_hall4->safeRadius = safeRad2;
 			GameUtilities::AddGameObject(meeting_hall4);
-			AddRubble(meeting_hall4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine);
+			AddRubble(meeting_hall4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine, true);
 			//Building* rubble1 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
 			//GameUtilities::AddGameObject(rubble1);
 			//meeting_hall4->SetRubble(rubble1);
@@ -1420,7 +1420,7 @@ namespace ADGameplay
 			}
 			for (int i = 40; i < 50; i++)
 			{
-				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*-10.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
+				villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Buckethead.AnimMesh", "files/textures/Buckethead.mat", bucketheadAnimations, XMFLOAT3(0.f, 0.1f, (0.f+(i*-25.f))), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0)));
 				villagerAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock5, &villagerThreats, &buildings, _engine));
 			}
 
@@ -1452,24 +1452,17 @@ namespace ADGameplay
 
 			for (int i = 0; i < 10; i++)
 			{
-				//cg->members.push_back(stoneMinions[i]);
-				//cg->members.push_back(fireMinions[i]);
-				//cg->members.push_back(waterMinions[i]);
 				cg->members.push_back(stoneMinions[i]);
 				sg->members.push_back(stoneMinions[i]);
-				//tg->members.push_back(stoneMinions[i]);
 
 				cg->members.push_back(waterMinions[i]);
 				sg->members.push_back(waterMinions[i]);
-				//tg->members.push_back(waterMinions[i]);
 
 				cg->members.push_back(fireMinions[i]);
 				sg->members.push_back(fireMinions[i]);
-				//tg->members.push_back(fireMinions[i]);
 
 				cg->members.push_back(woodMinions[i]);
 				sg->members.push_back(woodMinions[i]);
-				//tg->members.push_back(woodMinions[i]);
 			}
 
 
@@ -1501,18 +1494,9 @@ namespace ADGameplay
 			for (int i = 0; i < 10; i++)
 			{
 				stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->minionGroups[STONE], &minionTargets, STONE_MINION, pq));
-				//stoneMinionsAI[i]->currentTarget = golem->targetMarker;
 				waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->minionGroups[WATER], &minionTargets, WATER_MINION, pq));
-				//waterMinionsAI[i]->currentTarget = golem->targetMarker;
 				fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->minionGroups[FIRE], &minionTargets, FIRE_MINION, pq));
-				//fireMinionsAI[i]->currentTarget = golem->targetMarker;
 				woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->minionGroups[WOOD], &minionTargets, WOOD_MINION, pq));
-				//woodMinionsAI[i]->currentTarget = golem->targetMarker;
-
-				//stoneMinionsAI[i]->mySSM.states[1]->objectsToAvoid.push_back(villagers[i]);
-				//waterMinionsAI[i]->mySSM.states[1]->objectsToAvoid.push_back(villagers[i]);
-				//fireMinionsAI[i]->mySSM.states[1]->objectsToAvoid.push_back(villagers[i]);
-				//woodMinionsAI[i]->mySSM.states[1]->objectsToAvoid.push_back(villagers[i]);
 			}
 		}
 
@@ -1740,6 +1724,11 @@ namespace ADGameplay
 			villageFlock3.Update(_delta_time);
 			villageFlock4.Update(_delta_time);
 			villageFlock5.Update(_delta_time);
+
+			for (int i = 0; i < 4; ++i)
+			{
+				golem->minionGroups[i]->Update(_delta_time);
+			}
 			for (auto& stoneMinion : stoneMinionsAI)
 			{
 				stoneMinion->Update(_delta_time);
@@ -1786,12 +1775,18 @@ namespace ADGameplay
 
 		void UpdateMinionCounts(UINT _minionType)
 		{
-
 			switch (_minionType)
 			{
 			case ADResource::ADGameplay::OBJECT_TAG::STONE_MINION:
 			{
-				stoneMinionCount--;
+				stoneMinionCount = 0;
+				for (auto& minion : stoneMinions)
+				{
+					if (minion->active)
+					{
+						++stoneMinionCount;
+					}
+				}
 				stoneMinionCountstr->clear();
 				stoneMinionCountstr->append(to_string(stoneMinionCount));
 				ADEvents::ADEventSystem::Instance()->SendEvent("StoneMinionCountChanged", static_cast<void*>(stoneMinionCountstr));
@@ -1799,7 +1794,15 @@ namespace ADGameplay
 			}
 			case ADResource::ADGameplay::OBJECT_TAG::WATER_MINION:
 			{
-				waterMinionCount--;
+				waterMinionCount = 0;
+				for (auto& minion : waterMinions)
+				{
+					if (minion->active)
+					{
+						++waterMinionCount;
+					}
+				}
+				//waterMinionCount--;
 				waterMinionCountstr->clear();
 				waterMinionCountstr->append(to_string(waterMinionCount));
 				ADEvents::ADEventSystem::Instance()->SendEvent("WaterMinionCountChanged", static_cast<void*>(waterMinionCountstr));
@@ -1807,7 +1810,15 @@ namespace ADGameplay
 			}
 			case ADResource::ADGameplay::OBJECT_TAG::FIRE_MINION:
 			{
-				fireMinionCount--;
+				fireMinionCount = 0;
+				for (auto& minion : fireMinions)
+				{
+					if (minion->active)
+					{
+						++fireMinionCount;
+					}
+				}
+				//fireMinionCount--;
 				fireMinionCountstr->clear();
 				fireMinionCountstr->append(to_string(fireMinionCount));
 				ADEvents::ADEventSystem::Instance()->SendEvent("FireMinionCountChanged", static_cast<void*>(fireMinionCountstr));
@@ -1815,14 +1826,23 @@ namespace ADGameplay
 			}
 			case ADResource::ADGameplay::OBJECT_TAG::WOOD_MINION:
 			{
-				woodMinionCount--;
+				woodMinionCount = 0;
+				for (auto& minion : woodMinions)
+				{
+					if (minion->active)
+					{
+						++woodMinionCount;
+					}
+				}
+				//woodMinionCount--;
 				woodMinionCountstr->clear();
 				woodMinionCountstr->append(to_string(woodMinionCount));
 				ADEvents::ADEventSystem::Instance()->SendEvent("WoodMinionCountChanged", static_cast<void*>(woodMinionCountstr));
 				break;
 			}
 			}
-			totalMinionCount--;
+			//totalMinionCount--;
+			totalMinionCount = stoneMinionCount + waterMinionCount + fireMinionCount + woodMinionCount;
 			allMinionCountstr->clear();
 			allMinionCountstr->append(to_string(totalMinionCount));
 			ADEvents::ADEventSystem::Instance()->SendEvent("MinionCountChanged", static_cast<void*>(allMinionCountstr));

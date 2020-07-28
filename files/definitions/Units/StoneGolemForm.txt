@@ -1,20 +1,20 @@
 Effect=StoneArmorBuff:StatBuff
 Stat=Armor
-Duration=300
+Duration=0.1
 MinValue=200
 MaxValue=200
 ;
 
 Effect=IronHideBuffArmor:StatBuff
 Stat=Armor
-Duration=3
+Duration=8
 MinValue=752
 MaxValue=752
 ;
 
 Effect=IronHideBuffHate:StatBuff
 Stat=Hate
-Duration=3
+Duration=2
 MinValue=100
 MaxValue=100
 ;
@@ -123,7 +123,6 @@ SetEventsDelay=0.75
 
 Hitbox=GolemTauntHB:
 AddEffect=IronHideBuffArmor
-AddEffect=IronHideBuffHate
 OffsetX=-0
 OffsetY=15
 OffsetZ=0
