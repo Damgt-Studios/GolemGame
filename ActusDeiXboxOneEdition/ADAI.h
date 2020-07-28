@@ -70,16 +70,6 @@ namespace ADAI
 		//Current Pathfinding Path
 		void Update(float _deltaTime)
 		{
-			//XMVECTOR zVec = minion->currentTarget->transform.r[3] - minion->mySSM.gameObject->transform.r[3];
-			//zVec = XMVector3Normalize(zVec);
-
-			//XMVECTOR direction = XMVector3Dot(zVec, XMVector3Normalize(minion->mySSM.gameObject->transform.r[0]));
-			//XMFLOAT3 fvec;
-			//XMStoreFloat3(&fvec, direction);
-
-			//XMMATRIX tempMatrix = DirectX::XMMatrixRotationY(fvec.x);
-			//minion->mySSM.gameObject->transform = DirectX::XMMatrixMultiply(tempMatrix, minion->mySSM.gameObject->transform);
-
 			if (myAttack->active)
 			{
 				myAttack->Update(_deltaTime);
@@ -135,20 +125,65 @@ namespace ADAI
 				float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
 				if (distance < distnaceLimit)
 				{
-					if (distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance)
+					if (distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight)) <= currentTargetDistance && _searchGroup[i]->actionLevel < 80)
 					{
 						currentTarget = _searchGroup[i];
-						currentTargetDistance = distance * (2 - (_searchGroup[i]->desirability * desirabilityWeight));
+						currentTargetDistance = distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight));
 					}
+
 				}
 			}
 		}
 		return currentTarget;
 	}
 
-	static void turnTo(XMMATRIX _turner, XMMATRIX _target)
+	static ADResource::ADGameplay::GameObject* FindNearestSafe(ADResource::ADGameplay::GameObject* _gameObject, std::vector<ADResource::ADGameplay::GameObject*> _searchGroup, float distnaceLimit, float desirabilityWeight)
 	{
+		float currentTargetDistance = 9999999;
+		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
+		for (int i = 0; i < _searchGroup.size(); i++)
+		{
+			if (_searchGroup[i]->active)
+			{
+				float distance = DistanceCalculation(_gameObject->GetPosition(), _searchGroup[i]->GetPosition());
+				if (distance < distnaceLimit)
+				{
+					if (distance * ((2 + _searchGroup[i]->desirability)) <= currentTargetDistance && _searchGroup[i]->actionLevel < 20)
+					{
+						currentTarget = _searchGroup[i];
+						currentTargetDistance = distance * ((2 + _searchGroup[i]->actionLevel) - (_searchGroup[i]->desirability * desirabilityWeight));
+					}
+
+				}
+			}
+		}
+		return currentTarget;
 	}
+
+
+	static XMFLOAT3 FindNearestPoint(ADResource::ADGameplay::GameObject* _gameObject, std::vector<XMFLOAT3>* _searchGroup, float distnaceLimit, float desirabilityWeight, UINT& index)
+	{
+		float currentTargetDistance = 9999999;
+		XMFLOAT3 currentTarget = { 0,0,0 };
+		for (int i = 0; i < _searchGroup->size(); i++)
+		{
+			float distance = DistanceCalculation(_gameObject->GetPosition(), (*_searchGroup)[i]);
+			if (distance < distnaceLimit)
+			{
+				if (distance <= currentTargetDistance && i < index)
+				{
+					index = i;
+					currentTargetDistance = distance;
+					currentTarget = (*_searchGroup)[i];
+				}
+			}
+		}
+		return currentTarget;
+	}
+
+	//static void turnTo(XMMATRIX _turner, XMMATRIX _target)
+	//{
+	//}
 
 };
 

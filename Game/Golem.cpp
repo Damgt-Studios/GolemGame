@@ -12,19 +12,20 @@ ADResource::ADGameplay::Golem::Golem() {
 
 	collider = OBB(transform * translateToMiddle, XMFLOAT3(20, 60, 20));
 	colliderPtr = &collider;
+	gamePlayType = 0;
 
 	physicsType = (int)OBJECT_PHYSICS_TYPE::COLLIDABLE;
 
 	InitAnims();
 
-	minionGroups = new ADAI::MinionGroup * [5];
-	for (int i = 0; i < 5; ++i)
+	minionGroups = new ADAI::MinionGroup * [4];
+	for (int i = 0; i < 4; ++i)
 	{
 		minionGroups[i] = new ADAI::MinionGroup();
-		minionGroups[i]->player = &transform;
+		//minionGroups[i]->player = &transform;
 	}
 
-	desirability = 0.2f;
+	desirability = 1.0f;
 
 	playerElement = 0;
 
@@ -33,7 +34,7 @@ ADResource::ADGameplay::Golem::Golem() {
 
 ADResource::ADGameplay::Golem::~Golem()
 {
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		delete minionGroups[i];
 	}
@@ -57,7 +58,7 @@ void ADResource::ADGameplay::Golem::Update(float delta_time)
 	}
 	ProcessEffects(delta_time);
 
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		minionGroups[i]->Update(delta_time);
 	}
@@ -120,7 +121,7 @@ void ADResource::ADGameplay::Golem::CheckCollision(GameObject* obj)
 				//OnTrigger(obj);
 			}
 			//If collision and collision object is a collider then go to OnCollision Function
-			else
+			else if (obj->team != team)
 			{
 				collisionQueue.push(CollisionPacket(obj, this, m));
 				OnCollision(obj, m);
@@ -372,11 +373,12 @@ void ADResource::ADGameplay::Golem::HandleInput(float delta_time)
 		if (Input::QueryTriggerUpDown(Input::TRIGGERS::RIGHT_TRIGGER, 0.1f) && !isActing)
 		{
 			commandDistanceTimer += delta_time;
-			CastCommandTarget(commandDistanceTimer * 500);
+			CastCommandTarget(commandDistanceTimer * 250);
 		}
 		else if (commandDistanceTimer > 0)
 		{
 			CommandMinions();
+			SendToCommandTarget(commandDistanceTimer * 250);
 			commandDistanceTimer = 0;
 		}
 
@@ -495,66 +497,100 @@ void ADResource::ADGameplay::Golem::MoveGolem(XMFLOAT4& forward, float delta_tim
 
 void ADResource::ADGameplay::Golem::PerformSpecial()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].special.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].special->StartAction(&transform);
-
-	stats->RequestStats("Token")->currentValue--;
-	if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+	if (gActions[playerElement].special->StartAction(&transform))
 	{
-		stats->RequestStats("Token")->currentValue = 0;
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].special.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].special.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+		stats->RequestStats("Token")->currentValue--;
+		//if (stats->RequestStats("Token")->currentValue < stats->RequestStats("Token")->minValue)
+		//{
+		//	stats->RequestStats("Token")->currentValue = 0;
+		//}
+		ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
+		if (playerElement == WOOD)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				minionGroups[i]->ReviveAll(this);
+			}
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)3);
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)4);
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)5);
+			ADEvents::ADEventSystem::Instance()->SendEvent("MinionDeath", (void*)6);
+		}
+
 	}
-	ADEvents::ADEventSystem::Instance()->SendEvent("TokensChanged", (void*)stats->RequestStats("Token")->currentValue);
 }
 
 void ADResource::ADGameplay::Golem::TowerPunch()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].towerPunch.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].punch->StartAction(&transform);
+	if (gActions[playerElement].punch->StartAction(&transform))
+	{
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].towerPunch.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].towerPunch.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+	}
 }
 
 void ADResource::ADGameplay::Golem::GroundSlam()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].groundSlam.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].slam->StartAction(&transform);
+	if (gActions[playerElement].slam->StartAction(&transform))
+	{
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].groundSlam.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].groundSlam.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+	}
+
 }
 
 void ADResource::ADGameplay::Golem::Kick()
 {
-	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].kick.c_str());
-	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
-	isActing = true;
-	idleTime = 0.0;
-	responseTimer = 0.2f;
-	gActions[playerElement].kick->StartAction(&transform);
+	if (gActions[playerElement].kick->StartAction(&transform))
+	{
+		anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].kick.c_str());
+		currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].kick.c_str()) / 2700.0;
+		isActing = true;
+		idleTime = 0.0;
+		responseTimer = 0.2f;
+	}
+
 }
 
 void ADResource::ADGameplay::Golem::CastCommandTarget(float delta_time)
 {
+	targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
 	if (commandTargetGroup == 4)
 	{
-		targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
-		minionGroups[0]->SetDestination(targetMarker);
-		for (int i = 1; i < 4; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
-			//minionGroups[i]->SetCommandDirection(camera, delta_time);
+			minionGroups[i]->SetTarget(targetMarker);
+		}
+	}
+	else
+	{
+		minionGroups[commandTargetGroup]->SetTarget(targetMarker);
+	}
+}
+
+void ADResource::ADGameplay::Golem::SendToCommandTarget(float delta_time)
+{
+	targetMarker->SetPosition(minionGroups[0]->SetCommandDirection(camera, delta_time));
+	if (commandTargetGroup == 4)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
 			minionGroups[i]->SetDestination(targetMarker);
 		}
 	}
 	else
 	{
-		targetMarker->SetPosition(minionGroups[commandTargetGroup]->SetCommandDirection(camera, delta_time));
 		minionGroups[commandTargetGroup]->SetDestination(targetMarker);
 	}
 }
@@ -638,12 +674,14 @@ void ADResource::ADGameplay::Golem::ChangeMinionGroup(bool nextElement)
 
 void ADResource::ADGameplay::Golem::ConsumeMinion()
 {
+	if (consume->StartAction(&transform))
+	{
 	anim_controller[playerElement]->PlayAnimationByName(anims[playerElement].eat.c_str());
 	currentAnimTime = anim_controller[playerElement]->GetDurationByName(anims[playerElement].eat.c_str()) / 2700.0;
 	isActing = true;
 	idleTime = 0.0;
 	responseTimer = 0.2f;
-	consume->StartAction(&transform);
+	}
 }
 
 void ADResource::ADGameplay::Golem::SummonMinions()

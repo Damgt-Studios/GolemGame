@@ -113,34 +113,59 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 	golem->has_stats = true;
 
 	golem->consume = DefinitionDatabase::Instance()->actionDatabase["GolemConsume"];
+	golem->consume->scaleCorrection = 10;
 
 	golem->gActions[STONE].kick = DefinitionDatabase::Instance()->actionDatabase["StoneGolemKick"];
+	golem->gActions[STONE].kick->scaleCorrection = 10;
 	golem->gActions[STONE].punch = DefinitionDatabase::Instance()->actionDatabase["StoneGolemPunch"];
+	golem->gActions[STONE].punch->scaleCorrection = 10;
 	golem->gActions[STONE].slam = DefinitionDatabase::Instance()->actionDatabase["StoneGolemSlam"];
+	golem->gActions[STONE].slam->scaleCorrection = 10;
 	golem->gActions[STONE].special = DefinitionDatabase::Instance()->actionDatabase["GolemTaunt"];
+	golem->gActions[STONE].special->scaleCorrection = 10;
 	golem->gActions[STONE].nextForm = DefinitionDatabase::Instance()->actionDatabase["StoneNextForm"];
+	golem->gActions[STONE].nextForm->scaleCorrection = 10;
 	golem->gActions[STONE].prevForm = DefinitionDatabase::Instance()->actionDatabase["StonePreviousForm"];
+	golem->gActions[STONE].prevForm->scaleCorrection = 10;
 
 	golem->gActions[WATER].kick = DefinitionDatabase::Instance()->actionDatabase["WaterGolemKick"];
+	golem->gActions[WATER].kick->scaleCorrection = 10;
 	golem->gActions[WATER].punch = DefinitionDatabase::Instance()->actionDatabase["WaterGolemPunch"];
+	golem->gActions[WATER].punch->scaleCorrection = 10;
 	golem->gActions[WATER].slam = DefinitionDatabase::Instance()->actionDatabase["WaterGolemSlam"];
+	golem->gActions[WATER].slam->scaleCorrection = 10;
 	golem->gActions[WATER].special = DefinitionDatabase::Instance()->actionDatabase["GolemWaterWave"];
+	golem->gActions[WATER].special->scaleCorrection = 5;
 	golem->gActions[WATER].nextForm = DefinitionDatabase::Instance()->actionDatabase["WaterNextForm"];
+	golem->gActions[WATER].nextForm->scaleCorrection = 10;
 	golem->gActions[WATER].prevForm = DefinitionDatabase::Instance()->actionDatabase["WaterPreviousForm"];
+	golem->gActions[WATER].prevForm->scaleCorrection = 10;
 
 	golem->gActions[FIRE].kick = DefinitionDatabase::Instance()->actionDatabase["FireGolemKick"];
+	golem->gActions[FIRE].kick->scaleCorrection = 10;
 	golem->gActions[FIRE].punch = DefinitionDatabase::Instance()->actionDatabase["FireGolemPunch"];
+	golem->gActions[FIRE].punch->scaleCorrection = 10;
 	golem->gActions[FIRE].slam = DefinitionDatabase::Instance()->actionDatabase["FireGolemSlam"];
+	golem->gActions[FIRE].slam->scaleCorrection = 10;
 	golem->gActions[FIRE].special = DefinitionDatabase::Instance()->actionDatabase["GolemFireball"];
+	golem->gActions[FIRE].special->scaleCorrection = 10;
 	golem->gActions[FIRE].nextForm = DefinitionDatabase::Instance()->actionDatabase["FireNextForm"];
+	golem->gActions[FIRE].nextForm->scaleCorrection = 10;
 	golem->gActions[FIRE].prevForm = DefinitionDatabase::Instance()->actionDatabase["FirePreviousForm"];
+	golem->gActions[FIRE].prevForm->scaleCorrection = 10;
 
 	golem->gActions[WOOD].kick = DefinitionDatabase::Instance()->actionDatabase["WoodGolemKick"];
+	golem->gActions[WOOD].kick->scaleCorrection = 10;
 	golem->gActions[WOOD].punch = DefinitionDatabase::Instance()->actionDatabase["WoodGolemPunch"];
+	golem->gActions[WOOD].punch->scaleCorrection = 10;
 	golem->gActions[WOOD].slam = DefinitionDatabase::Instance()->actionDatabase["WoodGolemSlam"];
+	golem->gActions[WOOD].slam->scaleCorrection = 10;
 	golem->gActions[WOOD].special = DefinitionDatabase::Instance()->actionDatabase["GolemRooting"];
+	golem->gActions[WOOD].special->scaleCorrection = 10;
 	golem->gActions[WOOD].nextForm = DefinitionDatabase::Instance()->actionDatabase["WoodNextForm"];
+	golem->gActions[WOOD].nextForm->scaleCorrection = 10;
 	golem->gActions[WOOD].prevForm = DefinitionDatabase::Instance()->actionDatabase["WoodPreviousForm"];
+	golem->gActions[WOOD].prevForm->scaleCorrection = 10;
 
 	golem->consume->active = false;
 	for (int i = 0; i < 4; ++i)
@@ -250,7 +275,6 @@ Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::stri
 {
 	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
 
-
 	// Transform data
 	temp->SetScale(scale);
 	temp->SetRotation(rotation);
@@ -269,12 +293,34 @@ Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::stri
 	//scale.x *= 0.5f;
 	//scale.y *= 0.5f;
 	//scale.z *= 0.5f;
+
+	//scale.x *= (1.f / scale.x);
+	//scale.y *= (1.f / scale.y);
+	//scale.z *= (1.f / scale.z);
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
 	//temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
 
+	return temp;
+}
 
+MessageTrigger* GameUtilities::AddMessageTrigger(ADUI::UIMessage _message, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
+{
+	ADResource::ADGameplay::MessageTrigger* temp = new ADResource::ADGameplay::MessageTrigger;
+
+
+	// Transform data
+	temp->SetScale(scale);
+	temp->SetRotation(rotation);
+	temp->SetPosition(position);
+	temp->team = 1;
+	temp->colScale = scale;
+	temp->collider = ADPhysics::AABB(position, temp->colScale);
+	temp->colliderPtr = &temp->collider;
+	temp->eventUIMessage = _message;
+	temp->has_mesh = false;
+	temp->gamePlayType = EVENT_TRIGGER;
 	return temp;
 }
 
@@ -294,9 +340,9 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->SetMeshID(id);
 	temp->anim_controller->Initialize(temp);
 
-	scale.x *= (1.f / scale.x);
-	scale.y *= (1.f / scale.y);
-	scale.z *= (1.f / scale.z);
+	scale.x *= (1.f / scale.x) * 1.2;
+	scale.y *= (1.f / scale.y) * 1.2;
+	scale.z *= (1.f / scale.z) * 1.2;
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
@@ -458,6 +504,7 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	_destructable->safeRadius = 5.f;
 	_destructable->attackRadius = 8.f;
 	_destructable->villagerBlood = _engine->bloodEmitters;
+	_destructable->desirability = 1.2f;
 
 	ADAI::VillagerAI* temp = new ADAI::VillagerAI;
 	temp->mySSM.gameObject = _destructable;
@@ -471,13 +518,6 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	fleeing->mySSM = &temp->mySSM;
 	fleeing->villager = temp;
 	fleeing->fearedObjects = _fearGroup;
-
-
-	//fleeing->safetyStructures = _safetyGroup;
-	//for (auto& unit : _fearGroup)
-	//{
-	//	fleeing->fearedObjects.push_back(unit);
-	////}
 
 	for (auto& unit : *_safetyGroup)
 	{
@@ -499,11 +539,11 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	return temp;
 }
 
-ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType)
+ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType, ADAI::PathersQueue* _pathingQueue)
 {
 	_destructable->gamePlayType = _minionType;
 	_destructable->deathEvent = "MinionDeath";
-	_destructable->desirability = 0.5f;
+	_destructable->desirability = 1.0f;
 	_destructable->team = 0;
 	_destructable->colScale.x *= 8;
 	_destructable->colScale.y *= 10;
@@ -516,60 +556,69 @@ ADAI::MinionAI* GameUtilities::AttachMinionAI(ADResource::ADGameplay::Destructab
 	_destructable->anim_controller->SetNamebyIndex(5, "Death");
 
 
-	ADAI::MinionAI* temp = new ADAI::MinionAI;
-	temp->mySSM.gameObject = _destructable;
-	temp->destructable = _destructable;
+	ADAI::MinionAI* ai = new ADAI::MinionAI;
+	ai->mySSM.gameObject = _destructable;
+	ai->destructable = _destructable;
 
 
 	ADAI::FlockingState* idling = new ADAI::FlockingState();
-	idling->mySSM = &temp->mySSM;
-	temp->mySSM.states.push_back(idling);
+	idling->mySSM = &ai->mySSM;
+	ai->mySSM.states.push_back(idling);
 
 	ADAI::CommandState* charging = new ADAI::CommandState();
-	charging->mySSM = &temp->mySSM;
-	charging->minion = temp;
+	charging->mySSM = &ai->mySSM;
+	charging->minion = ai;
 	charging->targets = _killGroup;
-	temp->mySSM.states.push_back(charging);
+	charging->pathingQueue = _pathingQueue;
+	//charging->myGroup = _localGroup;
+	ai->mySSM.states.push_back(charging);
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
-	attacking->mySSM = &temp->mySSM;
+	attacking->mySSM = &ai->mySSM;
 	attacking->returnIndex = 1;
-	temp->mySSM.states.push_back(attacking);
+	ai->mySSM.states.push_back(attacking);
 
 	switch (_destructable->gamePlayType)
 	{
 	case STONE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
-
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	case WATER_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["WaterMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	case FIRE_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["FireMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	case WOOD_MINION:
 		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
-		temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["StoneMinionPunch"]->Clone();
-		temp->myAttack->scaleCorrection = 1 / temp->mySSM.gameObject->transform.r[0].m128_f32[0];
-		attacking->myAttack = temp->myAttack;
+		ai->myAttack = DefinitionDatabase::Instance()->actionDatabase["WoodMinionPunch"]->Clone();
+		ai->myAttack->scaleCorrection = 1 / ai->mySSM.gameObject->transform.r[0].m128_f32[0];
+		attacking->myAttack = ai->myAttack;
+		ai->moveSpeed = _destructable->GetStatSheet()->RequestStats("MovementSpeed")->currentValue;
+		ai->maxSpeed = ai->moveSpeed * 3;
 		break;
 	}
 
-	temp->mySSM.currentState = charging;
+	ai->mySSM.currentState = charging;
 
-	_localGroup->AddUnitToGroup(temp, charging);
+	_localGroup->AddUnitToGroup(ai, charging);
 
-	return temp;
+	return ai;
 }
 
 ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADResource::ADGameplay::GameObject*>* _killGroup)
@@ -591,6 +640,7 @@ ADAI::TowerAI* GameUtilities::AttachTowerAI(Building* _tower, std::vector<ADReso
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
 	attacking->mySSM = &temp->mySSM;
 	temp->myAttack = DefinitionDatabase::Instance()->actionDatabase["BallistaBoltFire"]->Clone();
+	temp->myAttack->scaleCorrection = 10;
 	attacking->myAttack = temp->myAttack;
 	attacking->returnIndex = 0;
 	temp->mySSM.states.push_back(attacking);
@@ -617,7 +667,6 @@ ADResource::ADGameplay::Renderable* GameUtilities::AddSimpleAsset(std::string mo
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation, instanced);
 	temp->SetMeshID(id);
-
 
 	return temp;
 }
@@ -1107,10 +1156,10 @@ std::vector<Renderable*> GameUtilities::GenerateRubble3(XMFLOAT3 pos, XMFLOAT3 r
 	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Stone.mesh", "files/textures/Debris.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 	temp.push_back(AddSimpleAsset("files/models/Rubble_03_Wood.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.05, 0.05, 0.05), rotation, true));
 
-	for (size_t i = 0; i < temp.size(); i++)
-	{
-		AddGameObject(temp[i]);
-	}
+	//for (size_t i = 0; i < temp.size(); i++)
+	//{
+	//	AddGameObject(temp[i]);
+	//}
 
 	return temp;
 }

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <string>
-
 #include "Golem.h"
 #include "GameplayAI.h"
 #include "GameObjectClasses.h"
-//#include "GameEffects.h"
-//#include "ADAI.h"
+#include "GameEffects.h"
+#include "ADAI.h"
 #include "Engine.h"
+
+#include <string>
 
 class GameUtilities
 {
@@ -22,15 +22,17 @@ public:
 	//static HitBox* AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	static Trigger* AddTriggerFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
+	static MessageTrigger* AddMessageTrigger(ADUI::UIMessage _message, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	static Destructable* AddDestructableFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	//static ADAI::AIUnit* AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType);
 	
 	//static void InitializeMinionModels();
 	//static ADAI::AIUnit* BirthStoneMinion(ADAI::FlockingGroup* _commandGroup);
 
-	static ADAI::VillagerAI* AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* engine);
-	static ADAI::MinionAI* AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType);
+	static ADAI::VillagerAI* AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* _engine);
+	static ADAI::MinionAI* AttachMinionAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::MinionGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup, OBJECT_TAG _minionType, ADAI::PathersQueue* _pathingQueue);
 	static ADAI::TowerAI* AttachTowerAI(Building* _destructable, std::vector< ADResource::ADGameplay::GameObject*>* _killGroup);
+
 
 	//static Destructable* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
 	//static Enemy* LoadCollectableFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);

@@ -30,6 +30,7 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
+CounterStat=Armor
 MinValue=-45
 MaxValue=-45
 ;
@@ -37,18 +38,25 @@ MaxValue=-45
 Hitbox=BallistaBoltHB:
 AddEffect=BallistaBoltHit
 OffsetX=0
-OffsetY=-10
+OffsetY=10
 OffsetZ=30
 Collider_Width=15
-Collider_Height=30
+Collider_Height=100
 Collider_Length=15
-ZVelocity=10
+Model_Name=files/models/Arrow.mesh
+Model_Mat=files/textures/Bark.mat
+Model_Width=1
+Model_Height=1
+Model_Length=1
+XRotation=-80
+YVelocity=-0.8
+ZVelocity=7.5
 Team=1
 SingleHit=true
 ;
 
 Action=BallistaBoltFire:
-Cooldown=2
+Cooldown=1
 Duration=0.5
 AddHitBox=BallistaBoltHB
 HitboxDuplicates=3

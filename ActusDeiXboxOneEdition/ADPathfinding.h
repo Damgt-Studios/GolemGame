@@ -3,6 +3,7 @@
 #include "Types.h"
 #include "ResourceManager.h"
 #include "ADPhysics.h"
+
 #include <unordered_map>
 #include <set>
 
@@ -21,6 +22,7 @@ namespace ADAI
 		unsigned char terrainWeight;
 		bool threeSided;
 		bool directions[8];
+		float finalCost;
 	};
 
 	struct PathingGrid
@@ -31,6 +33,7 @@ namespace ADAI
 		UINT rows;
 		UINT xDivisions;
 		UINT yDivisions;
+		float agentToWallGap;
 		std::vector<PathingNode*> nodeGrid;
 
 		void Initializing(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
@@ -64,7 +67,7 @@ namespace ADAI
 			//mapSize.y = zdelta * _mapSize.y;
 			//cellSize.x = (_agentSize + _agentToWallGap);
 			//cellSize.y = (_agentSize + _agentToWallGap);
-
+			agentToWallGap = _agentToWallGap;
 			mapSize = _mapSize;
 			cellSize = { _agentSize, _agentSize };
 			columns = (mapSize.x / cellSize.x);
@@ -84,9 +87,30 @@ namespace ADAI
 		};
 	};
 
+	struct SearchNode
+	{
+		SearchNode(PathingNode* _tile) : tile(_tile) {};
+		PathingNode* tile;
+		std::vector<SearchNode*> neighbors;
+		std::vector<float> neighborDist;
+	};
+
+	struct Solution
+	{
+		std::vector<XMFLOAT3> positions;
+		std::vector<float> totalLength;
+	};
+
+
 	class ADPathfinding
 	{
 	private:
+
+		ADPathfinding() {};
+		~ADPathfinding() { shutdown(); };
+		ADPathfinding(const ADPathfinding& _rhs) {};
+		ADPathfinding& operator =(const ADPathfinding& _rhs) {};
+
 		// Timing
 		XTime throttle_time;
 
@@ -94,15 +118,6 @@ namespace ADAI
 		{
 			XMFLOAT3 position;
 			bool walkable;
-		};
-
-
-		struct SearchNode
-		{
-			SearchNode(PathingNode* _tile) : tile(_tile) {};
-			PathingNode* tile;
-			std::vector<SearchNode*> neighbors;
-			std::vector<float> neighborDist;
 		};
 
 		struct PlannerNode
@@ -123,12 +138,14 @@ namespace ADAI
 				return (_a->finalCost > _b->finalCost);
 			};
 		};
+		std::vector<ADResource::ADGameplay::GameObject*>* extraCollidables;
 
 		std::vector<PathingPoint> pointGrid;
 
 		std::unordered_map<PathingNode*, SearchNode*> searching_map;
 		std::unordered_map<SearchNode*, PlannerNode*> visited_map;
-		std::vector<PathingNode const*> solution;
+		//std::vector<PathingNode const*> solution;
+		Solution solution;
 		std::vector<PathingNode*> previousTrace;
 		PlannerNode* current;
 		PlannerNode* retracer;
@@ -144,20 +161,24 @@ namespace ADAI
 		float DistanceCalculation(PathingNode* _a);
 		float DistanceCalculation(PathingNode* _a, PathingNode* _b);
 		bool done = false;
+		float xAdjust; 
+		float zAdjust; 
 
 	public:
+		static ADPathfinding* Instance();
 		PathingGrid tileMap;
-		ADPathfinding();
-		~ADPathfinding();
-		void Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap);
-		void enter(int startColumn, int startRow, int goalColumn, int goalRow);
+		void Initialize(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap, std::vector<ADResource::ADGameplay::GameObject*>* _extraCollidables);
+		int findAcceptablePoint(UINT& goalColumn, UINT& goalRow);
+		int enter(int startColumn, int startRow, int goalColumn, int goalRow);
 		bool isDone() const;
 		void update(float timeslice);
-		std::vector<PathingNode const*> const getSolution() const;
+		//std::vector<PathingNode const*> const getSolution() const;
+		Solution getSolutionPoints() const;
 		void exit();
 		void shutdown();
 		void UpdatePlayerNode(float x, float z, float mapWidth, float mapHeight);
 		std::vector<PathingNode*>* GetPlaneNodes();
+		void EnableTile(SearchNode* tile);
 
 		void ClearDebug()
 		{
@@ -178,6 +199,24 @@ namespace ADAI
 			}
 			return searching_map[tileMap.nodeGrid[(_row * tileMap.columns) + _column]];
 		};
+
+		SearchNode* GetTileFromPosition(XMFLOAT2 _position)
+		{
+			UINT tcolumn = 0;
+			UINT trow = 0;
+			tileMap.GetColumnRowFromPosition(_position, tcolumn, trow);
+			if (tcolumn < 0 || tcolumn >= tileMap.columns || trow < 0 || trow >= tileMap.rows)
+			{
+				return nullptr;
+			}
+			return searching_map[tileMap.nodeGrid[(trow * tileMap.columns) + tcolumn]];
+		};
+
+		XMFLOAT3 AdjustPosition(XMFLOAT3 _position)
+		{
+			return { _position.x - xAdjust, 0, _position.z - zAdjust };
+
+		}
 	};
 }
 
