@@ -52,7 +52,8 @@ namespace ADResource
 		{
 
 		public:
-			XMFLOAT3 colScale;
+			XMFLOAT3 colScale = { 1,1,1 };
+			XMFLOAT3 modelScale = { 1,1,1 };
 			XMFLOAT3 vel;
 
 			bool isDeactivateOnFirstApplication = false;
@@ -60,54 +61,26 @@ namespace ADResource
 			float offsetZ;
 			float offsetY = 0;
 			float lifespan;
+			XMFLOAT3 rotation;
+			
 			ADPhysics::OBB collider;
 
+			ADResource::ADGameplay::GameObject* target;
 			std::string eventName;
+			std::string modelName;
+			std::string matName;
 
-			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
-			//HitBox(const HitBox& _rhs) 
-			//{
-			//	colScale = _rhs.colScale;
-			//	vel = _rhs.vel;
-			//	isDeactivateOnFirstApplication = _rhs.isDeactivateOnFirstApplication;
-			//	offsetX = _rhs.offsetX;
-			//	offsetZ = _rhs.offsetZ;
-			//	offsetY = _rhs.offsetY;
-			//	lifespan = _rhs.lifespan;
-			//	collider = _rhs.collider;
-			//	eventName = _rhs.eventName;
-			//	for (auto& effect : _rhs.effects)
-			//	{
-			//		effects.push_back(effect->clone());
-			//	}
-			//	active = _rhs.active;
-			//	safeRadius = _rhs.safeRadius;
-			//	desirability = _rhs.desirability;
-			//	physicsType = _rhs.physicsType;
-			//	gamePlayType = _rhs.gamePlayType;
-			//	team = _rhs.team;
-			//	actionLevel = _rhs.actionLevel;
-			//	meshID = _rhs.meshID;
-			//	Velocity = _rhs.Velocity;
-			//	transform = _rhs.transform;
-			//	postTransform = _rhs.postTransform;
-			//	colliderPtr = &collider;
-			//	pmat = _rhs.pmat;
-			//};
-			//HitBox& operator =(const HitBox& _rhs) { return *this; };
+			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER;	gamePlayType = ADResource::ADGameplay::ALLY_HITBOX; colliderPtr->trigger = true; };
 			~HitBox() = default;
 
 			HitBox* Clone()
 			{
 				HitBox* nBox = new HitBox();
-				XMFLOAT3 scale = XMFLOAT3(1, 1, 1);
+				XMFLOAT3 scale = modelScale; //XMFLOAT3(1, 1, 1);
 				nBox->SetScale(scale);
 				nBox->SetRotation(scale);
 				nBox->SetPosition(scale);
 				nBox->active = false;
-
-				//nBox->collider = collider;
-
 
 				int cnt = 0;
 				for (auto& effect : effects)
@@ -120,36 +93,63 @@ namespace ADResource
 				nBox->offsetZ = offsetZ;
 				nBox->offsetY = offsetY;
 				nBox->colScale = colScale;
+				nBox->modelScale = modelScale;
+				nBox->modelName = modelName;
+				nBox->matName = matName;
 				nBox->vel = vel;
 				nBox->lifespan = lifespan;
 				nBox->team = team;
+
 				if (nBox->team == 3)
 				{
 					nBox->gamePlayType = ADResource::ADGameplay::CONSUMPTION_HITBOX;
 				}
 				nBox->isDeactivateOnFirstApplication = isDeactivateOnFirstApplication;
 				nBox->eventName = eventName;
-				AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-				nBox->SetMeshID(id);
 
+				//AD_ULONG id = ResourceManager::AddSimpleModel("files/models/Fireball.mesh", "files/textures/Fireball.mat", nBox->GetPosition(), {0.01f, 0.01f, 0.01f}, { 1,1,1 });
+				//nBox->SetMeshID(id);
+				//AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				//nBox->SetMeshID(id);
+				//GameUtilities::AttachModelToHitbox(nBox, "files/models/Fireball.mesh", "files/textures/Fireball.mat", XMFLOAT3(100, 1, 100), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
+				//// Transform data
+				//temp->SetScale(scale);
+				//temp->SetRotation(rotation);
+				//temp->SetPosition(position);
+				nBox->rotation = rotation;
+				if (nBox->modelName != "")
+				{
+					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, { 0,0,0 }); // trigger->modelScale
+
+					//AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 10, 1), nBox->modelScale, { 0,0,0 }); //nBox->rotation); // trigger->modelScale
+					nBox->SetMeshID(id);
+					//GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
+				}
+				//else
+				//{
+				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
+				//	nBox->SetMeshID(id);
+				//}
+
+
+				nBox->rotation = rotation;
+				nBox->transform = XMMatrixRotationX(nBox->rotation.x);
 				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
-				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, XMFLOAT3(1, 1, 1));
+				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+
+
+
+
+				////nBox->transform = XMMatrixRotationX(nBox->rotation.x);
+				//XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
+				////nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+				//nBox->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(nBox->rotation.y)) * XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ), nBox->colScale);
+				//nBox->collider.AxisX.x = nBox->colScale.x;
+				//nBox->collider.AxisY.y = nBox->colScale.y;
+				//nBox->collider.AxisZ.z = nBox->colScale.z;
+				nBox->SetScale(nBox->modelScale);	//colScale);  
 				nBox->collider.trigger = true;
-				nBox->SetScale(colScale);
 				nBox->colliderPtr = &nBox->collider;
-
-				//nBox->safeRadius = safeRadius;
-				//nBox->desirability = desirability;
-				//nBox->physicsType = physicsType;
-				//nBox->gamePlayType = gamePlayType;
-				//nBox->actionLevel = actionLevel;
-				//nBox->meshID = meshID;
-				//nBox->Velocity = Velocity;
-				//nBox->transform = transform;
-				//nBox->postTransform = postTransform;
-
-				//nBox->colliderPtr = &collider;
-				//nBox->pmat = pmat;
 
 				ResourceManager::AddGameObject(nBox);
 				return nBox;
@@ -169,8 +169,14 @@ namespace ADResource
 
 				if (active)
 				{
+					if (target)
+					{
+						XMVECTOR vel = XMLoadFloat3(&target->GetPosition()) - XMLoadFloat3(&GetPosition());
+						vel = XMVector3Normalize(vel) * 5;
+						XMStoreFloat4(&Velocity, vel);
+					}
 					// Physics
-					collider = ADPhysics::OBB(transform, XMFLOAT3(1, 1, 1));
+					collider = ADPhysics::OBB(transform, colScale); 
 					colliderPtr = &collider;
 					collider.trigger = true;
 
@@ -194,19 +200,24 @@ namespace ADResource
 				{
 					if (!obj->colliderPtr->trigger)
 					{
-						ADPhysics::Manifold m;
-						if (obj->colliderPtr->isCollision(&collider, m))
+						if (!target || target == obj)
 						{
-							if (obj->has_stats)
+							ADPhysics::Manifold m;
+							if (obj->colliderPtr->isCollision(&collider, m))
 							{
-								if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+								if (obj->has_stats)
 								{
-									if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
-										PassEffects(obj);
+									if (obj->team != team && obj->colliderPtr->type != ADPhysics::ColliderType::Plane)
+									{
+										if (gamePlayType != CONSUMPTION_HITBOX || obj->gamePlayType >= WOOD_MINION && obj->gamePlayType <= STONE_MINION)
+										{
+											PassEffects(obj);
+										}
+									}
 								}
 							}
-
 						}
+						
 					}
 				}
 			}
@@ -240,7 +251,7 @@ namespace ADResource
 			float attackDuration;
 			float attackTimer;
 			float hitboxDelay = 0;
-			float scaleCorrection = 10;
+			float scaleCorrection = 1;
 			std::vector<HitBox*> hitboxes;
 			UINT currentHitBox = 0;
 			UINT hitboxCount = 0;
@@ -280,9 +291,27 @@ namespace ADResource
 					}
 					if (hitboxes.size() > 0 && movesToPlayer)
 					{
-						//hitbox->transform = *_casterTransform;
-						hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x * scaleCorrection, hitboxes[currentHitBox]->colScale.y * scaleCorrection, hitboxes[currentHitBox]->colScale.z * scaleCorrection), *_casterTransform);
+						//hitboxes[currentHitBox]->transform = *_casterTransform;
+						//hitboxes[currentHitBox]->transform.r[0].m128_f32[0] = hitboxes[currentHitBox]->modelScale.x;
+						//hitboxes[currentHitBox]->transform.r[1].m128_f32[1] = hitboxes[currentHitBox]->modelScale.y;
+						//hitboxes[currentHitBox]->transform.r[2].m128_f32[2] = hitboxes[currentHitBox]->modelScale.z;
 
+						//hitboxes[currentHitBox]->transform = XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z);
+						//hitboxes[currentHitBox]->transform.r[0].m128_f32[0] = _casterTransform->r[0].m128_f32[0];
+						//hitboxes[currentHitBox]->transform.r[1].m128_f32[0] = _casterTransform->r[1].m128_f32[1];
+						//hitboxes[currentHitBox]->transform.r[2].m128_f32[0] = _casterTransform->r[2].m128_f32[2];
+						if (hitboxes[currentHitBox]->modelName == "")
+						{
+						//	hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(90.f), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection)));
+							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection));
+						}
+						else
+						{
+							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform));
+							//hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(hitboxes[currentHitBox]->rotation.x)), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform)));
+
+							hitboxes[currentHitBox]->SetRotation(hitboxes[currentHitBox]->rotation, RotationType::yxz);
+						}
 						XMVECTOR castSideNormal = _casterTransform->r[0];
 						XMVECTOR castUpNormal = _casterTransform->r[1];
 						XMVECTOR castHeadingNormal = _casterTransform->r[2];
@@ -312,7 +341,7 @@ namespace ADResource
 						hitboxes[currentHitBox]->Velocity.x = (casterFN.x * hitboxes[currentHitBox]->vel.z) + (casterUN.x * hitboxes[currentHitBox]->vel.y) + (casterSN.x * hitboxes[currentHitBox]->vel.x);
 						hitboxes[currentHitBox]->Velocity.y = (casterFN.y * hitboxes[currentHitBox]->vel.z) + (casterUN.y * hitboxes[currentHitBox]->vel.y) + (casterSN.y * hitboxes[currentHitBox]->vel.x);
 						hitboxes[currentHitBox]->Velocity.z = (casterFN.z * hitboxes[currentHitBox]->vel.z) + (casterUN.z * hitboxes[currentHitBox]->vel.y) + (casterSN.z * hitboxes[currentHitBox]->vel.x);
-
+						
 					}
 					for (int i = 0; i < eventDelay.size(); i++)
 					{
@@ -417,6 +446,7 @@ namespace ADResource
 				action->attackDuration = attackDuration;
 				action->removeHbIfEnd = removeHbIfEnd;
 				action->scaleCorrection = scaleCorrection;
+
 
 				for (auto& evnt : eventName)
 				{
@@ -578,7 +608,7 @@ namespace ADResource
 			//ADUI::UIMessage eventUIMessage;
 
 
-			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; colliderPtr->trigger = true; };
+			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; gamePlayType = ADResource::ADGameplay::EVENT_TRIGGER; colliderPtr->trigger = true; };
 
 			void Enable()
 			{

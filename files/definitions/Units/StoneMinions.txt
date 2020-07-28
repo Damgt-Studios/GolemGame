@@ -6,10 +6,10 @@ StatFail=0
 StatCurrent= 200
 
 AddStat=MovementSpeed
-StatMin=1
-StatMax=100
+StatMin=0
+StatMax=3
 StatFail=0
-StatCurrent=25
+StatCurrent=1.0
 
 AddStat=Hate
 StatMin=0
@@ -30,8 +30,8 @@ TickDuration=2
 TickOnEnter=true
 TickOnExit=false
 Stat=Health
-MinValue=-22
-MaxValue=-22
+MinValue=-12
+MaxValue=-12
 ;
 
 Hitbox=StoneMinionPunchHB:
@@ -47,10 +47,8 @@ SingleHit=false
 ;
 
 Action=StoneMinionPunch:
-Cooldown=2.0
-Duration=1.0
+Cooldown=2
+Duration=2
 AddHitBox=StoneMinionPunchHB
-AddEvent=Sfx_GolemPunch
-SetEventsDelay=0
 SetHitboxDelay=0.75
 ;

@@ -7,9 +7,9 @@ StatCurrent=100
 
 AddStat=MovementSpeed
 StatMin=1
-StatMax=100
+StatMax=3
 StatFail=0
-StatCurrent=50
+StatCurrent=1.2
 
 AddStat=Hate
 StatMin=0
@@ -30,8 +30,8 @@ TickDuration=0
 TickOnEnter=false
 TickOnExit=false
 Stat=Health
-MinValue=-30
-MaxValue=-30
+MinValue=-15
+MaxValue=-15
 ;
 
 Hitbox=FireMinionPunchHB:
@@ -45,7 +45,7 @@ SingleHit=true
 ;
 
 Action=FireMinionPunch:
-Cooldown=0.8
-Duration=0.5
+Cooldown=1.75
+Duration=1.75
 AddHitBox=FireMinionPunchHB
 ;

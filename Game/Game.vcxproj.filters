@@ -245,5 +245,6 @@
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="MinionManager.h" />
     <ClInclude Include="GamePlayAI.h" />
+    <ClInclude Include="SceneLoader.h" />
   </ItemGroup>
 </Project>

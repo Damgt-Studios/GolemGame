@@ -715,6 +715,11 @@ void ADUI::ADUI::AddFontArray(char** _fileNameArray, UINT _count)
 
 UINT ADUI::ADUI::AddUIComponent(std::string _name, UIComponent* _component)
 {
+    for (auto& element : uiComponents)
+    {
+        if (_component->name == element->name)
+            return 0;
+    }
     unsigned int index = uiComponents.size();
     _component->name = _name;
     uiComponents.push_back(_component);
@@ -804,9 +809,9 @@ void ADUI::ADUI::Render()
 void ADUI::ADUI::Shutdown()
 {
 
-    for (int i = 0; i < uiComponents.size(); ++i)
+    for (auto& comp: uiComponents)
     {
-        delete uiComponents[i];
+            delete comp;
     }
     uiComponents.clear();
     for (int i = 0; i < overlays.size(); ++i)
