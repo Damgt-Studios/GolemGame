@@ -731,7 +731,22 @@ public:
 		while (!shutdown)
 		{
 			//jobManagerTest->AddJob(&UpdateWrapper, (void*)engineArgs, 0);
-			
+			game_time.Signal();
+			delta_time = static_cast<float>(game_time.SmoothDelta());
+			timer += delta_time;
+
+			ProcessInput();
+			ADEvents::ADEventSystem::Instance()->ProcessEvents();
+
+			//ADAI::ADPathfinding::Instance()->UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
+			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
+			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
+
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+			PhysicsArguments->OBJ_COUNT = OBJ_COUNT;
+			PhysicsArguments->OBJS = OBJS;
+			PhysicsArguments->collisionTree = collisionTree;
 
 			physics_timer += delta_time;
 			if (physics_timer > physics_rate)
@@ -797,15 +812,13 @@ public:
 				//ADResource::ADGameplay::ResolveCollisions();
 				//jobManagerTest->AddJob(&ADResource::ADGameplay::ResolveCollisionsWrapper, testingthread, 0);
 
-
-				XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
-				audioEngine->Set3dListenerAndOrientation({ CamPosition.x, CamPosition.y, CamPosition.z });
-				audioEngine->Update();
-
-				XMFLOAT4X4 viewPass;
-				XMStoreFloat4x4(&viewPass, view);
-				XMFLOAT4 cpos = XMFLOAT4(CamPosition.x, CamPosition.y, CamPosition.z, 0);
-
+				for (int i = 0; i < 10; i++)
+				{
+					GroundClamping(stoneMinions[i], tree, delta_time);
+					GroundClamping(waterMinions[i], tree, delta_time);
+					GroundClamping(fireMinions[i], tree, delta_time);
+					GroundClamping(woodMinions[i], tree, delta_time);
+				}
 
 				clampArgs->golem = golem;
 				clampArgs->tree = tree;
@@ -823,7 +836,7 @@ public:
 				UINT srow;
 				UINT scolumn;
 				UINT drow;
-				UINT dcolumn; sDKLJGsklJDFHSDKJF; kSJDF; klSFJ;
+				UINT dcolumn;
 				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), scolumn, srow);
 				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->targetMarker->GetPosition().x, golem->targetMarker->GetPosition().z), dcolumn, drow);
 				pathfinder.enter(scolumn, srow, dcolumn, drow);
