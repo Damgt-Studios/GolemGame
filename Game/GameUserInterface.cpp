@@ -156,7 +156,7 @@ namespace GolemGameUISetup
 
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
-		if (splashTimer < 3.f)
+		if (splashTimer < 4.f)
 		{
 			return false;
 		}
@@ -827,7 +827,7 @@ namespace GolemGameUISetup
 		ADUI::Image2D* controlsScreenControls = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 175, 550, 3400, 2000 });
 		controlsScreenControls->BuildAnimation({ 210, 3550, 3705, 4800 }, 1, 1, emptyAnimation);
 		controlsScreenControls->active = false;
-		controlScreenBG->visible = false;
+		controlsScreenControls->visible = false;
 		myUI->AddUIComponent("ControlsMenu", controlsScreenControls);
 		myUI->overlays[optionsID]->AddComponent(controlsScreenControls);
 		//////myUI->AddUIComponent("ControlsMenu", controlsList);
@@ -1705,6 +1705,10 @@ namespace GolemGameUISetup
 				overlays[overlaysNameToID["HUD"]]->Enable();
 				uiState = ADUI::UISTATE::GAMEPLAY;
 				currentPage = 0;
+				text[0]->SetText("");
+				text[1]->SetText("");
+				text[2]->SetText("");
+				text[3]->SetText("");
 			}
 			else
 			{
