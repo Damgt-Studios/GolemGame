@@ -836,7 +836,7 @@ public:
 				UINT srow;
 				UINT scolumn;
 				UINT drow;
-				UINT dcolumn;
+				UINT dcolumn; sDKLJGsklJDFHSDKJF; kSJDF; klSFJ;
 				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), scolumn, srow);
 				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->targetMarker->GetPosition().x, golem->targetMarker->GetPosition().z), dcolumn, drow);
 				pathfinder.enter(scolumn, srow, dcolumn, drow);
