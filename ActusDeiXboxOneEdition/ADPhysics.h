@@ -330,6 +330,7 @@ namespace ADPhysics
 	static float maxDownwardVelocity = -20.0f;
 
 	//------------------------------------------Seperating Axes
+
 	static bool SerparatingAxisTest(const XMFLOAT3& Difference, const XMFLOAT3& Axis, const OBB& box1, const OBB& box2)
 	{
 		return (fabs(VectorDot(Difference, Axis)) >
@@ -480,6 +481,7 @@ namespace ADPhysics
 			return false;
 		}
 		else if (w1 + w2 > 1.0f)
+			return false;
 
 		return true;
 	}
@@ -840,7 +842,7 @@ namespace ADPhysics
 			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(Float3ToVector(box1.AxisZ), Float3ToVector(box2.AxisZ)))
 		};
 
-		int AxisOfMinimumCollision;
+		int AxisOfMinimumCollision = 0;
 		float MinOverlap = 100;
 
 		//Floating Point "Fix"
@@ -881,6 +883,11 @@ namespace ADPhysics
 		}
 
 		//Manifold Setup
+		if (AxisOfMinimumCollision < 0 || AxisOfMinimumCollision > 15)
+		{
+			AxisOfMinimumCollision = 0;
+		}
+
 		m.Normal = Axises[AxisOfMinimumCollision];
 
 
@@ -1294,7 +1301,7 @@ namespace ADPhysics
 			 (XMFLOAT3&)XMVector3Normalize(XMVector3Cross(XMVectorSet(0, 0, 1, 1), Float3ToVector(obb.AxisZ)))
 		};
 
-		int AxisOfMinimumCollision ;
+		int AxisOfMinimumCollision = 0;
 		float MinOverlap = 100;
 
 		//Floating Point "Fix"

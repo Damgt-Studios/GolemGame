@@ -10,6 +10,9 @@ AddStat=Token
 StatMin=0
 StatMax=3
 StatCurrent=3
+SetEventVal=-1
+SetEvent=TokensChanged
+SetEventType=0
 
 AddStat=Hate
 StatMin=0
@@ -22,6 +25,7 @@ StatMax=99999
 StatCurrent=200
 SetEventVal=-1
 SetEvent=ChangeEssence
+SetEventType=1
 
 AddStat=MovementSpeed
 StatMin=1
@@ -29,7 +33,7 @@ StatMax=100
 StatCurrent=50
 
 AddStat=Armor
-StatMin=1
+StatMin=0
 StatMax=500
 StatCurrent=0
 

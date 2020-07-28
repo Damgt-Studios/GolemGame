@@ -7,7 +7,6 @@ namespace AD_AUDIO
     AudioImplementation::AudioImplementation() {
         studioSystem = NULL;
         ADAudio::AudioErrorCheck(FMOD::Studio::System::create(&studioSystem));
-        //https://www.fmod.com/resources/documentation-api?version=1.10&page=content/generated/FMOD_STUDIO_INITFLAGS.html
         ADAudio::AudioErrorCheck(studioSystem->initialize(32, FMOD_STUDIO_INIT_LIVEUPDATE, FMOD_INIT_PROFILE_ENABLE, NULL));
 
         audioSystem = NULL;

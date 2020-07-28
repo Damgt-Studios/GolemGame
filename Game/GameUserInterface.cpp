@@ -1,7 +1,5 @@
 #include "pchgame.h"
 #include "GameUserInterface.h"
-#include "Golem.h"
-
 
 namespace GolemGameUISetup
 {
@@ -32,6 +30,8 @@ namespace GolemGameUISetup
 					controllers[controllersNameToID["TitleScreenController"]]->Enable();
 					overlays[overlaysNameToID["SuccessScreen"]]->Enable();
 					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					controllers[controllersNameToID["HUD"]]->Disable();
+
 					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
 					Disable();
 
@@ -48,6 +48,7 @@ namespace GolemGameUISetup
 					controllers[controllersNameToID["TitleScreenController"]]->Enable();
 					overlays[overlaysNameToID["DefeatScreen"]]->Enable();
 					ADEvents::ADEventSystem::Instance()->SendEvent("PlayEnd", (void*)0);
+					controllers[controllersNameToID["HUD"]]->Disable();
 					//controllers[controllersNameToID["SuccessScreen"]]->Enable();
 					Disable();
 
@@ -110,7 +111,7 @@ namespace GolemGameUISetup
 		bool buttonPressed = false;
 		if (Input::QueryButtonDown(GamepadButtons::View))
 		{
-			//overlays[overlaysNameToID["Log"]]->visible = !overlays[overlaysNameToID["Log"]]->visible;
+			overlays[overlaysNameToID["Log"]]->visible = false;
 			overlays[overlaysNameToID["PathingMap"]]->visible = !overlays[overlaysNameToID["PathingMap"]]->visible;
 			buttonPressed = true;
 		}
@@ -121,18 +122,45 @@ namespace GolemGameUISetup
 	{
 		if (uiState == ADUI::UISTATE::GAMEPLAY)
 		{
-			bool buttonPressed = false;
 			if (_message)
 			{
-				buttonPressed = true;
+				if (_message->externalMsg)
+				{
+					overlays[overlaysNameToID["MessageBox"]]->visible = true;
+					text[0]->SetText(tutorialMessages[(_message->targetID*4)]);
+					text[1]->SetText(tutorialMessages[(_message->targetID*4)+1]);
+					text[2]->SetText(tutorialMessages[(_message->targetID*4)+2]);
+					text[3]->SetText(tutorialMessages[(_message->targetID*4)+3]);
+					uiState = PAUSED;
+				}
 			}
-			return buttonPressed;
 		}
 		return false;
 	}
 
+	bool HUDController::ProcessInput(float delta_time, float& quick)
+	{
+		bool buttonPressed = false;
+		if (overlays[overlaysNameToID["MessageBox"]]->visible)
+		{
+			if (Input::QueryButtonDown(GamepadButtons::B) || Input::QueryButtonDown(GamepadButtons::A))
+			{
+				ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
+				overlays[overlaysNameToID["MessageBox"]]->visible = false;
+				uiState = GAMEPLAY;
+				buttonPressed = true;
+			}
+		}
+		return buttonPressed;
+	}
+
 	bool StartMenuUIController::ProcessResponse(ADUI::UIMessage* _message, float& quick)
 	{
+		if (splashTimer < 3.f)
+		{
+			return false;
+		}
+
 		bool buttonPressed = false;
 		if (_message && !overlays[overlaysNameToID["SuccessScreen"]]->active && !overlays[overlaysNameToID["DefeatScreen"]]->active)
 		{
@@ -149,26 +177,24 @@ namespace GolemGameUISetup
 						overlays[overlaysNameToID["TitleScreen"]]->Disable();
 						//componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
 						Disable();
-						controllers[controllersNameToID["HudController"]]->Enable();
-						controllers[controllersNameToID["PauseScreenController"]]->Enable();
-						overlays[overlaysNameToID["HUD"]]->Enable();
-						uiState = ADUI::UISTATE::GAMEPLAY;
 
+						controllers[controllersNameToID["TutorialController"]]->Enable();
+						overlays[overlaysNameToID["Tutorial"]]->Enable();
 						ADEvents::ADEventSystem::Instance()->SendEvent("PlayLevel", (void*)0);
 						buttonPressed = true;
 						break;
 					}
-					case 1: //saves
-						buttonPressed = true;
-						break;
-					case 2: //credits
+					//case 1: //saves
+					//	buttonPressed = true;
+					//	break;
+					case 1: //credits
 						componentTypeMap[componentsNameToID["TitleMenu"]]->Disable();
 						overlays[overlaysNameToID["CreditsScreen"]]->Enable();
 						overlays[overlaysNameToID["TitleScreen"]]->Disable();
 						uiState = ADUI::UISTATE::MENUSTATE;
 						buttonPressed = true;
 						break;
-					case 3:
+					case 2:
 						uiState = ADUI::UISTATE::QUIT;
 						buttonPressed = true;
 						break;
@@ -188,6 +214,15 @@ namespace GolemGameUISetup
 
 	bool StartMenuUIController::ProcessInput(float delta_time, float& quick)
 	{
+		if (splashTimer < 4.f)
+		{
+			splashTimer += delta_time;
+		}
+		else
+		{
+			overlays[overlaysNameToID["SplashScreen"]]->Disable();
+			overlays[overlaysNameToID["TitleScreen"]]->Enable();
+		}
 		bool buttonPressed = false;
 		if (overlays[overlaysNameToID["CreditsScreen"]]->active)
 		{
@@ -389,12 +424,13 @@ namespace GolemGameUISetup
 								componentTypeMap[componentsNameToID["AudioMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
-							case 1: //Video
+							case 1: //Controls
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
+								componentTypeMap[componentsNameToID["ControlsBG"]]->Enable();
 								componentTypeMap[componentsNameToID["ControlsMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
-							case 2: //Controls
+							case 2: //Video
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
 								componentTypeMap[componentsNameToID["VideoMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
@@ -420,10 +456,11 @@ namespace GolemGameUISetup
 		if (Input::QueryButtonDown(GamepadButtons::B))
 		{
 			ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Return", (void*)0);
-			if (componentTypeMap[componentsNameToID["AudioMenu"]]->active)// || componentTypeMap[componentsNameToID["ControlsMenu"]]->active || componentTypeMap[componentsNameToID["VideoMenu"]]->active)
+			if (componentTypeMap[componentsNameToID["AudioMenu"]]->active || componentTypeMap[componentsNameToID["ControlsMenu"]]->active)// || componentTypeMap[componentsNameToID["VideoMenu"]]->active)
 			{
 				componentTypeMap[componentsNameToID["AudioMenu"]]->Disable();
-				//componentTypeMap[componentsNameToID["ControlsMenu"]]->Disable();
+				componentTypeMap[componentsNameToID["ControlsBG"]]->Disable();
+				componentTypeMap[componentsNameToID["ControlsMenu"]]->Disable();
 				//componentTypeMap[componentsNameToID["VideoMenu"]]->Disable();
 				componentTypeMap[componentsNameToID["OptionsMenu"]]->Enable();
 				buttonPressed = true;
@@ -449,12 +486,31 @@ namespace GolemGameUISetup
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
 		emptyAnimation[0] = { 0, 1, 1 };
 
+
 		//TitleScreen
-		UINT titleid = myUI->AddNewOverlay("TitleScreen", true, true);
+		UINT splashID = myUI->AddNewOverlay("SplashScreen", true, true);
+
+
+		ADUI::Image2D* splashScreenbg = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 0, 0,  3840, 2160});
+		splashScreenbg->BuildAnimation({ 960,4626,961,4627 }, 1, 1, emptyAnimation);
+		splashScreenbg->visible = true;
+		splashScreenbg->stretched = true;
+		myUI->AddUIComponent("Splash", splashScreenbg);
+		myUI->overlays[splashID]->AddComponent(splashScreenbg);
+		
+		ADUI::Image2D* splashScreen = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { 1650, 845, 0,0 });
+		splashScreen->BuildAnimation({ 3300,4812,3840,5280 }, 1, 1, emptyAnimation);
+		splashScreen->visible = true;
+		myUI->AddUIComponent("Splash2", splashScreen);
+		myUI->overlays[splashID]->AddComponent(splashScreen);
+		
+		//TitleScreen
+		UINT titleid = myUI->AddNewOverlay("TitleScreen", false, false);
 		ADUI::Image2D* titleImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
 		titleImage->BuildAnimation({ 0,0,3840,2160 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("TitleBG", titleImage);
 		myUI->overlays[titleid]->AddComponent(titleImage);
+
 
 		//Credits Screen
 		UINT creditsID = myUI->AddNewOverlay("CreditsScreen", false, false);
@@ -535,15 +591,16 @@ namespace GolemGameUISetup
 		lbl->active = true;
 		lbl->visible = true;
 		ADUI::Button2D* btn = new ADUI::Button2D(position, buttonIcon, lbl, true, true, false);
-		buttonList->Generate(btn, position, spacing, 4, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
+		buttonList->Generate(btn, position, spacing, 3, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
 		buttonList->visible = true;
-		buttonList->components[1]->SetText("Load");
-		buttonList->components[2]->SetText("Credits");
-		buttonList->components[3]->SetText("Quit");
+		//buttonList->components[1]->SetText("Load");
+		buttonList->components[1]->SetText("Credits");
+		buttonList->components[2]->SetText("Quit");
 		myUI->AddUIComponent("TitleMenu", buttonList);
 		myUI->overlays[titleid]->AddComponent(buttonList);
 
 		_titleScreenController->AddComponent(buttonList);
+		_titleScreenController->AddOverlay(myUI->overlays[splashID]);
 		_titleScreenController->AddOverlay(myUI->overlays[titleid]);
 		_titleScreenController->AddOverlay(myUI->overlays[creditsID]);
 
@@ -758,86 +815,21 @@ namespace GolemGameUISetup
 		myUI->AddUIComponent("AudioMenu", sliderList);
 		myUI->overlays[optionsID]->AddComponent(sliderList);
 
-		//ADUI::Image2D* sliderImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//sliderImage->SetRects({ 100,100, 200, 200 }, { 3200, 5050, 3215, 5090 }, { 0, 0 });
-		//XMFLOAT2 sliderPosition = {1220, 700};
-		//XMFLOAT2 sliderMaxPosition = { 2120, 625 };
-		//XMFLOAT2 sliderMinPosition = { 1620, 625 };
-		//ADUI::Slider* slider = new ADUI::Slider(sliderImage, sliderPosition, sliderMaxPosition, sliderMinPosition);
-		//ADUI::Image2D* leftCapImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//leftCapImage->SetRects({ 1519, 599, 1620, 700 }, { 3201, 4921, 3301, 5020 }, { 0, 0 });
-		//ADUI::Image2D* leftCapImage2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//leftCapImage2->SetRects({ 1519, 599, 1620, 700 }, { 3301, 4921, 3402, 5020 }, { 0, 0 });
-		//ADUI::Image2D* rightCapImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//rightCapImage->SetRects({ 2150, 599, 2251, 700 }, { 3400, 4921, 3501, 5020 }, { 0, 0 });
-		//ADUI::Image2D* rightCapImage2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//rightCapImage2->SetRects({ 2150, 599, 2251, 700 }, { 3500, 4921, 3601, 5020 }, { 0, 0 });
-		//ADUI::Button2D* leftCap = new ADUI::Button2D(leftCapImage, leftCapImage2, true, true);
-		//ADUI::Button2D* rightCap = new ADUI::Button2D(rightCapImage, rightCapImage2, true, true);
-		//ADUI::Label2D sliderLabel;
-		//sliderLabel.SetFont(myUI->GetFont(3));
-		//sliderLabel.SetText({ true, {1750, 500}, "Music" });
-		//ADUI::SliderBar* sliderBar = new ADUI::SliderBar(slideImage, slider, leftCap, rightCap, sliderLabel);
-		//sliderBar->Enable();
 
+		ADUI::Image2D* controlScreenBG = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 125, 400, 3720, 1820 });
+		controlScreenBG->BuildAnimation({ 2315, 1080, 3825, 1970 }, 1, 1, emptyAnimation);
+		controlScreenBG->active = false;
+		controlScreenBG->visible = false;
+		controlScreenBG->stretched = true;
+		myUI->AddUIComponent("ControlsBG", controlScreenBG);
+		myUI->overlays[optionsID]->AddComponent(controlScreenBG);
 
-		//ADUI::Image2D* slideImage2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//slideImage2->SetRects({ 1616, 1035, 2150, 1066 }, { 3600, 4953, 3700, 4985 }, { 0, 0 });
-		//slideImage2->SetStretched(true);
-		//ADUI::Image2D* sliderImage2 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//sliderImage2->SetRects({ 100,100, 200, 200 }, { 3200, 5050, 3215, 5090 }, { 0, 0 });
-		//XMFLOAT2 sliderPosition2 = { 1220, 1100 };
-		//XMFLOAT2 sliderMaxPosition2 = { 2120, 1025 };
-		//XMFLOAT2 sliderMinPosition2 = { 1620, 1025 };
-		//ADUI::Slider* slider2 = new ADUI::Slider(sliderImage2, sliderPosition2, sliderMaxPosition2, sliderMinPosition2);
-		//ADUI::Image2D* leftCapImage3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//leftCapImage3->SetRects({ 1519, 999, 1620, 1100 }, { 3201, 4921, 3301, 5020 }, { 0, 0 });
-		//ADUI::Image2D* leftCapImage4 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//leftCapImage4->SetRects({ 1519, 999, 1620, 1100 }, { 3301, 4921, 3402, 5020 }, { 0, 0 });
-		//ADUI::Image2D* rightCapImage3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//rightCapImage3->SetRects({ 2150, 999, 2251, 1100 }, { 3400, 4921, 3501, 5020 }, { 0, 0 });
-		//ADUI::Image2D* rightCapImage4 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0]);
-		//rightCapImage4->SetRects({ 2150, 999, 2251, 1100 }, { 3500, 4921, 3601, 5020 }, { 0, 0 });
-		//ADUI::Button2D* leftCap2 = new ADUI::Button2D(leftCapImage3, leftCapImage4, true, true);
-		//ADUI::Button2D* rightCap2 = new ADUI::Button2D(rightCapImage3, rightCapImage4, true, true);
-		//ADUI::Label2D sliderLabel2;
-		//sliderLabel2.SetFont(myUI->GetFont(3));
-		//sliderLabel2.SetText({ true, {1450, 900}, "Sound Effects" });
-		//ADUI::SliderBar* sliderBar2 = new ADUI::SliderBar(slideImage2, slider2, leftCap2, rightCap2, sliderLabel2);
-		//sliderBar2->Enable();
-
-		//ADUI::ButtonList* sliderList = new ADUI::ButtonList();
-		//sliderList->x = 1819; 
-		//sliderList->y = 499;
-		//sliderList->spacing = 20.f;
-		//sliderList->columns = 1;
-		//sliderList->active = false;
-		//sliderList->controlFocus = false;
-
-		//sliderList->AddButton(sliderBar);
-		//sliderList->AddButton(sliderBar2);
-
-		//sliderList->Initialize();
-		//sliderList->Disable();
-
-
-
-
-
-
-		////ADUI::ButtonList* controlsList = new ADUI::ButtonList();
-		////controlsList->x = 0;
-		////controlsList->y = 0;
-		////controlsList->spacing = 20.f;
-		////controlsList->columns = 1;
-		////controlsList->active = false;
-		////controlsList->controlFocus = false;
-		////controlsList->AddButton(sliderBar);
-		////controlsList->Initialize();
-		////controlsList->Disable();
-
-		//myUI->AddUIComponent("ControlsMenu", slideImage);
-		//myUI->overlays[optionsID]->AddComponent(slideImage);
+		ADUI::Image2D* controlsScreenControls = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 175, 550, 3400, 2000 });
+		controlsScreenControls->BuildAnimation({ 210, 3550, 3705, 4800 }, 1, 1, emptyAnimation);
+		controlsScreenControls->active = false;
+		controlScreenBG->visible = false;
+		myUI->AddUIComponent("ControlsMenu", controlsScreenControls);
+		myUI->overlays[optionsID]->AddComponent(controlsScreenControls);
 		//////myUI->AddUIComponent("ControlsMenu", controlsList);
 		//////myUI->overlays[optionsID]->AddComponent(controlsList);
 
@@ -859,9 +851,113 @@ namespace GolemGameUISetup
 
 		_optionsMenuUIController->AddComponent(sliderList);
 		_optionsMenuUIController->AddComponent(buttonList3);
+		_optionsMenuUIController->AddComponent(controlScreenBG);
+		_optionsMenuUIController->AddComponent(controlsScreenControls);
 		_optionsMenuUIController->AddOverlay(myUI->overlays[optionsID]);
 
 		return optionsID;
+	}
+
+	UINT GameUserInterface::SetupTutorialScreen(ADUI::ADUI* myUI, TutorialController* _tutorialController)
+	{
+		UINT tutorialID = myUI->AddNewOverlay("Tutorial", false, false);
+
+		//SuccessScreen
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 1, 1 };
+
+		ADUI::Image2D* controlScreenBG = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 125, 400, 3720, 1820 });
+		controlScreenBG->BuildAnimation({ 2315, 1080, 3825, 1970 }, 1, 1, emptyAnimation);
+		controlScreenBG->active = false;
+		controlScreenBG->visible = true;
+		controlScreenBG->stretched = true;
+		myUI->AddUIComponent("ControlsBG", controlScreenBG);
+		myUI->overlays[tutorialID]->AddComponent(controlScreenBG);
+
+		ADUI::Image2D* controlsScreenControls = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 175, 550, 3400, 2000 });
+		controlsScreenControls->BuildAnimation({ 210, 3550, 3705, 4800 }, 1, 1, emptyAnimation);
+		controlsScreenControls->active = false;
+		controlsScreenControls->visible = false;
+		myUI->AddUIComponent("Page0", controlsScreenControls);
+		myUI->overlays[tutorialID]->AddComponent(controlsScreenControls);
+		_tutorialController->AddComponent(controlsScreenControls);
+
+		ADUI::Image2D* hidingInHouse = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 400, 550, 3400, 2000 });
+		hidingInHouse->BuildAnimation({ 2740, 1970, 3330, 2625 }, 1, 1, emptyAnimation);
+		hidingInHouse->active = false;
+		hidingInHouse->visible = false;
+		myUI->AddUIComponent("Page1", hidingInHouse);
+		myUI->overlays[tutorialID]->AddComponent(hidingInHouse);
+		_tutorialController->AddComponent(hidingInHouse);
+		
+		ADUI::Image2D* townHall = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1800, 550, 3400, 2000 });
+		townHall->BuildAnimation({ 2316, 1966, 2731, 2326 }, 1, 1, emptyAnimation);
+		townHall->active = false;
+		townHall->visible = false;
+		myUI->AddUIComponent("Page2", townHall);
+		myUI->overlays[tutorialID]->AddComponent(townHall);
+		_tutorialController->AddComponent(townHall);
+
+		ADUI::Image2D* spellIcons = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1700, 550, 3400, 2000 });
+		spellIcons->BuildAnimation({ 0, 1113, 560, 1236 }, 1, 1, emptyAnimation);
+		spellIcons->active = false;
+		spellIcons->visible = false;
+		myUI->AddUIComponent("Page3", spellIcons);
+		myUI->overlays[tutorialID]->AddComponent(spellIcons);
+		_tutorialController->AddComponent(spellIcons);
+		
+
+		ADUI::Image2D* faceIcons = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 1800, 550, 3400, 2000 });
+		faceIcons->BuildAnimation({ 220, 1337, 622, 1437 }, 1, 1, emptyAnimation);
+		faceIcons->active = false;
+		faceIcons->visible = false;
+		myUI->AddUIComponent("Page45", faceIcons);
+		myUI->overlays[tutorialID]->AddComponent(faceIcons);
+		_tutorialController->AddComponent(faceIcons);
+
+		ADUI::Label2D* messageLabel = new ADUI::Label2D();
+		messageLabel->SetFont(myUI->GetFont(3));
+		messageLabel->SetText(" ", { 1900, 1100 });// XMFLOAT2(1920, 1080));
+		messageLabel->active = true;
+		messageLabel->visible = true;
+		ADUI::Label2D* messageLabel2 = new ADUI::Label2D();
+		messageLabel2->SetFont(myUI->GetFont(3));
+		messageLabel2->SetText(" ", { 1900, 1300 });// XMFLOAT2(1920, 1080));
+		messageLabel2->active = true;
+		messageLabel2->visible = true;
+		ADUI::Label2D* messageLabel3 = new ADUI::Label2D();
+		messageLabel3->SetFont(myUI->GetFont(3));
+		messageLabel3->SetText(" ", { 1900, 1500 });// XMFLOAT2(1920, 1080));
+		messageLabel3->active = true;
+		messageLabel3->visible = true;
+		ADUI::Label2D* messageLabel4 = new ADUI::Label2D();
+		messageLabel4->SetFont(myUI->GetFont(3));
+		messageLabel4->SetText(" ", { 1900, 1700 });// XMFLOAT2(1920, 1080));
+		messageLabel4->active = true;
+		messageLabel4->visible = true;
+		myUI->AddUIComponent("messageLabel", messageLabel);
+		myUI->overlays[tutorialID]->AddComponent(messageLabel);
+		myUI->AddUIComponent("messageLabel2", messageLabel2);
+		myUI->overlays[tutorialID]->AddComponent(messageLabel2);
+		myUI->AddUIComponent("messageLabel3", messageLabel3);
+		myUI->overlays[tutorialID]->AddComponent(messageLabel3);
+		myUI->AddUIComponent("messageLabel4", messageLabel4);
+		myUI->overlays[tutorialID]->AddComponent(messageLabel4);
+		_tutorialController->AddOverlay(myUI->overlays[tutorialID]);
+		_tutorialController->pagePicture.push_back(controlsScreenControls);
+		_tutorialController->pagePicture.push_back(hidingInHouse);
+		_tutorialController->pagePicture.push_back(townHall);
+		_tutorialController->pagePicture.push_back(faceIcons);
+		_tutorialController->pagePicture.push_back(faceIcons);
+		_tutorialController->pagePicture.push_back(spellIcons);
+		_tutorialController->text.push_back(messageLabel);
+		_tutorialController->text.push_back(messageLabel2);
+		_tutorialController->text.push_back(messageLabel3);
+		_tutorialController->text.push_back(messageLabel4);
+
+
+
+		return tutorialID;
 	}
 
 	UINT GameUserInterface::SetupEngGameScreen(ADUI::ADUI* myUI)
@@ -898,7 +994,7 @@ namespace GolemGameUISetup
 		UINT creditsID = myUI->AddNewOverlay("DefeatScreen", false, false);
 		ADUI::Image2D* creditsImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
 		creditsImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("CreditsBG", creditsImage);
+		myUI->AddUIComponent("DefeatBG", creditsImage);
 		myUI->overlays[creditsID]->AddComponent(creditsImage);
 
 
@@ -924,6 +1020,9 @@ namespace GolemGameUISetup
 		ADUI::AnimationData* buttonAnimation = new ADUI::AnimationData[2];
 		buttonAnimation[0] = { 0, 1, 1 };
 		buttonAnimation[1] = { 0, 2, 6 };
+		ADUI::AnimationData* healthFlash = new ADUI::AnimationData[2];
+		healthFlash[0] = { 0, 1, 1 };
+		healthFlash[1] = { 0, 2, 4 };
 		ADUI::AnimationData* faceButtons = new ADUI::AnimationData[2];
 		faceButtons[0] = { 0, 1, 24 };
 		faceButtons[1] = { 1, 1, 24 };
@@ -946,7 +1045,8 @@ namespace GolemGameUISetup
 		_hUDController->AddComponent(healthBar);
 
 		ADUI::Image2D* healthUnits = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 141, 38, 153, 111 });
-		healthUnits->BuildAnimation({ 494, 961, 580, 1034 }, 1, 1, emptyAnimation);
+		healthUnits->BuildAnimation({ 494, 961, 580, 1034 }, 1, 2, healthFlash);
+		healthUnits->controlFocusAnimation = 1;
 		healthUnits->tiled = 100;
 		myUI->AddUIComponent("HealhBarUnit", healthUnits);
 		myUI->overlays[hudID]->AddComponent(healthUnits);
@@ -969,7 +1069,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* essenceLabel = new ADUI::Label2D();
 		essenceLabel->SetFont(myUI->GetFont(2));
-		essenceLabel->SetText("1000", { 200, 140 });// XMFLOAT2(1920, 1080));
+		essenceLabel->SetText("200", { 200, 140 });// XMFLOAT2(1920, 1080));
 		essenceLabel->active = true;
 		essenceLabel->visible = true;
 		myUI->AddUIComponent("EssenceLabel", essenceLabel);
@@ -1024,36 +1124,6 @@ namespace GolemGameUISetup
 		myUI->overlays[hudID]->AddComponent(specialIcon3);
 		_hUDController->AddComponent(specialIcon3);
 
-
-		//ADUI::Image2D* golemFace = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 93, 97, 502, 495 });
-		//golemFace->BuildAnimation({ 0, 0, 1, 1 }, 4, 1, faceAnimation);
-		//myUI->AddUIComponent("GolemFace", golemFace);
-		//myUI->overlays[hudID]->AddComponent(golemFace);
-		//golemFace->Focus();
-		//_hUDController->AddComponent(golemFace);
-
-		//ADUI::Image2D* minionPlate = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2475, 69, 2575, 169 });
-		//minionPlate->BuildAnimation({ 2300, 1085, 2450, 1235 }, 4, 1, faceAnimation);
-		//myUI->AddUIComponent("GolemFace", minionPlate);
-		//myUI->overlays[hudID]->AddComponent(minionPlate);
-		//minionPlate->Focus();
-		//_hUDController->AddComponent(minionPlate);
-
-		//ADUI::Image2D* minionFaces = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2500, 75, 2700, 175 });
-		//minionFaces->BuildAnimation({ 2300, 1236, 2400, 1336 }, 4, 1, faceAnimation);
-		//myUI->AddUIComponent("GolemFace", minionFaces);
-		//myUI->overlays[hudID]->AddComponent(minionFaces);
-		//minionFaces->Focus();
-		//_hUDController->AddComponent(minionFaces);
-
-		//ADUI::Image2D* minionHealthUnit = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2474, 176, 2477, 214 });
-		//minionHealthUnit->BuildAnimation({ 2097, 1086, 2100, 1124 }, 1, 1, emptyAnimation);
-		//minionHealthUnit->tiled = 50;
-		//myUI->AddUIComponent("HealhBarEmpty", minionHealthUnit);
-		//myUI->overlays[hudID]->AddComponent(minionHealthUnit);
-		//healthUnits->Focus();
-		//_hUDController->AddComponent(minionHealthUnit);
-
 		ADUI::Image2D* minionRightBar = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 80, 280, 3676, 1104 });
 		minionRightBar->BuildAnimation({ 2180, 960, 2313, 1556 }, 1, 1, emptyAnimation);
 		myUI->AddUIComponent("RightPlate", minionRightBar);
@@ -1063,7 +1133,7 @@ namespace GolemGameUISetup
 
 		ADUI::Image2D* minionFacesRightAll = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 331, 197, 431 });
 		minionFacesRightAll->BuildAnimation({ 221, 1237, 321, 1337 }, 1, 2, faceButtons);
-		myUI->AddUIComponent("GolemFaceRight1", minionFacesRightAll);
+		myUI->AddUIComponent("GolemFaceAll", minionFacesRightAll);
 		myUI->overlays[hudID]->AddComponent(minionFacesRightAll);
 		minionFacesRightAll->Focus();
 		minionFacesRightAll->controlFocusAnimation = 1;
@@ -1071,7 +1141,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* stoneCountLabel = new ADUI::Label2D();
 		stoneCountLabel->SetFont(myUI->GetFont(2));
-		stoneCountLabel->SetText("x10", { 250, 380 });// XMFLOAT2(1920, 1080));
+		stoneCountLabel->SetText("10", { 250, 380 });// XMFLOAT2(1920, 1080));
 		stoneCountLabel->active = true;
 		stoneCountLabel->visible = true;
 		myUI->AddUIComponent("StoneCountLabel", stoneCountLabel);
@@ -1088,7 +1158,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* waterCountLabel = new ADUI::Label2D();
 		waterCountLabel->SetFont(myUI->GetFont(2));
-		waterCountLabel->SetText("x0", { 250, 480 });// XMFLOAT2(1920, 1080));
+		waterCountLabel->SetText("10", { 250, 480 });// XMFLOAT2(1920, 1080));
 		waterCountLabel->active = true;
 		waterCountLabel->visible = true;
 		myUI->AddUIComponent("WaterCountLabel", waterCountLabel);
@@ -1105,7 +1175,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* fireCountLabel = new ADUI::Label2D();
 		fireCountLabel->SetFont(myUI->GetFont(2));
-		fireCountLabel->SetText("x0", { 250, 580 });// XMFLOAT2(1920, 1080));
+		fireCountLabel->SetText("10", { 250, 580 });// XMFLOAT2(1920, 1080));
 		fireCountLabel->active = true;
 		fireCountLabel->visible = true;
 		myUI->AddUIComponent("FireCountLabel", fireCountLabel);
@@ -1114,7 +1184,7 @@ namespace GolemGameUISetup
 
 		ADUI::Image2D* minionFacesRight3 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 637, 197, 737 });
 		minionFacesRight3->BuildAnimation({ 521, 1237, 621, 1337 }, 1, 2, faceButtons);
-		myUI->AddUIComponent("GolemFaceRight2", minionFacesRight3);
+		myUI->AddUIComponent("GolemFaceRight3", minionFacesRight3);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight3);
 		//minionFacesRight3->Focus();
 		minionFacesRight3->controlFocusAnimation = 1;
@@ -1122,7 +1192,7 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* woodCountLabel = new ADUI::Label2D();
 		woodCountLabel->SetFont(myUI->GetFont(2));
-		woodCountLabel->SetText("x0", { 250, 680 });// XMFLOAT2(1920, 1080));
+		woodCountLabel->SetText("10", { 250, 680 });// XMFLOAT2(1920, 1080));
 		woodCountLabel->active = true;
 		woodCountLabel->visible = true;
 		myUI->AddUIComponent("WoodCountLabel", woodCountLabel);
@@ -1131,7 +1201,7 @@ namespace GolemGameUISetup
 
 		ADUI::Image2D* minionFacesRight4 = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 97, 742, 197, 842 });
 		minionFacesRight4->BuildAnimation({ 621, 1237, 721, 1337 }, 1, 2, faceButtons);
-		myUI->AddUIComponent("GolemFaceRight1", minionFacesRight4);
+		myUI->AddUIComponent("GolemFaceRight4", minionFacesRight4);
 		myUI->overlays[hudID]->AddComponent(minionFacesRight4);
 		//minionFacesRight4->Focus();
 		minionFacesRight4->controlFocusAnimation = 1;
@@ -1139,22 +1209,36 @@ namespace GolemGameUISetup
 
 		ADUI::Label2D* allCountLabel = new ADUI::Label2D();
 		allCountLabel->SetFont(myUI->GetFont(2));
-		allCountLabel->SetText("x0", { 250, 780 });// XMFLOAT2(1920, 1080));
+		allCountLabel->SetText("40", { 250, 780 });// XMFLOAT2(1920, 1080));
 		allCountLabel->active = true;
 		allCountLabel->visible = true;
 		myUI->AddUIComponent("AllCountLabel", allCountLabel);
 		myUI->overlays[hudID]->AddComponent(allCountLabel);
 		_hUDController->AddComponent(allCountLabel);
 
+		ADUI::Image2D* villagerBG = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3300, 50, 3800, 400 });
+		villagerBG->BuildAnimation({ 710, 1190, 840, 1300 }, 1, 1, emptyAnimation);
+		myUI->AddUIComponent("VillagerBG", villagerBG);
+		myUI->overlays[hudID]->AddComponent(villagerBG);
+		villagerBG->stretched = true;
+		_hUDController->AddComponent(villagerBG);
+
 		ADUI::Label2D* villagerCountLabel = new ADUI::Label2D();
 		villagerCountLabel->SetFont(myUI->GetFont(2));
-		villagerCountLabel->SetText("10", { 3590, 250 });// XMFLOAT2(1920, 1080));
+		villagerCountLabel->SetText("50", { 3550, 250 });// XMFLOAT2(1920, 1080));
 		villagerCountLabel->active = true;
 		villagerCountLabel->visible = true;
 		myUI->AddUIComponent("VillagerCountLabel", villagerCountLabel);
 		myUI->overlays[hudID]->AddComponent(villagerCountLabel);
 		_hUDController->AddComponent(villagerCountLabel);
 
+		ADUI::Label2D* villagerLabel = new ADUI::Label2D();
+		villagerLabel->SetFont(myUI->GetFont(2));
+		villagerLabel->SetText("Villagers Remaining", { 3550, 100 });// XMFLOAT2(1920, 1080));
+		villagerLabel->active = true;
+		villagerLabel->visible = true;
+		myUI->AddUIComponent("villagerLabel", villagerLabel);
+		myUI->overlays[hudID]->AddComponent(villagerLabel);
 
 		ADUI::ComponentGrid* rightButtonList = new ADUI::ComponentGrid();
 		rightButtonList->SetCorners({ 97, 331, 197, 431 });
@@ -1274,7 +1358,7 @@ namespace GolemGameUISetup
 		return 0;
 	}
 
-	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController, ADAI::PathingGrid* _grid) //std::vector<ADAI::PathingNode*>* planeNodes, int columnCount, float mapWidth, float mapHeight)
+	UINT GameUserInterface::SetupPathingMap(ADUI::ADUI* myUI, DebugController* _debugController)
 	{
 		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
 		emptyAnimation[0] = { 0, 5, 0 };
@@ -1284,20 +1368,19 @@ namespace GolemGameUISetup
 		ADUI::Image2D* consoleBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 100, 100, 3540, 1816 });
 		consoleBox->BuildAnimation({ 0, 0, 2299, 960 }, 1, 1, emptyAnimation);
 		consoleBox->active = true;
-		consoleBox->visible = true;
+		consoleBox->visible = false;
 		consoleBox->stretched = true;
 		myUI->AddUIComponent("mapbg", consoleBox);
 		myUI->overlays[pathingID]->AddComponent(consoleBox);
 
 
-
-
-		//_debugController->planeNodes = &_grid->nodeGrid;
-		//for (int i = 0; i < _grid->nodeGrid.size(); i++)
+		//ADAI::PathingGrid* grid = &ADAI::ADPathfinding::Instance()->tileMap;
+		//_debugController->planeNodes = &grid->nodeGrid;
+		//for (int i = 0; i < grid->nodeGrid.size(); i++)
 		//{
 
-		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 3840.f - (_grid->nodeGrid[i]->position.x + 300.f) , 2160 - _grid->nodeGrid[i]->position.z, 3840.f - (_grid->nodeGrid[i]->position.x + 300.f),  2160 - _grid->nodeGrid[i]->position.z });
-		//	long heightValue = int((_grid->nodeGrid)[i]->position.y * 100.f);
+		//	ADUI::Image2D* tempImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 2000.f - (grid->nodeGrid[i]->position.x + 300.f) , 2100 - grid->nodeGrid[i]->position.z, 2000.f - (grid->nodeGrid[i]->position.x + 300.f),  2100 - grid->nodeGrid[i]->position.z });
+		//	long heightValue = int((grid->nodeGrid)[i]->position.y * 100.f);
 		//	if (heightValue < -4)
 		//	{
 		//		heightValue = -4;
@@ -1313,12 +1396,65 @@ namespace GolemGameUISetup
 		//	tempImage->Focus();
 		//	myUI->AddUIComponent("genericImage", tempImage);
 		//	myUI->overlays[pathingID]->AddComponent(tempImage);
-		//	_debugController->node_image_map[(_grid->nodeGrid)[i]] = tempImage;
+		//	_debugController->node_image_map[(grid->nodeGrid)[i]] = tempImage;
 		//}
 
 		return pathingID;
 	}
 
+
+	UINT GameUserInterface::SetupMessageBox(ADUI::ADUI* myUI, HUDController* _hUDController)
+	{
+		ADUI::AnimationData* emptyAnimation = new ADUI::AnimationData[1];
+		emptyAnimation[0] = { 0, 1, 1 };
+
+		//UI Log
+		UINT messageID = myUI->AddNewOverlay("MessageBox", false, true);
+
+		ADUI::Image2D* messageBox = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { 400, 1000, 3400, 2000 });
+		messageBox->BuildAnimation({ 2315, 1080, 3825, 1970 }, 1, 1, emptyAnimation);
+		messageBox->active = true;
+		messageBox->visible = true;
+		messageBox->stretched = true;
+		myUI->AddUIComponent("MessageBoxBG", messageBox);
+		myUI->overlays[messageID]->AddComponent(messageBox);
+
+		ADUI::Label2D* messageLabel = new ADUI::Label2D();
+		messageLabel->SetFont(myUI->GetFont(3));
+		messageLabel->SetText("Basic Message Text", { 1900, 1100 });// XMFLOAT2(1920, 1080));
+		messageLabel->active = true;
+		messageLabel->visible = true;
+		ADUI::Label2D* messageLabel2 = new ADUI::Label2D();
+		messageLabel2->SetFont(myUI->GetFont(3));
+		messageLabel2->SetText("Basic Message Text", { 1900, 1300 });// XMFLOAT2(1920, 1080));
+		messageLabel2->active = true;
+		messageLabel2->visible = true;
+		ADUI::Label2D* messageLabel3 = new ADUI::Label2D();
+		 messageLabel3->SetFont(myUI->GetFont(3));
+		 messageLabel3->SetText("Basic Message Text", { 1900, 1500 });// XMFLOAT2(1920, 1080));
+		 messageLabel3->active = true;
+		 messageLabel3->visible = true;
+		ADUI::Label2D* messageLabel4 = new ADUI::Label2D();
+		messageLabel4->SetFont(myUI->GetFont(3));
+		messageLabel4->SetText("Basic Message Text", { 1900, 1700 });// XMFLOAT2(1920, 1080));
+		messageLabel4->active = true;
+		messageLabel4->visible = true;
+		myUI->AddUIComponent("messageLabel", messageLabel);
+		myUI->overlays[messageID]->AddComponent(messageLabel);
+		myUI->AddUIComponent("messageLabel2", messageLabel2);
+		myUI->overlays[messageID]->AddComponent(messageLabel2);
+		myUI->AddUIComponent("messageLabel3", messageLabel3);
+		myUI->overlays[messageID]->AddComponent(messageLabel3);
+		myUI->AddUIComponent("messageLabel4", messageLabel4);
+		myUI->overlays[messageID]->AddComponent(messageLabel4);
+		_hUDController->AddOverlay(myUI->overlays[messageID]);
+		_hUDController->text.push_back(messageLabel);
+		_hUDController->text.push_back(messageLabel2);
+		_hUDController->text.push_back(messageLabel3);
+		_hUDController->text.push_back(messageLabel4);
+
+		return messageID;
+	}
 
 
 	UINT GameUserInterface::SetupLog(ADUI::ADUI* myUI)
@@ -1352,8 +1488,9 @@ namespace GolemGameUISetup
 	}
 
 
-	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem, ADAI::PathingGrid* _grid)
+	void GameUserInterface::SetupUI(ADUI::ADUI* myUI, AD_AUDIO::ADAudio* _audioSystem)
 	{
+		//ADAI::PathingGrid* grid = &ADAI::ADPathfinding::Instance()->tileMap;
 		ADUI::Settings::screenWidth = myUI->viewport->Width;
 		ADUI::Settings::screenHeight = myUI->viewport->Height;
 
@@ -1377,6 +1514,7 @@ namespace GolemGameUISetup
 		fonts[4] = "SpyroFont96.spritefont";
 		myUI->AddFontArray(fonts, 5);
 
+
 		UINT guideFont = 3;
 		float buttonSpacing = 20;
 
@@ -1390,6 +1528,7 @@ namespace GolemGameUISetup
 		myUI->AddUIController("HudController", hudController);
 		hudController->Disable();
 		UINT hudid = SetupHUD(myUI, hudController);
+		UINT humsgID = SetupMessageBox(myUI, hudController);
 
 		//// TitleScreen Controller
 		StartMenuUIController* titleScreenController = new StartMenuUIController(myUI->GetUIState());
@@ -1400,6 +1539,12 @@ namespace GolemGameUISetup
 		UINT defeatedID = SetupDefeatGameScreen(myUI);
 		titleScreenController->AddOverlay(myUI->overlays[endgameID]);
 		titleScreenController->AddOverlay(myUI->overlays[defeatedID]);
+
+		//// TutorialScreen Controller
+		TutorialController* TutorialScreenController = new TutorialController(myUI->GetUIState());
+		myUI->AddUIController("TutorialController", TutorialScreenController);
+		TutorialScreenController->Disable();
+		UINT tutorialID = SetupTutorialScreen(myUI, TutorialScreenController);
 
 		//// PauseScreen Controller
 		PauseMenuController* PauseScreenController = new PauseMenuController(myUI->GetUIState());
@@ -1417,18 +1562,27 @@ namespace GolemGameUISetup
 		UINT logID = SetupLog(myUI);
 
 
+
 		// DebugScreen Controller
 		DebugController* debugController = new DebugController(myUI->GetUIState());
 		myUI->AddUIController("DebugController", debugController);
 		debugController->Enable();
 
 
-		UINT pathingID = SetupPathingMap(myUI, debugController, _grid);
+		UINT pathingID = SetupPathingMap(myUI, debugController);
 
 
 		titleScreenController->AddOverlay(myUI->overlays[hudid]);
 		titleScreenController->AddController(hudController);
 		titleScreenController->AddController(PauseScreenController);
+		titleScreenController->AddOverlay(myUI->overlays[logID]);
+		titleScreenController->AddController(TutorialScreenController);
+		titleScreenController->AddOverlay(myUI->overlays[tutorialID]);
+
+		TutorialScreenController->AddOverlay(myUI->overlays[hudid]);
+		TutorialScreenController->AddController(hudController);
+		TutorialScreenController->AddController(PauseScreenController);
+		TutorialScreenController->AddOverlay(myUI->overlays[logID]);
 
 		PauseScreenController->AddController(hudController);
 		PauseScreenController->AddOverlay(myUI->overlays[titleID]);
@@ -1436,7 +1590,7 @@ namespace GolemGameUISetup
 		PauseScreenController->AddOverlay(myUI->overlays[optionsID]);
 		PauseScreenController->AddController(optionScreenController);
 
-		//gameplayMessageController->AddOverlay(myUI->overlays[logID]);
+		gameplayMessageController->AddOverlay(myUI->overlays[logID]);
 		gameplayMessageController->AddController(hudController);
 		gameplayMessageController->AddOverlay(myUI->overlays[hudid]);
 		gameplayMessageController->AddController(titleScreenController);
@@ -1447,6 +1601,7 @@ namespace GolemGameUISetup
 
 		gameplayMessageController->AddOverlay(myUI->overlays[endgameID]);
 		gameplayMessageController->AddOverlay(myUI->overlays[defeatedID]);
+
 
 		//gameplayMessageController
 
@@ -1478,9 +1633,6 @@ namespace GolemGameUISetup
 
 
 
-		//titleScreenController->AddOverlay(myUI->overlays[logid]);
-		//gameplayScreenController->AddOverlay(myUI->overlays[logid]);
-		//endScreenController->AddOverlay(myUI->overlays[logid]);
 
 		//uiLog->WriteToLog("UI Log Created.");
 		//uiLog->WriteToLog("1.");
@@ -1489,6 +1641,7 @@ namespace GolemGameUISetup
 		//uiLog->WriteToLog("4.");
 		//uiLog->WriteToLog("5.");
 		//uiLog->WriteToLog("6.");
+		
 	}
 
 
@@ -1505,6 +1658,68 @@ namespace GolemGameUISetup
 			it->second->SetCurrentFrame(it->first->displayState);
 		}
 		return false;
+	}
+
+
+	bool TutorialController::ProcessInput(float delta_time, float& quick)
+	{
+		bool buttonPressed = false;
+		if (currentPage == 0)
+		{
+			pagePicture[currentPage]->Enable();
+		}
+		if (Input::QueryButtonDown(GamepadButtons::Menu))
+		{
+			//Disable overlay as well
+			overlays[0]->Disable();
+			Disable();
+			controllers[controllersNameToID["HudController"]]->Enable();
+			controllers[controllersNameToID["PauseScreenController"]]->Enable();
+			overlays[overlaysNameToID["HUD"]]->Enable();
+			uiState = ADUI::UISTATE::GAMEPLAY;
+			currentPage = 0;
+
+			buttonPressed = true;
+
+		}
+		else if (Input::QueryButtonDown(GamepadButtons::B) || Input::QueryButtonDown(GamepadButtons::A))
+		{
+			buttonPressed = true;				
+			if (pagePicture.size() > currentPage)
+			{
+				pagePicture[currentPage]->Disable();
+			}
+			++currentPage;
+
+			if (currentPage == 6)
+			{
+				//Disable overlay as well
+				overlays[0]->Disable();
+				for (int i = 0; i < pagePicture.size(); ++i)
+				{
+					pagePicture[i]->Disable();
+				}
+				Disable();
+				controllers[controllersNameToID["HudController"]]->Enable();
+				controllers[controllersNameToID["PauseScreenController"]]->Enable();
+				overlays[overlaysNameToID["HUD"]]->Enable();
+				uiState = ADUI::UISTATE::GAMEPLAY;
+				currentPage = 0;
+			}
+			else
+			{
+				if (pagePicture.size() > currentPage)
+				{
+					pagePicture[currentPage]->Enable();
+				}
+				text[0]->SetText(tutorialMessages[(currentPage * 4)]);
+				text[1]->SetText(tutorialMessages[(currentPage * 4) + 1]);
+				text[2]->SetText(tutorialMessages[(currentPage * 4) + 2]);
+				text[3]->SetText(tutorialMessages[(currentPage * 4) + 3]);
+				uiState = PAUSED;
+			}
+		}
+		return buttonPressed;
 	}
 
 }
