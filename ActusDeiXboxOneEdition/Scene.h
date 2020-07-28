@@ -308,18 +308,6 @@ namespace ADGameplay
 			
 			//=========================================================Tutorial Stage
 
-			//for (unsigned int i = 0; i < 5; i++)
-			//{
-			//	Building* wall = new Building(XMFLOAT3(435.5 + (i * 40.5), 0, -900), XMFLOAT3(0, 0, 0), XMFLOAT3(35, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateWall, "Wall");
-			//	GameUtilities::AddGameObject(wall);
-			//}
-
-			//for (unsigned int i = 0; i < 5; i++)
-			//{
-			//	Building* wall = new Building(XMFLOAT3(435.5 + (i * 40.5), 0, -600), XMFLOAT3(0, 0, 0), XMFLOAT3(35, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateWall, "Wall");
-			//	GameUtilities::AddGameObject(wall);
-			//}
-
 			for (unsigned int i = 0; i < 5; i++)
 			{
 				Building* wall = new Building(XMFLOAT3(435.5 + (i * 40.5), 0, -900), XMFLOAT3(0, 0, 0), XMFLOAT3(42, 35, 20), XMFLOAT3(0, 1, 0), GameUtilities::GenerateWall, "Wall");
@@ -351,7 +339,6 @@ namespace ADGameplay
 			//===================================================Castle
 
 			Building* gate1 = new Building(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(40, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
-			Building* gate1 = new Building(XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
 			gate1->AddObject(XMFLOAT3(5,5,9.5), XMFLOAT3(0,180,0), GameUtilities::GenerateBanner);
 			gate1->AddObject(XMFLOAT3(-5,5,9.5), XMFLOAT3(0,180,0), GameUtilities::GenerateBanner);
 			gate1->AddObject(XMFLOAT3(5,5,-9.5), XMFLOAT3(0,0,0), GameUtilities::GenerateBanner);
@@ -360,7 +347,6 @@ namespace ADGameplay
 			minionTargets.push_back(gate1);
 
 			Building* gate2 = new Building(XMFLOAT3(-474, 0, -595.5), XMFLOAT3(0, 90, 0), XMFLOAT3(40, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
-			Building* gate2 = new Building(XMFLOAT3(-474, 0, -595.5), XMFLOAT3(0, 90, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
 			gate2->AddObject(XMFLOAT3(-483.5, 5, -590.5), XMFLOAT3(0, 90, 0), GameUtilities::GenerateBanner);
 			gate2->AddObject(XMFLOAT3(-464.5, 5, -590.5), XMFLOAT3(0, 270, 0), GameUtilities::GenerateBanner);
 			gate2->AddObject(XMFLOAT3(-483.5, 5, -600.5), XMFLOAT3(0, 90, 0), GameUtilities::GenerateBanner);
