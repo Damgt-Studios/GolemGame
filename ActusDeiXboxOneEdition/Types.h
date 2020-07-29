@@ -676,13 +676,6 @@ namespace ADResource
 			CollisionPacket(GameObject* a, GameObject* b, ADPhysics::Manifold& manifold) : A(a), B(b), m(manifold) {};
 		};
 
-		struct ClampingArgs
-		{
-			GameObject* golem;
-			QuadTree<ADPhysics::Triangle>* tree;
-			float time;
-		};
-
 		//If multiple instances will select one out of all of them and use only that one. 
 		//Not sure if extra ones still take up memory. Don't think they do
 		__declspec(selectany) std::queue<CollisionPacket> collisionQueue;
@@ -761,12 +754,6 @@ namespace ADResource
 			}
 
 			return false;
-		}
-
-		static void GroundClampingWrapper(void* args, int index)
-		{
-			ClampingArgs* temp = static_cast<ClampingArgs*>(args);
-			GroundClamping(temp->golem, temp->tree, temp->time);
 		}
 	}
 };

@@ -44,38 +44,54 @@ using namespace Platform::Collections;
 bool FULLSCREEN = false;
 // Settings
 
-//struct ClampingArgs
-//{
-//	GameObject* golem;
-//	QuadTree<ADPhysics::Triangle>* tree;
-//	float time;
-//};
-
-struct whateverargs
-{
-	int a, b;
-	std::promise<int>* jobpromise;
-};
 
 struct PhysicsShiz
 {
 	int OBJ_COUNT;
 	GameObject** OBJS;
 	QuadTree<int>* collisionTree;
+	promise<void>* physicspromise;
 };
 
-void dumbassMath(void* arg, int index)
+struct AiArgs
 {
-	whateverargs* penis = static_cast<whateverargs*>(arg);
+	ADGameplay::Scene* scene;
+	float delta;
+	promise<void>* scenePromise;
+};
 
-	penis->jobpromise->set_value(penis->a + penis->b);
+struct ClampingArgs
+{
+	GameObject* golem;
+	QuadTree<ADPhysics::Triangle>* tree;
+	vector<Destructable*>* stone;
+	vector<Destructable*>* water;
+	vector<Destructable*>* fire;
+	vector<Destructable*>* wood;
+	float time;
+	promise<void>* clamppromise;
+};
 
+void ClampingWrapper(void* args, int index)
+{
+	ClampingArgs* temp = static_cast<ClampingArgs*>(args);
+	for (int i = 0; i < 10; i++)
+	{
+		GroundClamping(temp->stone->at(i), temp->tree, temp->time);
+		GroundClamping(temp->water->at(i), temp->tree, temp->time);
+		GroundClamping(temp->fire->at(i), temp->tree, temp->time);
+		GroundClamping(temp->wood->at(i), temp->tree, temp->time);
+	}
+
+	GroundClamping(temp->golem, temp->tree, temp->time);
+	temp->clamppromise->set_value();
 }
 
-void UpdateWrapper(void* args, int index)
+void AiUpdateWrapper(void* args, int index)
 {
-	Engine::AllArgs* temp = static_cast<Engine::AllArgs*>(args);
-	temp->thePromise->set_value(temp->engine->Render());
+	AiArgs* temp = static_cast<AiArgs*>(args);
+	temp->scene->Update(temp->delta);
+	temp->scenePromise->set_value();
 }
 
 void MainPhysics(void* args, int index)
@@ -111,7 +127,9 @@ void MainPhysics(void* args, int index)
 	}
 
 	ADResource::ADGameplay::ResolveCollisions();
+	temp->physicspromise->set_value();
 }
+
 
 // the class definition for the core "framework" of our app
 ref class App sealed : public IFrameworkView
@@ -125,11 +143,14 @@ private:
 	AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
 	ADGameplay::Scene currentScene;
+	ClampingArgs* clampArgs;
+	AiArgs* aiArgs;
 	//MinionManager* minionManager;
 	AD_ULONG golem_collider = 0;
 	//FountainEmitter femitter;
 
 	bool shutdown = false;
+	bool thread = false;
 
 	// Timing
 	XTime game_time;
@@ -147,8 +168,6 @@ private:
 
 	float default_yaw = 180.0f;
 	float default_pitch = 30.0f;
-	void* testingthread;
-	ClampingArgs* clampArgs;
 
 	// Physics
 	ADPhysics::AABB test_colider;
@@ -200,44 +219,16 @@ public:
 		engine = new Engine;
 		audioEngine = new AD_AUDIO::ADAudio;
 		game = new TheGreatGolem();
-		engineArgs = new Engine::AllArgs();
+		clampArgs = new ClampingArgs();
+
+		jobManagerTest = Jobs::JobManager::GetInstance();
+		//clampArgs = new ClampingArgs();
+		PhysicsArguments = new PhysicsShiz();
+		aiArgs = new AiArgs();
 		//Initialize.  Order Matters.
 		audioEngine->Init();
 		game->LoadGameAudio(audioEngine);
 		game->Initialize();
-		jobManagerTest = Jobs::JobManager::GetInstance();
-		clampArgs = new ClampingArgs();
-		PhysicsArguments = new PhysicsShiz();
-
-		promise<bool> enginePromise;
-		future<bool> engineFuture = enginePromise.get_future();
-
-		engineArgs->thePromise = &enginePromise;
-
-		/*vector<promise<int>> promises;
-		vector<future<int>> futures;
-		vector<whateverargs*> peni;
-		for (int i = 0; i < 20; i++)
-		{
-			whateverargs* superpenis = new whateverargs();
-			superpenis->a = i + 1;
-			superpenis->b = i + 4;
-			promises.push_back(std::promise<int>());
-			futures.push_back(std::future<int>());
-			peni.push_back(superpenis);
-		}
-
-		for (int i = 0; i < 20; i++)
-		{
-			futures[i] = promises[i].get_future();
-			peni[i]->jobpromise = &promises[i];
-			jobManagerTest->AddJob(&dumbassMath, (void*)(peni[i]), 0);
-		}
-
-		for (int i = 0; i < 20; i++)
-		{
-			futures[i].wait();
-		}*/
 
 		BigCloudEmitterListener bigGolemDustParticles(engine->bigCloud);
 		bigGolemDustParticles.lifespan = 0.5f;
@@ -285,9 +276,9 @@ public:
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		
+
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		
+
 		GameUtilities::AddGameObject(engine->GetOrbitCamera());
 		golem->bigPuffs[STONE] = &engine->bigStonePuff;
 		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
@@ -418,7 +409,7 @@ public:
 
 #pragma endregion
 
-//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+		//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
 #pragma region Level Boundary
 
 		GameObject* object1 = new GameObject();
@@ -683,7 +674,7 @@ public:
 		eventUIMessage.targetID = 0;
 		eventUIMessage.externalMsg = true;
 		eventUIMessage.commandID = 1;
-		MessageTrigger* tb = GameUtilities::AddMessageTrigger(eventUIMessage ,XMFLOAT3(500, 0, -900), XMFLOAT3(700, 50, 800), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -900), XMFLOAT3(700, 50, 800), XMFLOAT3(0, 0, 0));
 		tb->active = true;
 		GameUtilities::AddGameObject(tb, false);
 		eventUIMessage.targetID = 1;
@@ -727,10 +718,24 @@ public:
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 		game_time.Restart();
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
-		engineArgs->engine = engine;
+		clampArgs->tree = tree;
+		clampArgs->golem = golem;
+		clampArgs->time = delta_time;
+		clampArgs->stone = &stoneMinions;
+		clampArgs->water = &waterMinions;
+		clampArgs->fire = &fireMinions;
+		clampArgs->wood = &woodMinions;
+		aiArgs->scene = &currentScene;
 		while (!shutdown)
 		{
-			//jobManagerTest->AddJob(&UpdateWrapper, (void*)engineArgs, 0);
+			promise<void> physicspromise;
+			promise<void> scenepromise;
+			promise<void> clamppromise;
+			future<void> physicsfuture = physicspromise.get_future();
+			future<void> scenefuture = scenepromise.get_future();
+			future<void> clampfuture = clamppromise.get_future();
+			aiArgs->scenePromise = &scenepromise;
+			clampArgs->clamppromise = &clamppromise;
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
@@ -738,15 +743,16 @@ public:
 			ProcessInput();
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
 
-			//ADAI::ADPathfinding::Instance()->UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
 			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
 			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
+			PhysicsArguments->collisionTree = collisionTree;
+			PhysicsArguments->physicspromise = &physicspromise;
 
 			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
-			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 			PhysicsArguments->OBJ_COUNT = OBJ_COUNT;
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
 			PhysicsArguments->OBJS = OBJS;
-			PhysicsArguments->collisionTree = collisionTree;
+
 
 			physics_timer += delta_time;
 			if (physics_timer > physics_rate)
@@ -777,89 +783,38 @@ public:
 				}*/
 
 				//----------------------------------New Physics System-------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-
-					if (OBJS[i]->colliderPtr)
-					{
-						int* index = new int(i);
-						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
-						{
-							int somethingswrong = 0;
-							somethingswrong++;
-						}
-					}
-				}
-
-				for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				{
-					if (OBJS[i]->colliderPtr)
-					{
-						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
-
-						for (unsigned int j = 0; j < collisionVector.size(); j++)
-						{
-							if (OBJS[*collisionVector[j].data]->colliderPtr)
-								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-						}
-					}
-				}*/
+				thread = true;
 				jobManagerTest->AddJob(&MainPhysics, (void*)PhysicsArguments, 0);
-				//---------------------------------------------End New Physics System------------------------------------------
 
-				//Resolve all collisions that occurred this frame
-				//ADResource::ADGameplay::ResolveCollisions();
-				//jobManagerTest->AddJob(&ADResource::ADGameplay::ResolveCollisionsWrapper, testingthread, 0);
-
-				for (int i = 0; i < 10; i++)
+				/*for (int i = 0; i < 10; i++)
 				{
 					GroundClamping(stoneMinions[i], tree, delta_time);
 					GroundClamping(waterMinions[i], tree, delta_time);
 					GroundClamping(fireMinions[i], tree, delta_time);
 					GroundClamping(woodMinions[i], tree, delta_time);
-				}
+				}*/
 
-				clampArgs->golem = golem;
-				clampArgs->tree = tree;
-				clampArgs->time = delta_time;
-
-
-				//GroundClamping(golem, tree, delta_time);
-				jobManagerTest->AddJob(&ADResource::ADGameplay::GroundClampingWrapper, (void*)clampArgs, 0);
 			}
 
-			if (Input::QueryButtonDown(GamepadButtons::RightShoulder))
-			{
-				//minionManager->Instance()->BirthStoneMinion(golem->flockingGroups[0]);
-				//pathfinder.ClearDebug();
-				UINT srow;
-				UINT scolumn;
-				UINT drow;
-				UINT dcolumn;
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->GetPosition().x, golem->GetPosition().z), scolumn, srow);
-				pathfinder.tileMap.GetColumnRowFromPosition(XMFLOAT2(golem->targetMarker->GetPosition().x, golem->targetMarker->GetPosition().z), dcolumn, drow);
-				pathfinder.enter(scolumn, srow, dcolumn, drow);
-			}
-			if (!pathfinder.isDone())
-			{
-				pathfinder.update(0.001f);
-			}
-			pathfinder.UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
+			//GroundClamping(golem, tree, delta_time);
+			jobManagerTest->AddJob(&ClampingWrapper, (void*)clampArgs, 1);
+
+			//ADAI::ADPathfinding::Instance()->UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
 			//golem->flockingGroups[commandTargetGroup
 
 			// Debug draw
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
-	
+
 			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
-	
+
 
 			golem->GetView(view);
 
+			aiArgs->delta = engine->GetEngineDeltaTime();
 
 
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
@@ -873,9 +828,9 @@ public:
 
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
 
-			XMFLOAT4X4 persPass; 
+			XMFLOAT4X4 persPass;
 			XMStoreFloat4x4(&persPass, pers);
-			
+
 
 #ifdef _DEBUG
 
@@ -919,7 +874,7 @@ public:
 
 			//	Works the exact same as the commented code above
 			
-
+			//jobManagerTest->AddJob(&AiUpdateWrapper, (void*)aiArgs, 0);
 			//GroundClamping(cube, tree, delta_time);
 			//cube->transform.r[3].m128_f32[1] += 5;
 
@@ -927,10 +882,17 @@ public:
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 			// D3d11 shit
+			clampfuture.wait();
+			if (thread)
+			{
+				physicsfuture.wait();
+				thread = false;
+			}
 			if (!engine->Update(delta_time)) break;
 			currentScene.Update(engine->GetEngineDeltaTime());
 			if (!engine->Render()) break;
 
+			//scenefuture.wait();
 			collisionTree->Shutdown();
 
 			// Update framerate
