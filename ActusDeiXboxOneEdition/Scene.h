@@ -307,7 +307,7 @@ namespace ADGameplay
 #pragma region Level
 			
 			//=========================================================Tutorial Stage
-
+			
 			for (unsigned int i = 0; i < 5; i++)
 			{
 				Building* wall = new Building(XMFLOAT3(435.5 + (i * 40.5), 0, -900), XMFLOAT3(0, 0, 0), XMFLOAT3(42, 35, 20), XMFLOAT3(0, 1, 0), GameUtilities::GenerateWall, "Wall");
@@ -464,7 +464,7 @@ namespace ADGameplay
 				minionAvoids.push_back(wall);
 			}
 
-
+			
 			Building* tower1 = new Building(XMFLOAT3(271.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), GameUtilities::GenerateTower, "Tower");
 			tower1->AddObject(XMFLOAT3(271.5, 20, 9), XMFLOAT3(0, 180, 0), GameUtilities::GenerateBanner);
 			tower1->AddObject(XMFLOAT3(280.5, 20, 0), XMFLOAT3(0, 270, 0), GameUtilities::GenerateBanner);
@@ -502,12 +502,6 @@ namespace ADGameplay
 			AddRubble(tower6, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 45, 12.5), XMFLOAT3(0, 0.5, 0), _engine);
 
 			//========================================================Houses
-
-			//Building* tutorial_home1 = new Building(XMFLOAT3(570, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse2, "House2");
-			//GameUtilities::AddGameObject(tutorial_home1);
-
-			//Building* tutorial_home2 = new Building(XMFLOAT3(570, 0, -1100), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
-			//GameUtilities::AddGameObject(tutorial_home2);
 
 			Building* tutorial_home1 = new Building(XMFLOAT3(570, 0, -1000), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse2, "House2");
 			GameUtilities::AddGameObject(tutorial_home1);
@@ -556,7 +550,7 @@ namespace ADGameplay
 			Building* tutorial_home12 = new Building(XMFLOAT3(460, 0, -200), XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse2, "House2");
 			GameUtilities::AddGameObject(tutorial_home12);
 			AddRubble(tutorial_home12, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
-
+			
 			Building* home1 = new Building(XMFLOAT3(575, 0, 200), XMFLOAT3(0, -60, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse4, "House4");
 			GameUtilities::AddGameObject(home1);
 			AddRubble(home1, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
@@ -776,7 +770,7 @@ namespace ADGameplay
 			Building* home55 = new Building(XMFLOAT3(-500, 0, -1000), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse1, "House1");
 			GameUtilities::AddGameObject(home55);
 			AddRubble(home55, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
-
+			
 			Building* home56 = new Building(XMFLOAT3(-200, 0, -30), XMFLOAT3(0, -90, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), GameUtilities::GenerateHouse2, "House2");
 			GameUtilities::AddGameObject(home56);
 			AddRubble(home56, 1, XMFLOAT3(0, 0, 0), XMFLOAT3(25, 35, 25), XMFLOAT3(0, 0.5, 5), _engine);
@@ -1054,12 +1048,9 @@ namespace ADGameplay
 			meeting_hall4->safeRadius = safeRad2;
 			GameUtilities::AddGameObject(meeting_hall4);
 			AddRubble(meeting_hall4, 3, XMFLOAT3(0, 0, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), _engine, true);
-			//Building* rubble1 = new Building(XMFLOAT3(580, 0, -350), XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateRubble1, "Rubble");
-			//GameUtilities::AddGameObject(rubble1);
-			//meeting_hall4->SetRubble(rubble1);
 
 			//===================================================Ballista Towers
-
+			
 			Building* attackTower1 = new Building(XMFLOAT3(450, 0, -350), XMFLOAT3(0, 180, 0), XMFLOAT3(12.5, 25, 12.5), XMFLOAT3(0, 5, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
 			attackTower1->AddObject(XMFLOAT3(450, 2, -355.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBanner);
 			GameUtilities::AddGameObject(attackTower1);
@@ -1431,7 +1422,7 @@ namespace ADGameplay
 			light1.lightType = (int)LIGHTTYPE::POINT;
 			light1.diffuse = XMFLOAT4(1, 0.807, 0, 1);
 			light1.diffuseIntensity = 4;
-			light1.position = XMFLOAT4(27.5, 5, 295, 1);
+			light1.position = XMFLOAT4(27.5, 7.5, 297, 1);
 			light1.lightRadius = 50;
 
 			Building* lamp2 = new Building(XMFLOAT3(35, 0, 430), XMFLOAT3(0, 180, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
@@ -1442,7 +1433,7 @@ namespace ADGameplay
 			light2.lightType = (int)LIGHTTYPE::POINT;
 			light2.diffuse = XMFLOAT4(1, 0.807, 0, 1);
 			light2.diffuseIntensity = 4;
-			light2.position = XMFLOAT4(35, 5, 430, 1);
+			light2.position = XMFLOAT4(35, 7.5, 428, 1);
 			light2.lightRadius = 50;
 
 			Building* lamp3 = new Building(XMFLOAT3(315, 0, 255), XMFLOAT3(0, 45, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
@@ -1453,7 +1444,7 @@ namespace ADGameplay
 			light3.lightType = (int)LIGHTTYPE::POINT;
 			light3.diffuse = XMFLOAT4(1, 0.807, 0, 1);
 			light3.diffuseIntensity = 4;
-			light3.position = XMFLOAT4(315, 5, 255, 1);
+			light3.position = XMFLOAT4(316, 7.5, 256, 1);
 			light3.lightRadius = 50;
 
 			Building* lamp4 = new Building(XMFLOAT3(355, 0, 425), XMFLOAT3(0, 180, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
@@ -1464,7 +1455,7 @@ namespace ADGameplay
 			light4.lightType = (int)LIGHTTYPE::POINT;
 			light4.diffuse = XMFLOAT4(1, 0.807, 0, 1);
 			light4.diffuseIntensity = 4;
-			light4.position = XMFLOAT4(355, 5, 425, 1);
+			light4.position = XMFLOAT4(355, 5, 423, 1);
 			light4.lightRadius = 50;
 
 			Building* lamp5 = new Building(XMFLOAT3(-240, 0, 245), XMFLOAT3(0, 180, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
@@ -1475,8 +1466,162 @@ namespace ADGameplay
 			light5.lightType = (int)LIGHTTYPE::POINT;
 			light5.diffuse = XMFLOAT4(1, 0.807, 0, 1);
 			light5.diffuseIntensity = 4;
-			light5.position = XMFLOAT4(-240, 5, 245, 1);
+			light5.position = XMFLOAT4(-240, 7.5, 243, 1);
 			light5.lightRadius = 50;
+
+			Building* lamp6 = new Building(XMFLOAT3(-180, 0, -55), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp6);
+			
+			Light light6;
+			ZeroMemory(&light6, sizeof(Light));
+			light6.lightType = (int)LIGHTTYPE::POINT;
+			light6.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light6.diffuseIntensity = 4;
+			light6.position = XMFLOAT4(-180, 7.5, -53, 1);
+			light6.lightRadius = 50;
+
+			Building* lamp7 = new Building(XMFLOAT3(120, 0, -57), XMFLOAT3(0, 180, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp7);
+
+			Light light7;
+			ZeroMemory(&light7, sizeof(Light));
+			light7.lightType = (int)LIGHTTYPE::POINT;
+			light7.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light7.diffuseIntensity = 4;
+			light7.position = XMFLOAT4(120, 7.5, -59, 1);
+			light7.lightRadius = 50;
+
+			Building* lamp8 = new Building(XMFLOAT3(-360, 0, -110), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp8);
+			
+			Light light8;
+			ZeroMemory(&light8, sizeof(Light));
+			light8.lightType = (int)LIGHTTYPE::POINT;
+			light8.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light8.diffuseIntensity = 4;
+			light8.position = XMFLOAT4(-360, 7.5, -108, 1);
+			light8.lightRadius = 50;
+
+			Building* lamp9 = new Building(XMFLOAT3(192.5, 0, -160), XMFLOAT3(0, -90, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp9);
+			
+			Light light9;
+			ZeroMemory(&light9, sizeof(Light));
+			light9.lightType = (int)LIGHTTYPE::POINT;
+			light9.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light9.diffuseIntensity = 4;
+			light9.position = XMFLOAT4(190.5, 7.5, -160, 1);
+			light9.lightRadius = 50;
+
+			Building* lamp10 = new Building(XMFLOAT3(191, 0, -410), XMFLOAT3(0, -30, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp10);
+
+			Light light10;
+			ZeroMemory(&light10, sizeof(Light));
+			light10.lightType = (int)LIGHTTYPE::POINT;
+			light10.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light10.diffuseIntensity = 4;
+			light10.position = XMFLOAT4(190.75, 7.5, -409.25, 1);
+			light10.lightRadius = 50;
+
+			Building* lamp11 = new Building(XMFLOAT3(-9, 0, -312.5), XMFLOAT3(0, -45, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp11);
+			
+			Light light11;
+			ZeroMemory(&light11, sizeof(Light));
+			light11.lightType = (int)LIGHTTYPE::POINT;
+			light11.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light11.diffuseIntensity = 4;
+			light11.position = XMFLOAT4(-10, 7.5, -311.5, 1);
+			light11.lightRadius = 50;
+
+			Building* lamp12 = new Building(XMFLOAT3(-120, 0, -390), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp12);
+
+			Light light12;
+			ZeroMemory(&light12, sizeof(Light));
+			light12.lightType = (int)LIGHTTYPE::POINT;
+			light12.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light12.diffuseIntensity = 4;
+			light12.position = XMFLOAT4(-120, 7.5, -388, 1);
+			light12.lightRadius = 50;
+			
+			Building* lamp13 = new Building(XMFLOAT3(120, 0, -650), XMFLOAT3(0, 45, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp13);
+			
+			Light light13;
+			ZeroMemory(&light13, sizeof(Light));
+			light13.lightType = (int)LIGHTTYPE::POINT;
+			light13.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light13.diffuseIntensity = 4;
+			light13.position = XMFLOAT4(121, 7.5, -649, 1);
+			light13.lightRadius = 50;
+
+			Building* lamp14 = new Building(XMFLOAT3(-50, 0, -550), XMFLOAT3(0, 180, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp14);
+			
+			Light light14;
+			ZeroMemory(&light14, sizeof(Light));
+			light14.lightType = (int)LIGHTTYPE::POINT;
+			light14.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light14.diffuseIntensity = 4;
+			light14.position = XMFLOAT4(-50, 7.5, -552, 1);
+			light14.lightRadius = 50;
+
+			Building* lamp15 = new Building(XMFLOAT3(-215, 0, -390), XMFLOAT3(0, 180, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp15);
+			
+			Light light15;
+			ZeroMemory(&light15, sizeof(Light));
+			light15.lightType = (int)LIGHTTYPE::POINT;
+			light15.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light15.diffuseIntensity = 4;
+			light15.position = XMFLOAT4(-215, 7.5, -392, 1);
+			light15.lightRadius = 50;
+
+			Building* lamp16 = new Building(XMFLOAT3(-190, 0, -700), XMFLOAT3(0, -25, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp16);
+			
+			Light light16;
+			ZeroMemory(&light16, sizeof(Light));
+			light16.lightType = (int)LIGHTTYPE::POINT;
+			light16.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light16.diffuseIntensity = 4;
+			light16.position = XMFLOAT4(-190.25, 7.5, -699.25, 1);
+			light16.lightRadius = 50;
+
+			Building* lamp17 = new Building(XMFLOAT3(-382, 0, -904.75), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp17);
+			
+			Light light17;
+			ZeroMemory(&light17, sizeof(Light));
+			light17.lightType = (int)LIGHTTYPE::POINT;
+			light17.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light17.diffuseIntensity = 4;
+			light17.position = XMFLOAT4(-382, 7.5, -903, 1);
+			light17.lightRadius = 50;
+
+			Building* lamp18 = new Building(XMFLOAT3(-102, 0, -905), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp18);
+			
+			Light light18;
+			ZeroMemory(&light18, sizeof(Light));
+			light18.lightType = (int)LIGHTTYPE::POINT;
+			light18.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light18.diffuseIntensity = 4;
+			light18.position = XMFLOAT4(-102, 7.5, -903, 1);
+			light18.lightRadius = 50;
+
+			Building* lamp19 = new Building(XMFLOAT3(178, 0, -905), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Inv");
+			GameUtilities::AddGameObject(lamp19);
+
+			Light light19;
+			ZeroMemory(&light19, sizeof(Light));
+			light19.lightType = (int)LIGHTTYPE::POINT;
+			light19.diffuse = XMFLOAT4(1, 0.807, 0, 1);
+			light19.diffuseIntensity = 4;
+			light19.position = XMFLOAT4(178, 7.5, -903, 1);
+			light19.lightRadius = 50;
 
 			ResourceManager::AddLight(light);
 			ResourceManager::AddLight(light1);
@@ -1484,6 +1629,35 @@ namespace ADGameplay
 			ResourceManager::AddLight(light3);
 			ResourceManager::AddLight(light4);
 			ResourceManager::AddLight(light5);
+			ResourceManager::AddLight(light6);
+			ResourceManager::AddLight(light7);
+			ResourceManager::AddLight(light8);
+			ResourceManager::AddLight(light9);
+			ResourceManager::AddLight(light10);
+			ResourceManager::AddLight(light11);
+			ResourceManager::AddLight(light12);
+			ResourceManager::AddLight(light13);
+			ResourceManager::AddLight(light14);
+			ResourceManager::AddLight(light15);
+			ResourceManager::AddLight(light16);
+			ResourceManager::AddLight(light17);
+			ResourceManager::AddLight(light18);
+			ResourceManager::AddLight(light19);
+
+			Building* well1 = new Building(XMFLOAT3(525, 0, 525), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Well");
+			GameUtilities::AddGameObject(well1);
+			
+			Building* well2 = new Building(XMFLOAT3(225, 0, 306.25), XMFLOAT3(0, -45, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Well");
+			GameUtilities::AddGameObject(well2);
+			
+			Building* well3 = new Building(XMFLOAT3(-200, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Well");
+			GameUtilities::AddGameObject(well3);
+			
+			Building* well4 = new Building(XMFLOAT3(160, 0, -75), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Well");
+			GameUtilities::AddGameObject(well4);
+			
+			Building* well5 = new Building(XMFLOAT3(185, 0, -390), XMFLOAT3(0, 0, 0), XMFLOAT3(3, 5, 3), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Well");
+			GameUtilities::AddGameObject(well5);
 
 			GameUtilities::GeneratePathway2(XMFLOAT3(0, 0, 10), XMFLOAT3(0, 0, 0));
 			GameUtilities::GeneratePathway3(XMFLOAT3(-17.5, 0, 62.5), XMFLOAT3(0, 180, 0));
@@ -1561,7 +1735,8 @@ namespace ADGameplay
 			GameUtilities::GeneratePathway2(XMFLOAT3(200, 0, -719), XMFLOAT3(0, 0, 0));
 			GameUtilities::GeneratePathway3(XMFLOAT3(175, 0, -770), XMFLOAT3(0, -90, 0));
 
-			GameUtilities::GeneratePathway2(XMFLOAT3(125, 0, -665), XMFLOAT3(0, -45, 0));
+			GameUtilities::GeneratePathway2(XMFLOAT3(158, 0, -676), XMFLOAT3(0, -45, 0));
+			GameUtilities::GeneratePathway2(XMFLOAT3(190, 0, -716), XMFLOAT3(0, -25, 0));
 
 			GameUtilities::GeneratePathway2(XMFLOAT3(178, 0, -350), XMFLOAT3(0, 45, 0));
 
@@ -1702,8 +1877,8 @@ namespace ADGameplay
 			GameUtilities::GeneratePathway2(XMFLOAT3(-555, 0, -970), XMFLOAT3(0, 0, 0));
 			GameUtilities::GeneratePathway2(XMFLOAT3(-555, 0, -916), XMFLOAT3(0, 0, 0));
 
-			/*
-
+			
+			
 			//Trees Collidable and Non-collidable
 			XMFLOAT3 renderable_tree_positions[] = {
 				XMFLOAT3(-340, 0, 25),
@@ -2349,7 +2524,7 @@ namespace ADGameplay
 			{
 				GameUtilities::AddGameObject(new Building(position, XMFLOAT3(0, 0, 0), XMFLOAT3(12.5, 9, 12.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Inv"));
 			}
-
+			
 			towers.push_back(GameUtilities::AttachTowerAI(ballista1, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista2, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista3, &villagerThreats));
@@ -2379,8 +2554,6 @@ namespace ADGameplay
 			towers.push_back(GameUtilities::AttachTowerAI(ballista27, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista28, &villagerThreats));
 			towers.push_back(GameUtilities::AttachTowerAI(ballista29, &villagerThreats));
-			*/
-
 #pragma endregion
 
 

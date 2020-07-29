@@ -187,10 +187,6 @@ public:
 		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
 		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
 
-
-
-
-
 #ifdef _DEBUG
 		Renderable* minionCollider = GameUtilities::AddRenderableCollider();
 
@@ -336,8 +332,8 @@ public:
 		object5->team = 4;
 		object5->colliderPtr = new AABB(XMFLOAT3(400, 0, -625), XMFLOAT3(22.5, 100, 1400));
 
-		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
-		//std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
+		//std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4 };
+		std::vector<GameObject*> forcedCollisions = { object1, object2, object3, object4, object5 };
 
 		GameUtilities::GenerateRockWall1(XMFLOAT3(630, 0, 10), XMFLOAT3(0, 180, 0));
 		GameUtilities::GenerateRockWall2(XMFLOAT3(630, 0, 50), XMFLOAT3(0, 0, 0));

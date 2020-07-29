@@ -156,7 +156,7 @@ namespace ADResource
 					models.push_back(r);
 			}
 
-			void SetRubble(Building* _rubble)
+			void SetRubble(Building* _rubble, ADResource::ADGameplay::GameObject* _player, bool _townHall = false)
 			{
 				rubble = _rubble;
 				rubble->active = false;

@@ -208,6 +208,20 @@ StatFail=0
 StatCurrent=8
 ;
 
+StatSheet=Well:
+AddStat=Health
+StatMin=0
+StatMax=200
+StatFail=0
+StatCurrent= 200
+
+AddStat=Armor
+StatMin=1
+StatMax=500
+StatFail=0
+StatCurrent=8
+;
+
 StatSheet=Inv:
 AddStat=Health
 StatMin=0

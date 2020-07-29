@@ -930,8 +930,8 @@ std::vector<Renderable*> GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rota
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Well_Wooden.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Well_Hole.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Well_Wooden.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 0.01f, pos.z), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Well_Hole.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x, pos.y + 0.01f, pos.z), XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1086,7 +1086,7 @@ std::vector<Renderable*> GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 rot
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Straw_01.mesh", "files/textures/Straw.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Straw_01.mesh", "files/textures/Straw.mat", pos, XMFLOAT3(0.03, 0.03, 0.03), rotation, true));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
