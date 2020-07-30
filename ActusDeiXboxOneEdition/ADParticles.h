@@ -19,12 +19,12 @@ namespace
 
 struct ParticleConstantBuffer
 {
-	XMFLOAT4X4 WorldMatrix;
-	XMFLOAT4X4 ViewMatrix;
-	XMFLOAT4X4 ProjectionMatrix;
-	XMFLOAT4 camPos;
-	XMFLOAT4 Time;
-	XMFLOAT4 Dimensions;
+	XMFLOAT4X4 WorldMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+	XMFLOAT4X4 ViewMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+	XMFLOAT4X4 ProjectionMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+	XMFLOAT4 camPos = { 0,0,0,0 };
+	XMFLOAT4 Time = { 0,0,0,0};
+	XMFLOAT4 Dimensions = { 0,0,0,0 };
 };
 
 struct ParticlePositionConstantBuffer
@@ -34,8 +34,8 @@ struct ParticlePositionConstantBuffer
 
 struct ParticleAttributes
 {
-	XMFLOAT4 position;
-	XMFLOAT4 color;
+	XMFLOAT4 position = { 0,0,0,0 };
+	XMFLOAT4 color = { 0,0,0,0 };
 };
 
 class Particle
@@ -140,11 +140,11 @@ public:
 	}
 private:
 	ParticleAttributes attributes;
-	XMFLOAT4 velocity;
-	float width;
-	float height;
-	float gravityEffect;
-	float lifeSpan;
+	XMFLOAT4 velocity = { 0,0,0,0 };
+	float width = 0;
+	float height = 0;
+	float gravityEffect = 0;
+	float lifeSpan = 0;
 	float elaspedTime = 0.0f;
 };
 
@@ -158,7 +158,7 @@ public:
 	ComPtr<ID3D11GeometryShader> geometryShader;
 	ComPtr<ID3D11PixelShader> pixelShader;
 	XMMATRIX worldMatrix;
-	Particle* particleToRender;
+	Particle* particleToRender = nullptr;
 	ComPtr<ID3D11Buffer> particleCBuff;
 	ComPtr<ID3D11Buffer> particlePosCBuff;
 	ParticleConstantBuffer particleConstants;
@@ -377,10 +377,10 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
+	float lifeSpan = 0;
 };
 
 class SpreadEmitter
@@ -453,10 +453,10 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
+	float lifeSpan = 0.0f;
 };
 
 class CylinderEmitter
@@ -564,14 +564,14 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
-	float emitterRadius;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
+	float emitterRadius = 0.0f;
 	vector<XMFLOAT4> cylinderPoints;
-	int emitterSlices;
+	int emitterSlices = 0;
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class BigCloudEmitter
@@ -657,11 +657,11 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0;
+	bool isActive = false;
 };
 
 class SmallCloudEmitter
@@ -746,11 +746,11 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class UpwardCloudEmitter
@@ -839,11 +839,11 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class OutwardCloudEmitter
@@ -928,11 +928,11 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class LongForwardCloudEmitter
@@ -1019,11 +1019,11 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class WaveEmitter
@@ -1108,12 +1108,12 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
+	float lifeSpan = 0.0f;
 	float totalElaspedTime = 0.0f;
-	bool isActive;
+	bool isActive = false;
 };
 
 class AnimSpreadEmitter
@@ -1209,13 +1209,13 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
+	int size = 0;
 	XMFLOAT4 emitterPos;
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	float coordTime;
-	float uCoord;
-	float vCoord;
+	float lifeSpan = 0.0f;
+	float coordTime = 0.0f;
+	float uCoord = 0.0f;
+	float vCoord = 0.0f;
 };
 
 class HealthEmitter
@@ -1323,14 +1323,14 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
-	float emitterRadius;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
+	float emitterRadius = 0.0f;
 	vector<XMFLOAT4> cylinderPoints;
-	int emitterSlices;
+	int emitterSlices = 0;
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class EssenceEmitter
@@ -1398,9 +1398,9 @@ public:
 private:
 	ParticleRenderer renderer;
 	Particle particle;
-	XMFLOAT4 emitterPos;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	bool isActive;
+	bool isActive = false;
 };
 
 class BloodEmitter
@@ -1494,12 +1494,12 @@ public:
 private:
 	ParticleRenderer renderer;
 	Particle particle;
-	XMFLOAT4 emitterPos;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	bool isActive;
-	float coordTime;
-	float uCoord;
-	float vCoord;
+	bool isActive = false;
+	float coordTime = 0.0f;
+	float uCoord= 0.0f;
+	float vCoord= 0.0f;
 };
 
 class BigElementalPuffEmitter
@@ -1593,11 +1593,11 @@ private:
 	Particle particle;
 	XMFLOAT4 emitterPos;
 	float elaspedTime = 0.0f;
-	bool isActive;
-	float coordTime;
-	float uCoord;
-	float vCoord;
-	XMFLOAT4 color;
+	bool isActive = false;
+	float coordTime = 0.0f;
+	float uCoord= 0.0f;
+	float vCoord= 0.0f;
+	XMFLOAT4 color = { 0,0,0,0 };
 };
 
 class SmallElementalPuffEmitter
@@ -1688,12 +1688,12 @@ public:
 private:
 	ParticleRenderer renderer;
 	Particle particle;
-	XMFLOAT4 emitterPos;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	bool isActive;
-	float coordTime;
-	float uCoord;
-	float vCoord;
+	bool isActive = false;
+	float coordTime = 0;
+	float uCoord= 0;
+	float vCoord= 0;
 };
 
 class FireballEmitter
@@ -1779,11 +1779,11 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };
 
 class IronSkinEmitter
@@ -1865,9 +1865,9 @@ public:
 private:
 	ParticleRenderer renderer;
 	vector<Particle> particles;
-	int size;
-	XMFLOAT4 emitterPos;
+	int size = 0;
+	XMFLOAT4 emitterPos = { 0,0,0,0 };
 	float elaspedTime = 0.0f;
-	float lifeSpan;
-	bool isActive;
+	float lifeSpan = 0.0f;
+	bool isActive = false;
 };

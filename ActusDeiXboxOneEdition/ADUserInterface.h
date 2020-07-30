@@ -40,12 +40,12 @@ namespace ADUI
         ~UIMessage() {};
 
         bool externalMsg = false;
-        UINT targetID;
-        UINT commandID;
-        UINT componentIndex;
+        UINT targetID = 0;
+        UINT commandID = 0;
+        UINT componentIndex = 0;
         union
         {
-            int ivalue;
+            int ivalue = 0;
             XMFLOAT4 fvalue;
             bool bvalue;
         };
@@ -53,19 +53,19 @@ namespace ADUI
 
     struct AnimationData
     {
-        UINT startFrame;
-        UINT frameCount;
-        UINT fps;
-        float updateThreshold;
+        UINT startFrame = 0;
+        UINT frameCount = 0;
+        UINT fps = 0;
+        float updateThreshold = 0;
     };
 
     struct TextLabel
     {
-        bool visible;
-        XMFLOAT2 position;
-        std::string output;
+        bool visible = false;
+        XMFLOAT2 position = { 0,0 };
+        std::string output = "";
 
-        float scale;
+        float scale = 0;
         XMVECTOR tint = Colors::White;
         float rotation = 0.f;
         XMFLOAT2 origin = { 0,0 };
@@ -118,19 +118,19 @@ namespace ADUI
     protected:
         Reaction** reactions = nullptr;
         UINT reactionCount = 0;
-        RECT corners;
-        XMFLOAT2 position;
-        XMFLOAT2 posOffsetByAnchor;
-        XMFLOAT2 size;
+        RECT corners = { 0,0,0,0 };
+        XMFLOAT2 position = { 0,0 };
+        XMFLOAT2 posOffsetByAnchor = { 0,0 };
+        XMFLOAT2 size = { 0,0 };
         XMFLOAT2 center = { 0,0 };
-        XMFLOAT2 scale;
-        bool controlFocus;
+        XMFLOAT2 scale = { 0,0 };
+        bool controlFocus = false;
 
     public:
-        std::string name;
-        bool active;
-        bool visible;
-        bool stretched;
+        std::string name = "";
+        bool active = false;
+        bool visible = false;
+        bool stretched = false;
 
 
         virtual ~UIComponent();
@@ -181,7 +181,7 @@ namespace ADUI
     class Overlay2D
     {
     public:
-        std::string name;
+        std::string name = "";
         bool active = true;
         bool visible = true;
         std::vector < UIComponent* > components;
@@ -265,7 +265,7 @@ namespace ADUI
     class Text2D
     {
     private:
-        SpriteBatch* spriteBatch;
+        SpriteBatch* spriteBatch = nullptr;
 
     public:
         std::unique_ptr<SpriteFont> spriteFont;
@@ -275,25 +275,25 @@ namespace ADUI
 
     class Image2D : public UIComponent
     {
-        ID3D11ShaderResourceView* texture;
-        SpriteBatch* spriteBatch;
-        RECT* uvRect;
-        AnimationData* animations;
-        UINT animationCount;
-        UINT uvCount;
-        UINT uvColumnCount;
-        UINT currentFrame;
-        UINT currentAnimation;
-        float updateTimer;
+        ID3D11ShaderResourceView* texture = nullptr;
+        SpriteBatch* spriteBatch = nullptr;
+        RECT* uvRect = nullptr;
+        AnimationData* animations = nullptr;
+        UINT animationCount = 0;
+        UINT uvCount = 0;
+        UINT uvColumnCount = 0;
+        UINT currentFrame = 0;
+        UINT currentAnimation = 0;
+        float updateTimer = 0.f;
 
         XMVECTOR tint = Colors::White;
-        float rotation;
+        float rotation = 0.f;
         SpriteEffects effects;
-        float depth;
+        float depth = 0.f;
 
     public:
         UINT tiled = 1;
-        UINT controlFocusAnimation;
+        UINT controlFocusAnimation = 0;
 
         Image2D(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture, XMFLOAT4 _posRect);
         ~Image2D();
@@ -337,7 +337,7 @@ namespace ADUI
 
     class Label2D : public UIComponent
     {
-        Text2D* text;
+        Text2D* text = nullptr;
 
         float scale = 1;
         XMVECTOR tint = Colors::White;
@@ -378,13 +378,13 @@ namespace ADUI
     class Button2D : public UIComponent
     {
     private:
-        Image2D* image;
-        Label2D* buttonLabel;
+        Image2D* image = nullptr;
+        Label2D* buttonLabel = nullptr;
         //float textXOffset;
         //float textYOffset;
 
     public:
-        UINT actionValue;
+        UINT actionValue = 0;
         Button2D(XMFLOAT4 _position, Image2D* _image, Label2D* _buttonLabel, bool _visible = true, bool _active = true, bool _controlFocus = false);
         ~Button2D();
         Button2D(const Button2D& p2);
@@ -420,14 +420,14 @@ namespace ADUI
     class UIComponentSelector : public UIComponent
     {
     private:
-        UIComponent** components;
-        UINT componentCount;
-        UINT currentComponent;
+        UIComponent** components = nullptr;
+        UINT componentCount = 0;
+        UINT currentComponent = 0;
         Label2D buttonLabel;
-        float textXOffset;
-        float textYOffset;
-        float height;
-        float width;
+        float textXOffset= 0;
+        float textYOffset= 0;
+        float height = 0;
+        float width = 0;
 
 
     public:
@@ -472,12 +472,12 @@ namespace ADUI
     class ComponentGrid : public UIComponent
     {
     public:
-        RECT* positions;
-        XMFLOAT2 topLeft;
-        float spacing;
-        int columns;
-        int maxRows;
-        int selectedButtonIndex;
+        RECT* positions = nullptr;
+        XMFLOAT2 topLeft = { 0,0 };
+        float spacing = 0;
+        int columns = 0;
+        int maxRows = 0;
+        int selectedButtonIndex = 0;
         ComponentGridStyle spacingStyle;
         std::vector<std::unique_ptr<UIComponent>> components;
 
@@ -520,10 +520,10 @@ namespace ADUI
     class Slider
     {
     public:
-        Image2D* slider;
-        XMFLOAT2 position;
-        XMFLOAT2 maxPosition;
-        XMFLOAT2 minPosition;
+        Image2D* slider = nullptr;
+        XMFLOAT2 position = { 0,0 };
+        XMFLOAT2 maxPosition= { 0,0 };
+        XMFLOAT2 minPosition= { 0,0 };
 
         Slider(Image2D* _sliderImage, XMFLOAT2 _position, XMFLOAT2 _maxPosition, XMFLOAT2 _minPosition);
         ~Slider();
@@ -535,15 +535,15 @@ namespace ADUI
 
     class SliderBar : public UIComponent
     {
-        Image2D* slide;
-        Slider* slider;
-        Image2D* leftCap;
-        Image2D* rightCap;
-        Label2D* label;
-        float incriment;
-        float maxValue;
-        float minValue;
-        float currentRatio;
+        Image2D* slide = nullptr;
+        Slider* slider = nullptr;
+        Image2D* leftCap = nullptr;
+        Image2D* rightCap = nullptr;
+        Label2D* label = nullptr;
+        float incriment = 0;
+        float maxValue = 0;
+        float minValue = 0;
+        float currentRatio = 0;
 
     public:
         SliderBar(Image2D* _slide, Slider* _slider, Image2D* _leftCap, Image2D* _rightCap, Label2D* _label, float _minValue = 0, float _maxValue = 1.f, float _currentValue = 0.5f, float _incriment = 0.01f);
@@ -573,8 +573,8 @@ namespace ADUI
     public:
         UILog();
         //~UILog() = default;
-        Image2D* blackBox;
-        Label2D* consoleLabel;
+        Image2D* blackBox = nullptr;
+        Label2D* consoleLabel = nullptr;
         std::deque<std::string> messageQueue;
 
         ~UILog();
@@ -600,15 +600,15 @@ namespace ADUI
     class ADUI
     {
         std::unique_ptr<DirectX::CommonStates> m_states;
-        float responseTime;
-        float inputTimer;
+        float responseTime = 0;
+        float inputTimer = 0;
         ComPtr<ID3D11Device1> device;
         ComPtr<ID3D11DeviceContext1> context;
         ComPtr<ID3D11RenderTargetView> rtv;
-        UINT fontCount;
-        Text2D* spriteFonts;
+        UINT fontCount = 0;
+        Text2D* spriteFonts = nullptr;
         UINT uiState = 1;
-        UILog* uiLog;
+        UILog* uiLog = nullptr;
 
     public:
         std::vector<UIComponent*> uiComponents;
@@ -618,7 +618,7 @@ namespace ADUI
 
         std::unique_ptr<SpriteBatch> spriteBatch;
         UIRendererResources uiResources;
-        D3D11_VIEWPORT* viewport;
+        D3D11_VIEWPORT* viewport = nullptr;
 
         ADUI();
         ~ADUI();

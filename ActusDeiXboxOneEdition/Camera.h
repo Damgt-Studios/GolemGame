@@ -40,10 +40,10 @@ protected:
 	Camera();
 
 protected:
-	XMFLOAT3 m_position, m_targetPosition, m_up, m_look, m_right, m_worldUp;
+	XMFLOAT3 m_position = { 0,0,0 }, m_targetPosition = { 0,0,0 }, m_up = { 0,0,0 }, m_look = { 0,0,0 }, m_right = { 0,0,0 }, m_worldUp = { 0,0,0 };
 
-	float m_yaw, m_pitch, m_fov;
-	float m_near, m_far;
+	float m_yaw = 0, m_pitch = 0, m_fov = 0;
+	float m_near = 0, m_far = 0;
 };
 
 class FPSCamera : public Camera
@@ -80,9 +80,9 @@ public:
 private:
 	void UpdateCameraVectors();
 
-	float mRadius;
+	float mRadius = 0;
 
-	XMFLOAT3 running_target;
+	XMFLOAT3 running_target = { 0,0,0 };
 	float catchup_delay = .2;
 	float rotation_speed = 20;
 	float follow_speed = 50;

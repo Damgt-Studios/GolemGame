@@ -26,13 +26,13 @@ namespace ADGameplay
 		{
 			std::array<char, 260> Model;
 			std::array<char, 260> Texture;
-			XMFLOAT3 position, scale, rotation;
+			XMFLOAT3 position = { 0,0,0 }, scale = { 0,0,0 }, rotation = { 0,0,0 };
 		};
 		struct PhysicsArgs
 		{
 			std::array<char, 260> Model;
 			std::array<char, 260> Texture;
-			XMFLOAT3 position, scale, rotation;
+			XMFLOAT3 position = { 0,0,0 }, scale = { 0,0,0 }, rotation = { 0,0,0 };
 			ADResource::ADGameplay::OBJECT_PHYSICS_TYPE type;
 		};
 

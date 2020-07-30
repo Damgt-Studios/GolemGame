@@ -47,29 +47,29 @@ bool FULLSCREEN = false;
 
 struct PhysicsShiz
 {
-	int OBJ_COUNT;
-	GameObject** OBJS;
-	QuadTree<int>* collisionTree;
-	promise<void>* physicspromise;
+	int OBJ_COUNT = 0;
+	GameObject** OBJS = nullptr;
+	QuadTree<int>* collisionTree = nullptr;
+	promise<void>* physicspromise = nullptr;
 };
 
 struct AiArgs
 {
-	ADGameplay::Scene* scene;
-	float delta;
-	promise<void>* scenePromise;
+	ADGameplay::Scene* scene = nullptr;
+	float delta = 0;
+	promise<void>* scenePromise = nullptr;
 };
 
 struct ClampingArgs
 {
-	GameObject* golem;
-	QuadTree<ADPhysics::Triangle>* tree;
-	vector<Destructable*>* stone;
-	vector<Destructable*>* water;
-	vector<Destructable*>* fire;
-	vector<Destructable*>* wood;
-	float time;
-	promise<void>* clamppromise;
+	GameObject* golem = nullptr;
+	QuadTree<ADPhysics::Triangle>* tree = nullptr;
+	vector<Destructable*>* stone= nullptr;
+	vector<Destructable*>* water= nullptr;
+	vector<Destructable*>* fire= nullptr;
+	vector<Destructable*>* wood= nullptr;
+	float time = 0.f;
+	promise<void>* clamppromise = nullptr;
 };
 
 void ClampingWrapper(void* args, int index)
@@ -135,16 +135,16 @@ void MainPhysics(void* args, int index)
 ref class App sealed : public IFrameworkView
 {
 private:
-	Jobs::JobManager* jobManagerTest;
-	Engine* engine;
-	Engine::AllArgs* engineArgs;
-	PhysicsShiz* PhysicsArguments;
-	TheGreatGolem* game;
-	AD_AUDIO::ADAudio* audioEngine;
-	ADResource::ADGameplay::Golem* golem;
+	Jobs::JobManager* jobManagerTest = nullptr;
+	Engine* engine = nullptr;
+	Engine::AllArgs* engineArgs = nullptr;
+	PhysicsShiz* PhysicsArguments = nullptr;
+	TheGreatGolem* game = nullptr;
+	AD_AUDIO::ADAudio* audioEngine = nullptr;
+	ADResource::ADGameplay::Golem* golem = nullptr;
 	ADGameplay::Scene currentScene;
-	ClampingArgs* clampArgs;
-	AiArgs* aiArgs;
+	ClampingArgs* clampArgs = nullptr;
+	AiArgs* aiArgs = nullptr;
 	//MinionManager* minionManager;
 	AD_ULONG golem_collider = 0;
 	//FountainEmitter femitter;
@@ -169,9 +169,9 @@ private:
 	float default_yaw = 180.0f;
 	float default_pitch = 30.0f;
 
-	// Physics
-	ADPhysics::AABB test_colider;
-	ADPhysics::AABB test_colider1;
+	//// Physics
+	//ADPhysics::AABB test_colider;
+	//ADPhysics::AABB test_colider1;
 
 
 

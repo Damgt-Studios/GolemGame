@@ -29,9 +29,9 @@ namespace ADAI
 	{
 	public:
 		SimpleStateMachine mySSM;
-		ADResource::ADGameplay::Destructable* destructable;
-		ADResource::ADGameplay::GameObject* currentStructure;
-		ADResource::ADGameplay::GameObject* currentFear;
+		ADResource::ADGameplay::Destructable* destructable = nullptr;
+		ADResource::ADGameplay::GameObject* currentStructure = nullptr;
+		ADResource::ADGameplay::GameObject* currentFear = nullptr;
 		float moveSpeed = 2.0f;
 		float maxSpeed = 10.0f;
 
@@ -58,8 +58,8 @@ namespace ADAI
 	public:
 		std::vector<VillagerAI*> flockers;
 		std::vector<FlockingState*> flockerState;
-		XMVECTOR averagePosition;
-		XMVECTOR averageForward;
+		XMVECTOR averagePosition = { 0,0,0 };
+		XMVECTOR averageForward = { 0,0,0 };
 
 		float groupCohesionStrength = 0.00f;
 		float groupSeparationStrength = 5.0f;
@@ -265,13 +265,13 @@ namespace ADAI
 	class FleeingState : public FlockingState
 	{
 	public:
-		VillagerAI* villager;
+		VillagerAI* villager = nullptr;
 		VillagerGroup myGroup;
 		float timer = 0;
 		const float waitDuration = 1.2f;
 		
 		std::vector<ADResource::ADGameplay::GameObject*> safetyStructures;
-		std::vector<ADResource::ADGameplay::GameObject*>* fearedObjects;
+		std::vector<ADResource::ADGameplay::GameObject*>* fearedObjects = nullptr;
 		virtual void Update(float _deltaTime)
 		{
 			if (_deltaTime > 0)
@@ -395,12 +395,12 @@ namespace ADAI
 	class MinionAI
 	{
 	public:
-		ADResource::ADGameplay::Destructable* destructable;
+		ADResource::ADGameplay::Destructable* destructable = nullptr;
 		SimpleStateMachine mySSM;
 
 		bool turning = false;
 
-		XMFLOAT3 currentTargetLocation;
+		XMFLOAT3 currentTargetLocation = { 0,0,0 };
 		ADAI::Solution myPath;
 		XMFLOAT3 currentPointInPath = { 0,0,0 };
 		XMFLOAT3 lastKnownGoodLocation = { 0,0,0 };
@@ -412,12 +412,12 @@ namespace ADAI
 		bool hasPath = false;
 		bool donePathing = true;
 		UINT currentPointIndex = UINT_MAX;
-		ADResource::ADGameplay::GameObject* currentTarget;
-		ADResource::ADGameplay::GameObject* potentialTarget;
+		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
+		ADResource::ADGameplay::GameObject* potentialTarget = nullptr;
 		float moveSpeed = 1.0f;
 		float maxSpeed = 10.0f;
 
-		ADResource::ADGameplay::Action* myAttack;
+		ADResource::ADGameplay::Action* myAttack = nullptr;
 
 		//Waypoints (both direct and pathing)
 		float directionalStrength = 0.00f;
@@ -440,8 +440,8 @@ namespace ADAI
 	};
 
 	struct queuePair {
-		MinionAI* currentUnit;
-		XMFLOAT3 currentTarget;
+		MinionAI* currentUnit = nullptr;
+		XMFLOAT3 currentTarget = { 0,0,0 };
 	};
 
 	class PathersQueue
@@ -758,7 +758,7 @@ namespace ADAI
 	class CommandState : public FlockingState
 	{
 	public:
-		MinionAI* minion;
+		MinionAI* minion = nullptr;
 		PathersQueue* pathingQueue = nullptr;
 		//MinionGroup* myGroup;
 		float targetCheckTimer = 0;
@@ -766,7 +766,7 @@ namespace ADAI
 		float distanceCheckingTimer = 0;
 		const float distanceCheckingDuration = 0.8f;
 
-		std::vector<ADResource::ADGameplay::GameObject*>* targets;
+		std::vector<ADResource::ADGameplay::GameObject*>* targets = nullptr;
 
 		virtual void EnterState(float _deltaTime) override
 		{
@@ -1001,9 +1001,9 @@ namespace ADAI
 		std::vector<MovementGroup*> myGroups;
 		std::vector<TargetedMovementGroup*> myTargetGroups;
 
-		std::vector<ADResource::ADGameplay::GameObject*>* avoidanceGroup;
+		std::vector<ADResource::ADGameplay::GameObject*>* avoidanceGroup = nullptr;
 
-		AttackingState* attacking;
+		AttackingState* attacking = nullptr;
 		//XMVECTOR averagePosition;
 		//XMVECTOR averageForward;
 		//std::queue<MinionAI*> waitingForPath;
@@ -1296,7 +1296,7 @@ namespace ADAI
 
 		XMVECTOR CalculatePathingAcceleration(MinionAI* _minion)//, ADResource::ADGameplay::GameObject* _target)
 		{
-			XMVECTOR velocity = { 0,0,0 }; \
+			XMVECTOR velocity = { 0,0,0 }; 
 			XMVECTOR currentPos = ADMath::Float3ToVector(_minion->destructable->GetPosition());
 			XMVECTOR targetPos = ADMath::Float3ToVector(_minion->myPath.positions[_minion->currentPointIndex]);
 
@@ -1581,10 +1581,10 @@ namespace ADAI
 	{
 	public:
 		SimpleStateMachine mySSM;
-		XMFLOAT3 currentTargetLocation;
-		ADResource::ADGameplay::Action* myAttack;
-		ADResource::ADGameplay::Building* building;
-		ADResource::ADGameplay::GameObject* currentTarget;
+		XMFLOAT3 currentTargetLocation = { 0,0,0 };
+		ADResource::ADGameplay::Action* myAttack = nullptr;
+		ADResource::ADGameplay::Building* building = nullptr;
+		ADResource::ADGameplay::GameObject* currentTarget = nullptr;
 
 		void Update(float _deltaTime)
 		{
@@ -1599,8 +1599,8 @@ namespace ADAI
 	class TowerState : public State
 	{
 	public:
-		TowerAI* tower;
-		std::vector<ADResource::ADGameplay::GameObject*>* targets;
+		TowerAI* tower = nullptr;
+		std::vector<ADResource::ADGameplay::GameObject*>* targets = nullptr;
 		float timer = 0;
 		const float waitDuration = 0.2f;
 

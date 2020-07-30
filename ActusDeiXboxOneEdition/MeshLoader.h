@@ -6,11 +6,10 @@ using namespace DirectX;
 
 struct SimpleVertex
 {
-
-	XMFLOAT3 Position;
-	XMFLOAT3 Tex;
-	XMFLOAT3 Normal;
-	XMFLOAT3 Tangent;
+	XMFLOAT3 Position = { 0,0,0 };
+	XMFLOAT3 Tex = { 0,0,0 };
+	XMFLOAT3 Normal = { 0,0,0 };
+	XMFLOAT3 Tangent = { 0,0,0 };
 };
 
 
@@ -24,13 +23,13 @@ struct SimpleMesh
 //Animation
 struct SimpleVertexAnim
 {
-	XMFLOAT3 Position;
-	XMFLOAT3 Tex;
-	XMFLOAT3 Normal;
-	XMFLOAT3 Tangent;
+	XMFLOAT3 Position = { 0,0,0 };
+	XMFLOAT3 Tex = { 0,0,0 };
+	XMFLOAT3 Normal = { 0,0,0 };
+	XMFLOAT3 Tangent = { 0,0,0 };
 
-	XMINT4 Joint;
-	XMFLOAT4 Weight;
+	XMINT4 Joint = { 0,0,0,0 };
+	XMFLOAT4 Weight = { 0,0,0,0 };
 
 };
 struct SimpleMeshAnim
@@ -46,14 +45,14 @@ struct bones
 };
 struct keyframe
 {
-	double time; vector<XMMATRIX> jointsMatrix; vector<int> parents;
+	double time = 0; vector<XMMATRIX> jointsMatrix; vector<int> parents;
 };
 
 
 struct anim_clip
 {
-	string animfilename;
-	double duration;
+	string animfilename = "";
+	double duration = 0;
 	vector<keyframe> frames;
 };
 

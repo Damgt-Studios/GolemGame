@@ -227,7 +227,6 @@ void OrbitCamera::SetColliderPosition(XMFLOAT3 m)
 }
 void OrbitCamera::CheckCollision(ADResource::ADGameplay::GameObject* obj)
 {
-
 	Manifold m;
 
 	if (obj->active)
@@ -248,21 +247,9 @@ void OrbitCamera::CheckCollision(ADResource::ADGameplay::GameObject* obj)
 					collisionQueue.push(CollisionPacket(obj, this, m));
 					OnCollision();
 				}
-
-				
-
-				
-
-
 			}
 		}
-		
-	
-
-
 	}
-	
-
 }
 void OrbitCamera::SetLookAt(XMFLOAT3 target)
 {

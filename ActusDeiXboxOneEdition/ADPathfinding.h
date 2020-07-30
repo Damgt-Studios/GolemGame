@@ -13,27 +13,27 @@ namespace ADAI
 
 	struct PathingNode
 	{
-		XMFLOAT3 position;
-		int column;
-		int row;
+		XMFLOAT3 position = { 0,0,0 };
+		int column = 0;
+		int row = 0;
 
-		bool walkable;
-		long displayState;
+		bool walkable = false;
+		long displayState = 0;
 		unsigned char terrainWeight;
-		bool threeSided;
+		bool threeSided = false;
 		bool directions[8];
-		float finalCost;
+		float finalCost = 0;
 	};
 
 	struct PathingGrid
 	{
-		XMFLOAT2 mapSize;
-		XMFLOAT2 cellSize;
-		UINT columns;
-		UINT rows;
-		UINT xDivisions;
-		UINT yDivisions;
-		float agentToWallGap;
+		XMFLOAT2 mapSize = { 0,0 };
+		XMFLOAT2 cellSize = { 0,0 };
+		UINT columns = 0;
+		UINT rows = 0;
+		UINT xDivisions = 0;
+		UINT yDivisions = 0;
+		float agentToWallGap = 0;
 		std::vector<PathingNode*> nodeGrid;
 
 		void Initializing(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
@@ -90,7 +90,7 @@ namespace ADAI
 	struct SearchNode
 	{
 		SearchNode(PathingNode* _tile) : tile(_tile) {};
-		PathingNode* tile;
+		PathingNode* tile = nullptr;
 		std::vector<SearchNode*> neighbors;
 		std::vector<float> neighborDist;
 	};
@@ -138,7 +138,7 @@ namespace ADAI
 				return (_a->finalCost > _b->finalCost);
 			};
 		};
-		std::vector<ADResource::ADGameplay::GameObject*>* extraCollidables;
+		std::vector<ADResource::ADGameplay::GameObject*>* extraCollidables = nullptr;
 
 		std::vector<PathingPoint> pointGrid;
 
@@ -147,12 +147,12 @@ namespace ADAI
 		//std::vector<PathingNode const*> solution;
 		Solution solution;
 		std::vector<PathingNode*> previousTrace;
-		PlannerNode* current;
-		PlannerNode* retracer;
+		PlannerNode* current = nullptr;
+		PlannerNode* retracer = nullptr;
 
 		std::vector<PlannerNode*> pHeap;
 
-		PathingNode* target;
+		PathingNode* target = nullptr;
 		UINT hWeight = 1.0f;
 
 		void CreatePointGrid(std::vector<SimpleVertex>* _planeVertices);
@@ -161,8 +161,8 @@ namespace ADAI
 		float DistanceCalculation(PathingNode* _a);
 		float DistanceCalculation(PathingNode* _a, PathingNode* _b);
 		bool done = false;
-		float xAdjust; 
-		float zAdjust; 
+		float xAdjust = 0;
+		float zAdjust = 0;
 
 	public:
 		static ADPathfinding* Instance();

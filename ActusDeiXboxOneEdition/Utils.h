@@ -15,7 +15,7 @@ namespace ADUtils
 		char pshader[64];
 		char gshader[64];
 
-		bool wireframe;
+		bool wireframe = false;
 	};
 
 	static std::string READ_PATH("");

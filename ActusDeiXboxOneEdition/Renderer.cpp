@@ -368,7 +368,7 @@ bool ADResource::ADRenderer::PBRRenderer::Update(FPSCamera* camera, OrbitCamera*
 
 	//XMFLOAT3 campos = camera->GetPosition();
 	XMFLOAT3 campos = ocamera->GetPosition();
-	XMFLOAT3 pos, rot, scale;
+	XMFLOAT3 pos = { 0,0,0 }, rot = { 0,0,0 }, scale = { 0,0,0 };
 	XMMATRIX temp;
 
 	// Skybox
@@ -551,8 +551,8 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 	FPSCamera* shadowCamera = new FPSCamera(XMFLOAT3(0, 600, 700), 0, 0);
 	shadowCamera->SetClippingPlanes(0.001f, 3000);
 
-	XMFLOAT3 campos;
-	XMFLOAT3 pos, rot, scale;
+	XMFLOAT3 campos = { 0,0,0 };
+	XMFLOAT3 pos = { 0,0,0 }, rot = { 0,0,0 }, scale = { 0,0,0 };
 	XMMATRIX temp;
 	XMMATRIX lightViewProjM;
 

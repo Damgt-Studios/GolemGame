@@ -54,21 +54,21 @@ namespace ADResource
 		public:
 			XMFLOAT3 colScale = { 1,1,1 };
 			XMFLOAT3 modelScale = { 1,1,1 };
-			XMFLOAT3 vel;
+			XMFLOAT3 vel = { 0,0,0 };
 
 			bool isDeactivateOnFirstApplication = false;
-			float offsetX;
-			float offsetZ;
+			float offsetX = 0;
+			float offsetZ = 0;
 			float offsetY = 0;
-			float lifespan;
-			XMFLOAT3 rotation;
+			float lifespan = 0;
+			XMFLOAT3 rotation = { 0,0,0 };
 			
 			ADPhysics::OBB collider;
 
-			ADResource::ADGameplay::GameObject* target;
-			std::string eventName;
-			std::string modelName;
-			std::string matName;
+			ADResource::ADGameplay::GameObject* target = nullptr;
+			std::string eventName= "";
+			std::string modelName= "";
+			std::string matName = "";
 
 			HitBox() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER;	gamePlayType = ADResource::ADGameplay::ALLY_HITBOX; colliderPtr->trigger = true; };
 			~HitBox() = default;
@@ -245,13 +245,13 @@ namespace ADResource
 		class Action
 		{
 		public:
-			bool active;
-			float cooldownDuration;
-			float cooldownTimer;
-			float attackDuration;
-			float attackTimer;
-			float hitboxDelay = 0;
-			float scaleCorrection = 1;
+			bool active = false;
+			float cooldownDuration = 0.f;
+			float cooldownTimer = 0.f;
+			float attackDuration = 0.f;
+			float attackTimer = 0.f;
+			float hitboxDelay = 0.f;
+			float scaleCorrection = 1.f;
 			std::vector<HitBox*> hitboxes;
 			UINT currentHitBox = 0;
 			UINT hitboxCount = 0;
@@ -465,12 +465,12 @@ namespace ADResource
 		class Destructable : public Renderable
 		{
 		protected:
-			StatSheet* stats;
+			StatSheet* stats = nullptr;
 		public:
-			XMFLOAT3 colScale;
-			AnimationStateMachine* anim_controller;
+			XMFLOAT3 colScale = { 0,0,0 };
+			AnimationStateMachine* anim_controller = nullptr;
 			ADPhysics::AABB collider;
-			std::string deathEvent;
+			std::string deathEvent = "";
 			BloodEmitter* villagerBlood = nullptr;
 
 			Destructable()
@@ -599,8 +599,8 @@ namespace ADResource
 			XMFLOAT3 colScale;
 
 			bool isDeactivateOnFirstApplication = false;
-			float offsetX;
-			float offsetZ;
+			float offsetX = 0;
+			float offsetZ = 0;
 			float offsetY = 0;
 			ADPhysics::AABB collider;
 

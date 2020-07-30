@@ -50,11 +50,11 @@ namespace ADResource
 		// Primitives
 		struct Vertex
 		{
-			XMFLOAT3 Pos;
-			XMFLOAT3 Normal;
-			XMFLOAT3 Tangent;
-			XMFLOAT3 Bitangent;
-			XMFLOAT2 Tex;
+			XMFLOAT3 Pos = { 0,0,0 };
+			XMFLOAT3 Normal = { 0,0,0 };
+			XMFLOAT3 Tangent = { 0,0,0 };
+			XMFLOAT3 Bitangent = { 0,0,0 };
+			XMFLOAT2 Tex = { 0,0 };
 		};
 
 		struct Header
@@ -71,13 +71,13 @@ namespace ADResource
 
 		struct PBRVertexBufferDesc
 		{
-			unsigned int index_start;
-			unsigned int index_count;
-			unsigned int index_offset;
-			unsigned int vertex_count;
-			unsigned int base_vertex_location;
+			unsigned int index_start = 0;
+			unsigned int index_count = 0;
+			unsigned int index_offset = 0;
+			unsigned int vertex_count = 0;
+			unsigned int base_vertex_location = 0;
 
-			bool wireframe_mode;
+			bool wireframe_mode = false;
 		};
 
 
@@ -136,9 +136,9 @@ namespace ADResource
 
 			bool animated = false;
 
-			XMFLOAT3 position;
-			XMFLOAT3 rotation;
-			XMFLOAT3 scale;
+			XMFLOAT3 position = {0,0,0};
+			XMFLOAT3 rotation = {0,0,0};
+			XMFLOAT3 scale = { 0,0,0 };
 
 			ComPtr<ID3D11Buffer> vertexBuffer;
 			ComPtr<ID3D11Buffer> indexBuffer;
@@ -151,9 +151,9 @@ namespace ADResource
 			// Texture stuff
 			ComPtr<ID3D11SamplerState> sampler;
 
-			ADTexture* albedo;
-			ADTexture* normal;
-			ADTexture* emissive;
+			ADTexture* albedo = nullptr;
+			ADTexture* normal = nullptr;
+			ADTexture* emissive = nullptr;
 
 		};
 
@@ -162,7 +162,7 @@ namespace ADResource
 #ifdef AD_MEMORY_DEFAULT
 			std::vector<SimpleVertex> vertices;
 			std::vector<int> indices;
-			UINT instanceCount;
+			UINT instanceCount = 0;
 			std::vector<XMFLOAT3> positions;
 			ComPtr<ID3D11Buffer> instanceBuffer;
 #else
@@ -274,16 +274,16 @@ namespace ADResource
 
 		struct WVP
 		{
-			XMFLOAT4X4 WorldMatrix;
-			XMFLOAT4X4 ViewMatrix;
-			XMFLOAT4X4 ProjectionMatrix;
-			XMFLOAT4   CameraPosition;
+			XMFLOAT4X4 WorldMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+			XMFLOAT4X4 ViewMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+			XMFLOAT4X4 ProjectionMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+			XMFLOAT4   CameraPosition = { 0,0,0,0};
 		};
 
 		struct LVP
 		{
-			XMFLOAT4X4 ViewMatrix;
-			XMFLOAT4X4 ProjectionMatrix;
+			XMFLOAT4X4 ViewMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+			XMFLOAT4X4 ProjectionMatrix = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
 		};
 
 		enum class LIGHTTYPE
@@ -296,9 +296,9 @@ namespace ADResource
 
 		struct Light
 		{
-			XMFLOAT4 position, lightDirection, diffuse, ambient;
-			unsigned int lightType; float lightRadius;
-			float diffuseIntensity, ambientIntensity;
+			XMFLOAT4 position = { 0,0,0,0 }, lightDirection = { 0,0,0,0 }, diffuse = { 0,0,0,0 }, ambient = { 0,0,0,0 };
+			unsigned int lightType = 0; float lightRadius = 0;
+			float diffuseIntensity = 0, ambientIntensity = 0;
 		};
 	}
 
@@ -396,17 +396,17 @@ namespace ADResource
 		class Effect
 		{
 		public:
-			std::string name;
+			std::string name = "";
 			std::vector<Stat*> targetedStats;
-			float tickDuration;
-			float currentTick;
-			float tickTimer;
-			bool isFinished;
-			bool tickOnEnter;
-			bool tickOnExit;
-			UINT tickCount;
-			UINT sourceID;
-			UINT instanceID;
+			float tickDuration = 0;
+			float currentTick = 0;
+			float tickTimer = 0;
+			bool isFinished = false;
+			bool tickOnEnter = false;
+			bool tickOnExit = false;
+			UINT tickCount = 0;
+			UINT sourceID = 0;
+			UINT instanceID = 0;
 
 			virtual UINT OnApply(StatSheet* _targetsStatSheet) { return 0; };
 
@@ -648,15 +648,15 @@ namespace ADResource
 			float attackRadius = 5.0f;
 			float desirability = 0;
 
-			UINT physicsType;
-			UINT gamePlayType;
+			UINT physicsType = 0;
+			UINT gamePlayType = 0;
 			UINT team = 0;
 			UINT actionLevel = 0;
-			AD_ULONG meshID;
+			AD_ULONG meshID = 0;
 			//OBJECT_DEFENSE defenseType;
 			XMFLOAT4 Velocity = { 0,0,0,0 };
-			XMMATRIX transform;
-			XMMATRIX postTransform;
+			XMMATRIX transform = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+			XMMATRIX postTransform = { 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
 
 			ADPhysics::Collider* colliderPtr = nullptr;
 			ADPhysics::PhysicsMaterial pmat = ADPhysics::PhysicsMaterial();
@@ -668,8 +668,8 @@ namespace ADResource
 
 		struct CollisionPacket
 		{
-			ADResource::ADGameplay::GameObject* A;
-			ADResource::ADGameplay::GameObject* B;
+			ADResource::ADGameplay::GameObject* A = nullptr;
+			ADResource::ADGameplay::GameObject* B = nullptr;
 			ADPhysics::Manifold m;
 
 			CollisionPacket() = delete;

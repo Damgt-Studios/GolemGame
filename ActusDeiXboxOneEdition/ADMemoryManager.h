@@ -377,8 +377,8 @@ public:
 	}
 private:
 	Handle<Type> _array;
-	unsigned int _size;
-	unsigned int _capacity;
+	unsigned int _size = 0
+	unsigned int _capacity = 0;
 
 	void push_back_resize(unsigned int newCapacity)
 	{

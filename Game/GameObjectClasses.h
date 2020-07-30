@@ -20,9 +20,9 @@ namespace ADResource
 			XMFLOAT3 colScale;
 
 			bool isDeactivateOnFirstApplication = true;
-			float offsetX;
-			float offsetZ;
-			float offsetY = 0;
+			float offsetX = 0.f;
+			float offsetZ = 0.f;
+			float offsetY = 0.f;
 			ADPhysics::AABB collider;
 
 			//Until we have an event manager this is our solution for events.
@@ -76,7 +76,7 @@ namespace ADResource
 
 		class Building : public GameObject
 		{
-			StatSheet* stats;
+			StatSheet* stats = nullptr;
 			Building* rubble = nullptr;
 			Building* turret = nullptr;
 			Action* Essence = nullptr;
@@ -92,8 +92,8 @@ namespace ADResource
 
 
 		public:
-			std::string name;
-			std::string deathEvent;
+			std::string name = "";
+			std::string deathEvent = "";
 
 			Building()
 			{
@@ -551,10 +551,10 @@ namespace ADResource
 				}
 			}
 
-			UpwardCloudEmitter* destructionEmitter;
-			UpwardCloudEmitter* destructionEmitter2;
+			UpwardCloudEmitter* destructionEmitter = nullptr;
+			UpwardCloudEmitter* destructionEmitter2 = nullptr;
 		private: 
-			XMFLOAT3 pos, off, colliderScale;
+			XMFLOAT3 pos = { 0,0,0 } , off = { 0,0,0 }, colliderScale = { 0,0,0 };
 			std::vector<Renderable*> models;
 			ADPhysics::OBB collider;
 		};

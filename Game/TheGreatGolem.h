@@ -25,7 +25,7 @@ public:
 	bool ReadEntity(std::string _entityStr)
 	{
 		const std::string delimiter = "=";
-		std::string lhs;
+		std::string lhs = "";
 		std::string mid = "";
 		std::string rhs = "";
 		size_t pos = 0;
@@ -495,7 +495,7 @@ public:
 	}
 
 	bool ReadDefinesFile(std::string _filename) {
-		std::string entity;
+		std::string entity = "";
 		ifstream myfile(_filename);
 
 		if (myfile.is_open())
@@ -510,7 +510,7 @@ public:
 	}
 
 	bool ReadMasterFile() {
-		string line;
+		string line = "";
 		ifstream myfile("files\\definitions\\MasterDefinesList.txt");
 		if (myfile.is_open())
 		{
