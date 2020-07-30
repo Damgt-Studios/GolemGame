@@ -173,22 +173,19 @@ public:
 
 		// Initialize the engine
 		engine->SetCamera(XMFLOAT3(0, 10000.0f, -100.0f), 0, 0, 45);
+		engine->GetCamera()->SetClippingPlanes(0.1, 5000);
 		currentScene.LoadScene("files/scenes/TestScene.scenery", engine);
 		golem = currentScene.GetGolem();
 		game->LoadListeners(golem, &currentScene);
 		engine->GetOrbitCamera()->SetLookAt((XMFLOAT3&)(Float3ToVector((*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position)));
-		
+
 		engine->GetOrbitCamera()->Rotate(yaw, pitch);
-		
+
 		GameUtilities::AddGameObject(engine->GetOrbitCamera());
 		golem->bigPuffs[STONE] = &engine->bigStonePuff;
 		golem->bigPuffs[WATER] = &engine->bigWaterPuff;
 		golem->bigPuffs[FIRE] = &engine->bigFirePuff;
 		golem->bigPuffs[WOOD] = &engine->bigWoodPuff;
-
-
-
-
 
 #ifdef _DEBUG
 		Renderable* minionCollider = GameUtilities::AddRenderableCollider();
@@ -214,10 +211,7 @@ public:
 		Renderable* rubbleCollider2 = GameUtilities::AddRenderableCollider();
 		Renderable* rubbleCollider3 = GameUtilities::AddRenderableCollider();
 
-		Renderable* rock_wallCollider1 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider2 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider3 = GameUtilities::AddRenderableCollider();
-		Renderable* rock_wallCollider4 = GameUtilities::AddRenderableCollider();
+		Renderable* rock_wallCollider = GameUtilities::AddRenderableCollider();
 
 #ifdef ShowColliders
 		//GameUtilities::AddGameObject(minionCollider);
@@ -266,7 +260,7 @@ public:
 		Renderable* physicsPlane = GameUtilities::AddSimpleAsset("files/models/LevelPhysics.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), true);
 		GameUtilities::AddGameObject(physicsPlane);
 
-		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, 2400), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), true);
+		Renderable* mountainRange = GameUtilities::AddSimpleAsset("files/models/Mountain.mesh", "files/textures/Mountain.mat", XMFLOAT3(-2400, 1750, 3600), XMFLOAT3(200, 200, 200), XMFLOAT3(0, 90, 0), false);
 		mountainRange->colliderPtr = nullptr;
 		GameUtilities::AddGameObject(mountainRange);
 
@@ -310,7 +304,7 @@ public:
 
 #pragma endregion
 
-//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
+		//DON'T DELETE THIS PLEASE FOR THE LOVE OF GOD
 #pragma region Level Boundary
 
 		GameObject* object1 = new GameObject();
@@ -562,7 +556,7 @@ public:
 		GameUtilities::AddGameObject(rock_wall7);
 		GameUtilities::AddGameObject(rock_wall8);
 
-
+		
 #pragma endregion
 
 
@@ -635,11 +629,11 @@ public:
 			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
 
 			//engine->GetOrbitCamera()->SetRadius(200);
-	
+
 			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;
 			engine->GetOrbitCamera()->GetViewMatrix(view);
-	
+
 
 			golem->GetView(view);
 
@@ -656,9 +650,9 @@ public:
 
 			XMMATRIX pers = XMMatrixPerspectiveFovLH(engine->GetOrbitCamera()->GetFOV(), (Window->Bounds.Width / Window->Bounds.Height), engine->GetOrbitCamera()->GetNear(), engine->GetOrbitCamera()->GetFar());
 
-			XMFLOAT4X4 persPass; 
+			XMFLOAT4X4 persPass;
 			XMStoreFloat4x4(&persPass, pers);
-			
+
 
 #ifdef _DEBUG
 
@@ -735,7 +729,7 @@ public:
 						}
 					}
 				}*/
-				
+
 				//----------------------------------New Physics System-------------------------------
 				for (int i = 0; i < OBJ_COUNT; i++)
 				{

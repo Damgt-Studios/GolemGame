@@ -930,8 +930,8 @@ std::vector<Renderable*> GameUtilities::GenerateWell(XMFLOAT3 pos, XMFLOAT3 rota
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Well_Wooden.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation));
-	temp.push_back(AddSimpleAsset("files/models/Well_Hole.mesh", "files/textures/Brick4.mat", pos, XMFLOAT3(25, 25, 25), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Well_Wooden.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 0.01f, pos.z), XMFLOAT3(0.025, 0.025, 0.025), rotation));
+	temp.push_back(AddSimpleAsset("files/models/Well_Hole.mesh", "files/textures/Brick4.mat", XMFLOAT3(pos.x, pos.y + 0.01f, pos.z), XMFLOAT3(25, 25, 25), rotation));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1086,7 +1086,7 @@ std::vector<Renderable*> GameUtilities::GenerateStraw(XMFLOAT3 pos, XMFLOAT3 rot
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Straw_01.mesh", "files/textures/Straw.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Straw_01.mesh", "files/textures/Straw.mat", pos, XMFLOAT3(0.03, 0.03, 0.03), rotation, true));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1171,8 +1171,8 @@ std::vector<Renderable*> GameUtilities::GenerateAttackTower(XMFLOAT3 pos, XMFLOA
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/AttackTower.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation, true));
-	temp.push_back(AddSimpleAsset("files/models/Shed.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 25, pos.z), XMFLOAT3(25, 25, 25), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/AttackTower.mesh", "files/textures/Wood_01.mat", pos, XMFLOAT3(0.025, 0.025, 0.025), rotation, false));
+	temp.push_back(AddSimpleAsset("files/models/Shed.mesh", "files/textures/Wood_01.mat", XMFLOAT3(pos.x, pos.y + 25, pos.z), XMFLOAT3(25, 25, 25), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1206,7 +1206,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall1(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_1.mesh", "files/textures/Cliff_1.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1223,7 +1223,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall2(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_2.mesh", "files/textures/Cliff_2.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1240,7 +1240,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall3(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_3.mesh", "files/textures/Cliff_3.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1257,7 +1257,7 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall4(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_4.mesh", "files/textures/Cliff_4.mat", XMFLOAT3(pos.x, pos.y + 16.67, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
@@ -1274,7 +1274,75 @@ std::vector<Renderable*> GameUtilities::GenerateRockWall5(XMFLOAT3 pos, XMFLOAT3
 	ADVector<Renderable*> temp;
 #endif
 
-	temp.push_back(AddSimpleAsset("files/models/Cliff_5.mesh", "files/textures/Cliff_5.mat", XMFLOAT3(pos.x, pos.y + 10, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, true));
+	temp.push_back(AddSimpleAsset("files/models/Cliff_5.mesh", "files/textures/Cliff_5.mat", XMFLOAT3(pos.x, pos.y + 10, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GeneratePathway1(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Pathway1.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.1, 0.1, 0.1), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GeneratePathway2(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Pathway2.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.1, 0.1, 0.1), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GeneratePathway3(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Pathway3.mesh", "files/textures/Pathway.mat", XMFLOAT3(pos.x, pos.y + 0.1, pos.z), XMFLOAT3(0.125, 0.125, 0.125), rotation, true));
+
+	for (size_t i = 0; i < temp.size(); i++)
+	{
+		AddGameObject(temp[i]);
+	}
+
+	return temp;
+}
+
+std::vector<Renderable*> GameUtilities::GenerateBanner(XMFLOAT3 pos, XMFLOAT3 rotation) {
+#ifndef MEMORY_MANAGER
+	std::vector<Renderable*> temp;
+#else
+	ADVector<Renderable*> temp;
+#endif
+
+	temp.push_back(AddSimpleAsset("files/models/Banner.mesh", "files/textures/Banner.mat", XMFLOAT3(pos.x, pos.y + 20, pos.z), XMFLOAT3(0.075, 0.075, 0.075), rotation, false));
 
 	for (size_t i = 0; i < temp.size(); i++)
 	{
