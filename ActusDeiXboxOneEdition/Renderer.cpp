@@ -931,7 +931,7 @@ bool ADResource::ADRenderer::PBRRenderer::Render(FPSCamera* camera, OrbitCamera*
 
 bool  ADResource::ADRenderer::PBRRenderer::Frame()
 {
-	renderer_resources.chain->Present(1, 0);
+	renderer_resources.chain->Present(0, 0);
 
 	return true;
 }

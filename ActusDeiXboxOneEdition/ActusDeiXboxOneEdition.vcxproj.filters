@@ -45,6 +45,7 @@
     <ClCompile Include="ADPathfinding.cpp" />
     <ClCompile Include="AnimationStateMachine.cpp" />
     <ClCompile Include="ADEventSystem.cpp" />
+    <ClCompile Include="JobManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -71,6 +72,8 @@
     <ClInclude Include="ADEventSystem.h" />
     <ClInclude Include="ADCombat.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="concurrentqueue.h" />
+    <ClInclude Include="JobManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

@@ -18,6 +18,8 @@
 #include "Listeners.h"
 //#include "MinionManager.h"
 #include <Scene.h>
+#include <JobManager.h>
+#include <future>
 
 
 #define ShowColliders
@@ -43,20 +45,112 @@ bool FULLSCREEN = false;
 // Settings
 
 
+struct PhysicsShiz
+{
+	int OBJ_COUNT;
+	GameObject** OBJS;
+	QuadTree<int>* collisionTree;
+	promise<void>* physicspromise;
+};
+
+struct AiArgs
+{
+	ADGameplay::Scene* scene;
+	float delta;
+	promise<void>* scenePromise;
+};
+
+struct ClampingArgs
+{
+	GameObject* golem;
+	QuadTree<ADPhysics::Triangle>* tree;
+	vector<Destructable*>* stone;
+	vector<Destructable*>* water;
+	vector<Destructable*>* fire;
+	vector<Destructable*>* wood;
+	float time;
+	promise<void>* clamppromise;
+};
+
+void ClampingWrapper(void* args, int index)
+{
+	ClampingArgs* temp = static_cast<ClampingArgs*>(args);
+	for (int i = 0; i < 10; i++)
+	{
+		GroundClamping(temp->stone->at(i), temp->tree, temp->time);
+		GroundClamping(temp->water->at(i), temp->tree, temp->time);
+		GroundClamping(temp->fire->at(i), temp->tree, temp->time);
+		GroundClamping(temp->wood->at(i), temp->tree, temp->time);
+	}
+
+	GroundClamping(temp->golem, temp->tree, temp->time);
+	temp->clamppromise->set_value();
+}
+
+void AiUpdateWrapper(void* args, int index)
+{
+	AiArgs* temp = static_cast<AiArgs*>(args);
+	temp->scene->Update(temp->delta);
+	temp->scenePromise->set_value();
+}
+
+void MainPhysics(void* args, int index)
+{
+	PhysicsShiz* temp = static_cast<PhysicsShiz*>(args);
+	for (int i = 0; i < temp->OBJ_COUNT; i++)
+	{
+
+		if (temp->OBJS[i]->colliderPtr)
+		{
+			int* index = new int(i);
+			if (!temp->collisionTree->Insert(ADQuadTreePoint<int>(temp->OBJS[i]->colliderPtr->Pos.x, temp->OBJS[i]->colliderPtr->Pos.z, *index)))
+			{
+				int somethingswrong = 0;
+				somethingswrong++;
+			}
+		}
+	}
+
+	for (unsigned int i = 0; i < temp->OBJ_COUNT; i++)
+	{
+		if (temp->OBJS[i]->colliderPtr)
+		{
+			XMFLOAT3 obj_pos = VectorToFloat3(temp->OBJS[i]->transform.r[3]);
+			std::vector<ADQuadTreePoint<int>> collisionVector = temp->collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
+
+			for (unsigned int j = 0; j < collisionVector.size(); j++)
+			{
+				if (temp->OBJS[*collisionVector[j].data]->colliderPtr)
+					temp->OBJS[i]->CheckCollision(temp->OBJS[*collisionVector[j].data]);
+			}
+		}
+	}
+
+	ADResource::ADGameplay::ResolveCollisions();
+	temp->physicspromise->set_value();
+}
+
+
 // the class definition for the core "framework" of our app
 ref class App sealed : public IFrameworkView
 {
 private:
+	Jobs::JobManager* jobManagerTest;
 	Engine* engine;
+	Engine::AllArgs* engineArgs;
+	PhysicsShiz* PhysicsArguments;
 	TheGreatGolem* game;
 	AD_AUDIO::ADAudio* audioEngine;
 	ADResource::ADGameplay::Golem* golem;
 	ADGameplay::Scene currentScene;
+	ClampingArgs* clampArgs;
+	AiArgs* aiArgs;
 	//MinionManager* minionManager;
 	AD_ULONG golem_collider = 0;
 	//FountainEmitter femitter;
 
 	bool shutdown = false;
+	bool thread = false;
 
 	// Timing
 	XTime game_time;
@@ -125,7 +219,12 @@ public:
 		engine = new Engine;
 		audioEngine = new AD_AUDIO::ADAudio;
 		game = new TheGreatGolem();
+		clampArgs = new ClampingArgs();
 
+		jobManagerTest = Jobs::JobManager::GetInstance();
+		//clampArgs = new ClampingArgs();
+		PhysicsArguments = new PhysicsShiz();
+		aiArgs = new AiArgs();
 		//Initialize.  Order Matters.
 		audioEngine->Init();
 		game->LoadGameAudio(audioEngine);
@@ -569,7 +668,7 @@ public:
 		eventUIMessage.targetID = 0;
 		eventUIMessage.externalMsg = true;
 		eventUIMessage.commandID = 1;
-		MessageTrigger* tb = GameUtilities::AddMessageTrigger(eventUIMessage ,XMFLOAT3(500, 0, -900), XMFLOAT3(700, 50, 800), XMFLOAT3(0, 0, 0));
+		MessageTrigger* tb = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -900), XMFLOAT3(700, 50, 800), XMFLOAT3(0, 0, 0));
 		tb->active = true;
 		GameUtilities::AddGameObject(tb, false);
 		eventUIMessage.targetID = 1;
@@ -613,14 +712,86 @@ public:
 		std::string fr; std::wstring tfw; const wchar_t* wchar;
 		game_time.Restart();
 		ADEvents::ADEventSystem::Instance()->SendEvent("PlayTitle", (void*)0);
+		clampArgs->tree = tree;
+		clampArgs->golem = golem;
+		clampArgs->time = delta_time;
+		clampArgs->stone = &stoneMinions;
+		clampArgs->water = &waterMinions;
+		clampArgs->fire = &fireMinions;
+		clampArgs->wood = &woodMinions;
+		aiArgs->scene = &currentScene;
 		while (!shutdown)
 		{
+			promise<void> physicspromise;
+			promise<void> scenepromise;
+			promise<void> clamppromise;
+			future<void> physicsfuture = physicspromise.get_future();
+			future<void> scenefuture = scenepromise.get_future();
+			future<void> clampfuture = clamppromise.get_future();
+			aiArgs->scenePromise = &scenepromise;
+			clampArgs->clamppromise = &clamppromise;
 			game_time.Signal();
 			delta_time = static_cast<float>(game_time.SmoothDelta());
 			timer += delta_time;
 
 			ProcessInput();
 			ADEvents::ADEventSystem::Instance()->ProcessEvents();
+
+			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
+			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
+			PhysicsArguments->collisionTree = collisionTree;
+			PhysicsArguments->physicspromise = &physicspromise;
+
+			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
+			PhysicsArguments->OBJ_COUNT = OBJ_COUNT;
+			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
+			PhysicsArguments->OBJS = OBJS;
+
+
+			physics_timer += delta_time;
+			if (physics_timer > physics_rate)
+			{
+				physics_timer = 0;
+				//--------------------------------------------------------------------------------------------------------
+				/*for (int i = 0; i < OBJ_COUNT; i++)
+				{
+					for (unsigned int j = 0; j < OBJ_COUNT; j++)
+					{
+						if (i != j)
+						{
+							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
+							{
+								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
+								{
+									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
+									{
+										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
+										{
+											OBJS[i]->CheckCollision(OBJS[j]);
+										}
+									}
+								}
+							}
+						}
+					}
+				}*/
+
+				//----------------------------------New Physics System-------------------------------
+				thread = true;
+				jobManagerTest->AddJob(&MainPhysics, (void*)PhysicsArguments, 0);
+
+				/*for (int i = 0; i < 10; i++)
+				{
+					GroundClamping(stoneMinions[i], tree, delta_time);
+					GroundClamping(waterMinions[i], tree, delta_time);
+					GroundClamping(fireMinions[i], tree, delta_time);
+					GroundClamping(woodMinions[i], tree, delta_time);
+				}*/
+
+			}
+
+			//GroundClamping(golem, tree, delta_time);
+			jobManagerTest->AddJob(&ClampingWrapper, (void*)clampArgs, 1);
 
 			//ADAI::ADPathfinding::Instance()->UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
 			//golem->flockingGroups[commandTargetGroup
@@ -637,6 +808,7 @@ public:
 
 			golem->GetView(view);
 
+			aiArgs->delta = engine->GetEngineDeltaTime();
 
 
 			XMFLOAT3 CamPosition = engine->GetOrbitCamera()->GetPosition();
@@ -695,91 +867,8 @@ public:
 			//This is just tmporary code for a simple collision layer loop, this will be slow but multithreading should help
 
 			//	Works the exact same as the commented code above
-			ADQuad collisionBoundary(0, 0, mapDimensions.x, mapDimensions.y);
-			QuadTree<int>* collisionTree = new QuadTree<int>(collisionBoundary);
-
-			int OBJ_COUNT = ResourceManager::GetGameObjectCount();
-			ADResource::ADGameplay::GameObject** OBJS = ResourceManager::GetGameObjectPtr();
-
-
-			physics_timer += delta_time;
-			if (physics_timer > physics_rate)
-			{
-				physics_timer = 0;
-				//--------------------------------------------------------------------------------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-					for (unsigned int j = 0; j < OBJ_COUNT; j++)
-					{
-						if (i != j)
-						{
-							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
-							{
-								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
-								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
-									{
-										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
-										{
-											OBJS[i]->CheckCollision(OBJS[j]);
-										}
-									}
-								}
-							}
-						}
-					}
-				}*/
-
-				//----------------------------------New Physics System-------------------------------
-				for (int i = 0; i < OBJ_COUNT; i++)
-				{
-
-					if (OBJS[i]->colliderPtr)
-					{
-						int* index = new int(i);
-						if (!collisionTree->Insert(ADQuadTreePoint<int>(OBJS[i]->colliderPtr->Pos.x, OBJS[i]->colliderPtr->Pos.z, *index)))
-						{
-							int somethingswrong = 0;
-							somethingswrong++;
-						}
-					}
-				}
-
-				for (unsigned int i = 0; i < OBJ_COUNT; i++)
-				{
-					if (OBJS[i]->colliderPtr)
-					{
-						XMFLOAT3 obj_pos = VectorToFloat3(OBJS[i]->transform.r[3]);
-						std::vector<ADQuadTreePoint<int>> collisionVector = collisionTree->Query(ADQuad(obj_pos.x, obj_pos.z, 25, 25));
-
-						for (unsigned int j = 0; j < collisionVector.size(); j++)
-						{
-							if (OBJS[*collisionVector[j].data]->colliderPtr)
-								OBJS[i]->CheckCollision(OBJS[*collisionVector[j].data]);
-						}
-
-						for (auto& object : forcedCollisions)
-						{
-							OBJS[i]->CheckCollision(object);
-						}
-					}
-				}
-				//---------------------------------------------End New Physics System------------------------------------------
-
-				//Resolve all collisions that occurred this frame
-				ADResource::ADGameplay::ResolveCollisions();
-
-				for (int i = 0; i < 10; i++)
-				{
-					GroundClamping(stoneMinions[i], tree, delta_time);
-					GroundClamping(waterMinions[i], tree, delta_time);
-					GroundClamping(fireMinions[i], tree, delta_time);
-					GroundClamping(woodMinions[i], tree, delta_time);
-				}
-
-			}
-
-			GroundClamping(golem, tree, delta_time);
+			
+			//jobManagerTest->AddJob(&AiUpdateWrapper, (void*)aiArgs, 0);
 			//GroundClamping(cube, tree, delta_time);
 			//cube->transform.r[3].m128_f32[1] += 5;
 
@@ -787,10 +876,17 @@ public:
 			Window->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
 
 			// D3d11 shit
+			clampfuture.wait();
+			if (thread)
+			{
+				physicsfuture.wait();
+				thread = false;
+			}
 			if (!engine->Update(delta_time)) break;
 			currentScene.Update(engine->GetEngineDeltaTime());
 			if (!engine->Render()) break;
 
+			//scenefuture.wait();
 			collisionTree->Shutdown();
 
 			// Update framerate
