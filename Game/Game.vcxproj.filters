@@ -247,4 +247,7 @@
     <ClInclude Include="GamePlayAI.h" />
     <ClInclude Include="SceneLoader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="Native\ActusDeiEngine.lib" />
+  </ItemGroup>
 </Project>
