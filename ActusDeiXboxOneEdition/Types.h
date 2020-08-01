@@ -721,11 +721,6 @@ namespace ADResource
 				//Otherwise it will apply a velocity change against both objects. Not sure how often this will be used but it is here for now.
 				else
 				{
-					//XMFLOAT4 aTemp = current.A->Velocity, bTemp = current.B->Velocity;
-					//const ADPhysics::PhysicsMaterial aMat = current.A->pmat, bMat = current.B->pmat;
-					//VelocityImpulse(aTemp, aMat, bTemp, bMat, current.m);
-					//(*current.A).Velocity = aTemp; (*current.B).Velocity = bTemp;
-					//(*current.A).pmat = aMat; (*current.B).pmat = bMat;
 					PositionalCorrection((XMFLOAT4&)current.A->transform.r[3], current.A->pmat, (XMFLOAT4&)current.B->transform.r[3], current.B->pmat, current.m);
 				}
 			}

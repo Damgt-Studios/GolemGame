@@ -44,8 +44,7 @@ void ADEvents::ADEventSystem::PrintData()
 {
 	for (std::multimap<std::string, Listener*>::iterator iter = listeners.begin(); iter != listeners.end(); iter++)
 	{
-		//Logger::log(iter->first);
-		//Logger::log(iter->second->ToString());
+		//Never used.
 	}
 }
 

@@ -41,7 +41,7 @@ using namespace Platform;
 using namespace Platform::Collections;
 
 // Settings
-bool FULLSCREEN = false;
+bool FULLSCREEN;
 // Settings
 
 
@@ -679,18 +679,6 @@ public:
 		MessageTrigger* tb3 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -200), XMFLOAT3(700, 50, 800), XMFLOAT3(0, 0, 0));
 		tb3->active = true;
 		GameUtilities::AddGameObject(tb3, false);
-		//eventUIMessage.targetID = 3;
-		//MessageTrigger* tb4 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -600), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		//tb4->active = true;
-		//GameUtilities::AddGameObject(tb4, false);
-		//eventUIMessage.targetID = 4;
-		//MessageTrigger* tb5 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -500), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		//tb5->active = true;
-		//GameUtilities::AddGameObject(tb5, false);
-		//eventUIMessage.targetID = 5;
-		//MessageTrigger* tb6 = GameUtilities::AddMessageTrigger(eventUIMessage, XMFLOAT3(500, 0, -400), XMFLOAT3(10, 10, 10), XMFLOAT3(0, 0, 0));
-		//tb6->active = true;		
-		//GameUtilities::AddGameObject(tb6, false);
 
 		ResourceManager::FinalizedStatics();
 
@@ -752,54 +740,13 @@ public:
 			if (physics_timer > physics_rate)
 			{
 				physics_timer = 0;
-				//--------------------------------------------------------------------------------------------------------
-				/*for (int i = 0; i < OBJ_COUNT; i++)
-				{
-					for (unsigned int j = 0; j < OBJ_COUNT; j++)
-					{
-						if (i != j)
-						{
-							if (OBJS[i]->colliderPtr != nullptr && OBJS[j]->colliderPtr != nullptr)
-							{
-								if (!OBJS[i]->colliderPtr->trigger || !OBJS[j]->colliderPtr->trigger)
-								{
-									if (OBJS[i]->colliderPtr->type != ColliderType::Plane || OBJS[j]->colliderPtr->type != ColliderType::Plane)
-									{
-										if (OBJS[i]->colliderPtr->type != ColliderType::Triangle || OBJS[j]->colliderPtr->type != ColliderType::Triangle)
-										{
-											OBJS[i]->CheckCollision(OBJS[j]);
-										}
-									}
-								}
-							}
-						}
-					}
-				}*/
-
 				//----------------------------------New Physics System-------------------------------
 				thread = true;
 				jobManagerTest->AddJob(&MainPhysics, (void*)PhysicsArguments, 0);
 
-				/*for (int i = 0; i < 10; i++)
-				{
-					GroundClamping(stoneMinions[i], tree, delta_time);
-					GroundClamping(waterMinions[i], tree, delta_time);
-					GroundClamping(fireMinions[i], tree, delta_time);
-					GroundClamping(woodMinions[i], tree, delta_time);
-				}*/
-
 			}
 
-			//GroundClamping(golem, tree, delta_time);
 			jobManagerTest->AddJob(&ClampingWrapper, (void*)clampArgs, 1);
-
-			//ADAI::ADPathfinding::Instance()->UpdatePlayerNode(golem->GetPosition().x, golem->GetPosition().z, 3000, 3000);
-			//golem->flockingGroups[commandTargetGroup
-
-			// Debug draw
-			//ResourceManager::GetModelPtrFromMeshId(golem_collider)->position = (*ResourceManager::GetSimpleModelPtrFromMeshId(golem->GetMeshId()))->position;
-
-			//engine->GetOrbitCamera()->SetRadius(200);
 
 			engine->GetOrbitCamera()->SetLookAtAndRotate((XMFLOAT3&)(Float3ToVector(golem->GetPosition()) + XMVectorSet(0, 15, 0, 1)), yaw, pitch, delta_time);
 			XMMATRIX view;

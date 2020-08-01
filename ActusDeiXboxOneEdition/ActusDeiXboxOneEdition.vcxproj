@@ -307,7 +307,6 @@
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ADAI.cpp" />
     <ClCompile Include="ADEventSystem.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="ADPathfinding.cpp" />
@@ -331,7 +330,6 @@
     </ClCompile>
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>

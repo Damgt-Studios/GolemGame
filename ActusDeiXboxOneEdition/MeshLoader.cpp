@@ -26,22 +26,10 @@ void Load_Mesh(const char* meshFileName, SimpleMesh& mesh)
 	//Example mesh conditioning if needed - this flips handedness
 	for (auto& v : mesh.vertexList)
 	{
-		/*v.Position.x = -v.Position.x;
-		v.Normal.x = -v.Normal.x;*/
 		v.Tex.y = 1.0f - v.Tex.y;
 
 	}
 
-	//int tri_count = (int)(mesh.indicesList.size() / 3);
-
-	//for (int i = 0; i < tri_count; ++i)
-	//{
-	//	int* tri = mesh.indicesList.data() + i * 3;
-
-	//	int temp = tri[0];
-	//	tri[0] = tri[2];
-	//	tri[2] = temp;
-	//}
 	file.close();
 };
 
@@ -69,22 +57,10 @@ void Load_AnimMesh(const char* meshFileName, SimpleMeshAnim& mesh)
 	//Example mesh conditioning if needed - this flips handedness
 	for (auto& v : mesh.vertexList)
 	{
-		//v.Position.x = -v.Position.x;
-		//v.Normal.x = -v.Normal.x;
 		v.Tex.y = 1.0f - v.Tex.y;
 
 	}
 
-	/*int tri_count = (int)(mesh.indicesList.size() / 3);
-
-	for (int i = 0; i < tri_count; ++i)
-	{
-		int* tri = mesh.indicesList.data() + i * 3;
-
-		int temp = tri[0];
-		tri[0] = tri[2];
-		tri[2] = temp;
-	}*/
 	file.close();
 };
 void Load_AnimFile(const char* animFileName, vector<bones>& skeleton, vector<XMMATRIX>& inverse, anim_clip& clip)
@@ -95,15 +71,8 @@ void Load_AnimFile(const char* animFileName, vector<bones>& skeleton, vector<XMM
 		clip.animfilename.pop_back();
 	}
 
-		clip.animfilename.erase(0,13);
+	clip.animfilename.erase(0,13);
 
-	
-	
-	
-
-
-
-	
 	std::fstream file{ animFileName, std::ios_base::in | std::ios_base::binary };
 
 	assert(file.is_open());

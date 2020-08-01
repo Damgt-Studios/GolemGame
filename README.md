@@ -13,3 +13,20 @@
 ```
 git filter-branch --index-filter "git rm -rf --cached --ignore-unmatch <filepath>" HEAD
 ```
+
+Controls:
+Control Pad Up – Switch Golem Selection Up.
+Control Pad Down – Switch Golem Selection Down.
+Control Pad Left - Consume a MInion to recover health.
+Left Thumbstick – Move and control the giant.
+Right Thumbstick – Direct the camera.  Mobs charge towards camera facing.  
+Start – Pause Menu, Resume from any option in the Menu.
+Select – Debug Menu for Developer Mode
+A – Slam Peasants
+X – Punch Structure
+Y – Special Skill
+B – Kick Attack
+RB – Switch Player Mode Right
+LB – Switch Player Mode Left
+RT – Send Minions toward camera direction.
+LT – Make Minions return to the player.

@@ -37,10 +37,6 @@ public:
 			{
 				targetedStats.push_back(_targetsStatSheet->RequestStats(stat));
 			}
-			//else
-			//{
-			//	isFinished = true;
-			//}
 		}
 		for (auto& stat : counterStatsIncluded)
 		{
@@ -48,10 +44,6 @@ public:
 			{
 				counterStats.push_back(_targetsStatSheet->RequestStats(stat));
 			}
-			//else
-			//{
-			//	isFinished = true;
-			//}
 		}
 		if (tickOnEnter)
 		{

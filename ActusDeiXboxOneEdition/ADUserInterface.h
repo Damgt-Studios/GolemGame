@@ -194,10 +194,6 @@ namespace ADUI
 
         ~Overlay2D()
         {
-            //for (int i = 0; i < components.size(); ++i)
-            //{
-            //    delete components[i];
-            //}
             components.clear();
         };
 
@@ -380,8 +376,6 @@ namespace ADUI
     private:
         Image2D* image = nullptr;
         Label2D* buttonLabel = nullptr;
-        //float textXOffset;
-        //float textYOffset;
 
     public:
         UINT actionValue = 0;
@@ -487,7 +481,6 @@ namespace ADUI
 
         void AddComponent(UIComponent* _component);
         void RecalculatePositions();
-        //virtual void Generate(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture, RECT _position, XMFLOAT2 _spacing, UINT _btnCount, UINT _columns, Image2D* _button, std::string* _textArray , bool _active, bool _isFocus);
         virtual void Generate(UIComponent* _comp, XMFLOAT4 _position, XMFLOAT2 _spacing, UINT _count, UINT _columns, ComponentGridStyle _spacingStyle, bool _active, bool _isFocus);
         virtual void Initialize();
         virtual UIMessage* ProcessInput() override;
@@ -498,15 +491,6 @@ namespace ADUI
         void SetSelected(int _selection);
         UINT GetIndex() override;
 
-        //    std::unique_ptr<ComponentGrid> clone() const
-        //    {
-        //        return std::unique_ptr<ComponentGrid>(this->clone_impl());
-        //    }
-        //private:
-        //    virtual ComponentGrid* clone_impl() const override
-        //    {
-        //        return new ComponentGrid(*this);
-        //    }
     public:
 
         Input::THUMBSTICKS thumbstickBinding = Input::THUMBSTICKS::LEFT_THUMBSTICK;
@@ -572,13 +556,12 @@ namespace ADUI
     {
     public:
         UILog();
-        //~UILog() = default;
         Image2D* blackBox = nullptr;
         Label2D* consoleLabel = nullptr;
         std::deque<std::string> messageQueue;
 
         ~UILog();
-        void InitializeLog(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture); // float textXOffset, float textYOffset, float screenWidth, float screenHeight, QuadData _quad);
+        void InitializeLog(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture); 
         void Setup(Image2D* _background, Label2D* _label);
         void SetFont(Text2D* _fontSmall);
         void SetRects(XMFLOAT4 _posRect, RECT _uvRect);
@@ -672,16 +655,6 @@ namespace ADUI
             posScalingHeight = (screenHeight / planningHeight) * (resolutionHeight / planningHeight);
         }
     };
-
-    //static inline long pixelInXPercent(float _number)
-    //{
-    //    return (_number / 1920) * Settings::screenWidth;
-    //}
-
-    //static inline long pixelInYPercent(float _number)
-    //{
-    //    return (_number / 1080) * Settings::screenHeight;
-    //}
 
     static inline XMFLOAT2 CenterOfImage(XMVECTOR& stringSize, Image2D* _image)
     {

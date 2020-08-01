@@ -107,47 +107,20 @@ namespace ADResource
 				nBox->isDeactivateOnFirstApplication = isDeactivateOnFirstApplication;
 				nBox->eventName = eventName;
 
-				//AD_ULONG id = ResourceManager::AddSimpleModel("files/models/Fireball.mesh", "files/textures/Fireball.mat", nBox->GetPosition(), {0.01f, 0.01f, 0.01f}, { 1,1,1 });
-				//nBox->SetMeshID(id);
-				//AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-				//nBox->SetMeshID(id);
-				//GameUtilities::AttachModelToHitbox(nBox, "files/models/Fireball.mesh", "files/textures/Fireball.mat", XMFLOAT3(100, 1, 100), XMFLOAT3(0.05f, 0.05f, 0.05f), XMFLOAT3(0, 0, 0));
-				//// Transform data
-				//temp->SetScale(scale);
-				//temp->SetRotation(rotation);
-				//temp->SetPosition(position);
 				nBox->rotation = rotation;
 				if (nBox->modelName != "")
 				{
-					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, { 0,0,0 }); // trigger->modelScale
-
-					//AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 10, 1), nBox->modelScale, { 0,0,0 }); //nBox->rotation); // trigger->modelScale
+					AD_ULONG id = ResourceManager::AddSimpleModel(nBox->modelName, nBox->matName, XMFLOAT3(1, 1, 1), nBox->modelScale, { 0,0,0 }); 
 					nBox->SetMeshID(id);
-					//GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
 				}
-				//else
-				//{
-				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0));
-				//	nBox->SetMeshID(id);
-				//}
-
 
 				nBox->rotation = rotation;
 				nBox->transform = XMMatrixRotationX(nBox->rotation.x);
 				XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
-				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
+				nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);
 
 
-
-
-				////nBox->transform = XMMatrixRotationX(nBox->rotation.x);
-				//XMMATRIX matrix1 = XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ);
-				////nBox->collider = ADPhysics::OBB(nBox->transform * matrix1, nBox->colScale);// XMFLOAT3(1, 1, 1));
-				//nBox->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(nBox->rotation.y)) * XMMatrixTranslation(nBox->offsetX, nBox->offsetY, nBox->offsetZ), nBox->colScale);
-				//nBox->collider.AxisX.x = nBox->colScale.x;
-				//nBox->collider.AxisY.y = nBox->colScale.y;
-				//nBox->collider.AxisZ.z = nBox->colScale.z;
-				nBox->SetScale(nBox->modelScale);	//colScale);  
+				nBox->SetScale(nBox->modelScale);	
 				nBox->collider.trigger = true;
 				nBox->colliderPtr = &nBox->collider;
 
@@ -291,25 +264,14 @@ namespace ADResource
 					}
 					if (hitboxes.size() > 0 && movesToPlayer)
 					{
-						//hitboxes[currentHitBox]->transform = *_casterTransform;
-						//hitboxes[currentHitBox]->transform.r[0].m128_f32[0] = hitboxes[currentHitBox]->modelScale.x;
-						//hitboxes[currentHitBox]->transform.r[1].m128_f32[1] = hitboxes[currentHitBox]->modelScale.y;
-						//hitboxes[currentHitBox]->transform.r[2].m128_f32[2] = hitboxes[currentHitBox]->modelScale.z;
-
-						//hitboxes[currentHitBox]->transform = XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z);
-						//hitboxes[currentHitBox]->transform.r[0].m128_f32[0] = _casterTransform->r[0].m128_f32[0];
-						//hitboxes[currentHitBox]->transform.r[1].m128_f32[0] = _casterTransform->r[1].m128_f32[1];
-						//hitboxes[currentHitBox]->transform.r[2].m128_f32[0] = _casterTransform->r[2].m128_f32[2];
 						if (hitboxes[currentHitBox]->modelName == "")
 						{
-						//	hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(90.f), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection)));
 							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->colScale.x, hitboxes[currentHitBox]->colScale.y, hitboxes[currentHitBox]->colScale.z), (*_casterTransform * scaleCorrection));
 						}
 						else
 						{
 							hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform));
-							//hitboxes[currentHitBox]->transform = XMMatrixMultiply(XMMatrixRotationX(XMConvertToRadians(hitboxes[currentHitBox]->rotation.x)), XMMatrixMultiply(XMMatrixScaling(hitboxes[currentHitBox]->modelScale.x, hitboxes[currentHitBox]->modelScale.y, hitboxes[currentHitBox]->modelScale.z), (*_casterTransform)));
-
+							
 							hitboxes[currentHitBox]->SetRotation(hitboxes[currentHitBox]->rotation, RotationType::yxz);
 						}
 						XMVECTOR castSideNormal = _casterTransform->r[0];
@@ -351,8 +313,6 @@ namespace ADResource
 					{
 						cooldownTimer = cooldownDuration;
 						attackTimer = attackDuration;
-						//for (auto& hb:hitboxes)
-						//{
 						if (hitboxDelay <= 0)
 						{
 							hitboxFired[currentHitBox] = true;
@@ -360,7 +320,6 @@ namespace ADResource
 						}
 						active = true;
 						return true;
-						//}
 					}
 				}
 				return false;
@@ -376,11 +335,8 @@ namespace ADResource
 				{
 					if (hitboxFired[currentHitBox] == false && attackDuration - attackTimer > hitboxDelay)
 					{
-						//for (auto& hb : hitboxes)
-						//{
 						hitboxFired[currentHitBox] = true;
 						hitboxes[currentHitBox]->Enable();
-						//}
 					}
 					if (attackTimer > 0)
 					{
@@ -419,28 +375,22 @@ namespace ADResource
 				if (hitboxes[currentHitBox])
 				{
 					active = false;
-					//hitboxFired[currentHitBox] = false;
-					//for (auto& hb : hitboxes)
-					//{
 					if (removeHbIfEnd)
 					{
 						hitboxes[currentHitBox]->active = false;
 						hitboxFired[currentHitBox] = false;
 					}
-					//}
 				}
 			}
 
 			Action* Clone()
 			{
 				Action* action = new Action();
-				//action->hitboxCount = 0;
 				for (auto& hb : hitboxes)
 				{
 					action->hitboxes.push_back(hb->Clone());
 					action->hitboxFired.push_back(false);
 				}
-				//action->hitbox = DefinitionDatabase::Instance()->hitboxDatabase[rhs];
 				action->hitboxCount = hitboxCount;
 				action->cooldownDuration = cooldownDuration;
 				action->attackDuration = attackDuration;
@@ -604,9 +554,6 @@ namespace ADResource
 			float offsetY = 0;
 			ADPhysics::AABB collider;
 
-			//Until we have an event manager this is our solution for events.
-			//ADUI::UIMessage eventUIMessage;
-
 
 			Trigger() { colliderPtr = &collider; physicsType = OBJECT_PHYSICS_TYPE::TRIGGER; gamePlayType = ADResource::ADGameplay::EVENT_TRIGGER; colliderPtr->trigger = true; };
 
@@ -679,7 +626,7 @@ namespace ADResource
 
 			void CallEvent()
 			{
-				//ADUI::MessageReceiver::SendMessage(&eventUIMessage);
+				//Never used.
 			}
 		};
 	}
@@ -699,10 +646,6 @@ public:
 	std::unordered_map<std::string, ADResource::ADGameplay::StatSheet*> statsheetDatabase;
 	std::unordered_map<std::string, ADResource::ADGameplay::HitBox*>	hitboxDatabase;
 	std::unordered_map<std::string, ADResource::ADGameplay::Action*>	actionDatabase;
-
-	//AD_ULONG villagerIdleMeshid;
-	//AD_ULONG villagerWalkingMeshid;
-	//AD_ULONG villagerRunningMeshid;
 
 
 	static DefinitionDatabase* Instance()

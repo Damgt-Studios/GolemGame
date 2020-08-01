@@ -42,12 +42,6 @@ void ADUI::UIComponent::SetPosition(XMFLOAT2 _position)
     corners.top = position.y;
     corners.right = position.x + size.x;
     corners.bottom = position.y + size.y;
-
-    //center.x = size.x / 2;
-    //center.y = size.y / 2;
-
-    //posOffsetByAnchor.x = position.x - (center.x);
-    //posOffsetByAnchor.y = position.y - (center.y);
 }
 
 void ADUI::UIComponent::SetCorners(XMFLOAT4 _position)
@@ -62,14 +56,12 @@ void ADUI::UIComponent::SetWidth(float _width)
 {
     size.x = _width;
     corners.right = position.x + size.x;
-    //center.x = position.x + (size.x * 0.5f * Settings::resScalingWidth);
 }
 
 void ADUI::UIComponent::SetHeight(float _height)
 {
     size.y = _height;
     corners.bottom = position.y + size.y;
-    //center.y = position.y + (size.y * 0.5f * Settings::resScalingHeight);
 }
 
 void ADUI::UIComponent::SetStretched(bool _stretched)
@@ -102,17 +94,6 @@ void ADUI::Text2D::Render(std::string& output, XMFLOAT2 position, XMVECTOR tint,
 {
     spriteFont->DrawString(spriteBatch, output.c_str(), position, tint, rotation, origin, { Settings::resScalingWidth, Settings::resScalingHeight });
 }
-//
-//ADUI::Image2D::Image2D()
-//{
-//    visible = false;
-//    active = false;
-//    animationData = { 1,0,1,0 };
-//    currentFrame = 0;
-//    updateThreshold = D3D10_FLOAT32_MAX;
-//    updateTimer = 0.f;
-//    scale = { 1,1 };
-//}
 
 
 ADUI::Image2D::Image2D(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture, XMFLOAT4 _posRect)
@@ -122,7 +103,6 @@ ADUI::Image2D::Image2D(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _tex
     visible = true;
     active = true;
     currentFrame = 0;
-    //updateThreshold = D3D10_FLOAT32_MAX;
     updateTimer = 0.f;
     scale = { 1,1 };
     SetCorners(_posRect);
@@ -191,29 +171,6 @@ void ADUI::Image2D::SetDepth(float _depth)
     depth = _depth;
 }
 
-//
-//void ADUI::Image2D::SetPosition(RECT _posRect)
-//{
-//    posFloats.x = _posRect.left * Settings::resScalingWidth;
-//    posFloats.y = _posRect.top * Settings::resScalingHeight;
-//    posRect = _posRect;
-//}
-//
-//void ADUI::Image2D::SetPosition(XMFLOAT2 _position)
-//{
-//    posFloats = _position;
-//}
-//
-//void ADUI::Image2D::SetScale(XMFLOAT2 _scale)
-//{
-//    scale = _scale;
-//}
-//
-//void ADUI::Image2D::SetStretched(bool _isStretched)
-//{
-//    stretched = _isStretched;
-//}
-
 RECT ADUI::Image2D::GetPos()
 {
     return corners;
@@ -266,11 +223,10 @@ void ADUI::Image2D::Render()
     {
         if (stretched)
         {
-            RECT scaledRect = { corners.left * (scale.x), // * Settings::posScalingWidth),
-                corners.top * (scale.y),// Settings::posScalingHeight * ,
-                corners.right * (scale.x),//Settings::resScalingWidth *),
-                corners.bottom * (scale.y) };//Settings::resScalingHeight *) };
-            //spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, anchor, effects, depth);
+            RECT scaledRect = { corners.left * (scale.x), 
+                corners.top * (scale.y),
+                corners.right * (scale.x),
+                corners.bottom * (scale.y) };
             spriteBatch->Draw(texture, scaledRect, &uvRect[currentFrame], tint, rotation, center, effects, depth);
         }
         else
@@ -358,11 +314,7 @@ const XMVECTOR ADUI::Image2D::GetTint()
 {
     return tint;
 }
-//
-//const XMFLOAT2 ADUI::Image2D::GetOrigin()
-//{
-//    return anchor;
-//}
+
 
 const XMFLOAT2 ADUI::Image2D::GetScale()
 {
@@ -452,11 +404,7 @@ ADUI::Label2D::~Label2D()
 {
 
 }
-//
-//ADUI::TextLabel* ADUI::Label2D::GetLabel()
-//{
-//    return &label;
-//}
+
 
 SpriteFont* ADUI::Label2D::GetFont()
 {
@@ -481,10 +429,6 @@ void ADUI::Label2D::SetText(std::string _message)
 void ADUI::Label2D::SetText(std::string _message, XMFLOAT2 _position, float _scale, XMVECTOR _tint, float rotation, XMFLOAT2 origin, UINT effects, float depth)
 {
     output = _message;
-    //position.x = _position.x * Settings::resScalingWidth;
-    //position.y = _position.y * Settings::resScalingHeight;
-    //center.x = (corners.right - corners.left) / 2.f;
-    //center.y = (corners.bottom - corners.top) / 2.f;
     SetPosition(_position);
 }
 
@@ -498,9 +442,6 @@ void ADUI::Label2D::SetPosition(XMFLOAT2 _position)
     position.x = _position.x * Settings::posScalingWidth;
     position.y = _position.y * Settings::posScalingHeight;
 
-    //position.x = _position.x;
-    //position.y = _position.y;
-
     center.x = (tsize.x / 2.f);
     center.y = (tsize.y / 2.f);
 }
@@ -511,12 +452,8 @@ void ADUI::Label2D::ResetPosition(XMFLOAT2 _position)
     XMFLOAT4 tsize;
     XMStoreFloat4(&tsize, size);
 
-
-    position.x = _position.x;// *Settings::posScalingWidth;
-    position.y = _position.y;// *Settings::posScalingHeight;
-
-    //position.x = _position.x;
-    //position.y = _position.y;
+    position.x = _position.x;
+    position.y = _position.y;
 
     center.x = (tsize.x / 2.f);
     center.y = (tsize.y / 2.f);
@@ -604,9 +541,9 @@ ADUI::UILog::~UILog()
     delete consoleLabel;
 }
 
-void ADUI::UILog::InitializeLog(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture) //float textXOffset, float textYOffset, float screenWidth, float screenHeight, QuadData _quad)
+void ADUI::UILog::InitializeLog(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture) 
 {
-    blackBox = new Image2D(_spriteBatch, _texture, { 0,0,0,0 }); //0.35f * screenWidth, -0.3f * screenHeight, 400, 250, 0.1046f, 0.2083f, 0.8645f, 0.9876f};
+    blackBox = new Image2D(_spriteBatch, _texture, { 0,0,0,0 }); 
     blackBox->visible = true;
     blackBox->SetStretched(true);
 }
@@ -1029,7 +966,6 @@ void ADUI::UIComponentSelector::SetCorners(XMFLOAT4 _pos)
     }
 
     XMVECTOR result = buttonLabel.GetFont()->MeasureString(buttonLabel.output.c_str());
-    //buttonLabel.SetPosition(CenterOfImage(result, image));
 }
 
 RECT ADUI::UIComponentSelector::GetPosRect()
@@ -1102,9 +1038,6 @@ void ADUI::ComponentGrid::RecalculatePositions()
         height = components[0].get()->GetHeight();
 
         break;
-        //case ComponentGridStyle::LargestInRowColumn:
-        //I'd have to check each row and then store the size of the position for that row.
-        //    break;
     default:
         break;
     }
@@ -1117,34 +1050,6 @@ void ADUI::ComponentGrid::RecalculatePositions()
 
     }
 }
-//
-//void ADUI::ComponentGrid::Generate(SpriteBatch* _spriteBatch, ID3D11ShaderResourceView* _texture, RECT _position, XMFLOAT2 _spacing, UINT _btnCount, UINT _columns, Image2D* _button, std::string* _textArray, bool _active, bool _isFocus)
-//{
-//    x = _position.left;
-//    y = _position.top;
-//    spacing = _spacing.x;
-//    columns = _columns;
-//    active = _active;
-//    controlFocus = _isFocus;
-//
-//    Image2D* button;
-//    Image2D* image;
-//    Image2D* imageS;
-//
-//    for (int i = 0; i < _btnCount; ++i)
-//    {
-//        /* image = new Image2D(_spriteBatch, _texture);
-//         image->SetRects(_position, *button->GetuvRect(), (button->GetOrigin()));
-//         imageS = new Image2D(_spriteBatch, _texture, button->GetuvRect(), button->animationData);
-//         Image2D* button = new Image2D(spriteBatch, _texture);
-//         TextLabel tempLabel = { true, XMFLOAT2(0, 0), _textArray[i] };
-//         button->SetText(tempLabel, 0, 0);
-//         button->SetFont(_button->GetText2D());
-//         buttons.push_back(button);*/
-//    }
-//
-//    //Initialize();
-//}
 
 void ADUI::ComponentGrid::Generate(UIComponent* _comp, XMFLOAT4 _position, XMFLOAT2 _spacing, UINT _count, UINT _columns, ComponentGridStyle _spacingStyle, bool _active, bool _isFocus)
 {
@@ -1311,9 +1216,6 @@ ADUI::SliderBar::SliderBar(Image2D* _slide, Slider* _slider, Image2D* _leftCap, 
     currentRatio = _currentValue;
     incriment = _incriment;
 
-    //align it all
-    //XMFLOAT2 pos = slide->GetPosFloats();
-
 }
 
 ADUI::SliderBar::~SliderBar()
@@ -1404,8 +1306,8 @@ void ADUI::Slider::SetValue(float _ratio)
     position.x = minPosition.x + (_ratio * (maxPosition.x - minPosition.x));
     position.y = minPosition.y + (_ratio * (maxPosition.y - minPosition.y));
     XMFLOAT2 scaledPosition;
-    scaledPosition.x = position.x;// *Settings::posScalingWidth;
-    scaledPosition.y = position.y;// *Settings::posScalingHeight;
+    scaledPosition.x = position.x;
+    scaledPosition.y = position.y;
     slider->SetPosition(scaledPosition);
 }
 

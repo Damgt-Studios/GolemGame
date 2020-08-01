@@ -43,8 +43,6 @@ public:
     {
         scene = _scene;
     };
-    //void HandleEvent(ADEvents::ADEvent* _event) override;
-    //std::string ToString() override;
 };
 
 class BigCloudEmitterListener : public ADEvents::Listener

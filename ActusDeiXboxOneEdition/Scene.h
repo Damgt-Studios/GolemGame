@@ -145,143 +145,7 @@ namespace ADGameplay
 
 		void InitializeScene(Engine* _engine)
 		{
-#pragma region oldshit
 
-			//Light light;
-			//ZeroMemory(&light, sizeof(Light));
-			//light.lightType = (int)LIGHTTYPE::DIRECTIONAL;
-			//light.diffuse = XMFLOAT4(0.5, 0.5, 0.5, 1);
-			//light.diffuseIntensity = 1;
-			//light.ambient = XMFLOAT4(0.156f, 0.003f, 0.215f, 1);
-			//light.ambientIntensity = 3;
-			//light.lightDirection = XMFLOAT4(0, -0.5f, -1, 1);
-			//light.position = XMFLOAT4(0, 0, 0, 1);
-
-			//// Point light
-			//Light light1;
-			//ZeroMemory(&light1, sizeof(Light));
-			//light.lightType - (int)LIGHTTYPE::POINT;
-			//light.diffuse = XMFLOAT4(1, 0.647, 0, 1);
-			//light.diffuseIntensity = 1;
-			//light.position = (XMFLOAT4(2.5, 0, 0, 1));
-			//light.lightRadius = 20;
-
-			//sceneLights.push_back(light);
-			//sceneLights.push_back(light1);
-
-			//float mapWidth = 1000;
-			//float mapHeight = 1000;
-
-			//PlaneArguments = { "files/models/Plane.mesh", "files/textures/Grass.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0) };
-			//
-
-			//sceneLights.push_back(light);
-			//sceneLights.push_back(light1);
-
-			//float mapWidth = 1000;
-			//float mapHeight = 1000;
-			//PlaneArguments = { "files/models/Ground.mesh", "files/textures/Ground.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(mapWidth, 100, mapHeight), XMFLOAT3(0, 0, 0) };
-			//
-
-			//
-			//animations.push_back("files/models/Golem_1_Idle.animfile");
-			//animations.push_back("files/models/Golem_1_Born.animfile");
-			//animations.push_back("files/models/Golem_1_Run.animfile");
-			//animations.push_back("files/models/Golem_1_Death.animfile");
-			//animations.push_back("files/models/Golem_1_Kick.animfile");
-			//
-			//stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
-			//waterMinionAnimations.push_back("files/models/Minion_4_Idle.animfile");
-			//fireMinionAnimations.push_back("files/models/Minion_2_Idle.animfile");
-			//woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
-
-			//SkyboxArguments = { "files/models/Skybox.mesh", "files/textures/Skybox.mat", XMFLOAT3(0, 0, 0), XMFLOAT3(-10, -10, -10), XMFLOAT3(0, 0, 0) };
-
-			//GolemArguments = { "files/models/Golem_1.AnimMesh", "files/textures/Golem_1.mat", XMFLOAT3(10, 0.00001, 10), XMFLOAT3(0.1, 0.1, 0.1), XMFLOAT3(0, 0, 0) };
-			//
-
-			//for (int i = 0; i < 10; i++)
-			//{
-			//	stoneMinionArguments.push_back({ "files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0) });
-			//	waterMinionArguments.push_back({ "files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", XMFLOAT3(-130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0) });
-			//	fireMinionArguments.push_back({"files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", XMFLOAT3(130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)});
-			//	woodMinionArguments.push_back({ "files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0) });
-			//}
-
-
-			//Building* house1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0.5f, 0.15), GameUtilities::GenerateHouse1, "House1");
-			//GameUtilities::AddGameObject(house1);
-			//AddBuilding(house1);
-			////house1->destructionEmitter = &engine->destructionCloud;
-			////house1->destructionEmitter2 = &engine->destructionCloud2;
-
-			//Building* rubble1 = new Building(XMFLOAT3(-500, 0, 100), XMFLOAT3(0, -45, 0), XMFLOAT3(25, 30, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble1, "Rubble");
-			//GameUtilities::AddGameObject(rubble1);
-			//house1->SetRubble(rubble1);
-
-
-			//for (int i = 0; i < 10; i++)
-			//{
-			//	Building* housey = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateHouse1, "House1");
-			//	GameUtilities::AddGameObject(housey);
-			//	AddBuilding(housey);
-			//	//housey->destructionEmitter = &engine->destructionCloud;
-			//	//housey->destructionEmitter2 = &engine->destructionCloud2;
-
-			//	Building* rubble2 = new Building(XMFLOAT3(-200 + (i * 33), 0, -100), XMFLOAT3(0, 90, 0), XMFLOAT3(25, 25, 30), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRubble2, "Rubble");
-			//	GameUtilities::AddGameObject(rubble2);
-			//	housey->SetRubble(rubble2);
-			//}
-
-			/*Building* attackTower = new Building(XMFLOAT3(10, 0, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(15, 25, 15), XMFLOAT3(0, 0, 0), GameUtilities::GenerateAttackTower, "BallistaTower");
-			GameUtilities::AddGameObject(attackTower);
-
-			Building* ballista = new Building(XMFLOAT3(10, 20, 200), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateBallista, "BallistaTower");
-			GameUtilities::AddGameObject(ballista);*/
-
-			
-
-			//Building* gateway = new Building(XMFLOAT3(330, 0, -330), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 1, 0), GameUtilities::GenerateGateway, "Gate");
-			//GameUtilities::AddGameObject(gateway);
-
-			//Building* scaffolding = new Building(XMFLOAT3(410, 0, -400), XMFLOAT3(0, 90, 0), XMFLOAT3(5, 25, 25), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateScaffoldWallX, "Scaffolding");
-			//GameUtilities::AddGameObject(scaffolding);
-
-			//Building* wall = new Building(XMFLOAT3(700, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(32.5, 35, 12.5), XMFLOAT3(0, 0.5f, 0), GameUtilities::GenerateWall, "Wall");
-			//GameUtilities::AddGameObject(wall);
-
-			//Building* well = new Building(XMFLOAT3(1500, 0, 1500), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 5, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateWell, "Rubble");
-			//GameUtilities::AddGameObject(well);
-
-			//Building* tavern = new Building(XMFLOAT3(-100, 0, 100), XMFLOAT3(0, 45, 0), XMFLOAT3(30, 70, 70), XMFLOAT3(0, 1, 0), GameUtilities::GenerateTavern, "Tavern");
-			//GameUtilities::AddGameObject(tavern);
-			////AddBuilding(tavern);
-
-			//Building* lamp = new Building(XMFLOAT3(62.5, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
-			//GameUtilities::AddGameObject(lamp);
-			//Building* lamp2 = new Building(XMFLOAT3(-125, 0, 187.5), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 0, 1.5), XMFLOAT3(0, 0, 0), GameUtilities::GenerateLamp, "Rubble");
-			//GameUtilities::AddGameObject(lamp2);
-
-			//Building* rock = new Building(XMFLOAT3(-20, 0, 220), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateRock1, "Rubble");
-			//GameUtilities::AddGameObject(rock);
-
-			//Building* meeting_hall = new Building(XMFLOAT3(100, 0, 360), XMFLOAT3(0, -135, 0), XMFLOAT3(40, 45, 25), XMFLOAT3(0, 1, 0), GameUtilities::GenerateMeetingHall, "House4");
-			//GameUtilities::AddGameObject(meeting_hall);
-			////AddBuilding(meeting_hall);
-
-			//Building* cart = new Building(XMFLOAT3(-125, 0, 310), XMFLOAT3(0, 0, 0), XMFLOAT3(0.5, 0.25, 0.1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateCart, "Cart");
-			//GameUtilities::AddGameObject(cart);
-
-			//for (int i = 0; i < 10; ++i)
-			//{
-			//	Building* realtree = new Building(XMFLOAT3(RandFloat(i - 1000, i + 1000), 0, RandFloat(i - 1000, i + 1000)), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 3, 1), XMFLOAT3(0, 0, 0), GameUtilities::GenerateTree, "Rubble");
-			//	GameUtilities::AddGameObject(realtree);
-			//}
-
-
-#pragma endregion
-
-			//villageFlock1.groupTarget = &golem->transform;
 
 			villageFlock1.groupCohesionStrength = 0.01f;
 			villageFlock1.groupSeparationStrength = 1.0;
@@ -2785,10 +2649,6 @@ namespace ADGameplay
 
 			file.close();
 
-			/*for (unsigned int i = 0; i < sceneLights.size(); i++)
-			{
-				ResourceManager::AddLight(sceneLights[i]);
-			}*/
 
 			Plane = GameUtilities::AddSimpleAsset(PlaneArguments.Model.data(), PlaneArguments.Texture.data(), PlaneArguments.position, PlaneArguments.scale, PlaneArguments.rotation);
 			ResourceManager::AddSkybox(SkyboxArguments.Model.data(), SkyboxArguments.Texture.data(), SkyboxArguments.position, SkyboxArguments.scale, SkyboxArguments.rotation);
@@ -2797,21 +2657,14 @@ namespace ADGameplay
 
 			for (int i = 0; i < stoneMinionCount; i++)
 			{
-				//stoneMinionArguments[i].position.x += i * 5;
-				//waterMinionArguments[i].position.z += i * 5;
-				//fireMinionArguments[i].position.x += i * 5;
-				//woodMinionArguments[i].position.x += i * 5;
+
 				stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile(stoneMinionArguments[i].Model.data(), stoneMinionArguments[i].Texture.data(), stoneMinionAnimations, { 500.f + i * 5, 0.1f, -1150.f }, stoneMinionArguments[i].scale, stoneMinionArguments[i].rotation));
 				waterMinions.push_back(GameUtilities::AddDestructableFromModelFile(waterMinionArguments[i].Model.data(), waterMinionArguments[i].Texture.data(), waterMinionAnimations, { 500.f + i * 5, 0.1f, -1150.f }, waterMinionArguments[i].scale, waterMinionArguments[i].rotation));
 				fireMinions.push_back(GameUtilities::AddDestructableFromModelFile(fireMinionArguments[i].Model.data(), fireMinionArguments[i].Texture.data(), fireMinionAnimations, { 500.f, 0.1f, -1150.f + i * 5 }, fireMinionArguments[i].scale, fireMinionArguments[i].rotation));
 				woodMinions.push_back(GameUtilities::AddDestructableFromModelFile(woodMinionArguments[i].Model.data(), woodMinionArguments[i].Texture.data(), woodMinionAnimations, { 500.f, 0.1f, -1150.f + i * 5 }, woodMinionArguments[i].scale, woodMinionArguments[i].rotation));
 			}
 
-			//for (int i = 0; i < renderableArguments.size(); i++)
-			//{
-			//	renderables.push_back(GameUtilities::AddDestructableFromModelFile(renderableArguments[i].Model.data(), renderableArguments[i].Texture.data(), woodMinionAnimations, renderableArguments[i].position, renderableArguments[i].scale, renderableArguments[i].rotation));
-			//	renderables[i]->physicsType = renderableArguments[i].type;
-			//}
+
 
 			for (int i = 0; i < stoneMinionCount; i++)
 			{
@@ -2821,17 +2674,10 @@ namespace ADGameplay
 				GameUtilities::AddGameObject(woodMinions[i]);
 			}
 
-			//for (int i = 0; i < renderables.size(); i++)
-			//{
-			//	GameUtilities::AddGameObject(renderables[i]);
-			//}
 
-
-			//Dan added this:
 			m1 = GameUtilities::AddTriggerFromModelFile("files/models/Target.mesh", "files/textures/Target.mat", XMFLOAT3(-145, 10, -145), XMFLOAT3(3, 3, 3), XMFLOAT3(0, 0, 0));
 			m1->desirability = 10;
 
-			//m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(-145, 5, -145), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
 			golem->targetMarker = m1;
 			m1->gamePlayType = ADResource::ADGameplay::COMMAND_MARKER;
 			GameUtilities::AddGameObject(m1);

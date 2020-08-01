@@ -184,91 +184,6 @@ ADResource::ADGameplay::Golem* GameUtilities::LoadGolemFromModelFile(XMFLOAT3 po
 
 	return golem;
 };
-//
-//Trigger* GameUtilities::AddTinyEssenceFromModelFile(std::string modelname, std::string materials, std::vector<std::string> animations, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-//{
-//	//ADResource::ADGameplay::Trigger* temp = DefinitionDatabase::Instance()->hitboxDatabase["GolemPunchHB"];
-//
-//	//// Transform data
-//	//temp->SetScale(scale);
-//	//temp->SetRotation(rotation);
-//	//temp->SetPosition(position);
-//
-//	//AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
-//	//temp->SetMeshID(id);
-//
-//	//temp->active = false;
-//	//temp->team = 1;
-//
-//	//scale.x *= 500.0f;
-//	//scale.y *= 500.0f;
-//	//scale.z *= 500.0f;
-//	//temp->collider = ADPhysics::AABB(position, scale);
-//	//temp->collider.trigger = true;
-//	//temp->colliderPtr = &temp->collider;
-//
-//	//return temp;
-//	return nullptr;
-//};
-//
-//Trigger* GameUtilities::AddEndGameTriggerFromModelFile(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-//{
-//	ADResource::ADGameplay::Trigger* temp = new ADResource::ADGameplay::Trigger;
-//
-//	// Transform data
-//	temp->SetScale(scale);
-//	temp->SetRotation(rotation);
-//	temp->SetPosition(position);
-//
-//	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-//	temp->SetMeshID(id);
-//
-//	scale.x *= 1.8f;
-//	scale.y *= 1.8f;
-//	scale.z *= 1.8f;
-//	temp->colScale = scale;
-//	temp->collider = ADPhysics::AABB(position, temp->colScale);
-//	temp->collider.trigger = true;
-//	temp->gamePlayType = EVENT_TRIGGER;
-//
-//	//Using UI as a event Manager.  Temp solution.
-//	//temp->eventUIMessage.controllerID = 1;
-//	//temp->eventUIMessage.messageType = ADUI::UIMessageTypes::ExternalMsg;
-//	//temp->eventUIMessage.number = 3;
-//
-//
-//	return temp;
-//}
-
-//
-//HitBox* GameUtilities::AddHitbox(std::string modelname, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
-//{
-//	ADResource::ADGameplay::HitBox* temp = new ADResource::ADGameplay::HitBox;
-//
-//	// Transform data
-//	temp->SetScale(scale);
-//	temp->SetRotation(rotation);
-//	temp->SetPosition(position);
-//
-//	AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-//	temp->SetMeshID(id);
-//
-//	scale.x *= 1.8f;
-//	scale.y *= 1.8f;
-//	scale.z *= 1.8f;
-//	temp->colScale = scale;
-//	temp->collider = ADPhysics::OBB(temp->transform, temp->colScale);
-//	temp->collider.trigger = true;
-//	temp->isDeactivateOnFirstApplication = true;
-//	temp->active = false;
-//	temp->gamePlayType = ENEMY_HITBOX;
-//	temp->team = 1;
-//
-//	temp->effects.push_back(std::unique_ptr<EssenceEffect>(new EssenceEffect()));
-//	temp->effects[0].get()->sourceID = ResourceManager::GenerateEffectID();
-//
-//	return temp;
-//}
 
 
 Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::string materials, XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation)
@@ -280,27 +195,14 @@ Trigger* GameUtilities::AddTriggerFromModelFile(std::string modelname, std::stri
 	temp->SetRotation(rotation);
 	temp->SetPosition(position);
 
-	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-	//temp->SetMeshID(id);
 
 	AD_ULONG id = ResourceManager::AddSimpleModel(modelname, materials, position, scale, rotation);
 	temp->SetMeshID(id);
 	temp->team = 0;
 
-	//scale.x *= 100.0f;
-	//scale.y *= 100.0f;
-	//scale.z *= 100.0f;
-	//scale.x *= 0.5f;
-	//scale.y *= 0.5f;
-	//scale.z *= 0.5f;
-
-	//scale.x *= (1.f / scale.x);
-	//scale.y *= (1.f / scale.y);
-	//scale.z *= (1.f / scale.z);
 	temp->colScale = scale;
 	temp->collider = ADPhysics::AABB(position, temp->colScale);
 	temp->colliderPtr = &temp->collider;
-	//temp->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["Rubble"]));
 
 	return temp;
 }
@@ -333,9 +235,6 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	temp->SetRotation(rotation);
 	temp->SetPosition(position);
 
-	//AD_ULONG id = ResourceManager::AddPBRModel(modelname, position, scale, rotation);
-	//temp->SetMeshID(id);
-
 	AD_ULONG id = ResourceManager::AddAnimatedModel(modelname, materials, animations, position, scale, rotation);
 	temp->SetMeshID(id);
 	temp->anim_controller->Initialize(temp);
@@ -353,140 +252,6 @@ Destructable* GameUtilities::AddDestructableFromModelFile(std::string modelname,
 	return temp;
 }
 
-
-//
-//ADAI::AIUnit* GameUtilities::AttachMinionAI(Destructable* _destructable, ADAI::FlockingGroup* _commandGroup, OBJECT_TAG _minionType)
-//{
-//	ADAI::AIUnit* temp = new ADAI::AIUnit;
-//	temp->owner = _destructable;
-//	_destructable->gamePlayType = _minionType;
-//	_destructable->deathEvent = "MinionDeath";
-//	_destructable->desirability = 0.5f;
-//	switch (_destructable->gamePlayType)
-//	{
-//	case STONE_MINION:
-//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["StoneMinion"]));
-//		break;
-//	case WATER_MINION:
-//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WaterMinion"]));
-//		break;
-//	case FIRE_MINION:
-//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["FireMinion"]));
-//		break;
-//	case WOOD_MINION:
-//		_destructable->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["WoodMinion"]));
-//		break;
-//	}
-//	_destructable->team = 0;
-//	ADAI::IdleState* idling = new ADAI::IdleState();
-//	ADAI::FlockingState* charging = new ADAI::FlockingState();
-//	idling->owner = temp;
-//	charging->owner = temp;
-//	temp->states.push_back(idling);
-//	temp->states.push_back(charging);
-//	temp->currentState = idling;
-//
-//	_commandGroup->AddUnitToGroup(temp, charging);
-//
-//	return temp;
-//}
-//
-//void GameUtilities::InitializeMinionModels()
-//{
-//	//std::vector<std::string> stoneMinionAnimations;
-//	//stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
-//	//std::vector<std::string> waterMinionAnimations;
-//	//waterMinionAnimations.push_back("files/models/Minion_4_Idle.animfile");
-//	//std::vector<std::string> fireMinionAnimations;
-//	//fireMinionAnimations.push_back("files/models/Minion_2_Idle.animfile");
-//	//std::vector<std::string> woodMinionAnimations;
-//	//woodMinionAnimations.push_back("files/models/Minion_1_Idle.animfile");
-//	//
-//	//XMFLOAT3 position = { 0,0,0 };
-//	//XMFLOAT3 scale = { 0,0,0 };
-//	//XMFLOAT3 rotation = { 0,0,0 };
-//
-//	//DefinitionDatabase::Instance()->stoneMinionMeshid = ResourceManager::InitializeAnimatedModel("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, position, scale, rotation, shader);
-//	//DefinitionDatabase::Instance()->waterMinionMeshid = ResourceManager::InitializeAnimatedModel("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", waterMinionAnimations, position, scale, rotation, shader);
-//	//DefinitionDatabase::Instance()->fireMinionMeshid  = ResourceManager::InitializeAnimatedModel("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, position, scale, rotation, shader);
-//	//DefinitionDatabase::Instance()->woodMinionMeshid  = ResourceManager::InitializeAnimatedModel("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, position, scale, rotation, shader);
-//	//DefinitionDatabase::Instance()->villagerMeshid    = ResourceManager::InitializeAnimatedModel("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, position, scale, rotation, shader);
-//
-//
-//	//for (int i = 0; i < 10; i++)
-//	//{
-//		//stoneMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(-130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-//	//	stoneMinionsAI.push_back(GameUtilities::AttachMinionAI(stoneMinions[i], golem->flockingGroups[STONE], STONE_MINION));
-//	//	waterMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_4.AnimMesh", "files/textures/Minion_4.mat", waterMinionAnimations, XMFLOAT3(-130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-//	//	waterMinionsAI.push_back(GameUtilities::AttachMinionAI(waterMinions[i], golem->flockingGroups[WATER], WATER_MINION));
-//	//	fireMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_2.AnimMesh", "files/textures/Minion_2.mat", fireMinionAnimations, XMFLOAT3(130, 5, -130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-//	//	fireMinionsAI.push_back(GameUtilities::AttachMinionAI(fireMinions[i], golem->flockingGroups[FIRE], FIRE_MINION));
-//	//	woodMinions.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", woodMinionAnimations, XMFLOAT3(130, 5, 130), XMFLOAT3(0.03f, 0.03f, 0.03f), XMFLOAT3(0, 0, 0)));
-//	//	woodMinionsAI.push_back(GameUtilities::AttachMinionAI(woodMinions[i], golem->flockingGroups[WOOD], WOOD_MINION));
-//	//}
-//	//for (int i = 0; i < 10; i++)
-//	//{
-//	//	villagers.push_back(GameUtilities::AddDestructableFromModelFile("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3((i - 5) * 10, 5, (i - 5) * 10), XMFLOAT3(0.015f, 0.03f, 0.015f), XMFLOAT3(0, 0, 0)));
-//	//	villagersAI.push_back(GameUtilities::AttachVillagerAI(villagers[i], &villageFlock1));
-//	//}
-//
-//	//Destructable* m1 = GameUtilities::AddDestructableFromModelFile("files/models/Minion_1.AnimMesh", "files/textures/Minion_1.mat", stoneMinionAnimations, XMFLOAT3(0, 5, 0), XMFLOAT3(0.02f, 1.02f, 0.02f), XMFLOAT3(0, 0, 0));
-//	//golem->targetMarker = m1;
-//
-//	//for (int i = 0; i < 10; i++)
-//	//{
-//	//	GameUtilities::AddGameObject(stoneMinions[i]);
-//	//	GameUtilities::AddGameObject(waterMinions[i]);
-//	//	GameUtilities::AddGameObject(fireMinions[i]);
-//	//	GameUtilities::AddGameObject(woodMinions[i]);
-//	//	GameUtilities::AddGameObject(villagers[i]);
-//
-//	//}
-//	//GameUtilities::AddGameObject(m1);
-//}
-//
-//ADAI::AIUnit* GameUtilities::BirthStoneMinion(ADAI::FlockingGroup* _commandGroup)
-//{
-//	//ADResource::ADGameplay::Destructable* fMinion = new ADResource::ADGameplay::Destructable;
-//
-//	//XMFLOAT3 position = { -130, 5, -130 };
-//	//XMFLOAT3 scale = { 0.03f, 0.03f, 0.03f };
-//	//XMFLOAT3 rotation = { 0,0,0 };
-//
-//
-//	//// Transform data
-//	//fMinion->SetScale(scale);
-//	//fMinion->SetRotation(rotation);
-//	//fMinion->SetPosition(position);
-//
-//
-//	////fMinion->SetMeshID(DefinitionDatabase::Instance()->stoneMinionMeshid);
-//	//fMinion->team = 0;
-//
-//	//scale.x *= 100.0f;
-//	//scale.y *= 100.0f;
-//	//scale.z *= 100.0f;
-//	//fMinion->colScale = scale;
-//	//fMinion->collider = ADPhysics::AABB(position, fMinion->colScale);
-//	//fMinion->colliderPtr = &fMinion->collider;
-//	//fMinion->SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase["GreatGolem"]));
-//
-//	//ADAI::AIUnit* fAI = new ADAI::AIUnit;
-//	//fAI->owner = fMinion;
-//	//fMinion->gamePlayType = FIRE_MINION;
-//	//fMinion->deathEvent = "StoneMinionCountChange";
-//	//fMinion->team = 0;
-//	//ADAI::IdleState* idling = new ADAI::IdleState();
-//	//ADAI::FlockingState* charging = new ADAI::FlockingState();
-//	//fAI->states.push_back(idling);
-//	//fAI->states.push_back(charging);
-//
-//	////DefinitionDatabase::Instance()->stoneMinions.push_back(fMinion);
-//	//_commandGroup->AddUnitToGroup(fMinion, charging);
-//
-//	//return fAI;
-//	return nullptr;
-//}
 
 ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destructable* _destructable, ADAI::VillagerGroup* _localGroup, std::vector< ADResource::ADGameplay::GameObject*>* _fearGroup, std::vector< ADResource::ADGameplay::Building*>* _safetyGroup, Engine* _engine)
 {
@@ -526,8 +291,6 @@ ADAI::VillagerAI* GameUtilities::AttachVillagerAI(ADResource::ADGameplay::Destru
 	temp->mySSM.states.push_back(fleeing);
 	temp->mySSM.currentState = fleeing;
 	_localGroup->AddUnitToGroup(temp, fleeing);
-	//_localGroup->AddUnitToGroup(temp, waypoint);
-
 
 	ADAI::AttackingState* attacking = new ADAI::AttackingState();
 	attacking->mySSM = &temp->mySSM;

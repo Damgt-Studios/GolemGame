@@ -38,35 +38,6 @@ namespace ADAI
 
 		void Initializing(std::vector<SimpleVertex>* _planeVertices, XMFLOAT2 _mapSize, float _agentSize, float _agentToWallGap)
 		{
-			//float xhigh = 0;
-			//float zhigh = 0;
-			//for (int i = 0; i < _planeVertices->size(); i++)
-			//{
-			//	float x = (*_planeVertices)[i].Position.x;
-			//	float z = (*_planeVertices)[i].Position.z;
-			//	if (x < planeLows.x)
-			//	{
-			//		planeLows.x = x;
-			//	}
-			//	if (x > xhigh)
-			//	{
-			//		xhigh = x;
-			//	}
-			//	if (z < planeLows.y)
-			//	{
-			//		planeLows.y = z;
-			//	}
-			//	if (z > zhigh)
-			//	{
-			//		zhigh = z;
-			//	}
-			//}
-			//float xdelta = xhigh - planeLows.x;
-			//float zdelta = zhigh - planeLows.y;
-			//mapSize.x = xdelta * _mapSize.x;
-			//mapSize.y = zdelta * _mapSize.y;
-			//cellSize.x = (_agentSize + _agentToWallGap);
-			//cellSize.y = (_agentSize + _agentToWallGap);
 			agentToWallGap = _agentToWallGap;
 			mapSize = _mapSize;
 			cellSize = { _agentSize, _agentSize };
@@ -80,10 +51,6 @@ namespace ADAI
 		{
 			_out_column = (_position.x + (mapSize.x / 2.f)) / cellSize.x;
 			_out_row = (_position.y + (mapSize.y / 2.f)) / cellSize.y;
-			//float x = _position.x - (planeLows.x * mapSize.x);
-			//float z = _position.y - (planeLows.y * mapSize.y);
-			//_out_column = int(x / cellSize.x);
-			//_out_row = int(z / cellSize.y);
 		};
 	};
 
@@ -144,7 +111,6 @@ namespace ADAI
 
 		std::unordered_map<PathingNode*, SearchNode*> searching_map;
 		std::unordered_map<SearchNode*, PlannerNode*> visited_map;
-		//std::vector<PathingNode const*> solution;
 		Solution solution;
 		std::vector<PathingNode*> previousTrace;
 		PlannerNode* current = nullptr;
@@ -172,7 +138,6 @@ namespace ADAI
 		int enter(int startColumn, int startRow, int goalColumn, int goalRow);
 		bool isDone() const;
 		void update(float timeslice);
-		//std::vector<PathingNode const*> const getSolution() const;
 		Solution getSolutionPoints() const;
 		void exit();
 		void shutdown();
