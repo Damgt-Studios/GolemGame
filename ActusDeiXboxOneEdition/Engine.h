@@ -55,8 +55,8 @@ public:
 private:
 	//Model m_model;
 	WVP WORLD;
-	std::string write_path;
-	std::string read_path;
+	std::string write_path = "";
+	std::string read_path = "";
 
 #if AD_MEMORY_DEFAULT
 	std::vector<Light> lights;
@@ -64,8 +64,8 @@ private:
 	ADVector<Light> lights;
 #endif
 
-	FPSCamera* camera;
-	OrbitCamera* ocamera;
+	FPSCamera* camera = nullptr;
+	OrbitCamera* ocamera = nullptr;
 
 
 
@@ -77,9 +77,9 @@ private:
 
 	// Timing
 	XTime engine_time;
-	float delta_time_sf;
-	float engine_time_sf;
-	double delta_time_sd;
+	float delta_time_sf = 0;
+	float engine_time_sf = 0;
+	double delta_time_sd = 0;
 
 	// Temp
 	int lightdir = 1;

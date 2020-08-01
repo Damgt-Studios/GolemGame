@@ -34,14 +34,12 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Utils.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="ADUserInterface.cpp" />
     <ClCompile Include="ADMemoryManager.cpp" />
     <ClCompile Include="MeshLoader.cpp" />
-    <ClCompile Include="ADAI.cpp" />
     <ClCompile Include="ADPathfinding.cpp" />
     <ClCompile Include="AnimationStateMachine.cpp" />
     <ClCompile Include="ADEventSystem.cpp" />

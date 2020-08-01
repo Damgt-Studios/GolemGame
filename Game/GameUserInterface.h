@@ -22,7 +22,7 @@ namespace GolemGameUISetup
     {
         UINT& uiState;
     public:
-        std::vector<ADAI::PathingNode*>* planeNodes;
+        std::vector<ADAI::PathingNode*>* planeNodes = nullptr;
         std::unordered_map<ADAI::PathingNode*, ADUI::Image2D*> node_image_map;
 
         DebugController(UINT* _uiState) : uiState(*_uiState) {};
@@ -32,7 +32,7 @@ namespace GolemGameUISetup
 
     class HUDController : public ADUI::OverlayController
     {
-        ADResource::ADGameplay::Golem* player;
+        ADResource::ADGameplay::Golem* player = nullptr;
         UINT& uiState;
         std::vector<std::string> tutorialMessages = {
             "Unless directed to follow or given a destination",
@@ -168,8 +168,8 @@ namespace GolemGameUISetup
     class OptionsMenuUIController : public ADUI::OverlayController
     {
         UINT& uiState;
-        UINT audioIndex;
-        AD_AUDIO::ADAudio* audioSystem;
+        UINT audioIndex = 0;
+        AD_AUDIO::ADAudio* audioSystem = nullptr;
     public:
         OptionsMenuUIController(UINT* _uiState) : uiState(*_uiState) {};
         void SetAudio(AD_AUDIO::ADAudio* _audioSystem);

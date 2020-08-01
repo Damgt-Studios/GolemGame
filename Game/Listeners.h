@@ -8,7 +8,7 @@
 class MinionCountListener : public ADEvents::Listener
 {
 private:
-    ADGameplay::Scene* scene;
+    ADGameplay::Scene* scene = nullptr;
 public:
     MinionCountListener() {};
     void SetTarget(ADGameplay::Scene* _scene)
@@ -22,7 +22,7 @@ public:
 class VillagerDeathListener : public ADEvents::Listener
 {
 private:
-    ADGameplay::Scene* scene;
+    ADGameplay::Scene* scene = nullptr;
 public:
     VillagerDeathListener() {};
     void SetTarget(ADGameplay::Scene* _scene)
@@ -36,23 +36,21 @@ public:
 class GameEndListener : public ADEvents::Listener
 {
 private:
-    ADGameplay::Scene* scene;
+    ADGameplay::Scene* scene = nullptr;
 public:
     GameEndListener() {};
     void SetTarget(ADGameplay::Scene* _scene)
     {
         scene = _scene;
     };
-    //void HandleEvent(ADEvents::ADEvent* _event) override;
-    //std::string ToString() override;
 };
 
 class BigCloudEmitterListener : public ADEvents::Listener
 {
 private:
     BigCloudEmitter& emitter;
-    XMFLOAT4 position;
-public:
+    XMFLOAT4 position = { 0,0,0,0 };
+;public:
     float lifespan;
     BigCloudEmitterListener(BigCloudEmitter& _emitter) : emitter(_emitter) {};
     void HandleEvent(ADEvents::ADEvent* _event) override;
@@ -63,7 +61,7 @@ class RecoveryEmitterListener : public ADEvents::Listener
 {
 private:
     HealthEmitter& emitter;
-    XMFLOAT4 position;
+    XMFLOAT4 position = { 0,0,0,0 };
 public:
     float lifespan;
     RecoveryEmitterListener(HealthEmitter& _emitter) : emitter(_emitter) {};
@@ -74,7 +72,7 @@ class SmallCloudEmitterListener : public ADEvents::Listener
 {
 private:
     SmallCloudEmitter& emitter;
-    XMFLOAT4 position;
+    XMFLOAT4 position = { 0,0,0,0 };
 public:
     float lifespan;
     SmallCloudEmitterListener(SmallCloudEmitter& _emitter) : emitter(_emitter) {};
@@ -85,7 +83,7 @@ class WaterWaveEmitterListener : public ADEvents::Listener
 {
 private:
     WaveEmitter& emitter;
-    XMFLOAT4 position;
+    XMFLOAT4 position = { 0,0,0,0 };
 public:
     float lifespan;
     WaterWaveEmitterListener(WaveEmitter& _emitter) : emitter(_emitter) {};
@@ -96,7 +94,7 @@ class IronSkinEmitterListener : public ADEvents::Listener
 {
 private:
     IronSkinEmitter& emitter;
-    XMFLOAT4 position;
+    XMFLOAT4 position = { 0,0,0,0 };
 public:
     float lifespan;
     IronSkinEmitterListener(IronSkinEmitter& _emitter) : emitter(_emitter) {};
@@ -107,7 +105,7 @@ class FireballEmitterListener : public ADEvents::Listener
 {
 private:
     FireballEmitter& emitter;
-    XMFLOAT4 position;
+    XMFLOAT4 position = { 0,0,0,0 };
 public:
     float lifespan;
     FireballEmitterListener(FireballEmitter& _emitter) : emitter(_emitter) {};
@@ -118,7 +116,7 @@ class CylinderEmitterListener : public ADEvents::Listener
 {
 private:
     CylinderEmitter& emitter;
-    XMFLOAT4 position;
+    XMFLOAT4 position = { 0,0,0,0 };
 public:
     float lifespan;
     CylinderEmitterListener(CylinderEmitter& _emitter) : emitter(_emitter) {};
@@ -148,8 +146,8 @@ public:
 class ApplyEffectListener : public ADEvents::Listener
 {
 private:
-    ADResource::ADGameplay::Effect* effect;
-    ADResource::ADGameplay::GameObject* target;
+    ADResource::ADGameplay::Effect* effect = nullptr;
+    ADResource::ADGameplay::GameObject* target = nullptr;
 public:
     ApplyEffectListener() {};
     void SetTarget(ADResource::ADGameplay::GameObject* _target, ADResource::ADGameplay::Effect* _effect);
@@ -160,7 +158,7 @@ public:
 class SetUIVisibilityListener : public ADEvents::Listener
 {
 private:
-    ADUI::UIComponent* uiComponent;
+    ADUI::UIComponent* uiComponent = nullptr;
 public:
     //This event turns visibility On for a target if the value sent is the same as the keyIndex.  
     //Leave 0 for all singles, UI groups will have a sepeate listener for each responder but only one event call.
@@ -185,7 +183,7 @@ public:
 class SetUIFocusListener : public ADEvents::Listener
 {
 private:
-    ADUI::UIComponent* uiComponent;
+    ADUI::UIComponent* uiComponent = nullptr;
 public:
     //This event turns visibility On for a target if the value sent is the same as the keyIndex.  
     //Leave 0 for all singles, UI groups will have a sepeate listener for each responder but only one event call.
@@ -210,7 +208,7 @@ public:
 class SetUISetFrameListener : public ADEvents::Listener
 {
 private:
-    ADUI::Image2D* image;
+    ADUI::Image2D* image = nullptr;
 public:
     SetUISetFrameListener() {};
     void SetTarget(ADUI::Image2D* _image)
@@ -224,10 +222,10 @@ public:
 class SetUITilingListener : public ADEvents::Listener
 {
 private:
-    ADUI::Image2D* image;
+    ADUI::Image2D* image = nullptr;
     UINT maximum = 1;
     UINT minimum = 0;
-    bool lerped;
+    bool lerped = false;
 public:
     SetUITilingListener() {};
     void SetTarget(ADUI::Image2D* _image, UINT _minimum, UINT _maximum, bool _lerped);
@@ -238,7 +236,7 @@ public:
 class SetUISelectionListener : public ADEvents::Listener
 {
 private:
-    ADUI::ComponentGrid* list;
+    ADUI::ComponentGrid* list = nullptr;
 public:
     SetUISelectionListener() {};
     void SetTarget(ADUI::ComponentGrid* _list)
@@ -252,7 +250,7 @@ public:
 class SetUITextListener : public ADEvents::Listener
 {
 private:
-    ADUI::Label2D* label;
+    ADUI::Label2D* label = nullptr;
 public:
     SetUITextListener() {};
     void SetTarget(ADUI::Label2D* _label)

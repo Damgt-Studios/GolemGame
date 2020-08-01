@@ -15,9 +15,9 @@ namespace ADAI
 	class SimpleStateMachine
 	{
 	public:
-		ADResource::ADGameplay::GameObject* gameObject;
+		ADResource::ADGameplay::GameObject* gameObject = nullptr;
 		std::vector<ADAI::State*> states;
-		ADAI::State* currentState;
+		ADAI::State* currentState = nullptr;
 
 		void SwitchState(ADAI::State* _state, float _deltaTime = 0.f)
 		{
@@ -40,7 +40,7 @@ namespace ADAI
 	class FlockingState : public State
 	{
 	public:
-		SimpleStateMachine* mySSM;
+		SimpleStateMachine* mySSM = nullptr;
 		XMFLOAT4 VelocityWhenFlocking = { 0,0,0,0 };
 		bool turning = false;
 
@@ -55,12 +55,12 @@ namespace ADAI
 	class AttackingState : public State
 	{
 	public:
-		SimpleStateMachine* mySSM;
-		UINT returnIndex;
+		SimpleStateMachine* mySSM = nullptr;
+		UINT returnIndex = 0;
 		//ADResource::ADGameplay::GameObject* target;
 		UINT attackCount = 1;
 		UINT attackCounter = 0;
-		ADResource::ADGameplay::Action* myAttack;
+		ADResource::ADGameplay::Action* myAttack = nullptr;
 
 		virtual void OnEnter()
 		{

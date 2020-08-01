@@ -8,11 +8,11 @@ class AnimationStateMachine
 {
 	struct AnimationState
 	{
-		string name;
-		double duration;
+		string name = "";
+		double duration = 0;
 		bool boolCondition = false;
 		float valueCondition = 0;
-		int index;
+		int index = 0;
 
 		inline bool operator=(AnimationState a)
 		{
@@ -25,7 +25,7 @@ class AnimationStateMachine
 		}
 	};
 	AnimationState currentState;
-	SimpleAnimModel* modAnim;
+	SimpleAnimModel* modAnim = nullptr;
 public:
 	vector<AnimationState> A_States;
 	inline bool operator=(AnimationStateMachine a)

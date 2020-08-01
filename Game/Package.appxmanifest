@@ -9,7 +9,7 @@
   <Identity
     Name="52214DamgtGames.TheGreatGolem"
     Publisher="CN=GroupKey"
-    Version="0.1.21.0" />
+    Version="0.1.22.0" />
 
   <mp:PhoneIdentity PhoneProductId="4cb65a5c-fe60-4b29-8849-67584b924006" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

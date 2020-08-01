@@ -4,7 +4,7 @@
 template <typename T>
 struct ADQuadTreePoint 
 {
-	int x, y;
+	int x = 0, y = 0;
 	T* data = nullptr;
 
 
@@ -18,7 +18,7 @@ struct ADQuadTreePoint
 //Creates a Quad variable that will be the bounding box of the Quad tree
 struct ADQuad
 {
-	float x, y, width, height;
+	float x = 0, y = 0, width = 0, height = 0;
 
 	ADQuad(float x, float y, float w, float h) :
 		x(x), y(y), width(w), height(h) {};

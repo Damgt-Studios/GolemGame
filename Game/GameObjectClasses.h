@@ -1,7 +1,6 @@
 #pragma once
 #include <Types.h>
 #include "ADUserInterface.h"
-#include "GameplayBaseClasses.h"
 #include "ResourceManager.h"
 #include "ADEventSystem.h"
 #include "ADCombat.h"
@@ -20,9 +19,9 @@ namespace ADResource
 			XMFLOAT3 colScale;
 
 			bool isDeactivateOnFirstApplication = true;
-			float offsetX;
-			float offsetZ;
-			float offsetY = 0;
+			float offsetX = 0.f;
+			float offsetZ = 0.f;
+			float offsetY = 0.f;
 			ADPhysics::AABB collider;
 
 			//Until we have an event manager this is our solution for events.
@@ -76,7 +75,7 @@ namespace ADResource
 
 		class Building : public GameObject
 		{
-			StatSheet* stats;
+			StatSheet* stats = nullptr;
 			Building* rubble = nullptr;
 			Building* turret = nullptr;
 			Action* Essence = nullptr;
@@ -92,8 +91,8 @@ namespace ADResource
 
 
 		public:
-			std::string name;
-			std::string deathEvent;
+			std::string name = "";
+			std::string deathEvent = "";
 
 			Building()
 			{
@@ -129,24 +128,6 @@ namespace ADResource
 
 				SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
 			}
-
-			//Building(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 collider_scale, XMFLOAT3 offset, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3), std::string statSheet)
-			//{
-			//	pos = position; rot = rotation;	colliderScale = collider_scale;	off = offset;
-			//	models = Generator(position, rotation);
-
-			//	for (size_t i = 0; i < models.size(); i++)
-			//	{
-			//		models[i]->colliderPtr = nullptr;
-			//	}
-
-			//	collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
-			//	physicsType = OBJECT_PHYSICS_TYPE::STATIC;
-			//	colliderPtr = &collider;
-			//	team = 1;
-
-			//	SetStatSheet(new StatSheet(*DefinitionDatabase::Instance()->statsheetDatabase[statSheet]));
-			//}
 
 			void AddObject(XMFLOAT3 position, XMFLOAT3 rotation, std::vector<Renderable*>(*Generator)(XMFLOAT3, XMFLOAT3)) 
 			{
@@ -246,7 +227,6 @@ namespace ADResource
 			{
 				collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(rot.y)) * XMMatrixTranslation(pos.x + off.x, pos.y + off.y, pos.z + off.z), colliderScale);
 				SetPosition(pos);
-				//collider.Pos = VectorToFloat3(XMVector3Transform(Float3ToVector(collider.Pos), XMMatrixScaling(25, 25, 25)));
 
 				physicsType = COLLIDABLE;
 				colliderPtr = &collider;
@@ -318,10 +298,7 @@ namespace ADResource
 				if (active && obj->active)
 				{
 					ADPhysics::Manifold m;
-					if (obj->colliderPtr->isCollision(&collider, m))
-					{
-						//collisionQueue.push(CollisionPacket(this, obj, m));
-					}
+					obj->colliderPtr->isCollision(&collider, m);
 				}
 			}
 
@@ -559,10 +536,10 @@ namespace ADResource
 				}
 			}
 
-			UpwardCloudEmitter* destructionEmitter;
-			UpwardCloudEmitter* destructionEmitter2;
+			UpwardCloudEmitter* destructionEmitter = nullptr;
+			UpwardCloudEmitter* destructionEmitter2 = nullptr;
 		private: 
-			XMFLOAT3 pos, off, colliderScale;
+			XMFLOAT3 pos = { 0,0,0 } , off = { 0,0,0 }, colliderScale = { 0,0,0 };
 			std::vector<Renderable*> models;
 			ADPhysics::OBB collider;
 		};

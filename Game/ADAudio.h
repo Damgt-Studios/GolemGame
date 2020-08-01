@@ -61,19 +61,19 @@ namespace AD_AUDIO
     class AudioSource
     {
     public:
-        ADAudio* engine;
-        std::string soundName;
-        bool isEvent;
-        XMFLOAT3 vPos;
-        float personalVolume;
-        UINT audioSourceType;
+        ADAudio* engine = nullptr;
+        std::string soundName = "";
+        bool isEvent = false;;
+        XMFLOAT3 vPos = { 0,0,0 };
+        float personalVolume = 0.f;
+        UINT audioSourceType = 0;
         bool restartOnRepeat = false;
-        int currentChannel;
+        int currentChannel = 0;
         void LoadSound(std::string _soundName, bool _isEvent = true, bool is3D = true, bool isLooping = false, bool isStream = false);
         void Play();
         void Stop();
         void RefreshVolume();
-        void UpdatePosition(XMFLOAT3 pos);
+        void UpdatePosition(XMFLOAT3 pos = { 0,0,0 } );
     };
 
     struct AudioImplementation {
@@ -82,8 +82,8 @@ namespace AD_AUDIO
 
         void Update();
 
-        FMOD::Studio::System* studioSystem;
-        FMOD::System* audioSystem;
+        FMOD::Studio::System* studioSystem = nullptr;
+        FMOD::System* audioSystem = nullptr;
 
         int nextChannelId = -1;
 

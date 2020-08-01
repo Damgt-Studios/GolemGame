@@ -25,7 +25,7 @@ public:
 	bool ReadEntity(std::string _entityStr)
 	{
 		const std::string delimiter = "=";
-		std::string lhs;
+		std::string lhs = "";
 		std::string mid = "";
 		std::string rhs = "";
 		size_t pos = 0;
@@ -240,11 +240,6 @@ public:
 				trigger->SetPosition(scale);
 
 
-				//std::vector<std::string> stoneMinionAnimations;
-				//stoneMinionAnimations.push_back("files/models/Minion_3_Idle.animfile");
-				//AD_ULONG id = ResourceManager::AddAnimatedModel("files/models/Minion_3.AnimMesh", "files/textures/Minion_3.mat", stoneMinionAnimations, XMFLOAT3(300, 0, 100), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT3(0, 0, 0));
-				//trigger->SetScale(XMFLOAT3(0.1f, 0.1f, 0.1f)); 
-				//trigger->SetMeshID(id);
 				trigger->rotation = { 0,0,0 };
 				trigger->active = false;
 				trigger->team = 1;
@@ -260,11 +255,6 @@ public:
 
 					if (lhs == "AddEffect")
 					{
-						//auto tFoundIt = DefinitionDatabase::Instance()->effectsDatabase.find(rhs);
-						//if (tFoundIt == DefinitionDatabase::Instance()->effectsDatabase.end())
-						//{
-						//	int a = 0;
-						//}
 						trigger->effects.push_back(DefinitionDatabase::Instance()->effectsDatabase[rhs]->clone());
 						trigger->effects[0].get()->sourceID = ResourceManager::GenerateEffectID();
 						currentEffect = rhs;
@@ -372,27 +362,13 @@ public:
 
 				if (trigger->modelName != "")
 				{
-					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, { 0,0,0 });// trigger->rotation); // trigger->modelScale
+					AD_ULONG id = ResourceManager::AddSimpleModel(trigger->modelName, trigger->matName, XMFLOAT3(1, 1, 1), trigger->modelScale, { 0,0,0 });
 					trigger->SetMeshID(id);
-					////GameUtilities::AttachModelToHitbox(trigger, trigger->modelName, "files/textures/Fireball.mat", XMFLOAT3(1, 1, 1), trigger->modelScale, XMFLOAT3(0, 0, 0));
 				}
-				//else
-				//{
-				//	AD_ULONG id = ResourceManager::AddRenderableCollider(XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), { 0,0,0 });
-				//	trigger->SetMeshID(id);
-				//}
 				trigger->colScale = scale;
-				//trigger->transform = XMMatrixRotationX(trigger->rotation.x);// trigger->rotation);
-				//XMMATRIX matrix1 = XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ);
-				//trigger->collider = ADPhysics::OBB(trigger->transform * matrix1, trigger->colScale); //XMFLOAT3(1, 1, 1)); 
 				trigger->collider = ADPhysics::OBB(XMMatrixRotationY(XMConvertToRadians(trigger->rotation.y)) * XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ), trigger->colScale);
 
-				//trigger->collider = ADPhysics::OBB(XMMatrixTranslation(trigger->offsetX, trigger->offsetY, trigger->offsetZ) * XMMatrixScaling(trigger->colScale.x, trigger->colScale.y, trigger->colScale.z) * XMMatrixRotationY(XMConvertToRadians(trigger->rotation.y)), trigger->colScale);
-				//trigger->collider.AxisX.x = trigger->colScale.x;
-				//trigger->collider.AxisY.y = trigger->colScale.y;
-				//trigger->collider.AxisZ.z = trigger->colScale.z;
 				trigger->collider.trigger = true;
-				//trigger->SetScale(trigger->modelScale);//(scale);  
 				trigger->colliderPtr = &trigger->collider;
 				DefinitionDatabase::Instance()->hitboxDatabase[mid] = trigger;
 				//Needs an ID from a map.
@@ -411,17 +387,9 @@ public:
 
 					if (lhs == "AddHitBox")
 					{
-						//auto tFoundIt = DefinitionDatabase::Instance()->hitboxDatabase.find(rhs);
-						//if (tFoundIt == DefinitionDatabase::Instance()->hitboxDatabase.end())
-						//{
-						//	int a = 0;
-						//}
 
 						action->hitboxes.push_back(DefinitionDatabase::Instance()->hitboxDatabase[rhs]);
-						//ResourceManager::AddGameObject(action->hitboxes[0]);
 						action->hitboxFired.push_back(false);
-						//HitBox* temp = action->hitbox->Clone();
-						//action->hitbox = temp;
 						action->hitboxCount++;
 					}
 					else if (lhs == "HitboxDuplicates")
@@ -469,15 +437,7 @@ public:
 					}
 					_entityStr.erase(0, endPos + 1);
 				}
-				//if (action->hitbox == nullptr || action->hitbox->colliderPtr == nullptr)
-				//{
-				//	std::string msg = "Dick Sauce ";
-				//	msg.append(lhs);
-				//	msg.append(mid);
-				//	msg.append(rhs);
-				//	ADUI::MessageReceiver::Log(msg);
-				//}
-
+			
 				DefinitionDatabase::Instance()->actionDatabase[mid] = action;
 				//Needs an ID from a map.
 			}
@@ -495,7 +455,7 @@ public:
 	}
 
 	bool ReadDefinesFile(std::string _filename) {
-		std::string entity;
+		std::string entity = "";
 		ifstream myfile(_filename);
 
 		if (myfile.is_open())
@@ -510,7 +470,7 @@ public:
 	}
 
 	bool ReadMasterFile() {
-		string line;
+		string line = "";
 		ifstream myfile("files\\definitions\\MasterDefinesList.txt");
 		if (myfile.is_open())
 		{
@@ -587,34 +547,6 @@ class TheGreatGolem
 
 	bool LoadGameEmitterListeners()
 	{
-		/*	ParticleEmitterListener golemPunchParticles(engine->bigCloud);
-			golemPunchParticles.lifespan = 20.0f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("Sfx_GolemPunch", &golemPunchParticles);
-
-			ParticleEmitterListener bigGolemDustParticles(engine->bigCloud);
-			bigGolemDustParticles.lifespan = 0.5f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("BigGolemParticles", &bigGolemDustParticles);
-
-			RecoveryEmitterEvent golemRecoveryParticles(engine->recoveryEmitter);
-			golemRecoveryParticles.lifespan = 1.0f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemRecoveryParticles", &golemRecoveryParticles);
-
-			SmallCloudEmitterEvent smallGolemDustParticles(engine->smallCloud);
-			smallGolemDustParticles.lifespan = 1.0f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("SmallGolemParticles", &smallGolemDustParticles);
-
-			WaterWaveEmitterEvent waveParticles(engine->waterWave);
-			waveParticles.lifespan = 1.0f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemWaveParticles", &waveParticles);
-
-			IronSkinEmitterEvent ironSkinParticles(engine->ironSkin);
-			ironSkinParticles.lifespan = 1.0f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemIronSkinParticles", &ironSkinParticles);
-
-			FireballEmitterEvent fireballParticles(engine->fireball);
-			fireballParticles.lifespan = 1.0f;
-			ADEvents::ADEventSystem::Instance()->RegisterClient("GolemFireballParticles", &fireballParticles);*/
-
 		return true;
 	};
 

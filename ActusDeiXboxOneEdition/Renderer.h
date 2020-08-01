@@ -19,7 +19,7 @@ namespace ADResource
 		public:
 			struct RendererResources
 			{
-				unsigned int width, height;
+				unsigned int width = 0, height = 0;
 				ComPtr<ID3D11Device1> device;
 				ComPtr<ID3D11DeviceContext1> context;
 				ComPtr<IDXGISwapChain1> chain;

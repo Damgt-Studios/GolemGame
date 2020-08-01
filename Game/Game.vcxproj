@@ -359,29 +359,22 @@
     <ClInclude Include="GameEffects.h" />
     <ClInclude Include="GameObjectClasses.h" />
     <ClInclude Include="GamePlayAI.h" />
-    <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameUtilities.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="Listeners.h" />
-    <ClInclude Include="MinionManager.h" />
     <ClInclude Include="pchgame.h" />
-    <ClInclude Include="SceneLoader.h" />
     <ClInclude Include="TheGreatGolem.h" />
     <ClInclude Include="XTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ADAudio.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="GameObjectClasses.cpp" />
-    <ClCompile Include="GamePlayAI.cpp" />
-    <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MinionManager.cpp" />
     <ClCompile Include="pchgame.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -392,7 +385,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TheGreatGolem.cpp" />
     <ClCompile Include="XTime.cpp" />
   </ItemGroup>
   <ItemGroup>

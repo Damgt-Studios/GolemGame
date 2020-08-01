@@ -30,15 +30,10 @@
     <ClCompile Include="XTime.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="GameUtilities.cpp" />
-    <ClCompile Include="GameplayBaseClasses.cpp" />
     <ClCompile Include="GameUserInterface.cpp" />
-    <ClCompile Include="GameObjectClasses.cpp" />
     <ClCompile Include="ADAudio.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="Listeners.cpp" />
-    <ClCompile Include="TheGreatGolem.cpp" />
-    <ClCompile Include="MinionManager.cpp" />
-    <ClCompile Include="GamePlayAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\SplashScreen.scale-100.png">
@@ -235,7 +230,6 @@
     <ClInclude Include="XTime.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="GameUtilities.h" />
-    <ClInclude Include="GameplayBaseClasses.h" />
     <ClInclude Include="GameUserInterface.h" />
     <ClInclude Include="GameObjectClasses.h" />
     <ClInclude Include="GameEffects.h" />
@@ -243,9 +237,7 @@
     <ClInclude Include="Golem.h" />
     <ClInclude Include="Listeners.h" />
     <ClInclude Include="TheGreatGolem.h" />
-    <ClInclude Include="MinionManager.h" />
     <ClInclude Include="GamePlayAI.h" />
-    <ClInclude Include="SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Native\ActusDeiEngine.lib" />

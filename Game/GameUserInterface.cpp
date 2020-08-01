@@ -293,13 +293,7 @@ namespace GolemGameUISetup
 
 									break;
 								}
-								case 1: //guidebook/credits
-									overlays[pauseOverlayID]->Disable();
-									componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
-
-									overlays[guideOverlayID]->Enable();
-									break;
-								case 2: //options
+								case 1: //options
 									overlays[pauseOverlayID]->Disable();
 									//componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
 									Disable();
@@ -308,7 +302,7 @@ namespace GolemGameUISetup
 									//componentTypeMap[componentsNameToID["OptionsMenu"]]->Enable();
 									controllers[controllersNameToID["OptionScreenController"]]->Enable();
 									break;
-								case 3: //Exit Level
+								case 2: //Exit Level
 									overlays[pauseOverlayID]->Disable();
 									componentTypeMap[componentsNameToID["PauseMenu"]]->Disable();
 									Disable();
@@ -317,7 +311,7 @@ namespace GolemGameUISetup
 									//componentTypeMap[componentsNameToID["TitleMenu"]]->Enable();
 									controllers[controllersNameToID["TitleScreenController"]]->Enable();
 									break;
-								case 4:
+								case 3:
 									uiState = ADUI::UISTATE::QUIT;
 									break;
 								default:
@@ -428,11 +422,6 @@ namespace GolemGameUISetup
 								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
 								componentTypeMap[componentsNameToID["ControlsBG"]]->Enable();
 								componentTypeMap[componentsNameToID["ControlsMenu"]]->Enable();
-								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
-								break;
-							case 2: //Video
-								componentTypeMap[componentsNameToID["OptionsMenu"]]->Disable();
-								componentTypeMap[componentsNameToID["VideoMenu"]]->Enable();
 								ADEvents::ADEventSystem::Instance()->SendEvent("UI_Sfx_Confirm", (void*)0);
 								break;
 							default:
@@ -619,26 +608,7 @@ namespace GolemGameUISetup
 
 		//Pause Screen
 		UINT pauseID = myUI->AddNewOverlay("PauseScreen", false, false);
-		////ADUI::Image2D* pauseImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[1], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
-		////pauseImage->BuildAnimation({ 0, 0, 3840, 2160 }, 1, 1, emptyAnimation);
-		////myUI->AddUIComponent("PauseBG", pauseImage);
-		////myUI->overlays[pauseID]->AddComponent(pauseImage);
 
-		//Guidebook Screen
-		UINT guideID = myUI->AddNewOverlay("GuideScreen", false, false);
-		ADUI::Image2D* guideImage = new ADUI::Image2D(myUI->spriteBatch.get(), myUI->uiResources.uiTextures[0], { myUI->viewport->TopLeftX,  myUI->viewport->TopLeftY,  (myUI->viewport->TopLeftX + myUI->viewport->Width),   (myUI->viewport->TopLeftY + myUI->viewport->Height) });
-		guideImage->BuildAnimation({ 0, 2160, 3840, 4320 }, 1, 1, emptyAnimation);
-		myUI->AddUIComponent("GuideBG", guideImage);
-		myUI->overlays[guideID]->AddComponent(guideImage);
-
-		ADUI::Label2D* guideLabel = new ADUI::Label2D();
-		guideLabel->SetFont(myUI->GetFont(4));
-		guideLabel->SetText("The Great Golem Guide \n",
-			XMFLOAT2(800, 400));
-		guideLabel->Enable();
-		guideLabel->SetTint(Colors::YellowGreen);
-		myUI->AddUIComponent("GuideLabel", guideLabel);
-		myUI->overlays[guideID]->AddComponent(guideLabel);
 
 		//Pause Menu Buttons
 		ADUI::ComponentGrid* buttonList2 = new ADUI::ComponentGrid();
@@ -653,20 +623,18 @@ namespace GolemGameUISetup
 		lbl->active = true;
 		lbl->visible = true;
 		ADUI::Button2D* btn2 = new ADUI::Button2D(position, buttonIcon, lbl, true, true, false);
-		buttonList2->Generate(btn2, position, spacing, 5, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
+		buttonList2->Generate(btn2, position, spacing, 4, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
 		buttonList2->visible = true;
 		buttonList2->components[0]->SetText("Resume");
-		buttonList2->components[1]->SetText("GuideBook");
-		buttonList2->components[2]->SetText("Options");
-		buttonList2->components[3]->SetText("Main Menu");
-		buttonList2->components[4]->SetText("Quit");
+		buttonList2->components[1]->SetText("Options");
+		buttonList2->components[2]->SetText("Main Menu");
+		buttonList2->components[3]->SetText("Quit");
 		buttonList2->Disable();
 		myUI->AddUIComponent("PauseMenu", buttonList2);
 		myUI->overlays[pauseID]->AddComponent(buttonList2);
 
 		_pauseMenuController->AddComponent(buttonList2);
 		_pauseMenuController->AddOverlay(myUI->overlays[pauseID]);
-		_pauseMenuController->AddOverlay(myUI->overlays[guideID]);
 
 		return pauseID;
 	}
@@ -701,11 +669,10 @@ namespace GolemGameUISetup
 		lbl->active = true;
 		lbl->visible = true;
 		ADUI::Button2D* btn3 = new ADUI::Button2D(position, buttonIcon, lbl, true, true, false);
-		buttonList3->Generate(btn3, position, spacing, 3, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
+		buttonList3->Generate(btn3, position, spacing, 2, 1, ADUI::ComponentGridStyle::ExactSpacing, true, true);
 		buttonList3->Enable();
 		buttonList3->components[0]->SetText("Audio");
 		buttonList3->components[1]->SetText("Controls");
-		buttonList3->components[2]->SetText("Gameplay");
 		myUI->AddUIComponent("OptionsMenu", buttonList3);
 		myUI->overlays[optionsID]->AddComponent(buttonList3);
 

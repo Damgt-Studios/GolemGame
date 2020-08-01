@@ -32,7 +32,7 @@ namespace ADPhysics
 
 	struct Collider 
 	{
-		XMFLOAT3 Pos;
+		XMFLOAT3 Pos = { 0,0,0 };
 		ColliderType type;
 		bool trigger = false;
 
@@ -68,7 +68,7 @@ namespace ADPhysics
 
 	struct AABB : Collider
 	{
-		XMFLOAT3 Min, Max, Extents, HalfSize;
+		XMFLOAT3 Min = { 0,0,0 }, Max = { 0,0,0 }, Extents = { 0,0,0 }, HalfSize = { 0,0,0 };
 		AABB()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
@@ -119,7 +119,7 @@ namespace ADPhysics
 
 	struct OBB : Collider
 	{
-		XMFLOAT3 AxisX, AxisY, AxisZ, HalfSize;
+		XMFLOAT3 AxisX = { 0,0,0 }, AxisY = { 0,0,0 }, AxisZ = { 0,0,0 }, HalfSize = { 0,0,0 };
 		OBB()
 		{
 			Pos = XMFLOAT3(0, 0, 0);
@@ -247,28 +247,28 @@ namespace ADPhysics
 
 	struct InfinitePlane
 	{
-		XMFLOAT3 normal;
-		float distance;
+		XMFLOAT3 normal = { 0,0,0 };
+		float distance = 0;
 	};
 
 	struct Ray {
-		XMFLOAT3 Origin, Direction;
+		XMFLOAT3 Origin = { 0,0,0 }, Direction = { 0,0,0 };
 
 		Ray(XMFLOAT3 origin, XMFLOAT3 direction) : Origin(origin), Direction(direction) {};
 	};
 
 	struct Segment
 	{
-		XMFLOAT3 Start, End;
+		XMFLOAT3 Start = { 0,0,0 }, End = { 0,0,0 };
 
 		Segment(XMFLOAT3 s, XMFLOAT3 e) : Start(s), End(e) {};
 	};
 
 	struct Triangle : Collider
 	{
-		XMFLOAT3 a;
-		XMFLOAT3 b;
-		XMFLOAT3 c;
+		XMFLOAT3 a = { 0,0,0 };
+		XMFLOAT3 b = { 0,0,0 };
+		XMFLOAT3 c = { 0,0,0 };
 
 		Triangle(XMFLOAT3 A, XMFLOAT3 B, XMFLOAT3 C) : a(A), b(B), c(C) 
 		{ Pos = (XMFLOAT3&)((Float3ToVector(A) + Float3ToVector(B) + Float3ToVector(C)) / 3); type = ColliderType::Triangle; };
@@ -306,9 +306,9 @@ namespace ADPhysics
 
 	struct PhysicsMaterial
 	{
-		float Mass;
-		float InvMass;
-		float Restitution;
+		float Mass = 0;
+		float InvMass = 0;
+		float Restitution = 0;
 
 		PhysicsMaterial() : Mass(1), InvMass(1), Restitution(0.5f) {};
 		PhysicsMaterial(float Mass, float InvMass, float Rest) : Mass(Mass), InvMass(InvMass), Restitution(Rest) {};
@@ -316,14 +316,14 @@ namespace ADPhysics
 
 	struct Manifold
 	{
-		float PenetrationDepth;
-		XMFLOAT3 Normal;
-		XMFLOAT4 ContactPoint;
+		float PenetrationDepth = 0;
+		XMFLOAT3 Normal = { 0,0,0 };
+		XMFLOAT4 ContactPoint = { 0,0,0,0 };
 	};
 
 	struct Interval
 	{
-		float min, max;
+		float min =0, max = 0;
 	};
 
 	static float Gravity = -9.8f;
@@ -1259,7 +1259,7 @@ namespace ADPhysics
 
 	static bool AabbToObbCollision(const AABB& aabb, const OBB& obb, Manifold& m)
 	{
-		static XMFLOAT3 Difference;
+		static XMFLOAT3 Difference = { 0,0,0 };
 		Difference = XMFLOAT3(obb.Pos.x - aabb.Pos.x, obb.Pos.y - aabb.Pos.y, obb.Pos.z - aabb.Pos.z);
 
 		bool temp = !(

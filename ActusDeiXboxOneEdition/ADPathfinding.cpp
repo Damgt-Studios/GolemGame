@@ -530,87 +530,6 @@ int ADAI::ADPathfinding::findAcceptablePoint(UINT& goalColumn, UINT& goalRow)
 			return 0;
 		}
 	}
-			//int c = -1;
-			//int r = -1;
-			//int c2 = 0;
-			//int r2 = 0;
-
-			//do
-			//{
-			//	if (c != 0 && r != 0)
-			//	{
-			//		temp = GetTile(goalColumn + c, goalRow + r);
-			//	}
-
-			//	if (temp)
-			//	{
-			//		if (temp->tile->walkable)
-			//		{
-			//			goalColumn = goalColumn + c;
-			//			goalRow = goalRow + r;
-			//			return 0;
-			//		}
-			//	}
-
-			//		++c;
-			//		if (r == 2)
-			//		{
-			//			temp = GetTile(goalColumn -2, goalRow);
-
-			//			if (temp)
-			//			{
-			//				if (temp->tile->walkable)
-			//				{
-			//					goalColumn = goalColumn -2;
-			//					goalRow = goalRow ;
-			//					return 0;
-			//				}
-			//			}
-
-			//			temp = GetTile(goalColumn + 2, goalRow);
-
-			//			if (temp)
-			//			{
-			//				if (temp->tile->walkable)
-			//				{
-			//					goalColumn = goalColumn + 2;
-			//					goalRow = goalRow;
-			//					return 0;
-			//				}
-			//			}
-
-			//			temp = GetTile(goalColumn, goalRow + 2);
-
-			//			if (temp)
-			//			{
-			//				if (temp->tile->walkable)
-			//				{
-			//					goalColumn = goalColumn;
-			//					goalRow = goalRow + 2;
-			//					return 0;
-			//				}
-			//			}
-			//			temp = GetTile(goalColumn, goalRow - 2);
-
-			//			if (temp)
-			//			{
-			//				if (temp->tile->walkable)
-			//				{
-			//					goalColumn = goalColumn;
-			//					goalRow = goalRow - 2;
-			//					return 0;
-			//				}
-			//			}
-			//		}
-			//		else if (c == 2)
-			//		{
-			//			++r;
-			//			c = -1;
-			//		}
-			//	
-			//} while (r != 2);
-		//}
-	//}
 	else
 	{
 		return 1;
@@ -684,11 +603,9 @@ void ADAI::ADPathfinding::update(float timeslice)
 			done = true;
 			return;
 		}
-		//Do search for xtime then stop and let thread continue
+
 		current = pHeap.front();
 		std::pop_heap(pHeap.begin(), pHeap.end(), CompareCost()); pHeap.pop_back();
-		//current = pQueue.top();
-		//pQueue.pop();
 
 		current->searchNode->tile->displayState = 1;
 		if (current->searchNode->tile == target)
@@ -710,18 +627,6 @@ void ADAI::ADPathfinding::update(float timeslice)
 			return;
 		}
 
-		//if (timeslice == 0)
-		//{
-		//	previousTrace.clear();
-		//	//retracer = current;
-		//	//while (retracer->parent != NULL)
-		//	//{
-		//	//	previousTrace.push_back(retracer->searchNode->tile);
-		//	//	retracer = retracer->parent;
-		//	//}
-		//	previousTrace.push_back(retracer->searchNode->tile);
-		//}
-
 
 		int neighborIndex = 0;
 		auto end = current->searchNode->neighbors.end();
@@ -734,16 +639,10 @@ void ADAI::ADPathfinding::update(float timeslice)
 				PlannerNode* node = visited_map[*i];
 				if (tempGivenCost < node->givenCost)
 				{
-					//pHeap.erase();
-					//pQueue.remove[node];
-
 					node->givenCost = tempGivenCost;
 					node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 					node->parent = current;
 					std::make_heap(pHeap.begin(), pHeap.end(), CompareCost());
-					//std::sort_heap(pHeap.begin(), pHeap.end(), CompareCost());
-					//pQueue.push(node);
-					//pHeap.push_back(node);
 				}
 			}
 			else
@@ -756,7 +655,6 @@ void ADAI::ADPathfinding::update(float timeslice)
 				node->finalCost = node->givenCost + node->heuristicCost * hWeight;
 				visited_map[*i] = node;
 				node->searchNode->tile->displayState = 1;
-				//pQueue.push(node);
 				pHeap.push_back(node);
 			}
 		}
@@ -780,14 +678,6 @@ void ADAI::ADPathfinding::exit()
 	}
 	visited_map.clear();
 	pHeap.clear();
-	//while (pHeap.size() > 0)
-	//{
-	//	std::pop_heap(pHeap.begin(), pHeap.end()); pHeap.pop_back();
-	//}
-	//while (pQueue.size() > 0)
-	//{
-	//	pQueue.pop();
-	//}
 
 	solution.positions.clear();
 	solution.totalLength.clear();
@@ -812,14 +702,7 @@ void ADAI::ADPathfinding::shutdown()
 
 	tileMap.nodeGrid.clear();
 	pHeap.clear();
-	//while (pHeap.size() > 0)
-	//{
-	//	std::pop_heap(pHeap.begin(), pHeap.end()); pHeap.pop_back();
-	//}
-	//while (pQueue.size() > 0)
-	//{
-	//	pQueue.pop();
-	//}
+
 	solution.positions.clear();
 	solution.totalLength.clear();
 	previousTrace.clear();
@@ -830,20 +713,8 @@ bool ADAI::ADPathfinding::isDone() const
 {
 	return done;
 }
-//
-//std::vector<const ADAI::PathingNode*> const ADAI::ADPathfinding::getSolution() const
-//{
-//	return solution;
-//}
 
 ADAI::Solution ADAI::ADPathfinding::getSolutionPoints() const
 {
 	return solution;
-	//Solution points;
-	//for (auto& solPoint : solution.positions)
-	//{
-	//	points.positions.push_back(XMFLOAT3(solPoint.x - xAdjust, 0, solPoint.z - zAdjust)); 
-	//	points.totalLength.push_back(solPoint->);
-	//}
-	//return points;
 }

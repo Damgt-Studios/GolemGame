@@ -52,10 +52,10 @@ namespace ADResource
 
 			// Public Data Members
 			// AI
-			GameObject* targetMarker;
+			GameObject* targetMarker = nullptr;
 
 			float commandDistanceTimer = 0;
-			ADAI::MinionGroup** minionGroups;
+			ADAI::MinionGroup** minionGroups = nullptr;
 			int commandTargetGroup = 0;
 
 
@@ -63,21 +63,21 @@ namespace ADResource
 			OBB collider = OBB(transform, XMFLOAT3(20, 25, 20));
 			PhysicsMaterial mat = PhysicsMaterial(1, 1, 0.5f);
 
-			ADResource::ADGameplay::StatSheet* stats;
+			ADResource::ADGameplay::StatSheet* stats = nullptr;
 			struct GolemActions
 			{
-				Action* punch;
-				Action* kick;
-				Action* slam;
-				Action* special;
-				Action* nextForm;
-				Action* prevForm;
+				Action* punch = nullptr;
+				Action* kick = nullptr;
+				Action* slam = nullptr;
+				Action* special = nullptr;
+				Action* nextForm = nullptr;
+				Action* prevForm = nullptr;
 			} gActions[4];
-			Action* consume;
+			Action* consume = nullptr;
 
 			AD_ULONG meshIDs[4];
 
-			BigElementalPuffEmitter* bigPuffs[4];
+			BigElementalPuffEmitter* bigPuffs[4] = { nullptr, nullptr, nullptr, nullptr };
 
 		private:
 			// Private Methods
@@ -106,14 +106,14 @@ namespace ADResource
 
 			// Private Data Members
 			// Golem Stats
-			bool isAlive;
-			int health;
+			bool isAlive = true;
+			//int health;
 
 
 
 			// Audio Stuff
 			bool playingSound = false;
-			UINT collectionNoiseID;
+			UINT collectionNoiseID = 0;
 
 
 			// Collider Translations
@@ -137,22 +137,22 @@ namespace ADResource
 			double idleTime = 0.0;
 			struct GolemAnimations
 			{
-				std::string born;
-				std::string command;
-				std::string death;
-				std::string eat;
-				std::string groundSlam;
-				std::string heavyHitBack;
-				std::string heavyHitFront;
-				std::string heavyHitLeft;
-				std::string heavyHitRight;
-				std::string idle;
-				std::string idleLook;
-				std::string kick;
-				std::string run;
-				std::string special;
-				std::string summonMinions;
-				std::string towerPunch;
+				std::string born = "";
+				std::string command = "";
+				std::string death = "";
+				std::string eat = "";
+				std::string groundSlam = "";
+				std::string heavyHitBack = "";
+				std::string heavyHitFront = "";
+				std::string heavyHitLeft = "";
+				std::string heavyHitRight = "";
+				std::string idle = "";
+				std::string idleLook = "";
+				std::string kick = "";
+				std::string run = "";
+				std::string special = "";
+				std::string summonMinions = "";
+				std::string towerPunch = "";
 			} anims[4];
 
 
